@@ -69,8 +69,8 @@
     "proposed_version": "1.9.6",
     "candidate_archive_url": "https://registry.npmjs.org/ace-builds/-/ace-builds-1.9.6.tgz",
     "selected_build_family": "src-min-noconflict",
-    "archive_integrity": null,
-    "archive_integrity_status": "PENDING: verify npm registry dist.integrity and SHA-256 before vendoring (#3).",
+    "archive_integrity": "sha512-M/Li4hPruMSbkkg35LgdbsIBq0WuwrV4ztP2pKaww47rC/MvDc1bOrYxwJrfgxdlzyLKrja5bn+9KwwuzqB2xQ==",
+    "archive_integrity_status": "VERIFIED in Actions run 43439821481; locked digests for all 440 files",
     "language_modes_offered": [
       "abap",
       "abc",
@@ -251,7 +251,14 @@
       "vim",
       "emacs"
     ],
-    "dynamic_modules_status": "PENDING browser trace and tarball closure verification; likely mode-*, theme-*, keybinding-*, worker-*"
+    "dynamic_modules_status": "Tarball closure verified for 440 files (11 workers); actual browser dynamic fetch trace pending #6, 3 old UI modes absent and must be addressed by #3.",
+    "archive_sha256": "b9facb2b1187cd1b0792eb5b23aac2faae772ea293d128c70c13c7a4f9f2c61d",
+    "lock_file": "docs/ace-builds-1.9.6-lock.json",
+    "missing_ui_modes": [
+      "bro",
+      "dummy",
+      "dummysyntax"
+    ]
   },
   "notes": [
     "The HTML still attempts CDN scripts and CSS. No complete offline compliance is claimed.",
