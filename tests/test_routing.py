@@ -129,6 +129,10 @@ class ServerTests(unittest.TestCase):
         self.assertEqual(static.getheader("X-Content-Type-Options"), "nosniff")
         self.assertEqual(static.getheader("Content-Type"), "text/css; charset=utf-8")
         self.assertGreater(len(data), 10)
+        js, source = self.request("GET", "/assets/v%s/jquery-3.6.0.min.js" % version)
+        self.assertEqual(js.status, 200)
+        self.assertEqual(js.getheader("Content-Type"), "text/javascript; charset=utf-8")
+        self.assertGreater(len(source), 10)
 
     def test_legacy_api_is_exact_and_not_cached(self):
         ok, content = self.request("GET", "/api/prefs")
