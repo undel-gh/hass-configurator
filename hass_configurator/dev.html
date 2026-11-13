@@ -5,12 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" />
     <title>HASS Configurator</title>
     <link rel="stylesheet" type="text/css" href="assets/v$asset_version/material-icons.fallback.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/3.4.93/css/materialdesignicons.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+    <link href="assets/v$asset_version/vendor/mdi/css/materialdesignicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="assets/v$asset_version/vendor/materialize/css/materialize.min.css">
     <link rel="stylesheet" type="text/css" href="assets/v$asset_version/style.css" media="screen">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.9.6/ace.js" type="text/javascript" charset="utf-8"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.9.6/ext-modelist.js" type="text/javascript" charset="utf-8"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.9.6/ext-language_tools.js" type="text/javascript" charset="utf-8"></script>
+    <script src="assets/v$asset_version/vendor/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script>
+  // Ace dynamic modules and workers share this ingress-relative versioned base.
+  (function () {
+    var aceBase = new URL('assets/v$asset_version/vendor/ace/', document.baseURI).href;
+    ['basePath', 'modePath', 'themePath', 'workerPath'].forEach(function (key) {
+      ace.config.set(key, aceBase);
+    });
+  })();
+</script>
+    <script src="assets/v$asset_version/vendor/ace/ext-modelist.js" type="text/javascript" charset="utf-8"></script>
+    <script src="assets/v$asset_version/vendor/ace/ext-language_tools.js" type="text/javascript" charset="utf-8"></script>
 </head>
 <body>
   <div class="preloader-background">
@@ -1018,43 +1027,43 @@
             <p>Developed by:</p>
             <ul>
                 <li>
-                    <div class="chip"> <img src="https://avatars3.githubusercontent.com/u/7396998?v=4&s=400" alt="Contact Person"> <a class="black-text" href="https://github.com/danielperna84" target="_blank">Daniel Perna</a> </div>
+                    <div class="chip"> <span class="offline-avatar material-icons" aria-hidden="true">person</span> <a class="black-text" href="https://github.com/danielperna84" target="_blank">Daniel Perna</a> </div>
                 </li>
                 <li>
-                    <div class="chip"> <img src="https://avatars2.githubusercontent.com/u/1509640?v=4&s=400" alt="Contact Person"> <a class="black-text" href="https://github.com/jmart518" target="_blank">JT Martinez</a> </div>
+                    <div class="chip"> <span class="offline-avatar material-icons" aria-hidden="true">person</span> <a class="black-text" href="https://github.com/jmart518" target="_blank">JT Martinez</a> </div>
                 </li>
                 <li>
-                    <div class="chip"> <img src="https://avatars0.githubusercontent.com/u/1525413?v=4&s=400" alt="Contact Person"> <a class="black-text" href="https://github.com/AtoxIO" target="_blank">AtoxIO</a> </div>
+                    <div class="chip"> <span class="offline-avatar material-icons" aria-hidden="true">person</span> <a class="black-text" href="https://github.com/AtoxIO" target="_blank">AtoxIO</a> </div>
                 </li>
                 <li>
-                    <div class="chip"> <img src="https://avatars0.githubusercontent.com/u/646513?s=400&v=4" alt="Contact Person"> <a class="black-text" href="https://github.com/Munsio" target="_blank">Martin Treml</a> </div>
+                    <div class="chip"> <span class="offline-avatar material-icons" aria-hidden="true">person</span> <a class="black-text" href="https://github.com/Munsio" target="_blank">Martin Treml</a> </div>
                 </li>
                 <li>
-                    <div class="chip"> <img src="https://avatars2.githubusercontent.com/u/1399443?s=460&v=4" alt="Contact Person"> <a class="black-text" href="https://github.com/sytone" target="_blank">Sytone</a> </div>
+                    <div class="chip"> <span class="offline-avatar material-icons" aria-hidden="true">person</span> <a class="black-text" href="https://github.com/sytone" target="_blank">Sytone</a> </div>
                 </li>
                 <li>
-                    <div class="chip"> <img src="https://avatars3.githubusercontent.com/u/1561226?s=400&v=4" alt="Contact Person"> <a class="black-text" href="https://github.com/dimagoltsman" target="_blank">Dima Goltsman</a> </div>
+                    <div class="chip"> <span class="offline-avatar material-icons" aria-hidden="true">person</span> <a class="black-text" href="https://github.com/dimagoltsman" target="_blank">Dima Goltsman</a> </div>
                 </li>
                 <li>
-                    <div class="chip"> <img src="https://avatars3.githubusercontent.com/u/14281572?s=400&v=4" alt="Contact Person"> <a class="black-text" href="https://github.com/emontnemery" target="_blank">Erik Montnemery</a> </div>
+                    <div class="chip"> <span class="offline-avatar material-icons" aria-hidden="true">person</span> <a class="black-text" href="https://github.com/emontnemery" target="_blank">Erik Montnemery</a> </div>
                 </li>
                 <li>
-                    <div class="chip"> <img src="https://avatars0.githubusercontent.com/u/1294876?s=400&v=4" alt="Contact Person"> <a class="black-text" href="https://github.com/tjorim" target="_blank">Jorim Tielemans</a> </div>
+                    <div class="chip"> <span class="offline-avatar material-icons" aria-hidden="true">person</span> <a class="black-text" href="https://github.com/tjorim" target="_blank">Jorim Tielemans</a> </div>
                 </li>
                 <li>
-                    <div class="chip"> <img src="https://avatars.githubusercontent.com/u/874635?v=4&s=400" alt="Contact Person"> <a class="black-text" href="https://github.com/javawizard" target="_blank">Alex Boyd</a> </div>
+                    <div class="chip"> <span class="offline-avatar material-icons" aria-hidden="true">person</span> <a class="black-text" href="https://github.com/javawizard" target="_blank">Alex Boyd</a> </div>
                 </li>
                 <li>
-                    <div class="chip"> <img src="https://avatars.githubusercontent.com/u/20040931?v=4&s=400" alt="Contact Person"> <a class="black-text" href="https://github.com/salim-b" target="_blank">Salim B</a> </div>
+                    <div class="chip"> <span class="offline-avatar material-icons" aria-hidden="true">person</span> <a class="black-text" href="https://github.com/salim-b" target="_blank">Salim B</a> </div>
                 </li>
                 <li>
-                    <div class="chip"> <img src="https://avatars.githubusercontent.com/u/85389871?v=4&s=400" alt="Contact Person"> <a class="black-text" href="https://github.com/wrt54g" target="_blank">Sven Serlier</a> </div>
+                    <div class="chip"> <span class="offline-avatar material-icons" aria-hidden="true">person</span> <a class="black-text" href="https://github.com/wrt54g" target="_blank">Sven Serlier</a> </div>
                 </li>
                 <li>
-                    <div class="chip"> <img src="https://avatars.githubusercontent.com/u/613272?v=4&s=400" alt="Contact Person"> <a class="black-text" href="https://github.com/maweki" target="_blank">Mario Wenzel</a> </div>
+                    <div class="chip"> <span class="offline-avatar material-icons" aria-hidden="true">person</span> <a class="black-text" href="https://github.com/maweki" target="_blank">Mario Wenzel</a> </div>
                 </li>
                 <li>
-                    <div class="chip"> <img src="https://avatars.githubusercontent.com/u/114901470?v=4&s=400" alt="Contact Person"> <a class="black-text" href="https://github.com/mallewski" target="_blank">mallewski</a> </div>
+                    <div class="chip"> <span class="offline-avatar material-icons" aria-hidden="true">person</span> <a class="black-text" href="https://github.com/mallewski" target="_blank">mallewski</a> </div>
                 </li>
             </ul>
             <p>Libraries used:</p>
@@ -1363,7 +1372,6 @@
                       <option value="ace/mode/assembly_x86">assembly_x86</option>
                       <option value="ace/mode/autohotkey">autohotkey</option>
                       <option value="ace/mode/batchfile">batchfile</option>
-                      <option value="ace/mode/bro">bro</option>
                       <option value="ace/mode/c_cpp">c_cpp</option>
                       <option value="ace/mode/c9search">c9search</option>
                       <option value="ace/mode/cirru">cirru</option>
@@ -1381,8 +1389,6 @@
                       <option value="ace/mode/dockerfile">dockerfile</option>
                       <option value="ace/mode/dot">dot</option>
                       <option value="ace/mode/drools">drools</option>
-                      <option value="ace/mode/dummy">dummy</option>
-                      <option value="ace/mode/dummysyntax">dummysyntax</option>
                       <option value="ace/mode/eiffel">eiffel</option>
                       <option value="ace/mode/ejs">ejs</option>
                       <option value="ace/mode/elixir">elixir</option>

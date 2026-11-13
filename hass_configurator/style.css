@@ -905,3 +905,19 @@ body, nav, .side-nav, #slide-out, .dropdown-content,
 .waves-effect.waves-blue .waves-ripple {
     background-color: var(--accent);
 }
+
+/* Offline contributor avatars replace remote GitHub image requests. */
+.chip .offline-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    margin: 0 8px 0 -12px;
+    border-radius: 50%;
+    background: #e0e0e0;
+    color: #455a64;
+    font-size: 22px;
+    line-height: 32px;
+    vertical-align: middle;
+}

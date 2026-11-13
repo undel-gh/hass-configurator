@@ -1,4 +1,4 @@
-/** Baseline offline network-attempt gate; full UI is expected to fail until #3/#4. */
+/** Offline network-attempt gate for bundled Ace and UI assets. */
 const { test, expect } = require('@playwright/test');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -100,30 +100,44 @@ test('real HTML resolves local assets and API under simulated ingress prefix', a
 
   expect(requested.filter((p) => p.startsWith('/assets/') ||
     p.startsWith('/api/'))).toEqual([]);
-  // These are genuine attempts from the actual HTML, even when the
-  // browser intercepts/blocks them. Pin known offline debt without marking
-  // this test as a strict offline pass (the next test is expected to fail).
-  const expectedExternal = [
-    'https://cdnjs.cloudflare.com/ajax/libs/ace/1.9.6/ace.js',
-    'https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/3.4.93/css/materialdesignicons.min.css',
-  ];
-  for (const url of expectedExternal) {
-    await expect.poll(() => external.some((attempt) => attempt.url === url),
-      { message: 'Expected existing CDN request attempt: ' + url }).toBe(true);
+  // The actual prefixed HTML, not synthetic markup, must not attempt
+  // public-origin script, CSS, font or image loads. No expected failures.
+  expect(external).toEqual([]);
+  expect(await page.locator('img[src^="http"]').count()).toBe(0);
+  await expect.poll(() => page.evaluate(() => Boolean(window.ace && window.editor))).toBe(true);
+  for (const filename of [
+    'vendor/ace/ace.js',
+    'vendor/ace/ext-modelist.js',
+    'vendor/ace/ext-language_tools.js',
+    'vendor/materialize/css/materialize.min.css',
+    'vendor/mdi/css/materialdesignicons.min.css',
+    'vendor/mdi/fonts/materialdesignicons-webfont.woff2',
+  ]) {
+    await expect.poll(() => assets.some((r) =>
+      r.path.endsWith('/' + filename) && r.status === 200),
+      { message: 'Missing local dependency: ' + filename }).toBe(true);
   }
 });
 
-test('full UI sends no public-origin requests (KNOWN OFFLINE DEBT #3/#4)', async ({ page }) => {
-  test.fail(true, 'Known CDN and avatar requests remain until Ace/CSS bundling (#3/#4). This test MUST become green and lose fail() before release.');
+test('full UI attempts no public-origin requests with cold cache', async ({ page }) => {
   const attempts = await interceptAttempts(page);
+  const errors = [];
+  page.on('pageerror', (error) => errors.push(error.message));
   await page.goto(server + '/', { waitUntil: 'domcontentloaded' });
-  await page.waitForTimeout(700); // give CSS fonts / optional images time to attempt loading
+  await expect.poll(() => page.evaluate(() =>
+    Boolean(window.ace && window.editor && window.jQuery))).toBe(true);
+  await page.waitForTimeout(600);
   fs.mkdirSync(path.join(__dirname, 'artifacts'), { recursive: true });
   fs.writeFileSync(path.join(__dirname, 'artifacts', 'runtime-attempts.json'),
                    JSON.stringify(attempts, null, 2) + '\n');
+  // Keep the downloadable CI artifact independently machine-readable.
+  const recordedAttempts = JSON.parse(fs.readFileSync(
+    path.join(__dirname, 'artifacts', 'runtime-attempts.json'), 'utf8'));
+  expect(recordedAttempts).toEqual(attempts);
   await test.info().attach('runtime-attempts.json', {
     body: Buffer.from(JSON.stringify(attempts, null, 2)),
     contentType: 'application/json',
   });
+  expect(errors).toEqual([]);
   expect(attempts).toEqual([]);
 });

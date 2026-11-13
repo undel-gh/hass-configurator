@@ -1,5 +1,6 @@
 """Unit and loopback contract tests for the permanent routing boundary."""
 import contextlib
+import hashlib
 import http.client
 import os
 from pathlib import Path
@@ -57,6 +58,17 @@ class RouterTests(unittest.TestCase):
         self.assertEqual(self.router.match("POST", path).allow, "GET")
         self.assertEqual(self.router.match("GET", path.replace("v" + self.assets.version, "v" + "0"*16)).kind, "not_found")
         self.assertEqual(self.router.match("GET", path + "/more").kind, "not_found")
+
+    def test_asset_digest_uses_nul_and_newline_separators(self):
+        # Keep the fingerprint formula compatible with the original router
+        # rather than silently using literal backslash bytes.
+        fragments = []
+        for name in sorted(PACKAGE_ASSETS):
+            payload = (Path(self.tmp.name) / name).read_bytes()
+            fragments.append(name.encode("ascii") + b"\x00" +
+                             hashlib.sha256(payload).hexdigest().encode("ascii"))
+        expected = hashlib.sha256(b"\n".join(fragments)).hexdigest()[:16]
+        self.assertEqual(self.assets.version, expected)
 
     def test_content_change_changes_version(self):
         initial = self.assets.version
