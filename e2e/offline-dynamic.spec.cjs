@@ -146,3 +146,97 @@ test('YAML syntax worker reports and clears errors with public network blocked',
   expect(errors).toEqual([]);
 });
 
+test('simulated Ingress preserves lazy Ace mode/theme/keybinding and YAML worker paths', async ({ page }) => {
+  const requested = [];
+  const received = [];
+  const publicAttempts = [];
+  const pageErrors = [];
+  const workers = [];
+  page.on('request', request => {
+    const url = new URL(request.url());
+    if (url.origin === origin) requested.push(url.pathname);
+  });
+  page.on('response', response => {
+    const url = new URL(response.url());
+    if (url.origin === origin) {
+      received.push({ path: url.pathname, status: response.status() });
+    }
+  });
+  page.on('pageerror', error => pageErrors.push(error.message));
+  page.on('worker', worker => workers.push(worker.url()));
+
+  // Intercept requests before Chromium can use the network. The route
+  // below emulates Supervisor stripping the public Ingress path segment.
+  await page.route('**/*', async route => {
+    const url = new URL(route.request().url());
+    if (url.protocol !== 'blob:' && url.protocol !== 'data:' && url.origin !== origin) {
+      publicAttempts.push(url.href);
+      await route.abort('blockedbyclient');
+    } else {
+      await route.continue();
+    }
+  });
+  await page.route('**/ingress/test/**', async route => {
+    const target = new URL(route.request().url());
+    if (!target.pathname.startsWith('/ingress/test/')) {
+      throw new Error('Unexpected Ingress route: ' + target.pathname);
+    }
+    target.pathname = target.pathname.replace(/^\/ingress\/test\//, '/');
+    const upstream = await route.fetch({ url: target.toString() });
+    await route.fulfill({ response: upstream });
+  });
+
+  await page.goto(server + '/ingress/test/', { waitUntil: 'domcontentloaded' });
+  await expect.poll(() => page.evaluate(() =>
+    Boolean(window.ace && window.editor && window.editor.session))).toBe(true);
+  const prefix = /^\/ingress\/test\/assets\/v[a-f0-9]{16}\/vendor\/ace\//;
+
+  // This is specifically a regression guard for lazy script resolution.
+  // Checking only the HTML's initial <script> URLs would miss this failure.
+  const configuredPaths = await page.evaluate(() =>
+    ['basePath', 'modePath', 'themePath', 'workerPath'].map(key =>
+      ace.config.get(key)));
+  for (const configured of configuredPaths) {
+    expect(new URL(configured).origin).toBe(origin);
+    expect(new URL(configured).pathname).toMatch(prefix);
+  }
+  await page.evaluate(() => {
+    editor.setTheme('ace/theme/monokai');
+    editor.getSession().setMode('ace/mode/python');
+    editor.setKeyboardHandler('ace/keyboard/vim');
+  });
+
+  const assertPrefixedLoad = async filename => {
+    const end = '/vendor/ace/' + filename;
+    await expect.poll(() => received.some(item => prefix.test(item.path) &&
+      item.path.endsWith(end) && item.status === 200),
+      { message: 'Ace lazy file must succeed via Ingress: ' + filename }).toBe(true);
+    expect(requested.some(path => prefix.test(path) && path.endsWith(end))).toBe(true);
+  };
+  for (const file of ['mode-python.js', 'theme-monokai.js', 'keybinding-vim.js']) {
+    await assertPrefixedLoad(file);
+  }
+
+  await page.evaluate(() => {
+    const session = editor.getSession();
+    session.setMode('ace/mode/yaml');
+    session.setUseWorker(true);
+    editor.setValue('broken: [list' + String.fromCharCode(10), -1);
+  });
+  await expect.poll(() => page.evaluate(() =>
+    editor.getSession().getAnnotations().some(a => a.type === 'error')),
+    { timeout: 12000, message: 'YAML worker must validate through Ingress' }).toBe(true);
+  await page.evaluate(() =>
+    editor.setValue('valid: [list]' + String.fromCharCode(10), -1));
+  await expect.poll(() => page.evaluate(() =>
+    editor.getSession().getAnnotations().filter(a => a.type === 'error').length),
+    { timeout: 12000 }).toBe(0);
+
+  for (const file of ['mode-yaml.js', 'worker-yaml.js']) {
+    await assertPrefixedLoad(file);
+  }
+  expect(workers.length).toBeGreaterThan(0);
+  expect(requested.filter(path => path.startsWith('/assets/'))).toEqual([]);
+  expect(publicAttempts).toEqual([]);
+  expect(pageErrors).toEqual([]);
+});
