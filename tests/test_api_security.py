@@ -405,6 +405,64 @@ class SecurityLoopbackTests(unittest.TestCase):
         finally:
             cfg.ALLOWED_NETWORKS[:] = original
 
+    def test_parallel_network_removals_never_clear_last_allowed_range(self):
+        original = list(cfg.ALLOWED_NETWORKS)
+        cfg.ALLOWED_NETWORKS[:] = ["127.0.0.0/8", "127.0.0.1/32"]
+        try:
+            results = []
+            failures = []
+            ready = threading.Barrier(3)
+            def remove(network):
+                try:
+                    ready.wait(timeout=5)
+                    body = urlencode({"network": network, "method": "remove"}).encode()
+                    status, _, payload = http_request(
+                        self.server, "POST", "/api/allowed_networks", body,
+                        {"Content-Type": "application/x-www-form-urlencoded",
+                         "X-CSRF-Token": cfg.HTTP_ROUTER.security.csrf_token})
+                    results.append((status, json.loads(payload)))
+                except Exception as exc:
+                    failures.append(exc)
+
+            with patch.object(cfg, "ALLOW_NETWORK_ADMIN", True):
+                workers = [threading.Thread(target=remove, args=(network,))
+                           for network in tuple(cfg.ALLOWED_NETWORKS)]
+                for worker in workers:
+                    worker.start()
+                ready.wait(timeout=5)
+                for worker in workers:
+                    worker.join(timeout=5)
+                self.assertFalse(any(worker.is_alive() for worker in workers))
+                self.assertFalse(failures)
+                self.assertEqual(len(results), 2)
+                self.assertEqual(len(cfg.ALLOWED_NETWORKS), 1)
+                self.assertEqual(sum(not result["error"] for _, result in results), 1)
+        finally:
+            cfg.ALLOWED_NETWORKS[:] = original
+
+    def test_network_admin_rejects_invalid_method_and_cidr_ban(self):
+        headers = {"Content-Type": "application/x-www-form-urlencoded",
+                   "X-CSRF-Token": cfg.HTTP_ROUTER.security.csrf_token}
+        original_allowed = list(cfg.ALLOWED_NETWORKS)
+        original_banned = list(cfg.BANNED_IPS)
+        try:
+            with patch.object(cfg, "ALLOW_NETWORK_ADMIN", True):
+                for route, payload in (
+                    ("/api/allowed_networks", {"network": "127.0.0.1/32", "method": "nonsense"}),
+                    ("/api/banned_ips", {"ip": "203.0.113.0/24", "method": "ban"}),
+                    ("/api/banned_ips", {"ip": "203.0.113.1", "method": "nonsense"}),
+                ):
+                    with self.subTest(route=route, payload=payload):
+                        status, _, raw = http_request(
+                            self.server, "POST", route, urlencode(payload).encode(), headers)
+                        self.assertEqual(status, 200)
+                        self.assertTrue(json.loads(raw)["error"])
+                self.assertEqual(cfg.ALLOWED_NETWORKS, original_allowed)
+                self.assertEqual(cfg.BANNED_IPS, original_banned)
+        finally:
+            cfg.ALLOWED_NETWORKS[:] = original_allowed
+            cfg.BANNED_IPS[:] = original_banned
+
     def test_ha_control_real_outbound_post_only_after_all_gates(self):
         class Reply:
             def __enter__(self):
