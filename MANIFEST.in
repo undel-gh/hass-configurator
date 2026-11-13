@@ -5,3 +5,4 @@ include hass_configurator/js-yaml.min.js
 include hass_configurator/material-icons.fallback.css
 include hass_configurator/materialize.min.js
 include hass_configurator/style.css
+recursive-include hass_configurator/vendor *
