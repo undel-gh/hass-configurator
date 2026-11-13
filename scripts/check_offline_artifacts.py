@@ -7,12 +7,19 @@ import sys
 import tarfile
 import zipfile
 
+from hass_configurator.http_routing import PACKAGE_ASSETS
+
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = json.loads((ROOT / "hass_configurator/vendor/manifest.json").read_text("utf8"))
 
 
 def verify(files, label):
-    required = MANIFEST["resources"]
+    required = dict(MANIFEST["resources"])
+    # Bundle integrity is not complete if the six application-owned static
+    # resources are missing, even when the third-party vendor tree is intact.
+    for name in PACKAGE_ASSETS:
+        required[name] = hashlib.sha256(
+            (ROOT / "hass_configurator" / name).read_bytes()).hexdigest()
     missing = []
     different = []
     for name, expected in required.items():
@@ -22,14 +29,15 @@ def verify(files, label):
         elif hashlib.sha256(files[archive_path]).hexdigest() != expected:
             different.append(archive_path)
     if missing or different:
-        raise RuntimeError("%s incomplete/corrupted vendor files: missing=%s changed=%s" %
+        raise RuntimeError("%s incomplete/corrupted packaged resources: missing=%s changed=%s" %
                            (label, missing[:5], different[:5]))
     extra_manifest = files.get("hass_configurator/vendor/manifest.json")
     if extra_manifest is None:
         raise RuntimeError("%s missing the vendor integrity manifest" % label)
     if json.loads(extra_manifest)["resources"] != required:
         raise RuntimeError("%s embedded manifest differs from source" % label)
-    print("%s: %d resources and manifest validated" % (label, len(required)))
+    print("%s: %d vendor resources, %d first-party resources and manifest validated" %
+          (label, len(MANIFEST["resources"]), len(PACKAGE_ASSETS)))
 
 
 def main(wheel_dir, sdist_dir):
@@ -39,14 +47,18 @@ def main(wheel_dir, sdist_dir):
         raise RuntimeError("Expected exactly one wheel and one sdist")
     with zipfile.ZipFile(wheels[0]) as archive:
         verify({n: archive.read(n) for n in archive.namelist() if
-                n.startswith("hass_configurator/vendor/")}, "wheel")
+                n.startswith("hass_configurator/vendor/") or
+                n in {"hass_configurator/" + filename for filename in PACKAGE_ASSETS}},
+               "wheel")
     with tarfile.open(sdists[0], "r:gz") as archive:
         files = {}
         for member in archive.getmembers():
-            if not member.isfile() or "hass_configurator/vendor/" not in member.name:
+            if not member.isfile() or "hass_configurator/" not in member.name:
                 continue
-            path = member.name[member.name.index("hass_configurator/vendor/"):]
-            files[path] = archive.extractfile(member).read()
+            path = member.name[member.name.index("hass_configurator/"):]
+            if path.startswith("hass_configurator/vendor/") or path in {
+                    "hass_configurator/" + name for name in PACKAGE_ASSETS}:
+                files[path] = archive.extractfile(member).read()
         verify(files, "sdist")
 
 
