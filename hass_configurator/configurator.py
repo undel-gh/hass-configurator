@@ -527,7 +527,6 @@ class RequestHandler(BaseHTTPRequestHandler):
                     ALLOWED_NETWORKS.append(self.client_address[0])
                 if self.client_address[0] in BANNED_IPS:
                     BANNED_IPS.remove(self.client_address[0])
-                url = req.path[:req.path.rfind(chunk)]
                 self.send_response(302)
                 self.send_header('Location', './')
                 self.end_headers()
@@ -543,7 +542,6 @@ class RequestHandler(BaseHTTPRequestHandler):
                     ALLOWED_NETWORKS.append(self.client_address[0])
                 if self.client_address[0] in BANNED_IPS:
                     BANNED_IPS.remove(self.client_address[0])
-                url = req.path[:req.path.rfind(chunk)]
                 self.send_response(302)
                 self.send_header('Location', './')
                 self.end_headers()
