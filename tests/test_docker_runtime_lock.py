@@ -20,6 +20,24 @@ class DockerRuntimeLockTests(unittest.TestCase):
         self.assertTrue(direct_dependencies_from_setup().issubset(locked))
         self.assertEqual(len({hash for _, hash in locked.values()}), 5)
 
+    def test_dockerfile_pins_one_official_base_and_offline_final_stage(self):
+        from scripts.check_docker_runtime_lock import REPO
+
+        source = (REPO / "Dockerfile").read_text("utf8")
+        digest = "sha256:726d304906fa5eb468e5531e366548d1903286352f5adb54ef508ac01fbd80c6"
+        self.assertIn("ARG PYTHON_BASE=docker.io/library/python:3.11.18-bookworm@" +
+                      digest, source)
+        self.assertIn('org.opencontainers.image.base.digest="' + digest + '"',
+                      source)
+        self.assertIn("COPY requirements/docker-runtime.lock", source)
+        self.assertIn("pip download", source)
+        self.assertIn("--only-binary=:all: --require-hashes", source)
+        self.assertIn("--no-index --no-compile", source)
+        self.assertIn("PIP_NO_INDEX=1", source)
+        self.assertIn("pip check", source)
+        self.assertNotIn("RUN apt-get", source)
+        self.assertNotIn("pip install --no-cache-dir hass-configurator", source)
+
     def test_rejects_unhashed_duplicate_and_unpinned_runtime_dependency(self):
         original = LOCK.read_text("utf8")
         with tempfile.TemporaryDirectory() as folder:
