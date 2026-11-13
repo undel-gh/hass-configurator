@@ -261,15 +261,15 @@ def load_settings(args):
         ENFORCE_BASEPATH = True
     if settings.get("ENFORCE_BASEPATH") is False:
         LOG.warning("ENFORCE_BASEPATH=false ignored: P1 confinement is mandatory")
-    ALLOW_SHELL_COMMANDS = settings.get("ALLOW_SHELL_COMMANDS", ALLOW_SHELL_COMMANDS)
+    ALLOW_SHELL_COMMANDS = _secure_flag(settings, "ALLOW_SHELL_COMMANDS", ALLOW_SHELL_COMMANDS)
     EXEC_ALLOWED_BINARIES = settings.get("EXEC_ALLOWED_BINARIES", EXEC_ALLOWED_BINARIES)
     if not isinstance(EXEC_ALLOWED_BINARIES, list) or any(
             not isinstance(name, str) or not os.path.isabs(name)
             for name in EXEC_ALLOWED_BINARIES):
         raise ValueError("EXEC_ALLOWED_BINARIES must be a list of absolute paths")
-    ALLOW_GIT_OPERATIONS = settings.get("ALLOW_GIT_OPERATIONS", ALLOW_GIT_OPERATIONS)
-    ALLOW_NETWORK_ADMIN = settings.get("ALLOW_NETWORK_ADMIN", ALLOW_NETWORK_ADMIN)
-    ALLOW_HA_CONTROL = settings.get("ALLOW_HA_CONTROL", ALLOW_HA_CONTROL)
+    ALLOW_GIT_OPERATIONS = _secure_flag(settings, "ALLOW_GIT_OPERATIONS", ALLOW_GIT_OPERATIONS)
+    ALLOW_NETWORK_ADMIN = _secure_flag(settings, "ALLOW_NETWORK_ADMIN", ALLOW_NETWORK_ADMIN)
+    ALLOW_HA_CONTROL = _secure_flag(settings, "ALLOW_HA_CONTROL", ALLOW_HA_CONTROL)
     SSL_CERTIFICATE = settings.get("SSL_CERTIFICATE", SSL_CERTIFICATE)
     SSL_KEY = settings.get("SSL_KEY", SSL_KEY)
     if args.standalone:
@@ -360,6 +360,14 @@ def _js_safe(value):
     return (value.replace("<", r"\u003c").replace(">", r"\u003e")
             .replace("&", r"\u0026")
             .replace("\u2028", r"\u2028").replace("\u2029", r"\u2029"))
+
+def _secure_flag(settings, name, default):
+    """Privileged capabilities require an actual JSON/env boolean, not a truthy string."""
+    value = settings.get(name, default)
+    if type(value) is not bool:
+        raise ValueError("%s must be a boolean (true or false)" % name)
+    return value
+
 
 def _fs():
     """Resolve the currently configured workspace for every request."""
@@ -552,10 +560,10 @@ class RequestHandler(BaseHTTPRequestHandler):
         if self._legacy_route:
             denied = HTTP_ROUTER.security.authorize(
                 self, method, match.path,
-                allow_shell=ALLOW_SHELL_COMMANDS and bool(EXEC_ALLOWED_BINARIES),
-                allow_git=ALLOW_GIT_OPERATIONS and bool(GIT),
-                allow_network=ALLOW_NETWORK_ADMIN,
-                allow_ha_control=ALLOW_HA_CONTROL,
+                allow_shell=(ALLOW_SHELL_COMMANDS is True) and bool(EXEC_ALLOWED_BINARIES),
+                allow_git=(ALLOW_GIT_OPERATIONS is True) and bool(GIT),
+                allow_network=(ALLOW_NETWORK_ADMIN is True),
+                allow_ha_control=(ALLOW_HA_CONTROL is True),
             )
             if denied is not None:
                 write_http_response(self, denied)
