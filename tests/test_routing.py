@@ -63,6 +63,17 @@ class RouterTests(unittest.TestCase):
         (Path(self.tmp.name) / "style.css").write_bytes(b"changed")
         self.assertNotEqual(initial, Assets(self.tmp.name).version)
 
+    def test_immutable_url_keeps_bytes_until_server_restart(self):
+        path = Path(self.tmp.name) / "style.css"
+        first = self.assets.read("style.css")
+        original_version = self.assets.version
+        path.write_bytes(b"changed in place")
+        self.assertEqual(self.assets.read("style.css"), first)
+        self.assertEqual(self.assets.version, original_version)
+        updated = Assets(self.tmp.name)
+        self.assertNotEqual(updated.version, original_version)
+        self.assertEqual(updated.read("style.css"), b"changed in place")
+
     def test_symlink_not_served(self):
         filename = "style.css"
         resource = Path(self.tmp.name) / filename
