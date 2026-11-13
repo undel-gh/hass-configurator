@@ -19,14 +19,13 @@ VERSION = match.group(1)
 setup(name=NAME,
       version=VERSION,
       description='HASS Configurator',
-      long_description="https://github.com/danielperna84/hass-configurator",
+      long_description="https://github.com/undel-gh/hass-configurator",
       long_description_content_type='text/markdown',
-      url='http://github.com/danielperna84/hass-configurator',
+      url='https://github.com/undel-gh/hass-configurator',
       project_urls={
-          'Documentation': 'https://github.com/danielperna84/hass-configurator',
-          'Tracker': 'https://github.com/danielperna84/hass-configurator/issues'
+          'Documentation': 'https://github.com/undel-gh/hass-configurator',
+          'Tracker': 'https://github.com/undel-gh/hass-configurator/issues'
       },
-      download_url='https://github.com/danielperna84/hass-configurator/tarball/'+VERSION,
       author='Daniel Perna',
       author_email='danielperna84@gmail.com',
       license='MIT',
