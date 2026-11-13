@@ -53,7 +53,7 @@ Application transport MAY initially remain Python `BaseHTTPRequestHandler`. **Pe
 
 ### 4.3 Asset provenance and caching
 - Select ONE verified Ace build family from an immutable published archive, including `ace.js`, `ext-*.js`, supported `mode-*.js`, `theme-*.js`, keyboard handlers, workers and transitive dependencies. Do not pull matching-named modules from arbitrary CDN copies.
-- Bundle in URL namespace `assets/v<manifest-digest>/...` and use `Cache-Control: public, max-age=31536000, immutable` for hashed, non-secret static resources. All dynamic HTML, authenticated redirects and `/api/*` MUST send `Cache-Control: no-store`. Transitional fixed paths MUST revalidate and MUST NOT be served as immutable.
+- Bundle in URL namespace `assets/v<manifest-digest>/...` and use `Cache-Control: private, max-age=31536000, immutable` for hashed, non-secret static resources. All dynamic HTML, authenticated redirects and `/api/*` MUST send `Cache-Control: no-store`. A private cache policy protects ingress-token-bearing URLs from being explicitly shared-cacheable while allowing browser caching of immutable assets. Transitional fixed paths MUST revalidate and MUST NOT be served as immutable.
 - A change to any asset or asset manifest MUST change digest; after an upgrade, refreshed HTML MUST resolve new digest and corresponding worker/module URLs.
 - SHA-256 per file, package-integrity metadata and third-party licenses MUST be included in the build manifest; package and container version MUST match runtime.
 
