@@ -78,6 +78,53 @@ jobs:
       - name: Full browser E2E matrix (disposable workspace)
         working-directory: e2e
         run: npm test
+      - name: Browser gate against installed wheel and installed sdist
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/hc-artifacts
+          python -m pip wheel --no-deps --wheel-dir /tmp/hc-artifacts .
+          python setup.py sdist --dist-dir /tmp/hc-artifacts
+          for variant in wheel sdist; do
+            venv="/tmp/hc-installed-$variant"
+            python -m venv "$venv"
+            if [ "$variant" = wheel ]; then
+              artifact=$(find /tmp/hc-artifacts -maxdepth 1 -name '*.whl' -print -quit)
+              port=3219
+            else
+              artifact=$(find /tmp/hc-artifacts -maxdepth 1 -name '*.tar.gz' -print -quit)
+              port=3220
+            fi
+            "$venv/bin/pip" install --disable-pip-version-check "$artifact"
+            work="/tmp/hc-installed-workspace-$variant"
+            mkdir -p "$work"
+            "$venv/bin/python" -m hass_configurator.configurator \
+              --standalone --listen 127.0.0.1 --port "$port" \
+              --basepath "$work" --enforce \
+              > "/tmp/hc-installed-$variant.log" 2>&1 &
+            app_pid=$!
+            trap 'kill "$app_pid" 2>/dev/null || true' EXIT
+            ready=0
+            for n in $(seq 1 40); do
+              if curl -fsS "http://127.0.0.1:$port/api/prefs" >/dev/null; then
+                ready=1
+                break
+              fi
+              sleep 1
+            done
+            if [ "$ready" -ne 1 ]; then
+              cat "/tmp/hc-installed-$variant.log"
+              exit 1
+            fi
+            (
+              cd e2e
+              EDITOR_URL="http://127.0.0.1:$port" \
+              E2E_WORKSPACE="$work" E2E_PYTHON="$venv/bin/python" \
+                npm test -- --grep 'full UI attempts|real HTML resolves|Ace modes, themes|file browser'
+            )
+            kill "$app_pid"
+            wait "$app_pid" || true
+            trap - EXIT
+          done
       - name: Store browser audit and traces
         if: always()
         uses: actions/upload-artifact@v4
