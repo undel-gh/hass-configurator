@@ -30,7 +30,10 @@ install "HASS Configurator Ingress Validation (temporary)" and Open Web UI.
 
 Its app config enables ingress on internal port 8099 with request streaming.
 The nginx proxy allows only Supervisor's documented bridge peer 172.30.32.2;
-all others are denied. A nonroot Python process serves only
+all others are denied. The test proxy passes a received X-Ingress-Path header
+only from that allowlisted peer; the Python editor ignores it. This is **not**
+proof that Supervisor sanitizes client-supplied header values. Actual header
+semantics and any future trusted-proxy policy must be verified before #8 closes. A nonroot Python process serves only
 /data/hc-ingress-validation; there are **no host directory mounts** or
 exposed host ports. Privileged shell/Git/restart/network administration API
 routes are blocked by the fixture proxy. The fixture runs with standalone
@@ -59,8 +62,13 @@ Log in, then close that browser. Set environment variables privately:
     npm run test:haos
 
 The checked-in .gitignore protects e2e/.secrets/. If authentication expires,
-refresh local storage state rather than sharing session tokens. Real browser
-test reports should be kept private until sanitized.
+refresh local storage state rather than sharing session tokens. A missing,
+unreadable or invalid HAOS_STORAGE_STATE now produces a sanitized diagnostic
+without exposing the path. Navigation failures and popup-load errors are
+also rethrown without the bearer-like URL or original Playwright call log;
+synthetic secret-leak regression checks run in ordinary CI. **This does not
+sanitize raw browser traces, screenshots, HAR or arbitrary third-party
+failures**: keep all real-HAOS browser reports private until reviewed.
 
 File mutation is OFF by default. To test only the disposable fixture's
 private /data sandbox, explicitly run:
