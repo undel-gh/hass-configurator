@@ -169,6 +169,8 @@ jobs:
               cat "/tmp/hc-installed-$variant.log"
               exit 1
             fi
+            # Preserve import origin in the public CI log for audit.
+            grep -F "Installed runtime origin: $venv/" "/tmp/hc-installed-$variant.log"
             (
               cd e2e
               EDITOR_URL="http://127.0.0.1:$port" \
