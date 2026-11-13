@@ -512,11 +512,27 @@ def check_access(clientip):
     return False
 
 def verify_hostname(request_hostname):
-    """Verify the provided host header is correct."""
-    if VERIFY_HOSTNAME:
-        if VERIFY_HOSTNAME not in request_hostname:
+    """Check the exact canonical Host, never a substring or forwarded value."""
+    if not isinstance(request_hostname, str) or any(
+            ord(ch) < 32 or ord(ch) == 127 for ch in request_hostname):
+        return False
+    if not VERIFY_HOSTNAME:
+        return True
+    try:
+        if any(ch in request_hostname for ch in "@/?#\\"):
             return False
-    return True
+        actual = urlparse("//" + request_hostname)
+        expected = urlparse("//" + VERIFY_HOSTNAME)
+        if not actual.hostname or not expected.hostname:
+            return False
+        # A configured port is mandatory when specified; otherwise Host may
+        # include the ordinary listener port used for this instance.
+        if expected.port is not None and actual.port != expected.port:
+            return False
+        return hmac.compare_digest(
+            actual.hostname.casefold(), expected.hostname.casefold())
+    except ValueError:
+        return False
 
 class RequestHandler(BaseHTTPRequestHandler):
     """Request handler."""
@@ -631,6 +647,7 @@ class RequestHandler(BaseHTTPRequestHandler):
             return
         elif req.path == '/api/file':
             content = ""
+            is_raw = False
             filename = query.get('filename', None)
             try:
                 if filename:
@@ -1036,7 +1053,14 @@ class RequestHandler(BaseHTTPRequestHandler):
             "message": "Generic failure"
         }
 
-        length = int(self.headers['content-length'])
+        try:
+            length = int(self.headers.get('Content-Length', ''))
+            limit = 104857600 if req.path == '/api/upload' else 1048576
+            if length < 0 or length > limit:
+                raise ValueError("Invalid request size")
+        except (ValueError, TypeError):
+            write_http_response(self, error_response(413))
+            return
         if req.path == '/api/save':
             try:
                 postvars = parse_qs(self.rfile.read(length).decode('utf-8'),
@@ -1589,8 +1613,8 @@ class RequestHandler(BaseHTTPRequestHandler):
                         if method == 'remove':
                             if network in ALLOWED_NETWORKS:
                                 ALLOWED_NETWORKS.remove(network)
-                                if not ALLOWED_NETWORKS:
-                                    ALLOWED_NETWORKS.append("0.0.0.0/0")
+                                # Never broaden a restricted allowlist
+                                # to all IPv4 addresses as a side effect.
                             response['error'] = False
                         elif method == 'add':
                             ipaddress.ip_network(network)
