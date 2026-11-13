@@ -2021,7 +2021,9 @@ jQuery.ajaxPrefilter(function(options, ignored, xhr) {
         stats.classList.add('stats');
         if (itemdata.type == 'dir') {
             iicon.innerHTML = 'folder';
-            item.setAttribute("onclick", "listdir('" + encodeURI(itemdata.fullpath) + "')");
+            item.addEventListener('click', function() {
+                listdir(encodeURI(itemdata.fullpath));
+            });
             stats.innerHTML = "Mod.: " + date.toUTCString();
         }
         else {
@@ -2188,7 +2190,12 @@ jQuery.ajaxPrefilter(function(options, ignored, xhr) {
                 link.classList.add("branch_select", "truncate");
                 link.textContent = dirdata.branches[i];
                 link.href = '#';
-                link.setAttribute('onclick', 'checkout("' + dirdata.branches[i] + '");collapseAll()')
+                (function(name) {
+                    link.addEventListener('click', function() {
+                        checkout(name);
+                        collapseAll();
+                    });
+                })(dirdata.branches[i]);
                 branch.appendChild(link);
                 if (dirdata.branches[i] == dirdata.activebranch) {
                     link.classList.add("active", "grey", "darken-1");
@@ -2570,7 +2577,7 @@ jQuery.ajaxPrefilter(function(options, ignored, xhr) {
                     var $toastContent = $("<div><pre></pre></div>");
                     $toastContent.find("pre").text(resp.message);
                     Materialize.toast($toastContent, 2000);
-                    listdir(document.getElementById('fbheader').innerHTML);
+                    listdir(document.getElementById('fbheader').textContent);
                     $('.markdirty').each(function(i, o){o.classList.remove('red');});
                     $('.hidesave').css('opacity', 0);
                     editor.session.getUndoManager().markClean();
@@ -2621,7 +2628,7 @@ jQuery.ajaxPrefilter(function(options, ignored, xhr) {
                     var $toastContent = $("<div><pre></pre></div>");
                     $toastContent.find("pre").text(resp.message);
                     Materialize.toast($toastContent, 2000);
-                    listdir(document.getElementById('fbheader').innerHTML)
+                    listdir(document.getElementById('fbheader').textContent)
                     //document.getElementById('currentfile').value='';
                     //editor.setValue('');
                     document.getElementById("rename_name_new").value = "";
@@ -2645,7 +2652,7 @@ jQuery.ajaxPrefilter(function(options, ignored, xhr) {
                     var $toastContent = $("<div><pre></pre></div>");
                     $toastContent.find("pre").text(resp.message);
                     Materialize.toast($toastContent, 2000);
-                    listdir(document.getElementById('fbheader').innerHTML)
+                    listdir(document.getElementById('fbheader').textContent)
                     document.getElementById('currentfile').value='';
                     editor.setValue('');
                 }
@@ -2694,7 +2701,7 @@ jQuery.ajaxPrefilter(function(options, ignored, xhr) {
                     var $toastContent = $("<div><pre></pre></div>");
                     $toastContent.find("pre").text(resp.message);
                     Materialize.toast($toastContent, 2000);
-                    listdir(document.getElementById('fbheader').innerHTML);
+                    listdir(document.getElementById('fbheader').textContent);
                     if (document.getElementById('currentfile').value == path) {
                         document.getElementById('currentfile').value='';
                         editor.setValue('');
@@ -2719,7 +2726,7 @@ jQuery.ajaxPrefilter(function(options, ignored, xhr) {
                     var $toastContent = $("<div><pre></pre></div>");
                     $toastContent.find("pre").text(resp.message);
                     Materialize.toast($toastContent, 2000);
-                    listdir(document.getElementById('fbheader').innerHTML);
+                    listdir(document.getElementById('fbheader').textContent);
                 }
             });
         }
@@ -2747,7 +2754,7 @@ jQuery.ajaxPrefilter(function(options, ignored, xhr) {
     }
 
     function gitinit() {
-        var path = document.getElementById("fbheader").innerHTML;
+        var path = document.getElementById("fbheader").textContent;
         if (path.length > 0) {
             data = new Object();
             data.path = path;
@@ -2761,14 +2768,14 @@ jQuery.ajaxPrefilter(function(options, ignored, xhr) {
                     var $toastContent = $("<div><pre></pre></div>");
                     $toastContent.find("pre").text(resp.message);
                     Materialize.toast($toastContent, 2000);
-                    listdir(document.getElementById('fbheader').innerHTML);
+                    listdir(document.getElementById('fbheader').textContent);
                 }
             });
         }
     }
 
     function commit(message) {
-        var path = document.getElementById("fbheader").innerHTML;
+        var path = document.getElementById("fbheader").textContent;
         if (path.length > 0) {
             data = new Object();
             data.path = path;
@@ -2783,7 +2790,7 @@ jQuery.ajaxPrefilter(function(options, ignored, xhr) {
                     var $toastContent = $("<div><pre></pre></div>");
                     $toastContent.find("pre").text(resp.message);
                     Materialize.toast($toastContent, 2000);
-                    listdir(document.getElementById('fbheader').innerHTML);
+                    listdir(document.getElementById('fbheader').textContent);
                     document.getElementById('commitmessage').value = "";
                 }
             });
@@ -2791,7 +2798,7 @@ jQuery.ajaxPrefilter(function(options, ignored, xhr) {
     }
 
     function gitpush() {
-        var path = document.getElementById("fbheader").innerHTML;
+        var path = document.getElementById("fbheader").textContent;
         if (path.length > 0) {
             data = new Object();
             data.path = path;
@@ -2805,14 +2812,14 @@ jQuery.ajaxPrefilter(function(options, ignored, xhr) {
                     var $toastContent = $("<div><pre></pre></div>");
                     $toastContent.find("pre").text(resp.message);
                     Materialize.toast($toastContent, 2000);
-                    listdir(document.getElementById('fbheader').innerHTML);
+                    listdir(document.getElementById('fbheader').textContent);
                 }
             });
         }
     }
 
     function gitstash() {
-        var path = document.getElementById("fbheader").innerHTML;
+        var path = document.getElementById("fbheader").textContent;
         if (path.length > 0) {
             data = new Object();
             data.path = path;
@@ -2826,14 +2833,14 @@ jQuery.ajaxPrefilter(function(options, ignored, xhr) {
                     var $toastContent = $("<div><pre></pre></div>");
                     $toastContent.find("pre").text(resp.message);
                     Materialize.toast($toastContent, 5000);
-                    listdir(document.getElementById('fbheader').innerHTML);
+                    listdir(document.getElementById('fbheader').textContent);
                 }
             });
         }
     }
 
     function checkout(branch) {
-        var path = document.getElementById("fbheader").innerHTML;
+        var path = document.getElementById("fbheader").textContent;
         if (path.length > 0) {
             data = new Object();
             data.path = path;
@@ -2848,14 +2855,14 @@ jQuery.ajaxPrefilter(function(options, ignored, xhr) {
                     var $toastContent = $("<div><pre></pre></div>");
                     $toastContent.find("pre").text(resp.message);
                     Materialize.toast($toastContent, 2000);
-                    listdir(document.getElementById('fbheader').innerHTML);
+                    listdir(document.getElementById('fbheader').textContent);
                 }
             });
         }
     }
 
     function newbranch(branch) {
-        var path = document.getElementById("fbheader").innerHTML;
+        var path = document.getElementById("fbheader").textContent;
         if (path.length > 0) {
             data = new Object();
             data.path = path;
@@ -2870,14 +2877,14 @@ jQuery.ajaxPrefilter(function(options, ignored, xhr) {
                     var $toastContent = $("<div><pre></pre></div>");
                     $toastContent.find("pre").text(resp.message);
                     Materialize.toast($toastContent, 2000);
-                    listdir(document.getElementById('fbheader').innerHTML);
+                    listdir(document.getElementById('fbheader').textContent);
                 }
             });
         }
     }
 
     function newfolder(foldername) {
-        var path = document.getElementById('fbheader').innerHTML;
+        var path = document.getElementById('fbheader').textContent;
         if (path.length > 0 && foldername.length > 0) {
             data = new Object();
             data.path = path;
@@ -2893,14 +2900,14 @@ jQuery.ajaxPrefilter(function(options, ignored, xhr) {
                     $toastContent.find("pre").text(resp.message);
                     Materialize.toast($toastContent, 2000);
                 }
-                listdir(document.getElementById('fbheader').innerHTML);
+                listdir(document.getElementById('fbheader').textContent);
                 document.getElementById('newfoldername').value = '';
             });
         }
     }
 
     function newfile(filename) {
-        var path = document.getElementById('fbheader').innerHTML;
+        var path = document.getElementById('fbheader').textContent;
         if (path.length > 0 && filename.length > 0) {
             data = new Object();
             data.path = path;
@@ -2916,7 +2923,7 @@ jQuery.ajaxPrefilter(function(options, ignored, xhr) {
                     $toastContent.find("pre").text(resp.message);
                     Materialize.toast($toastContent, 2000);
                 }
-                listdir(document.getElementById('fbheader').innerHTML);
+                listdir(document.getElementById('fbheader').textContent);
                 document.getElementById('newfilename').value = '';
             });
         }
@@ -2926,7 +2933,7 @@ jQuery.ajaxPrefilter(function(options, ignored, xhr) {
         var file_data = $('#uploadfile').prop('files')[0];
         var form_data = new FormData();
         form_data.append('file', file_data);
-        form_data.append('path', document.getElementById('fbheader').innerHTML);
+        form_data.append('path', document.getElementById('fbheader').textContent);
         $.ajax({
             url: 'api/upload',
             dataType: 'json',
@@ -2937,13 +2944,14 @@ jQuery.ajaxPrefilter(function(options, ignored, xhr) {
             type: 'post',
             success: function(resp){
                 if (resp.error) {
-                    var $toastContent = $("<div><pre>Error: " + resp.message + "</pre></div>");
+                    var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text("Error: " + resp.message);
                     Materialize.toast($toastContent, 2000);
                 }
                 else {
                     var $toastContent = $("<div><pre>Upload succesful</pre></div>");
                     Materialize.toast($toastContent, 2000);
-                    listdir(document.getElementById('fbheader').innerHTML);
+                    listdir(document.getElementById('fbheader').textContent);
                     document.getElementById('uploadform').reset();
                 }
             }
