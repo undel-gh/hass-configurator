@@ -41,6 +41,11 @@ restricted to the configured `BASEPATH` even when legacy settings request
 are disabled by default until explicitly enabled in settings. Shell execution
 also needs an absolute-path `EXEC_ALLOWED_BINARIES` allowlist.
 
+The fork-built Docker image runs as non-root **UID/GID 10001:10001**.
+Host bind mounts at `/config` must be writable by this account. Existing
+root-owned directories may need an ownership or ACL migration; consult the
+[security threat model and Docker permissions guide](docs/P1_API_SECURITY.md).
+
 See [P1 API security threat model](docs/P1_API_SECURITY.md) before testing.
 **Do not use these draft changes as proof of actual Home Assistant OS Ingress
 authentication or a secure deployment.**
