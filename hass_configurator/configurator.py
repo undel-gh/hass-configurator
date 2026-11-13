@@ -12,6 +12,7 @@ import json
 import ssl
 import socket
 import socketserver
+import threading
 import base64
 import binascii
 import ipaddress
@@ -70,6 +71,8 @@ PASSWORD = None
 # Limit access to the configurator by adding allowed IP addresses / networks to
 # the list, e.g ALLOWED_NETWORKS = ["192.168.0.0/24", "172.16.47.23"]
 ALLOWED_NETWORKS = []
+# Serializes allowlist and banlist mutations across threaded HTTP requests.
+NETWORK_ADMIN_LOCK = threading.RLock()
 # Allow access to the configurator to client IP addesses which match the result
 # of DNS lookups for the specified domains.
 ALLOWED_DOMAINS = []
@@ -499,12 +502,15 @@ def password_problems(password, name="UNKNOWN"):
 def check_access(clientip):
     """Check if IP is allowed to access the configurator / API."""
     global BANNED_IPS
-    if clientip in BANNED_IPS:
+    with NETWORK_ADMIN_LOCK:
+        banned = clientip in BANNED_IPS
+        allowed_networks = tuple(ALLOWED_NETWORKS)
+    if banned:
         LOG.warning("Client IP banned.")
         return False
-    if not ALLOWED_NETWORKS:
+    if not allowed_networks:
         return True
-    for net in ALLOWED_NETWORKS:
+    for net in allowed_networks:
         ipobject = ipaddress.ip_address(clientip)
         if ipobject in ipaddress.ip_network(net):
             return True
@@ -521,7 +527,9 @@ def check_access(clientip):
                     if res[4][0] == clientip:
                         return True
         LOG.warning("Client IP not within allowed domains.")
-    BANNED_IPS.append(clientip)
+    with NETWORK_ADMIN_LOCK:
+        if clientip not in BANNED_IPS:
+            BANNED_IPS.append(clientip)
     return False
 
 def verify_hostname(request_hostname):
@@ -606,10 +614,11 @@ class RequestHandler(BaseHTTPRequestHandler):
         if SESAME or TOTP:
             chunk = req.path.split("/")[-1]
             if SESAME and chunk == SESAME:
-                if self.client_address[0] not in ALLOWED_NETWORKS:
-                    ALLOWED_NETWORKS.append(self.client_address[0])
-                if self.client_address[0] in BANNED_IPS:
-                    BANNED_IPS.remove(self.client_address[0])
+                with NETWORK_ADMIN_LOCK:
+                    if self.client_address[0] not in ALLOWED_NETWORKS:
+                        ALLOWED_NETWORKS.append(self.client_address[0])
+                    if self.client_address[0] in BANNED_IPS:
+                        BANNED_IPS.remove(self.client_address[0])
                 self.send_response(302)
                 self.send_header('Location', './')
                 # Access-token redirects execute before the shared router.
@@ -626,10 +635,11 @@ class RequestHandler(BaseHTTPRequestHandler):
                 notify(**data)
                 return
             if TOTP and TOTP.verify(chunk):
-                if self.client_address[0] not in ALLOWED_NETWORKS:
-                    ALLOWED_NETWORKS.append(self.client_address[0])
-                if self.client_address[0] in BANNED_IPS:
-                    BANNED_IPS.remove(self.client_address[0])
+                with NETWORK_ADMIN_LOCK:
+                    if self.client_address[0] not in ALLOWED_NETWORKS:
+                        ALLOWED_NETWORKS.append(self.client_address[0])
+                    if self.client_address[0] in BANNED_IPS:
+                        BANNED_IPS.remove(self.client_address[0])
                 self.send_response(302)
                 self.send_header('Location', './')
                 # Access-token redirects execute before the shared router.
@@ -1500,17 +1510,19 @@ class RequestHandler(BaseHTTPRequestHandler):
                         network = unquote(postvars['network'][0])
                         method = unquote(postvars['method'][0])
                         if method == 'remove':
-                            if network in ALLOWED_NETWORKS:
-                                # Empty allowlist means "allow all" in
-                                # check_access(): removing the final entry
-                                # would silently unlock remote access.
-                                if len(ALLOWED_NETWORKS) == 1:
-                                    raise PermissionError("Cannot remove final allowed network")
-                                ALLOWED_NETWORKS.remove(network)
+                            with NETWORK_ADMIN_LOCK:
+                                if network in ALLOWED_NETWORKS:
+                                    # Empty allowlist means allow-all: check
+                                    # and removal must be one atomic action.
+                                    if len(ALLOWED_NETWORKS) == 1:
+                                        raise PermissionError("Cannot remove final allowed network")
+                                    ALLOWED_NETWORKS.remove(network)
                             response['error'] = False
                         elif method == 'add':
                             ipaddress.ip_network(network)
-                            ALLOWED_NETWORKS.append(network)
+                            with NETWORK_ADMIN_LOCK:
+                                if network not in ALLOWED_NETWORKS:
+                                    ALLOWED_NETWORKS.append(network)
                             response['error'] = False
                         else:
                             response['error'] = True
@@ -1541,12 +1553,15 @@ class RequestHandler(BaseHTTPRequestHandler):
                         ip_address = unquote(postvars['ip'][0])
                         method = unquote(postvars['method'][0])
                         if method == 'unban':
-                            if ip_address in BANNED_IPS:
-                                BANNED_IPS.remove(ip_address)
+                            with NETWORK_ADMIN_LOCK:
+                                if ip_address in BANNED_IPS:
+                                    BANNED_IPS.remove(ip_address)
                             response['error'] = False
                         elif method == 'ban':
                             ipaddress.ip_network(ip_address)
-                            BANNED_IPS.append(ip_address)
+                            with NETWORK_ADMIN_LOCK:
+                                if ip_address not in BANNED_IPS:
+                                    BANNED_IPS.append(ip_address)
                         else:
                             response['error'] = True
                         self.send_response(200)
