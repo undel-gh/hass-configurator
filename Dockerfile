@@ -39,24 +39,27 @@ LABEL org.opencontainers.image.source="https://github.com/undel-gh/hass-configur
 LABEL org.opencontainers.image.base.name="docker.io/library/python:3.11.18-bookworm"
 LABEL org.opencontainers.image.base.digest="sha256:726d304906fa5eb468e5531e366548d1903286352f5adb54ef508ac01fbd80c6"
 ENV SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH} PYTHONDONTWRITEBYTECODE=1 PIP_NO_INDEX=1
-COPY --from=dependency-wheelhouse /locked-wheels/ /opt/hc-locked-wheels/
-COPY --from=fork-wheel-builder /fork-wheel/ /opt/hc-fork-wheel/
-COPY requirements/docker-runtime.lock /usr/local/share/hass-configurator/runtime.lock
-COPY requirements/normalize_mtimes.py /tmp/normalize_mtimes.py
-# Install the five reviewed third-party wheels from an OFFLINE wheelhouse,
-# re-checking their hashes. Install only THIS fork's locally built wheel.
-# No external Python/OS package repository is contacted in final stage.
-RUN python -m pip install --disable-pip-version-check --no-index --no-compile \
-      --find-links=/opt/hc-locked-wheels --require-hashes \
+# Read-only BuildKit mounts avoid adding then deleting wheelhouses in image
+# layers. COPY+rm produced variable directory/whiteout timestamps even with
+# identical wheel SHA-256s and SOURCE_DATE_EPOCH.
+# No runtime-stage package-index, apt, npm or public network request.
+RUN --mount=type=bind,from=dependency-wheelhouse,source=/locked-wheels,target=/mnt/locked-wheels,readonly \
+    --mount=type=bind,from=fork-wheel-builder,source=/fork-wheel,target=/mnt/fork-wheel,readonly \
+    --mount=type=bind,source=requirements/docker-runtime.lock,target=/tmp/docker-runtime.lock,readonly \
+    --mount=type=bind,source=requirements/normalize_mtimes.py,target=/tmp/normalize_mtimes.py,readonly \
+    mkdir -p /usr/local/share/hass-configurator \
+    && cp /tmp/docker-runtime.lock /usr/local/share/hass-configurator/runtime.lock \
+    && python -m pip install --disable-pip-version-check --no-index --no-compile \
+      --find-links=/mnt/locked-wheels --require-hashes \
       -r /usr/local/share/hass-configurator/runtime.lock \
     && python -m pip install --disable-pip-version-check --no-index \
-      --no-compile --no-deps /opt/hc-fork-wheel/hass_configurator-*.whl \
+      --no-compile --no-deps /mnt/fork-wheel/hass_configurator-*.whl \
     && python -m pip check \
     && git --version && ssh -V \
-    && rm -rf /opt/hc-locked-wheels /opt/hc-fork-wheel \
     && python /tmp/normalize_mtimes.py --epoch "$SOURCE_DATE_EPOCH" \
-         --installed /usr/local/share/hass-configurator/runtime.lock \
-    && rm -f /tmp/normalize_mtimes.py
+      --installed /usr/local/share/hass-configurator/runtime.lock \
+    && touch -d "@$SOURCE_DATE_EPOCH" \
+      /etc /opt /tmp /usr/local/share /usr/local/share/hass-configurator
 
 EXPOSE 3218
 VOLUME /config
