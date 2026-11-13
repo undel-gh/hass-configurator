@@ -319,13 +319,18 @@ jobs:
             /repo/scripts/check_docker_runtime_lock.py \
             --lock /repo/requirements/docker-runtime.lock --installed
 
+          # These are isolated, disposable test-only credentials, never
+          # deployment secrets or credentials for a user's installation.
+          basic_user=ci-local-review
+          basic_password=ci-only-strong-password
           docker run --detach --rm --network none \
+            -e HC_USERNAME="$basic_user" -e HC_PASSWORD="$basic_password" \
             --name hc-fork-p0-networkless hc-fork-p0:ci
           trap 'docker rm -f hc-fork-p0-networkless hc-fork-p0-browser 2>/dev/null || true' EXIT
           ready=0
           for i in $(seq 1 40); do
             if docker exec hc-fork-p0-networkless python -c \
-              'import json,urllib.request; u=urllib.request.urlopen("http://127.0.0.1:3218/api/version",timeout=2); assert u.status==200 and json.loads(u.read())["version"]' \
+              'import base64,json,urllib.request; c=base64.b64encode(b"ci-local-review:ci-only-strong-password").decode(); r=urllib.request.Request("http://127.0.0.1:3218/api/version",headers={"Authorization":"Basic "+c}); u=urllib.request.urlopen(r,timeout=2); assert u.status==200 and json.loads(u.read())["version"]' \
               >/dev/null 2>&1; then
               ready=1
               break
@@ -336,12 +341,13 @@ jobs:
           docker rm -f hc-fork-p0-networkless
           mkdir -p /tmp/hc-fork-p0-sandbox
           docker run --detach --rm --name hc-fork-p0-browser \
+            -e HC_USERNAME="$basic_user" -e HC_PASSWORD="$basic_password" \
             -p 127.0.0.1:3221:3218 \
             -v /tmp/hc-fork-p0-sandbox:/config \
             hc-fork-p0:ci
           ready=0
           for i in $(seq 1 40); do
-            if curl -fsS http://127.0.0.1:3221/api/version >/dev/null; then
+            if curl -fsS -u "$basic_user:$basic_password" http://127.0.0.1:3221/api/version >/dev/null; then
               ready=1
               break
             fi
@@ -351,6 +357,7 @@ jobs:
           (
             cd e2e
             EDITOR_URL=http://127.0.0.1:3221 \
+            E2E_BASIC_USER="$basic_user" E2E_BASIC_PASSWORD="$basic_password" \
             E2E_WORKSPACE=/tmp/hc-fork-p0-sandbox \
             E2E_CONTAINER_PATH=/config \
               npm test -- --grep 'fork-built Docker|full UI attempts|real HTML resolves|Ace modes, themes|release identity'
