@@ -176,3 +176,22 @@ A matching browser asset digest alone is never sufficient as proof that the
 entire image is repeatable. See `docs/P0_PACKAGING.md` for source-epoch and
 lock regeneration. Real HA OS Ingress and privileged API hardening remain
 separate P1 acceptance (#8/#7/#13).
+
+
+### Independent review follow-up on PR #19 (source SHA/provenance)
+
+- Pull-request checks explicitly checkout PR **head SHA**, not GitHub's
+  default synthetic `refs/pull/N/merge`. Push checks checkout `github.sha`.
+  The Docker job compares checked-out HEAD to the expected event SHA,
+  derives `SOURCE_DATE_EPOCH` from that exact commit, and emits matching
+  `source_commit` / `event_source_commit` fields for audit.
+- All three Dockerfile `FROM` entries use the same literal official digest.
+  `PYTHON_BASE` cannot be silently overridden while the OCI provenance
+  labels remain pinned to the default.
+- `scripts/diagnose_docker_layers.py` compares layer member bytes and
+  metadata even if two archive entries reuse identical paths. A synthetic
+  malformed Docker-save fixture in `tests/test_docker_layer_diagnostics.py`
+  demonstrates the negative case.
+- Installed-file RECORD verification remains optional defense-in-depth
+  beyond the existing exact-wheel SHA-256 / `--require-hashes` checks.
+  Do not present wheel-RECORD hashing as independent source authenticity.
