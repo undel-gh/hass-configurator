@@ -5,7 +5,8 @@ They MUST pass through this exact-path, method-aware dispatcher first.
 """
 from dataclasses import dataclass, field
 from hashlib import sha256
-from pathlib import Path
+import json
+from pathlib import Path, PurePosixPath
 from urllib.parse import urlsplit
 import re
 
@@ -66,25 +67,68 @@ class Assets:
     def __init__(self, root=None):
         self.root = Path(root) if root is not None else Path(__file__).parent
         self.root = self.root.resolve(strict=True)
+        self.mime = dict(PACKAGE_ASSETS)
+        self._vendor_hashes = {}
+        manifest_path = self.root / "vendor" / "manifest.json"
+        if manifest_path.is_file():
+            if manifest_path.is_symlink():
+                raise RuntimeError("Unsafe vendor manifest symlink")
+            manifest = json.loads(manifest_path.read_text(encoding="utf8"))
+            if manifest.get("schema") != 1 or not isinstance(manifest.get("resources"), dict):
+                raise RuntimeError("Invalid vendored assets manifest")
+            for name, expected_hash in manifest["resources"].items():
+                parts = PurePosixPath(name).parts
+                if (not name.startswith("vendor/") or
+                        not parts or any(not _SAFE_SEGMENT.fullmatch(p) for p in parts) or
+                        not isinstance(expected_hash, str) or
+                        len(expected_hash) != 64 or
+                        any(c not in "0123456789abcdef" for c in expected_hash)):
+                    raise RuntimeError("Invalid vendor resource entry: " + name)
+                self._vendor_hashes[name] = expected_hash
+                self.mime[name] = self._guess_mime(name)
         hashes = []
         self._snapshot = {}
-        for name in sorted(PACKAGE_ASSETS):
+        for name in sorted(self.mime):
             resource = self._resource_path(name)
             try:
                 content = resource.read_bytes()
             except OSError as exc:
                 raise RuntimeError("Missing packaged static asset: " + name) from exc
+            hashed = sha256(content).hexdigest()
+            if name in self._vendor_hashes and self._vendor_hashes[name] != hashed:
+                raise RuntimeError("Vendored asset digest mismatch: " + name)
             self._snapshot[name] = content
-            hashes.append(name.encode("ascii") + b"\x00" + sha256(content).hexdigest().encode("ascii"))
-        self.version = sha256(b"\n".join(hashes)).hexdigest()[:16]
+            hashes.append(name.encode("ascii") + b"\\x00" + hashed.encode("ascii"))
+        self.version = sha256(b"\\n".join(hashes)).hexdigest()[:16]
+
+    @staticmethod
+    def _guess_mime(name):
+        return {
+            ".js": "text/javascript; charset=utf-8",
+            ".css": "text/css; charset=utf-8",
+            ".woff2": "font/woff2", ".woff": "font/woff",
+            ".ttf": "font/ttf", ".eot": "application/vnd.ms-fontobject",
+            ".svg": "image/svg+xml", ".json": "application/json",
+            ".png": "image/png", ".gif": "image/gif",
+            ".jpg": "image/jpeg",
+            ".html": "text/html; charset=utf-8",
+            ".txt": "text/plain; charset=utf-8",
+        }.get(PurePosixPath(name).suffix.lower(), "application/octet-stream")
 
     def _resource_path(self, name):
-        if name not in PACKAGE_ASSETS:
+        if name not in self.mime:
             raise FileNotFoundError(name)
         resource = self.root / name
-        # Even an allowlisted name must not be redirected by a symlink.
-        if resource.is_symlink() or resource.resolve(strict=False).parent != self.root:
-            raise FileNotFoundError(name)
+        # Never follow a symlink in an allowlisted package path.
+        component = self.root
+        for part in resource.relative_to(self.root).parts:
+            component = component / part
+            if component.is_symlink():
+                raise FileNotFoundError(name)
+        try:
+            resource.resolve(strict=False).relative_to(self.root)
+        except ValueError as exc:
+            raise FileNotFoundError(name) from exc
         return resource
 
     def read(self, name):
@@ -98,7 +142,7 @@ class Assets:
             payload = self.read(match.asset)
         except (FileNotFoundError, OSError):
             return error_response(404)
-        return Response(200, payload, PACKAGE_ASSETS[match.asset], (
+        return Response(200, payload, self.mime[match.asset], (
             ("Cache-Control", IMMUTABLE_CACHE if match.immutable else REVALIDATE_CACHE),
         ))
 
@@ -161,15 +205,17 @@ class Router:
 
         if path.startswith("/assets/"):
             parts = path.split("/")
-            if (len(parts) != 4 or
+            name = "/".join(parts[3:])
+            if (len(parts) < 4 or
                     not _VERSION_PATTERN.fullmatch(parts[2]) or
-                    not _SAFE_SEGMENT.fullmatch(parts[3]) or
-                    parts[3] not in PACKAGE_ASSETS or
+                    not name or
+                    any(not _SAFE_SEGMENT.fullmatch(p) for p in parts[3:]) or
+                    name not in self.assets.mime or
                     parts[2] != "v" + self.assets.version):
                 return Match("not_found", path)
             if method != "GET":
                 return Match("method_not_allowed", path, allow="GET")
-            return Match("asset", path, asset=parts[3], immutable=True)
+            return Match("asset", path, asset=name, immutable=True)
 
         return Match("not_found", path)
 
