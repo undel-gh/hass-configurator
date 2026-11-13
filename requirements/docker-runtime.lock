@@ -1,0 +1,11 @@
+# Immutable Python dependency closure for the fork Docker runtime.
+# Regenerated on Python 3.11.18 bookworm, linux/amd64 (GitHub Actions #172).
+# Each artifact is py3-none-any; direct + transitive packages are included.
+# Regenerate only after reviewing the new wheel bytes, upstream provenance
+# and compatibility; run all P0 browser/artifact tests before merging.
+--only-binary=:all:
+gitdb==4.0.12 --hash=sha256:67073e15955400952c6565cc3e707c554a4eea2e428946f7a4c162fab9bd9bcf
+GitPython==3.2.1 --hash=sha256:d66b0832aa8755c1a84892937282df0befb16c97e5a64aeebd68be9c5e323f53
+legacy-cgi==2.6.4 --hash=sha256:7e235ce58bf1e25d1fc9b2d299015e4e2cd37305eccafec1e6bac3fc04b878cd
+pyotp==2.10.0 --hash=sha256:1df2f6a1bcc3bb0716172a5215ddc2f8c7c7fd26a13df9927d52e1746934836c
+smmap==5.0.3 --hash=sha256:c106e05d5a61449cf6ba9a1e650227ecfb141590d2a98412103ff35d89fc7b2f
