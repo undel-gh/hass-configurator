@@ -11,6 +11,8 @@ class TraceabilityTests(unittest.TestCase):
         spec = (ROOT / "docs/SPECIFICATION.md").read_text(encoding="utf-8")
         arch = (ROOT / "docs/ARCHITECTURE.md").read_text(encoding="utf-8")
         trace = (ROOT / "docs/TRACEABILITY.md").read_text(encoding="utf-8")
+        # Exclude examples/checkpoints, which may legitimately repeat IDs.
+        canonical_trace = trace.split("## Release gates", 1)[0]
 
         ids = set(re.findall(r"\|\s*((?:FR|NFR)-\d{3})\s*\|", spec))
         ids.update(re.findall(r"\|\s*(ADR-\d{3})\s*\|", arch))
@@ -21,7 +23,7 @@ class TraceabilityTests(unittest.TestCase):
                 # ownership is separate from implementation proof.
                 matches = re.findall(
                     r"^\|\s*" + re.escape(requirement_id) +
-                    r"\s*\|([^\n]+)$", trace, re.MULTILINE)
+                    r"\s*\|([^\n]+)$", canonical_trace, re.MULTILINE)
                 self.assertEqual(len(matches), 1)
                 self.assertIn("#", matches[0], "Every requirement needs an Issue")
                 self.assertTrue("pending" in matches[0] or
