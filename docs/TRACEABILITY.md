@@ -68,3 +68,21 @@ Copy one row per impacted requirement:
 | FR-005 | #2 | — | planned e2e/ingress.spec | — | pending |
 
 No implementation PR should leave unfilled evidence fields when claiming a `verified` requirement.
+
+
+## Implementation checkpoint — draft PR #15 (#1, #2, #14)
+
+**Not a release sign-off.** Full P0 NFR-001, FR-001, AT-01, AT-03, AT-05, AT-09 and HA OS P1 acceptance remain pending. No requirement row above is changed to `verified` by this checkpoint.
+
+| Requirement / ADR | Evidence introduced | Verification state |
+| --- | --- | --- |
+| FR-005 / ADR-004 | `tests/test_routing.py`, `e2e/offline-smoke.spec.cjs`: root, versioned assets and simulated ingress prefix asset requests; no real HA OS Ingress | **partial**, P1 #8 pending |
+| NFR-003 / ADR-003 | `hass_configurator/http_routing.py` exact-path/method dispatcher, `tests/test_routing.py` including route collisions/traversal | **partial**; legacy API policy migration #7 pending |
+| NFR-004 | Central response writer for new static/errors, MIME, nosniff, 404/405, single-response HTTP checks | **partial**; legacy API handlers remain direct |
+| NFR-009 / ADR-009 | 16-hex-digest versioned namespace, private immutable static and no-store HTML/API; `tests/test_routing.py` | **partial**; warm-cache A→B test #5/#6 pending |
+| NFR-001 / ADR-002 | `e2e/offline-smoke.spec.cjs` intercepts browser requests at initiation, proves off-origin fixture detection, persists baseline JSON artifact | **not met**; full UI test explicitly expected failure (#3/#4) |
+| NFR-002 / NFR-011 / ADR-006 | `docs/ace-builds-1.9.6-lock.json`, `scripts/verify_ace_archive.py` official npm SRI + full file hashes | **partial**; 3 obsolete modes / dynamic closure #3 pending |
+| NFR-008 / ADR-007 | `.github/workflows/offline-foundation.yml`, `tests/test_traceability.py`, PR checklist | **partial**; CI HEAD outcome and repo branch protection not yet recorded |
+| NFR-005 | Minimum Chromium smoke plus Python routing tests, early CI | **partial**; full E2E gate #6 pending |
+
+For the current/last CI runs and exact commit evidence see [PR #15](https://github.com/undel-gh/hass-configurator/pull/15) checks and [foundation notes](FOUNDATION_IMPLEMENTATION.md). Avoid copying an obsolete CI run ID as evidence for a newer commit.
