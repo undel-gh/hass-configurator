@@ -552,7 +552,7 @@ class RequestHandler(BaseHTTPRequestHandler):
         super().end_headers()
 
     # pylint: disable=invalid-name
-    def do_BLOCK(self, status=420, reason="Policy not fulfilled"):
+    def _send_block(self, status=420, reason="Policy not fulfilled"):
         """Reject a pre-router request without permitting shared caching."""
         self.send_response(status)
         self.send_header('Cache-Control', 'no-store')
@@ -564,7 +564,7 @@ class RequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         """Customized do_GET method."""
         if not verify_hostname(self.headers.get('Host', '')):
-            self.do_BLOCK(403, "Forbidden")
+            self._send_block(403, "Forbidden")
             return
         req = urlparse(self.path)
         if SESAME or TOTP:
@@ -610,7 +610,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                 notify(**data)
                 return
         if not check_access(self.client_address[0]):
-            self.do_BLOCK()
+            self._send_block()
             return
         if not self._dispatch_route("GET"):
             return
@@ -749,10 +749,9 @@ class RequestHandler(BaseHTTPRequestHandler):
                     return
                 if os.path.isdir(absp):
                     self.wfile.write(
-                        _fs().resolve_for_read(
-                            os.path.dirname(absp), directory=True).encode('utf-8')
-                        if os.path.dirname(absp) != os.fsencode(_fs().root)
-                        else absp)
+                        absp if absp == os.fsencode(_fs().root)
+                        else _fs().resolve_for_read(
+                            os.path.dirname(absp), directory=True).encode('utf-8'))
             return
         elif req.path == '/api/prefs':
             self.send_header('Content-type', 'text/json')
@@ -1016,10 +1015,10 @@ class RequestHandler(BaseHTTPRequestHandler):
         """Customized do_POST method."""
         global ALLOWED_NETWORKS, BANNED_IPS
         if not verify_hostname(self.headers.get('Host', '')):
-            self.do_BLOCK(403, "Forbidden")
+            self._send_block(403, "Forbidden")
             return
         if not check_access(self.client_address[0]):
-            self.do_BLOCK()
+            self._send_block()
             return
         req = urlparse(self.path)
         if not self._dispatch_route("POST"):
@@ -1673,9 +1672,9 @@ class RequestHandler(BaseHTTPRequestHandler):
 
 class AuthHandler(RequestHandler):
     """Handler to verify auth header."""
-    def do_BLOCK(self, status=420, reason="Policy not fulfilled"):
+    def _send_block(self, status=420, reason="Policy not fulfilled"):
         # Reuse the same pre-router denial policy as RequestHandler.
-        return super().do_BLOCK(status, reason)
+        return super()._send_block(status, reason)
 
     # pylint: disable=invalid-name
     def _send_auth_challenge(self):
@@ -1690,7 +1689,7 @@ class AuthHandler(RequestHandler):
 
     def do_GET(self):
         if not verify_hostname(self.headers.get('Host', '')):
-            self.do_BLOCK(403, "Forbidden")
+            self._send_block(403, "Forbidden")
             return
         header = self.headers.get('Authorization', None)
         if header is None:
@@ -1716,7 +1715,7 @@ class AuthHandler(RequestHandler):
                 bancounter = FAIL2BAN_IPS.get(self.client_address[0], 1)
                 if bancounter >= BANLIMIT:
                     LOG.warning("Blocking access from %s", self.client_address[0])
-                    self.do_BLOCK()
+                    self._send_block()
                     return
                 FAIL2BAN_IPS[self.client_address[0]] = bancounter + 1
             self._send_auth_challenge()
@@ -1724,7 +1723,7 @@ class AuthHandler(RequestHandler):
 
     def do_POST(self):
         if not verify_hostname(self.headers.get('Host', '')):
-            self.do_BLOCK(403, "Forbidden")
+            self._send_block(403, "Forbidden")
             return
         header = self.headers.get('Authorization', None)
         if header is None:
@@ -1750,7 +1749,7 @@ class AuthHandler(RequestHandler):
                 bancounter = FAIL2BAN_IPS.get(self.client_address[0], 1)
                 if bancounter >= BANLIMIT:
                     LOG.warning("Blocking access from %s", self.client_address[0])
-                    self.do_BLOCK()
+                    self._send_block()
                     return
                 FAIL2BAN_IPS[self.client_address[0]] = bancounter + 1
             self._send_auth_challenge()
