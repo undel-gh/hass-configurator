@@ -1,6 +1,6 @@
 # P0 closeout audit — issues #1, #2, #6, #14
 
-**Status (2026-11-14): ready for evidence-based review, not yet accepted or merged.**
+**Scope (prepared 2026-11-14): automated P0 acceptance audit, not a production sign-off.**
 This page defines the **automated P0 subset**. A test that uses a local
 prefix-stripping proxy, HA REST outage fixture, or ephemeral container is
 **not a test against real Home Assistant OS Supervisor Ingress**. Privileged
@@ -19,9 +19,10 @@ Internet or to production HA configurations.
 - This closeout PR adds executable contracts in `tests/test_p0_closeout.py`
   for the inventory, pinned Ace family, method-aware API dispatch,
   single-write HTTP responses, negative CI probes, and P1 exclusions.
-- **Current PR HEAD / CI:** pending; record the exact commit and green run
-  in the PR body before requesting approval. Do not reuse #206 as proof
-  of changes made after #19.
+- **Closeout review evidence:** [PR #20](https://github.com/undel-gh/hass-configurator/pull/20)
+  records the exact source commit and CI outcome in its description.
+  Consult that final record before approving or closing the linked issues;
+  do not reuse #206 as proof of changes made after #19.
 - A maintainer must review the final evidence and decide issue closure
   **after merge**. Neither this document nor a green test automatically
   closes issues or waives their acceptance criteria.
@@ -30,7 +31,7 @@ Internet or to production HA configurations.
 
 | Issue / owner | P0 requirement | Implemented and testable evidence | Boundary and disposition |
 | --- | --- | --- | --- |
-| [#1](https://github.com/undel-gh/hass-configurator/issues/1) — inventory | Classify cold/dynamic public-origin attempts, initial CDN/avatar footprint, approved HA REST/WS and user-opened documentation; lock provenance of Ace 1.9.6 `src-min-noconflict` | `docs/runtime-dependencies.json`; `docs/ace-builds-1.9.6-lock.json`; `hass_configurator/vendor/manifest.json` provenance and source license paths; `scripts/audit_runtime_assets.py --strict-offline`; `scripts/verify_ace_archive.py`; `tests/test_vendored_assets.py`; `tests/test_p0_closeout.py`; `e2e/offline-smoke.spec.cjs` runtime-attempts JSON | **P0 candidate accepted subject to current PR CI**. Only automatic browser requests in supported scenarios are prohibited; deliberate external links are not preloaded. Full license/SBOM/vulnerability adjudication: #9 |
+| [#1](https://github.com/undel-gh/hass-configurator/issues/1) — inventory | Classify cold/dynamic public-origin attempts, initial CDN/avatar footprint, approved HA REST/WS and user-opened documentation; lock provenance of Ace 1.9.6 `src-min-noconflict` | `docs/runtime-dependencies.json`; `docs/ace-builds-1.9.6-lock.json`; `hass_configurator/vendor/manifest.json` provenance and source license paths; `scripts/audit_runtime_assets.py --strict-offline`; `scripts/verify_ace_archive.py`; `tests/test_vendored_assets.py`; `tests/test_p0_closeout.py`; `e2e/offline-smoke.spec.cjs` runtime-attempts JSON | **P0 automated criteria implemented; require PR #20 exact-HEAD CI and review**. Only automatic browser requests in supported scenarios are prohibited; deliberate external links are not preloaded. Full license/SBOM/vulnerability adjudication: #9 |
 | [#2](https://github.com/undel-gh/hass-configurator/issues/2) — routing | Permanent exact/method-aware router, package-only versioned static resources, canonical 400/404/405 and headers, root and simulated prefix behavior | `hass_configurator/http_routing.py`; `tests/test_routing.py`; `tests/test_legacy_contract.py`; `tests/test_ingress_redirect.py`; `tests/test_p0_closeout.py`; `e2e/ingress-operations.spec.cjs`; `e2e/cache-upgrade.spec.cjs` | **P0 scoped adapter only**: `Router.match()` is the mandatory exact-path/method gate for all legacy API routes; `send_response()` is the single writer for router-owned static/error responses. Legacy handler implementations continue to emit their own responses under the gate. Moving privileged API operations to controller-owned policy/response objects and end-to-end security belongs to #7; real proxy/header semantics to #8. Do not claim global response-writer centralization |
 | [#6](https://github.com/undel-gh/hass-configurator/issues/6) — E2E | Cold and warm browser testing, blocked public requests, supported Ace modes, simulated Ingress API and file operations, outage, package and Docker tests | `e2e/offline-smoke.spec.cjs`; `e2e/offline-dynamic.spec.cjs`; `e2e/release-matrix.spec.cjs`; `e2e/ingress-operations.spec.cjs`; `e2e/ha-outage.spec.cjs`; `e2e/cache-upgrade.spec.cjs`; `e2e/docker-runtime.spec.cjs`; `tests/test_p0_failure_gates.py` | **P0 supported/low-risk flows**. Privileged Git/exec/restart confirmation actions are **NOT VERIFIED**; #7 owns safe authorization/CSRF and confirmation testing. Real HA OS browser integration and upgrade are #8 |
 | [#14](https://github.com/undel-gh/hass-configurator/issues/14) — governance | Required CI, negative fixtures, traceability and PR review contract | `.github/workflows/offline-foundation.yml`; `.github/pull_request_template.md`; `tests/test_traceability.py`; `tests/test_p0_closeout.py`; this audit and `docs/TRACEABILITY.md` | **P0 repository-file controls testable**. Branch protection/rulesets are **NOT VERIFIED** from repository files, and cannot be enabled by a CI documentation PR. Maintainer action below must be recorded independently |
