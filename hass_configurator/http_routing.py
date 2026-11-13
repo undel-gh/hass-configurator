@@ -68,12 +68,14 @@ class Assets:
         self.root = Path(root) if root is not None else Path(__file__).parent
         self.root = self.root.resolve(strict=True)
         hashes = []
+        self._snapshot = {}
         for name in sorted(PACKAGE_ASSETS):
             resource = self._resource_path(name)
             try:
                 content = resource.read_bytes()
             except OSError as exc:
                 raise RuntimeError("Missing packaged static asset: " + name) from exc
+            self._snapshot[name] = content
             hashes.append(name.encode("ascii") + b"\x00" + sha256(content).hexdigest().encode("ascii"))
         self.version = sha256(b"\n".join(hashes)).hexdigest()[:16]
 
@@ -87,7 +89,10 @@ class Assets:
         return resource
 
     def read(self, name):
-        return self._resource_path(name).read_bytes()
+        # Immutable URL must yield immutable bytes during this process.
+        # Recheck symlink safety if a package path changes after startup.
+        self._resource_path(name)
+        return self._snapshot[name]
 
     def response(self, match):
         try:
