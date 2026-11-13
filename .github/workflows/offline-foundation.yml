@@ -47,6 +47,12 @@ jobs:
       - name: Install browser test dependencies
         working-directory: e2e
         run: npm install --no-audit --no-fund
+      - name: Capture npm-generated lock for reproducible CI
+        working-directory: e2e
+        run: |
+          echo E2E_LOCK_BEGIN
+          cat package-lock.json
+          echo E2E_LOCK_END
       - name: Install Chromium
         working-directory: e2e
         run: npx playwright install --with-deps chromium
