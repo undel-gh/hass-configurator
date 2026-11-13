@@ -24,7 +24,7 @@ test('release identity agrees between HTML About dialog and API without external
 
   const api = await page.evaluate(async () => {
     const reply = await fetch('api/version', { cache: 'no-store' });
-    return { status: reply.status(), cache: reply.headers.get('cache-control'),
+    return { status: reply.status, cache: reply.headers.get('cache-control'),
              version: (await reply.json()).version };
   });
   expect(api.status).toBe(200);
