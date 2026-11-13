@@ -121,6 +121,8 @@ jobs:
           done
           cat /tmp/configurator.log
           exit 1
+      - name: Check manual HA OS browser suite parses without secrets
+        run: node --check e2e/haos-real.spec.cjs
       - name: Full browser E2E matrix (disposable workspace)
         working-directory: e2e
         run: npm test
