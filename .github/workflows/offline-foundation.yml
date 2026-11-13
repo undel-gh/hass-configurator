@@ -175,7 +175,7 @@ jobs:
               cd e2e
               EDITOR_URL="http://127.0.0.1:$port" \
               E2E_WORKSPACE="$work" E2E_PYTHON="$venv/bin/python" \
-                npm test -- --grep 'full UI attempts|real HTML resolves|Ace modes, themes|file browser'
+                npm test -- --grep 'full UI attempts|real HTML resolves|Ace modes, themes|file browser|release identity'
             )
             kill "$app_pid"
             wait "$app_pid" || true
@@ -246,7 +246,7 @@ jobs:
             EDITOR_URL=http://127.0.0.1:3221 \
             E2E_WORKSPACE=/tmp/hc-fork-p0-sandbox \
             E2E_CONTAINER_PATH=/config \
-              npm test -- --grep 'fork-built Docker|full UI attempts|real HTML resolves|Ace modes, themes'
+              npm test -- --grep 'fork-built Docker|full UI attempts|real HTML resolves|Ace modes, themes|release identity'
           )
           docker rm -f hc-fork-p0-browser
           trap - EXIT
