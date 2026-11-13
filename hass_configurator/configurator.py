@@ -22,7 +22,7 @@ import logging
 import fnmatch
 import hashlib
 import hmac
-import html
+import html as html_escape
 import mimetypes
 from string import Template
 from http.server import BaseHTTPRequestHandler
@@ -30,7 +30,7 @@ from hass_configurator.http_routing import Router, error_response, send_response
 from hass_configurator._version import VERSION
 from hass_configurator.api_security import ConfinedFS
 import urllib.request
-from urllib.parse import urlparse, parse_qs, unquote
+from urllib.parse import urlparse, parse_qs, unquote, quote
 
 ### Some options for you to change
 LISTENIP = "0.0.0.0"
@@ -675,9 +675,10 @@ class RequestHandler(BaseHTTPRequestHandler):
                     filepath = _fs().resolve_for_read(filename).encode('utf-8')
                     if os.path.isfile(filepath):
                         filecontent = _fs().read_bytes(filename)
+                        safe_filename = quote(os.path.basename(os.fsdecode(filename)), safe="")
                         self.send_header(
                             'Content-Disposition',
-                            'attachment; filename=%s' % filename.decode('utf-8').split(os.sep)[-1])
+                            "attachment; filename*=UTF-8''%s" % safe_filename)
                         self.end_headers()
                         self.wfile.write(filecontent)
                         return
@@ -686,6 +687,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                 LOG.warning(err)
                 content = str(err)
             self.send_header('Content-type', 'text/text')
+            self.end_headers()
             self.wfile.write(bytes(content, "utf8"))
             return
         elif req.path == '/api/listdir':
@@ -999,11 +1001,11 @@ class RequestHandler(BaseHTTPRequestHandler):
                     githidden="" if GIT else "hiddendiv",
                     # pylint: disable=anomalous-backslash-in-string
                     separator="\%s" % os.sep if os.sep == "\\" else os.sep,
-                    your_address=html.escape(self.client_address[0], quote=True),
-                    listening_address=html.escape("%s://%s:%i" % (
+                    your_address=html_escape.escape(self.client_address[0], quote=True),
+                    listening_address=html_escape.escape("%s://%s:%i" % (
                         'https' if SSL_CERTIFICATE else 'http', LISTENIP, PORT), quote=True),
-                    hass_api_address=html.escape("%s" % (HASS_API, ), quote=True),
-                    hass_ws_address=html.escape(ws_api, quote=True),
+                    hass_api_address=html_escape.escape("%s" % (HASS_API, ), quote=True),
+                    hass_ws_address=html_escape.escape(ws_api, quote=True),
                     # Never embed server-held HA credentials into HTML/DOM.
                     api_password="",
                     csrf_token=HTTP_ROUTER.security.csrf_token,
