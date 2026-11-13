@@ -97,9 +97,11 @@ class ConfinedFS:
         self._dirflags = os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | getattr(os, "O_NOFOLLOW", 0)
 
     def _parts(self, value):
+        if isinstance(value, os.PathLike):
+            value = os.fspath(value)
         if isinstance(value, bytes):
             value = os.fsdecode(value)
-        if not isinstance(value, str) or not value or "\x00" in value:
+        if not isinstance(value, str) or not value or "\x00" in value or any(ord(ch) < 32 or ord(ch) == 127 for ch in value):
             raise PermissionError("Invalid file path")
         path = Path(value)
         if not path.is_absolute():
@@ -163,6 +165,7 @@ class ConfinedFS:
     def write_bytes(self, value, payload, exclusive=False):
         with self._parent(value) as (fd, name):
             flags = (os.O_WRONLY | os.O_CREAT | getattr(os, "O_NOFOLLOW", 0)
+                     | getattr(os, "O_NONBLOCK", 0)
                      | (os.O_EXCL if exclusive else os.O_TRUNC))
             out = os.open(name, flags, 0o600, dir_fd=fd)
             try:
