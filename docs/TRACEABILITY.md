@@ -73,7 +73,7 @@ scope, AT-01–AT-10 tests, and external maintainer controls.
 
 | Gate | Required scenarios | Verification state |
 | --- | --- | --- |
-| P0 | AT-01–AT-10 (supported low-risk scenarios), simulated Ingress and blocked public Internet | partial: CI evidence [#206](https://github.com/undel-gh/hass-configurator/actions/runs/43502177693) is historical, closeout PR exact HEAD pending; maintainer required-check settings NOT VERIFIED |
+| P0 | AT-01–AT-10 (supported low-risk scenarios), simulated Ingress and blocked public Internet | partial: historical CI evidence [#206](https://github.com/undel-gh/hass-configurator/actions/runs/43502177693); consult [closeout PR #20](https://github.com/undel-gh/hass-configurator/pull/20) for exact-HEAD revalidation; maintainer required-check settings NOT VERIFIED |
 | P1 | Real Supervisor Ingress (#8), authenticated privileged API hardening (#7), SBOM/licenses (#9), CSP (#13) | pending; NOT VERIFIED |
 
 For **per-scenario** AT-01–AT-10 status and limitations, see
