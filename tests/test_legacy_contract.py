@@ -218,6 +218,19 @@ class AuthLoopbackTests(unittest.TestCase):
         self.assertIn("immutable", headers.get("Cache-Control", ""))
         self.assertGreater(len(body), 10)
 
+    def test_malformed_basic_credentials_always_challenge(self):
+        for method in ("GET", "POST"):
+            for value in ("Basic @@@", "Basic Zm9v", "Bearer arbitrary",
+                          "Basic  !!!!", "Basic " + "x" * 10000):
+                with self.subTest(method=method, authorization=value):
+                    status, headers, _ = make_request(
+                        self.server, method, "/api/prefs",
+                        b"{}" if method == "POST" else None,
+                        {"Authorization": value, "Content-Type": "application/json"})
+                    self.assertEqual(status, 401)
+                    self.assertIn("Basic", headers.get("WWW-Authenticate", ""))
+                    self.assertEqual(headers.get("Cache-Control"), "no-store")
+
     def test_unsupported_methods_do_not_disclose_route_existence(self):
         for method in ("HEAD", "PUT", "DELETE"):
             with self.subTest(method=method):
