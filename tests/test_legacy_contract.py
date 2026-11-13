@@ -89,6 +89,23 @@ class LegacyLoopbackTests(unittest.TestCase):
         cfg.BASEPATH = cls.old_basepath
         cls.workspace.cleanup()
 
+    def test_version_identity_matches_distribution_runtime_and_ui(self):
+        from importlib.metadata import version as installed_version
+
+        self.assertEqual(cfg.VERSION, installed_version("hass-configurator"))
+        status, headers, raw = make_request(self.server, "GET", "/api/version")
+        self.assertEqual(status, 200)
+        self.assertEqual(headers.get("Cache-Control"), "no-store")
+        self.assertEqual(json.loads(raw), {"version": cfg.VERSION})
+        status, headers, html = make_request(self.server, "GET", "/")
+        self.assertEqual(status, 200)
+        self.assertEqual(headers.get("Cache-Control"), "no-store")
+        self.assertIn((">" + cfg.VERSION + "</a>").encode("utf8"), html)
+        status, headers, _ = make_request(self.server, "POST", "/api/version",
+                                          b"", {"Content-Type": "application/json"})
+        self.assertEqual(status, 405)
+        self.assertEqual(headers.get("Allow"), "GET")
+
     def test_post_prefs_json_and_get_round_trip(self):
         body = json.dumps({"ui_theme": "dark"}).encode("utf-8")
         status, headers, response = make_request(
