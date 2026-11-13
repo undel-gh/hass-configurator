@@ -111,3 +111,38 @@ test('MDI, Roboto and fallback Material Icons have locally served fonts', async 
   }
   expect(external).toEqual([]);
 });
+test('YAML syntax worker reports and clears errors with public network blocked', async ({ page }) => {
+  const outbound = [];
+  const workers = [];
+  const errors = [];
+  page.on('pageerror', err => errors.push(err.message));
+  page.on('worker', worker => workers.push(worker.url()));
+  await page.route('**/*', async route => {
+    const url = new URL(route.request().url());
+    if (url.origin !== origin) {
+      outbound.push(url.href);
+      await route.abort('blockedbyclient');
+    } else {
+      await route.continue();
+    }
+  });
+  await page.goto(server + '/', { waitUntil: 'domcontentloaded' });
+  await expect.poll(() => page.evaluate(() => Boolean(window.editor))).toBe(true);
+  await page.evaluate(() => {
+    const session = editor.getSession();
+    session.setMode('ace/mode/yaml');
+    session.setUseWorker(true);
+    editor.setValue('example: [unfinished\\n', -1);
+  });
+  await expect.poll(() => page.evaluate(() =>
+    editor.getSession().getAnnotations().some(a => a.type === 'error')),
+    { timeout: 12000, message: 'Ace YAML worker should report invalid YAML' }).toBe(true);
+  await page.evaluate(() => editor.setValue('example: [valid]\\n', -1));
+  await expect.poll(() => page.evaluate(() =>
+    editor.getSession().getAnnotations().filter(a => a.type === 'error').length),
+    { timeout: 12000 }).toBe(0);
+  expect(workers.length).toBeGreaterThan(0);
+  expect(outbound).toEqual([]);
+  expect(errors).toEqual([]);
+});
+
