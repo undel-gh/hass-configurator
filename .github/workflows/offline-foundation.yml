@@ -75,10 +75,17 @@ jobs:
           fi
           # Direct calls to the nginx Ingress port from localhost MUST be
           # rejected. Only bridged Supervisor peer 172.30.32.2 is allowed.
-          docker exec hc-ingress-e2e python -c \
-            'import urllib.error, urllib.request; \
-             u="http://127.0.0.1:8099/"; \
-             exec("try:\\n urllib.request.urlopen(u, timeout=2)\\n raise RuntimeError(\\\"Ingress proxy unexpectedly public\\\")\\nexcept urllib.error.HTTPError as e:\\n assert e.code == 403")'
+          docker exec -i hc-ingress-e2e python - <<'PY'
+          from urllib.error import HTTPError
+          from urllib.request import urlopen
+
+          try:
+              urlopen("http://127.0.0.1:8099/", timeout=3)
+          except HTTPError as error:
+              assert error.code == 403, error.code
+          else:
+              raise AssertionError("non-Supervisor peer reached Ingress")
+          PY
           test -z "$(docker inspect --format '{{json .HostConfig.PortBindings}}' hc-ingress-e2e | tr -d 'null{}')"
 
   early-browser-smoke:
