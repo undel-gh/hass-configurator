@@ -14,7 +14,11 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 14
     steps:
+      # On pull_request, default checkout is refs/pull/<n>/merge, not the
+      # source commit whose local reproducibility the release record claims.
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Check pinned lock and official digest-pinned OS toolchain
         run: |
           set -euo pipefail
@@ -42,7 +46,11 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
+      # On pull_request, default checkout is refs/pull/<n>/merge, not the
+      # source commit whose local reproducibility the release record claims.
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -75,7 +83,11 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 18
     steps:
+      # On pull_request, default checkout is refs/pull/<n>/merge, not the
+      # source commit whose local reproducibility the release record claims.
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -123,7 +135,11 @@ jobs:
     env:
       E2E_WORKSPACE: /tmp/hass-configurator-e2e-sandbox
     steps:
+      # On pull_request, default checkout is refs/pull/<n>/merge, not the
+      # source commit whose local reproducibility the release record claims.
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -210,12 +226,23 @@ jobs:
             trap - EXIT
           done
       - name: Build fork Docker image, verify identity offline, test real container browser
+        env:
+          EXPECTED_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
           set -euo pipefail
           # Two independent BuildKit builds WITHOUT layer cache, from one
           # reviewed commit and a fixed SOURCE_DATE_EPOCH.
           export DOCKER_BUILDKIT=1
-          epoch=$(git log -1 --format=%ct)
+          source_commit=$(git rev-parse HEAD)
+          # Fail closed if Actions checked out the synthetic PR merge commit
+          # rather than the exact reviewed PR HEAD (or push commit).
+          if [ "$source_commit" != "$EXPECTED_SOURCE_SHA" ]; then
+            echo "ERROR: checked-out SHA does not match requested source commit" >&2
+            exit 1
+          fi
+          epoch=$(git show -s --format=%ct "$source_commit")
+          test "$epoch" -ge 315532800 && test "$epoch" -le 4102444800
+          echo "Release source SHA=$source_commit SOURCE_DATE_EPOCH=$epoch"
           # SOURCE_DATE_EPOCH alone fixes OCI metadata but not layer file
           # timestamps. BuildKit's Docker exporter must explicitly rewrite
           # layer timestamps, otherwise independent image IDs drift.
@@ -247,7 +274,8 @@ jobs:
           # future #9 vulnerability/SBOM review; no credentials or Ingress URLs.
           mkdir -p e2e/artifacts
           {
-            printf 'source_commit=%s\n' "$(git rev-parse HEAD)"
+            printf 'source_commit=%s\n' "$source_commit"
+            printf 'event_source_commit=%s\n' "$EXPECTED_SOURCE_SHA"
             printf 'source_date_epoch=%s\n' "$epoch"
             printf 'image_id_a=%s\nimage_id_b=%s\n' "$id_a" "$id_b"
             printf 'base_index_digest=%s\n' \
