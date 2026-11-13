@@ -1,0 +1,18 @@
+name: "HASS Configurator Ingress Validation (temporary)"
+version: "0.0.1"
+slug: hc_ingress_validation
+description: "Temporary sandboxed Home Assistant Ingress test fixture; not a file editor replacement"
+arch:
+  - amd64
+  - aarch64
+init: false
+startup: application
+boot: manual
+ingress: true
+ingress_port: 8099
+ingress_stream: true
+panel_admin: true
+panel_icon: "mdi:file-code-outline"
+map: []
+options: {}
+schema: {}

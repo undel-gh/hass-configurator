@@ -96,6 +96,14 @@ test('real HTML resolves local assets and API under simulated ingress prefix', a
     return response.json();
   });
   expect(prefs).toHaveProperty('ui_theme');
+  // Font loads depend on glyph usage and may be deferred by Chromium.
+  // Force the actual MDI font to load before asserting its prefixed URL.
+  await page.evaluate(async () => {
+    const icon = document.createElement('i');
+    icon.className = 'mdi mdi-git';
+    document.body.appendChild(icon);
+    await document.fonts.load('24px "Material Design Icons"');
+  });
   expect(requested).toContain('/ingress/test/api/prefs');
 
   expect(requested.filter((p) => p.startsWith('/assets/') ||

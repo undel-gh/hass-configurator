@@ -42,10 +42,58 @@ jobs:
           python setup.py sdist --dist-dir /tmp/vendor-sdist
           python scripts/check_offline_artifacts.py /tmp/vendor-wheel /tmp/vendor-sdist
 
+  disposable-haos-fixture:
+    name: Disposable HA OS app container smoke (NOT real Supervisor)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Generate a private non-root Ingress app fixture
+        run: python scripts/prepare_haos_ingress_fixture.py --output /tmp/hc-ingress-fixture
+      - name: Build and boot temporary container
+        run: |
+          set -euo pipefail
+          docker build --tag hc-ingress-e2e:pr /tmp/hc-ingress-fixture
+          docker run --detach --rm --name hc-ingress-e2e hc-ingress-e2e:pr
+          trap 'docker rm -f hc-ingress-e2e 2>/dev/null || true' EXIT
+          ready=0
+          for i in $(seq 1 40); do
+            if docker exec hc-ingress-e2e python -c \
+              'import urllib.request; assert urllib.request.urlopen("http://127.0.0.1:3218/api/prefs",timeout=2).status == 200' \
+              >/dev/null 2>&1; then
+              ready=1
+              break
+            fi
+            sleep 1
+          done
+          if [ "$ready" -ne 1 ]; then
+            docker logs hc-ingress-e2e
+            exit 1
+          fi
+          # Direct calls to the nginx Ingress port from localhost MUST be
+          # rejected. Only bridged Supervisor peer 172.30.32.2 is allowed.
+          docker exec -i hc-ingress-e2e python - <<'PY'
+          from urllib.error import HTTPError
+          from urllib.request import urlopen
+
+          try:
+              urlopen("http://127.0.0.1:8099/", timeout=3)
+          except HTTPError as error:
+              assert error.code == 403, error.code
+          else:
+              raise AssertionError("non-Supervisor peer reached Ingress")
+          PY
+          test -z "$(docker inspect --format '{{json .HostConfig.PortBindings}}' hc-ingress-e2e | tr -d 'null{}')"
+
   early-browser-smoke:
     name: Network-attempt smoke (Chromium)
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 25
+    env:
+      E2E_WORKSPACE: /tmp/hass-configurator-e2e-sandbox
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -64,7 +112,8 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Start standalone editor
         run: |
-          python -m hass_configurator.configurator --standalone --listen 127.0.0.1 --port 3218 > /tmp/configurator.log 2>&1 &
+          mkdir -p "$E2E_WORKSPACE"
+          python -m hass_configurator.configurator --standalone --listen 127.0.0.1 --port 3218 --basepath "$E2E_WORKSPACE" --enforce > /tmp/configurator.log 2>&1 &
           echo $! > /tmp/configurator.pid
           for i in $(seq 1 40); do
             if curl -fsS http://127.0.0.1:3218/api/prefs >/dev/null; then exit 0; fi
@@ -72,9 +121,66 @@ jobs:
           done
           cat /tmp/configurator.log
           exit 1
-      - name: Browser smoke and known offline debt
+      - name: Check manual HA OS browser suite parses without secrets
+        run: node --check e2e/haos-real.spec.cjs
+      - name: Full browser E2E matrix (disposable workspace)
         working-directory: e2e
         run: npm test
+      - name: Browser gate against installed wheel and installed sdist
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/hc-artifacts
+          python -m pip wheel --no-deps --wheel-dir /tmp/hc-artifacts .
+          python setup.py sdist --dist-dir /tmp/hc-artifacts
+          for variant in wheel sdist; do
+            venv="/tmp/hc-installed-$variant"
+            python -m venv "$venv"
+            if [ "$variant" = wheel ]; then
+              artifact=$(find /tmp/hc-artifacts -maxdepth 1 -name '*.whl' -print -quit)
+              port=3219
+            else
+              artifact=$(find /tmp/hc-artifacts -maxdepth 1 -name '*.tar.gz' -print -quit)
+              port=3220
+            fi
+            "$venv/bin/pip" install --disable-pip-version-check "$artifact"
+            work="/tmp/hc-installed-workspace-$variant"
+            mkdir -p "$work"
+            # Import and start the installed package from OUTSIDE checkout.
+            # A subprocess cwd at the repository root would silently choose
+            # ./hass_configurator instead of venv/site-packages.
+            (
+              cd "$work"
+              "$venv/bin/python" -c 'import sys, pathlib, hass_configurator; from hass_configurator import configurator; p=pathlib.Path(sys.prefix).resolve(); files=[pathlib.Path(hass_configurator.__file__).resolve(), pathlib.Path(configurator.__file__).resolve()]; assert all(f.is_relative_to(p) for f in files), files; print("Installed runtime origin:", files[-1], flush=True)' 
+              exec "$venv/bin/python" -m hass_configurator.configurator \
+                --standalone --listen 127.0.0.1 --port "$port" \
+                --basepath "$work" --enforce
+            ) > "/tmp/hc-installed-$variant.log" 2>&1 &
+            app_pid=$!
+            trap 'kill "$app_pid" 2>/dev/null || true' EXIT
+            ready=0
+            for n in $(seq 1 40); do
+              if curl -fsS "http://127.0.0.1:$port/api/prefs" >/dev/null; then
+                ready=1
+                break
+              fi
+              sleep 1
+            done
+            if [ "$ready" -ne 1 ]; then
+              cat "/tmp/hc-installed-$variant.log"
+              exit 1
+            fi
+            # Preserve import origin in the public CI log for audit.
+            grep -F "Installed runtime origin: $venv/" "/tmp/hc-installed-$variant.log"
+            (
+              cd e2e
+              EDITOR_URL="http://127.0.0.1:$port" \
+              E2E_WORKSPACE="$work" E2E_PYTHON="$venv/bin/python" \
+                npm test -- --grep 'full UI attempts|real HTML resolves|Ace modes, themes|file browser'
+            )
+            kill "$app_pid"
+            wait "$app_pid" || true
+            trap - EXIT
+          done
       - name: Store browser audit and traces
         if: always()
         uses: actions/upload-artifact@v4
