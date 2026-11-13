@@ -34,7 +34,7 @@ def verify(files, label):
     extra_manifest = files.get("hass_configurator/vendor/manifest.json")
     if extra_manifest is None:
         raise RuntimeError("%s missing the vendor integrity manifest" % label)
-    if json.loads(extra_manifest)["resources"] != required:
+    if json.loads(extra_manifest)["resources"] != MANIFEST["resources"]:
         raise RuntimeError("%s embedded manifest differs from source" % label)
     print("%s: %d vendor resources, %d first-party resources and manifest validated" %
           (label, len(MANIFEST["resources"]), len(PACKAGE_ASSETS)))
