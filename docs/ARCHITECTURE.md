@@ -137,8 +137,9 @@ both completely cache-disabled builds and uses BuildKit's Docker exporter
 with `rewrite-timestamp=true`; without that option source timestamps in layer
 files can still vary. It compares full image IDs, not only
 the first-party resource namespace. Normalization of generated/installed
-file timestamps prevents package download/build time from contaminating
-layers. The full binary dependency lock is authoritative for Docker; the
+file timestamps and read-only BuildKit mounts (instead of COPY plus delete)
+prevent package download/build time and filesystem whiteout timestamps from
+contaminating final image layers. The full binary dependency lock is authoritative for Docker; the
 separate package's `install_requires` remains compatibility metadata and
 must be a subset of the reviewed lock.
 
