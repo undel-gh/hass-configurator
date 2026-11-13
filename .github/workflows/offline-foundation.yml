@@ -42,6 +42,45 @@ jobs:
           python setup.py sdist --dist-dir /tmp/vendor-sdist
           python scripts/check_offline_artifacts.py /tmp/vendor-wheel /tmp/vendor-sdist
 
+  disposable-haos-fixture:
+    name: Disposable HA OS app container smoke (NOT real Supervisor)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Generate a private non-root Ingress app fixture
+        run: python scripts/prepare_haos_ingress_fixture.py --output /tmp/hc-ingress-fixture
+      - name: Build and boot temporary container
+        run: |
+          set -euo pipefail
+          docker build --tag hc-ingress-e2e:pr /tmp/hc-ingress-fixture
+          docker run --detach --rm --name hc-ingress-e2e hc-ingress-e2e:pr
+          trap 'docker rm -f hc-ingress-e2e 2>/dev/null || true' EXIT
+          ready=0
+          for i in $(seq 1 40); do
+            if docker exec hc-ingress-e2e python -c \
+              'import urllib.request; assert urllib.request.urlopen("http://127.0.0.1:3218/api/prefs",timeout=2).status == 200' \
+              >/dev/null 2>&1; then
+              ready=1
+              break
+            fi
+            sleep 1
+          done
+          if [ "$ready" -ne 1 ]; then
+            docker logs hc-ingress-e2e
+            exit 1
+          fi
+          # Direct calls to the nginx Ingress port from localhost MUST be
+          # rejected. Only bridged Supervisor peer 172.30.32.2 is allowed.
+          docker exec hc-ingress-e2e python -c \
+            'import urllib.error, urllib.request; \
+             u="http://127.0.0.1:8099/"; \
+             exec("try:\\n urllib.request.urlopen(u, timeout=2)\\n raise RuntimeError(\\\"Ingress proxy unexpectedly public\\\")\\nexcept urllib.error.HTTPError as e:\\n assert e.code == 403")'
+          test -z "$(docker inspect --format '{{json .HostConfig.PortBindings}}' hc-ingress-e2e | tr -d 'null{}')"
+
   early-browser-smoke:
     name: Network-attempt smoke (Chromium)
     runs-on: ubuntu-24.04
