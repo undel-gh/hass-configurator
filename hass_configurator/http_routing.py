@@ -65,11 +65,16 @@ class Assets:
     """Small allowlisted package resource store. No arbitrary path reads."""
 
     def __init__(self, root=None):
+        # Unit fixtures can supply a minimal isolated resource root. The real
+        # installed application MUST have the complete vendored manifest.
+        production_root = root is None
         self.root = Path(root) if root is not None else Path(__file__).parent
         self.root = self.root.resolve(strict=True)
         self.mime = dict(PACKAGE_ASSETS)
         self._vendor_hashes = {}
         manifest_path = self.root / "vendor" / "manifest.json"
+        if production_root and not manifest_path.is_file():
+            raise RuntimeError("Missing vendored assets manifest in installed package")
         if manifest_path.is_file():
             if manifest_path.is_symlink():
                 raise RuntimeError("Unsafe vendor manifest symlink")
