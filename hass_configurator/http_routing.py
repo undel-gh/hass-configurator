@@ -6,8 +6,7 @@ They MUST pass through this exact-path, method-aware dispatcher first.
 from dataclasses import dataclass, field
 from hashlib import sha256
 from pathlib import Path
-from urllib.parse import unquote, urlsplit
-import mimetypes
+from urllib.parse import urlsplit
 import re
 
 
@@ -28,9 +27,9 @@ POST_API = frozenset((
 # Transitional aliases remain revalidated for existing clients. New HTML uses
 # versioned paths and no permanent redirect is necessary.
 PACKAGE_ASSETS = {
-    "jquery-3.6.0.min.js": "application/javascript; charset=utf-8",
-    "js-yaml.min.js": "application/javascript; charset=utf-8",
-    "materialize.min.js": "application/javascript; charset=utf-8",
+    "jquery-3.6.0.min.js": "text/javascript; charset=utf-8",
+    "js-yaml.min.js": "text/javascript; charset=utf-8",
+    "materialize.min.js": "text/javascript; charset=utf-8",
     "style.css": "text/css; charset=utf-8",
     "material-icons.fallback.css": "text/css; charset=utf-8",
     "flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2": "font/woff2",
@@ -175,7 +174,7 @@ class Router:
         return Match("not_found", path)
 
 
-def send_response(handler, response, head=False):
+def send_response(handler, response):
     """Write a response exactly once for dispatcher-owned paths."""
     handler.send_response(response.status)
     handler.send_header("Content-Type", response.content_type)
@@ -184,5 +183,4 @@ def send_response(handler, response, head=False):
         handler.send_header(key, value)
     handler.send_header("Content-Length", str(len(response.body)))
     handler.end_headers()
-    if not head:
-        handler.wfile.write(response.body)
+    handler.wfile.write(response.body)
