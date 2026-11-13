@@ -145,10 +145,32 @@ jobs:
             "$venv/bin/pip" install --disable-pip-version-check "$artifact"
             work="/tmp/hc-installed-workspace-$variant"
             mkdir -p "$work"
-            "$venv/bin/python" -m hass_configurator.configurator \
-              --standalone --listen 127.0.0.1 --port "$port" \
-              --basepath "$work" --enforce \
-              > "/tmp/hc-installed-$variant.log" 2>&1 &
+            # Import and start the installed package from OUTSIDE checkout.
+            # A subprocess cwd at the repository root would silently choose
+            # ./hass_configurator instead of venv/site-packages.
+            (
+              cd "$work"
+              "$venv/bin/python" - <<'PY'
+            import importlib.util
+            import sys
+            from pathlib import Path
+
+            import hass_configurator
+            from hass_configurator import configurator
+
+            prefix = Path(sys.prefix).resolve()
+            package_file = Path(hass_configurator.__file__).resolve()
+            runtime_file = Path(configurator.__file__).resolve()
+            assert package_file.is_relative_to(prefix), (
+                "Package imported outside installed venv: " + str(package_file))
+            assert runtime_file.is_relative_to(prefix), (
+                "Runtime imported outside installed venv: " + str(runtime_file))
+            print("Verified installed-package import: " + str(runtime_file), flush=True)
+            PY
+              exec "$venv/bin/python" -m hass_configurator.configurator \
+                --standalone --listen 127.0.0.1 --port "$port" \
+                --basepath "$work" --enforce
+            ) > "/tmp/hc-installed-$variant.log" 2>&1 &
             app_pid=$!
             trap 'kill "$app_pid" 2>/dev/null || true' EXIT
             ready=0
