@@ -6,3 +6,12 @@
 # Python egg metadata, regenerated from source files by setuptools.
 /*.egg-info
 /*.egg
+
+# Private HA OS session credentials and browser run outputs.
+e2e/.secrets/
+e2e/artifacts/
+e2e/test-results/
+e2e/playwright-report/
+
+# Generated local HA OS fixture output.
+haos-local-build/
