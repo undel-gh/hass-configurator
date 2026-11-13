@@ -3,6 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" />
+    <meta name="hc-csrf-token" content="$csrf_token" />
     <title>HASS Configurator</title>
     <link rel="stylesheet" type="text/css" href="assets/v$asset_version/material-icons.fallback.css">
     <link href="assets/v$asset_version/vendor/mdi/css/materialdesignicons.min.css" rel="stylesheet">
@@ -1621,6 +1622,16 @@
 <input type="hidden" id="fb_currentfile" value="" />
 <!-- Scripts -->
 <script src="assets/v$asset_version/jquery-3.6.0.min.js"></script>
+<script>
+// All same-origin jQuery requests carry a non-persistent, server-rendered token.
+jQuery.ajaxPrefilter(function(options, ignored, xhr) {
+    var target = new URL(options.url, document.baseURI);
+    if (target.origin === window.location.origin) {
+        xhr.setRequestHeader("X-CSRF-Token",
+            document.querySelector('meta[name="hc-csrf-token"]').content);
+    }
+});
+</script>
 <script src="assets/v$asset_version/materialize.min.js"></script>
 <script>
     function ws_connect() {
@@ -2037,12 +2048,14 @@
             else {
                 iicon.classList.add('mdi', 'mdi-file');
             }
-            item.setAttribute("onclick", "loadfile('" + encodeURI(itemdata.fullpath) + "', '" + itemdata.name + "')");
+            item.addEventListener('click', function() {
+                loadfile(encodeURI(itemdata.fullpath), itemdata.name);
+            });
             stats.innerHTML = "Mod.: " + date.toUTCString() + "&nbsp;&nbsp;Size: " + (itemdata.size/1024).toFixed(1) + " KiB";
         }
         item.appendChild(iicon);
         var itext = document.createElement('div');
-        itext.innerHTML = itemdata.name;
+        itext.textContent = itemdata.name;
         itext.classList.add("filename");
 
         var hasgitadd = false;
@@ -2076,7 +2089,9 @@
         var dd_download = document.createElement('li');
         var dd_download_a = document.createElement('a');
         dd_download_a.classList.add("waves-effect", "fb_dd");
-        dd_download_a.setAttribute('onclick', "download_file('" + encodeURI(itemdata.fullpath) + "')");
+        dd_download_a.addEventListener('click', function() {
+            download_file(encodeURI(itemdata.fullpath));
+        });
         dd_download_a.innerHTML = "Download";
         dd_download.appendChild(dd_download_a);
         dropdown.appendChild(dd_download);
@@ -2136,7 +2151,10 @@
         menubutton.classList.add('material-icons');
         menubutton.classList.add("right");
         menubutton.innerHTML = 'more_vert';
-        menubutton.setAttribute('onclick', "document.getElementById('fb_currentfile').value='" + encodeURI(itemdata.fullpath) + "';$('span.fb_currentfile').html('" + itemdata.name + "')");
+        menubutton.addEventListener('click', function() {
+            document.getElementById('fb_currentfile').value = encodeURI(itemdata.fullpath);
+            $('span.fb_currentfile').text(itemdata.name);
+        });
         li.appendChild(item);
         li.appendChild(menubutton);
         li.setAttribute("title", itemdata.name)
@@ -2152,7 +2170,7 @@
             fbelements.removeChild(fbelements.firstChild);
         }
         var fbheader = document.getElementById('fbheader');
-        fbheader.innerHTML = dirdata.abspath;
+        fbheader.textContent = dirdata.abspath;
         var branchselector = document.getElementById('branchselector');
         var fbheaderbranch = document.getElementById('fbheaderbranch');
         var branchlist = document.getElementById('branchlist');
@@ -2161,14 +2179,14 @@
         }
         if (dirdata.activebranch) {
             newbranchbutton.style.display = "inline-block";
-            fbheaderbranch.innerHTML = dirdata.activebranch;
+            fbheaderbranch.textContent = dirdata.activebranch;
             fbheaderbranch.style.display = "inline";
             branchselector.style.display = "block";
             for (var i = 0; i < dirdata.branches.length; i++) {
                 var branch = document.createElement('li');
                 var link = document.createElement('a');
                 link.classList.add("branch_select", "truncate");
-                link.innerHTML = dirdata.branches[i];
+                link.textContent = dirdata.branches[i];
                 link.href = '#';
                 link.setAttribute('onclick', 'checkout("' + dirdata.branches[i] + '");collapseAll()')
                 branch.appendChild(link);
@@ -2275,8 +2293,10 @@
                         var item = document.createElement('span');
                         var parts = decodeURI(filehistory[i]).split(separator);
                         var filename = parts[parts.length - 1];
-                        item.innerHTML = "..." + decodeURI(filehistory[i].slice(filehistory[i].length - 25));
-                        item.setAttribute("onclick", "loadfile('" + filehistory[i] + "', '" + filename + "')");
+                        item.textContent = "..." + decodeURI(filehistory[i].slice(filehistory[i].length - 25));
+                        (function(file, name) {
+                            item.addEventListener("click", function() { loadfile(file, name); });
+                        })(filehistory[i], filename);
                         li.appendChild(item);
                         history_ul.appendChild(li);
                     }
@@ -2350,7 +2370,8 @@
                 Materialize.toast($toastContent, 2000);
             }
             else {
-                var $toastContent = $("<div><pre>" + resp + "</pre></div>");
+                var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp);
                 Materialize.toast($toastContent, 2000);
             }
         });
@@ -2444,11 +2465,13 @@
         data.method = 'remove';
         $.post("api/allowed_networks", data).done(function(resp) {
             if (resp.error) {
-                var $toastContent = $("<div><pre>" + resp.message + "</pre></div>");
+                var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp.message);
                 Materialize.toast($toastContent, 5000);
             }
             else {
-                var $toastContent = $("<div><pre>" + resp.message + "</pre></div>");
+                var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp.message);
                 Materialize.toast($toastContent, 2000);
             }
         });
@@ -2468,11 +2491,13 @@
         data.method = 'add';
         $.post("api/allowed_networks", data).done(function(resp) {
             if (resp.error) {
-                var $toastContent = $("<div><pre>" + resp.message + "</pre></div>");
+                var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp.message);
                 Materialize.toast($toastContent, 5000);
             }
             else {
-                var $toastContent = $("<div><pre>" + resp.message + "</pre></div>");
+                var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp.message);
                 Materialize.toast($toastContent, 2000);
             }
         });
@@ -2491,11 +2516,13 @@
         data.method = 'unban';
         $.post("api/banned_ips", data).done(function(resp) {
             if (resp.error) {
-                var $toastContent = $("<div><pre>" + resp.message + "</pre></div>");
+                var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp.message);
                 Materialize.toast($toastContent, 5000);
             }
             else {
-                var $toastContent = $("<div><pre>" + resp.message + "</pre></div>");
+                var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp.message);
                 Materialize.toast($toastContent, 2000);
             }
         });
@@ -2515,11 +2542,13 @@
         data.method = 'ban';
         $.post("api/banned_ips", data).done(function(resp) {
             if (resp.error) {
-                var $toastContent = $("<div><pre>" + resp.message + "</pre></div>");
+                var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp.message);
                 Materialize.toast($toastContent, 5000);
             }
             else {
-                var $toastContent = $("<div><pre>" + resp.message + "</pre></div>");
+                var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp.message);
                 Materialize.toast($toastContent, 2000);
             }
         });
@@ -2533,11 +2562,13 @@
             data.text = editor.getValue()
             $.post("api/save", data).done(function(resp) {
                 if (resp.error) {
-                    var $toastContent = $("<div><pre>" + resp.message + "\n" + resp.path + "</pre></div>");
+                    var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp.message + "\n" + resp.path);
                     Materialize.toast($toastContent, 5000);
                 }
                 else {
-                    var $toastContent = $("<div><pre>" + resp.message + "</pre></div>");
+                    var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp.message);
                     Materialize.toast($toastContent, 2000);
                     listdir(document.getElementById('fbheader').innerHTML);
                     $('.markdirty').each(function(i, o){o.classList.remove('red');});
@@ -2582,11 +2613,13 @@
             data.dstfilename = dstfilename;
             $.post("api/rename", data).done(function(resp) {
                 if (resp.error) {
-                    var $toastContent = $("<div><pre>" + resp.message + "\n" + resp.path + "</pre></div>");
+                    var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp.message + "\n" + resp.path);
                     Materialize.toast($toastContent, 5000);
                 }
                 else {
-                    var $toastContent = $("<div><pre>" + resp.message + "</pre></div>");
+                    var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp.message);
                     Materialize.toast($toastContent, 2000);
                     listdir(document.getElementById('fbheader').innerHTML)
                     //document.getElementById('currentfile').value='';
@@ -2604,11 +2637,13 @@
             data.path = path;
             $.post("api/delete", data).done(function(resp) {
                 if (resp.error) {
-                    var $toastContent = $("<div><pre>" + resp.message + "\n" + resp.path + "</pre></div>");
+                    var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp.message + "\n" + resp.path);
                     Materialize.toast($toastContent, 5000);
                 }
                 else {
-                    var $toastContent = $("<div><pre>" + resp.message + "</pre></div>");
+                    var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp.message);
                     Materialize.toast($toastContent, 2000);
                     listdir(document.getElementById('fbheader').innerHTML)
                     document.getElementById('currentfile').value='';
@@ -2626,7 +2661,8 @@
             data.timeout = 15;
             $.post("api/exec_command", data).done(function(resp) {
                 if (resp.error) {
-                    var $toastContent = $("<div><pre>" + resp.message + "</pre></div>");
+                    var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp.message);
                     Materialize.toast($toastContent, 5000);
                 }
                 else {
@@ -2650,11 +2686,13 @@
             data.path= path;
             $.post("api/delete", data).done(function(resp) {
                 if (resp.error) {
-                    var $toastContent = $("<div><pre>" + resp.message + "\n" + resp.path + "</pre></div>");
+                    var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp.message + "\n" + resp.path);
                     Materialize.toast($toastContent, 5000);
                 }
                 else {
-                    var $toastContent = $("<div><pre>" + resp.message + "</pre></div>");
+                    var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp.message);
                     Materialize.toast($toastContent, 2000);
                     listdir(document.getElementById('fbheader').innerHTML);
                     if (document.getElementById('currentfile').value == path) {
@@ -2673,11 +2711,13 @@
             data.path = path;
             $.post("api/gitadd", data).done(function(resp) {
                 if (resp.error) {
-                    var $toastContent = $("<div><pre>" + resp.message + "\n" + resp.path + "</pre></div>");
+                    var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp.message + "\n" + resp.path);
                     Materialize.toast($toastContent, 5000);
                 }
                 else {
-                    var $toastContent = $("<div><pre>" + resp.message + "</pre></div>");
+                    var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp.message);
                     Materialize.toast($toastContent, 2000);
                     listdir(document.getElementById('fbheader').innerHTML);
                 }
@@ -2693,7 +2733,8 @@
             data.path = path;
             $.post("api/gitdiff", data).done(function(resp) {
                 if (resp.error) {
-                    var $toastContent = $("<div><pre>" + resp.message + "\n" + resp.path + "</pre></div>");
+                    var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp.message + "\n" + resp.path);
                     Materialize.toast($toastContent, 5000);
                 }
                 else {
@@ -2712,11 +2753,13 @@
             data.path = path;
             $.post("api/init", data).done(function(resp) {
                 if (resp.error) {
-                    var $toastContent = $("<div><pre>" + resp.message + "\n" + resp.path + "</pre></div>");
+                    var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp.message + "\n" + resp.path);
                     Materialize.toast($toastContent, 5000);
                 }
                 else {
-                    var $toastContent = $("<div><pre>" + resp.message + "</pre></div>");
+                    var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp.message);
                     Materialize.toast($toastContent, 2000);
                     listdir(document.getElementById('fbheader').innerHTML);
                 }
@@ -2732,11 +2775,13 @@
             data.message = message;
             $.post("api/commit", data).done(function(resp) {
                 if (resp.error) {
-                    var $toastContent = $("<div><pre>" + resp.message + "\n" + resp.path + "</pre></div>");
+                    var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp.message + "\n" + resp.path);
                     Materialize.toast($toastContent, 5000);
                 }
                 else {
-                    var $toastContent = $("<div><pre>" + resp.message + "</pre></div>");
+                    var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp.message);
                     Materialize.toast($toastContent, 2000);
                     listdir(document.getElementById('fbheader').innerHTML);
                     document.getElementById('commitmessage').value = "";
@@ -2752,11 +2797,13 @@
             data.path = path;
             $.post("api/push", data).done(function(resp) {
                 if (resp.error) {
-                    var $toastContent = $("<div><pre>" + resp.message + "\n" + resp.path + "</pre></div>");
+                    var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp.message + "\n" + resp.path);
                     Materialize.toast($toastContent, 5000);
                 }
                 else {
-                    var $toastContent = $("<div><pre>" + resp.message + "</pre></div>");
+                    var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp.message);
                     Materialize.toast($toastContent, 2000);
                     listdir(document.getElementById('fbheader').innerHTML);
                 }
@@ -2771,11 +2818,13 @@
             data.path = path;
             $.post("api/stash", data).done(function(resp) {
                 if (resp.error) {
-                    var $toastContent = $("<div><pre>" + resp.message + "\n" + resp.path + "</pre></div>");
+                    var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp.message + "\n" + resp.path);
                     Materialize.toast($toastContent, 5000);
                 }
                 else {
-                    var $toastContent = $("<div><pre>" + resp.message + "</pre></div>");
+                    var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp.message);
                     Materialize.toast($toastContent, 5000);
                     listdir(document.getElementById('fbheader').innerHTML);
                 }
@@ -2791,11 +2840,13 @@
             data.branch = branch;
             $.post("api/checkout", data).done(function(resp) {
                 if (resp.error) {
-                    var $toastContent = $("<div><pre>" + resp.message + "\n" + resp.path + "</pre></div>");
+                    var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp.message + "\n" + resp.path);
                     Materialize.toast($toastContent, 5000);
                 }
                 else {
-                    var $toastContent = $("<div><pre>" + resp.message + "</pre></div>");
+                    var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp.message);
                     Materialize.toast($toastContent, 2000);
                     listdir(document.getElementById('fbheader').innerHTML);
                 }
@@ -2811,11 +2862,13 @@
             data.branch = branch;
             $.post("api/newbranch", data).done(function(resp) {
                 if (resp.error) {
-                    var $toastContent = $("<div><pre>" + resp.message + "\n" + resp.path + "</pre></div>");
+                    var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp.message + "\n" + resp.path);
                     Materialize.toast($toastContent, 5000);
                 }
                 else {
-                    var $toastContent = $("<div><pre>" + resp.message + "</pre></div>");
+                    var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp.message);
                     Materialize.toast($toastContent, 2000);
                     listdir(document.getElementById('fbheader').innerHTML);
                 }
@@ -2831,11 +2884,13 @@
             data.name = foldername;
             $.post("api/newfolder", data).done(function(resp) {
                 if (resp.error) {
-                    var $toastContent = $("<div><pre>" + resp.message + "\n" + resp.path + "</pre></div>");
+                    var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp.message + "\n" + resp.path);
                     Materialize.toast($toastContent, 5000);
                 }
                 else {
-                    var $toastContent = $("<div><pre>" + resp.message + "</pre></div>");
+                    var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp.message);
                     Materialize.toast($toastContent, 2000);
                 }
                 listdir(document.getElementById('fbheader').innerHTML);
@@ -2852,11 +2907,13 @@
             data.name = filename;
             $.post("api/newfile", data).done(function(resp) {
                 if (resp.error) {
-                    var $toastContent = $("<div><pre>" + resp.message + "\n" + resp.path + "</pre></div>");
+                    var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp.message + "\n" + resp.path);
                     Materialize.toast($toastContent, 5000);
                 }
                 else {
-                    var $toastContent = $("<div><pre>" + resp.message + "</pre></div>");
+                    var $toastContent = $("<div><pre></pre></div>");
+                    $toastContent.find("pre").text(resp.message);
                     Materialize.toast($toastContent, 2000);
                 }
                 listdir(document.getElementById('fbheader').innerHTML);
