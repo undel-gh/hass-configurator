@@ -38,6 +38,17 @@ class DockerRuntimeLockTests(unittest.TestCase):
         self.assertNotIn("RUN apt-get", source)
         self.assertNotIn("pip install --no-cache-dir hass-configurator", source)
 
+    def test_ci_requires_timestamp_rewriting_for_both_image_exports(self):
+        from scripts.check_docker_runtime_lock import REPO
+
+        workflow = (REPO / ".github/workflows/offline-foundation.yml").read_text(
+            "utf8")
+        self.assertEqual(workflow.count("--output type=docker,rewrite-timestamp=true"),
+                         2)
+        self.assertIn('id_a=$(docker image inspect', workflow)
+        self.assertIn('id_b=$(docker image inspect', workflow)
+        self.assertIn('if [ "$id_a" != "$id_b" ]', workflow)
+
     def test_rejects_unhashed_duplicate_and_unpinned_runtime_dependency(self):
         original = LOCK.read_text("utf8")
         with tempfile.TemporaryDirectory() as folder:
