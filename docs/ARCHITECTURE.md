@@ -1,61 +1,102 @@
-# Offline Architecture
+# Offline Architecture — normative target (ADR register)
 
-Status: proposed; retain Python HTTP server initially.
+**Status:** normative proposal for PR #12. Once approved, every implementation PR **MUST** comply or submit an explicit ADR change for review. This documents desired behavior; it does **not** assert current implementation or real HA Ingress verification.
+
+## Context and verified baseline
+- `hass_configurator/configurator.py` is a monolithic `BaseHTTPRequestHandler` with `endswith(...)` dispatch. GET handlers include `/api/file`, `/api/download`, `/api/listdir`, `/api/prefs`, config/reload endpoints and static routes; POST includes `/api/save`, `/api/upload`, `/api/exec_command`, Git operations and more.
+- `hass_configurator/dev.html` contains extensive inline JavaScript and event-handler attributes. The Home Assistant event observer calls `new WebSocket(document.getElementById("ws_uri").value)`; **this app does not operate its own WebSocket endpoint**.
+- `dev.html` uses Ace 1.9.6 script URLs from cdnjs, Materialize CSS 0.100.2 and MDI CSS 3.4.93 from cdnjs, while jQuery 3.6.0, js-yaml, Materialize JS and some fonts are local.
+- `setup.py` currently reports 0.6.0 while `hass_configurator/configurator.py` contains 0.7.0; current Dockerfile installs public PyPI code rather than this fork.
+- `master` is the implementation base; historical `offline` is not to be merged wholesale.
+
+## Component design
 
 ```mermaid
-flowchart LR
-  B[Browser / HA Ingress] --> H[Python RequestHandler]
-  H --> T[HTML page]
-  H --> S[Allowlisted /assets route]
-  H --> API[Existing API routes]
-  S --> P[Packaged resources]
-  P --> ACE[Ace core, modes, themes, workers]
-  P --> UI[Materialize CSS/JS, MDI/fonts, jQuery, js-yaml]
-  API --> FS[Constrained configuration filesystem]
-  API --> HA[Optional LAN HA REST/WS]
-  API --> OPS[Optional Git and shell operations]
+flowchart TD
+  B[Browser / actual or simulated HA Ingress] --> P[Trusted ingress proxy; optional path stripping]
+  P --> H[BaseHTTPRequestHandler transport adapter]
+  H --> R[PERMANENT route dispatcher]
+  R --> S[Static package-resource controller]
+  R --> A[Existing API controllers]
+  R --> T[HTML template controller]
+  S --> V[Versioned static asset manifest]
+  V --> ACE[ACE core / extensions / modes / themes / workers]
+  V --> FE[CSS / JS / icons / fonts]
+  A --> FS[Constrained filesystem]
+  A --> OPS[Privileged Git / shell operations]
+  T --> PREFS[Non-secret preferences]
+  B --> WS[Optional configured HA WebSocket URI]
 ```
 
-## Existing topology
-- `hass_configurator/configurator.py`: monolithic BaseHTTPRequestHandler, API operations, HTML rendering and repeated `endswith` static routes.
-- `hass_configurator/dev.html`: combined HTML + large inline JS; loads Ace 1.9.6 and extensions, Materialize 0.100.2 CSS and MDI 3.4.93 CSS from cdnjs.
-- `hass_configurator/{jquery-3.6.0.min.js,js-yaml.min.js,materialize.min.js,style.css,material-icons.fallback.css,*.woff2}`: partially-localized assets already in `master`.
-- `MANIFEST.in` names a few local assets; `Dockerfile` installs generic PyPI `hass-configurator` rather than fork source.
-- Root-level `configurator.py` and `dev.html` are parallel historical copies; identify actual consumers before changing or removing.
+### Permanent router and response boundary — P0, #2
+**ADR-003 (revised):** retain `BaseHTTPRequestHandler` only as the initial HTTP transport **adapter**. Extract a **permanent**, testable route dispatcher and common response writer in #2, *not* a temporary asset-only `endswith` branch. A full framework migration and decomposition of UI remain optional P2 work (#11). P1 security controls (#7/#13) must be integrated into the permanent dispatch/authorization/response boundary rather than scattered across raw handlers.
 
-## Target boundaries
-**Build time:** verified pinned upstream archives → offline asset vendor tree → hash/licenses/SBOM → complete wheel/sdist/image. Network can be used for controlled build-time dependency download; never needed for browser runtime.
+- Dispatch MUST compare **normalized exact routes and methods**, except explicit safe prefixes for static assets; static routes, HTML and `/api/*` MUST be isolated. Preserve existing API compatibility until tests demonstrate a safe migration.
+- Route/controller code MUST return a structured response result (status, headers, body/stream) to a single response writer. The transport MUST emit exactly one status line/header section and handle malformed input, 404/405 and exceptions deterministically. Centralize no-store policy and security headers here.
+- Resolve static assets via an allowlisted **package manifest**, not request-controlled filesystem paths. Reject traversal and encoded escapes, separators, symlink escapes and directory listings. Authorization for app data MUST be checked independently from static file confinement.
+- Avoid introducing an untested blanket rewrite of all existing API behavior in P0. First provide compatible adapters and tests; move mutating handlers to policy-checked route functions in P1.
+- P0 tests MUST exercise method separation, route collisions (e.g., `/evil/api/save`), exceptions, repeated/double response headers, malicious paths and ingress.
 
-**Browser runtime:** resolve same-origin URLs for HTML, CSS/JS/fonts, API operations and Ace lazy-loaded resources from a canonical application base. Explicit Ace `basePath`, `modePath`, `themePath`, `workerPath`. Avoid root-absolute paths that would escape a Home Assistant ingress prefix.
+### Browser base URL and actual HA Ingress — P0/P1, #2/#8
+Official HA guidance: [Contributors ingress guide](https://contributors.home-assistant.io/apps/guides/ingress/) and [HA developer docs](https://developers.home-assistant.io/docs/apps/presentation/). Ingress mount paths vary per installation, and its proxy injects `X-Ingress-Path`. The exact live behavior is subject to P1 validation.
 
-**HTTP static route:** allowlisted package resource namespace (suggest `assets/`), strict URL parsing, safe path normalization and MIME. Keep separate from `/api/*` and file editing endpoints, prohibit traversal, avoid double response headers and leaking config files.
+1. **Browser-visible base:** use a canonical document directory URL ending in `/` as the base for relative `assets/...` and `api/...`. Confirm handling of a missing trailing slash at the proxy boundary; do not redirect from backend to origin-root `/` when mounted under an opaque prefix.
+2. **HTML/static:** HTML and static/script/font URLs MUST resolve under that externally visible directory. The ingress proxy MAY strip the prefix, so internal handlers see normalized `/`, `/assets/...` and `/api/...`; they MUST NOT assume that the external opaque prefix is present internally.
+3. **API calls:** frontend code SHOULD use a centralized `new URL('api/...', appBase)` helper and MUST NOT hard-code origin-root `/api/`. Apply to fetch/AJAX, forms, upload, download and Git actions. Existing paths are enumerated in current code and MUST be covered by regression tests.
+4. **Redirects and new tabs:** resolve internal redirects relative to application base (or use a correctly configured proxy's rewrite). New tabs MUST retain the ingress prefix and MUST use `noopener` when opening additional content; audit existing `window.location.origin + window.location.pathname` and `window.open('api/download?...')` behavior before changing it.
+5. **Ingress header trust:** `X-Ingress-Path` is a **supported HA header**, not intrinsically untrustworthy. Prefer relative browser URLs when sufficient. If a server-rendered absolute URL/base is required, accept a forwarded ingress prefix **only** on traffic from explicitly configured trusted proxy peers and only when the ingress deployment mode is enabled; peers MUST strip/sanitize user-supplied versions before setting it. Validate path syntax, reject control chars, scheme/host and traversal. Direct standalone clients MUST NOT be able to spoof it. P1 real HA ingress tests MUST confirm the supported header semantics and proxy peer restrictions (official docs mention `172.30.32.2`; configure rather than assume a universal address).
+6. **WebSocket:** HASS Configurator does **not** serve an app-origin WS. Its only current WS behavior is the optional HA event observer using the configured `ws_uri` / `HASS_WS_API` or derived local HA WS URL. Do **not** invent a `/ws` route or require ingress WebSocket routing. The configured endpoint MUST be explicitly validated and approved in CSP/connect-src and network-allowlist tests, and its failure MUST NOT prevent local editing.
+7. **Acceptance split:** **P0:** simulated ingress with prefix stripping plus root mode, API/static, redirects, new tabs and HA WS URL behavior. **P1:** an actual HA OS add-on/Ingress deployment and trace showing the same behavior. A simulated prefix is not proof of real HA support.
 
-**Application API:** preserve existing file read/write/management and local HA REST/WS interactions. Harden authorization, path confinement, CSRF and privileged shell/Git actions in P1; address any critical blockers found sooner.
+### Asset provenance and resolution — P0, #1/#3
+**ADR-006:** candidate single authoritative source for initial Ace bundle is the upstream `ace-builds@1.9.6` npm release tarball, using the **`src-min-noconflict`** build family. `ace-builds` contains distinct `src`, `src-min`, `src-noconflict` and `src-min-noconflict` variants; do not mix families or fetch extensions/workers independently from CDNs. #1 MUST verify tarball availability, integrity and compatibility; #3 MUST record any justified alternative in a new ADR.
 
-**Deployment:** standalone Python wheel, fork-built Docker container, optionally downstream official/community HA OS add-on packaging. Do not mistake a Python fork release for an updated official add-on.
+- Capture official package name, exact version, resolved immutable tarball URL, package-provided `dist.integrity` and per-file SHA-256 in a checked-in machine-readable lock/manifest. No unverified downloaded file is accepted at build time. Preserve license/NOTICE.
+- Source layout MUST retain `ace.js`, `ext-modelist.js`, `ext-language_tools.js`, actually referenced `mode-*.js`, `theme-*.js`, `keybinding-*.js`, `worker-*.js` and any transitive dependencies in the **same** family. Determine required closure from HTML choices plus browser network traces; test mode/theme switches and workers.
+- Asset paths are derived from a versioned static base, including `ace.config.set('basePath', ...)`, `modePath`, `themePath`, `workerPath`. Avoid hidden dependence on cdnjs or mixed-version files.
+- All future upgrades MUST update the lock, license listing, asset closure test and offline smoke in one PR.
 
-## Home Assistant Ingress URL and proxy contract (P0 design)
+### Cache-busting and response policy — P0, #2/#5/#6
+**ADR-009:** use **content-addressed versioned asset URL prefix** `assets/v<manifest-digest>/...` (e.g. the first 12+ hex characters of a SHA-256 manifest digest; exact length and collision policy defined in #2). Names may remain `ace.js` / `worker-yaml.js` *inside* the versioned tree. Do not use fixed asset URLs with long-lived caching or rely solely on `?v=...`.
 
-The following is the **target design**, not a claim of verified HA OS behavior. Confirm the actual Supervisor ingress path rewriting and forwarded-header set during P1 real-add-on tests.
+| Resource | Cache policy | Extra controls |
+| --- | --- | --- |
+| Fingerprinted static JS/CSS/fonts/worker scripts | `Cache-Control: public, max-age=31536000, immutable` | `Content-Type`, `X-Content-Type-Options: nosniff`; served from package only |
+| HTML/bootstrap, auth/session-aware redirects, error pages | `Cache-Control: no-store` | Never expose ingress tokens or HA credentials to shared caches |
+| `/api/*` including file payload, edits, preferences, privileged ops | `Cache-Control: no-store` | Authorization, content type, no cache of secrets |
+| Unversioned compatibility static endpoints (if temporarily retained) | `Cache-Control: no-cache, must-revalidate` | Remove after consumers migrate; no immutable claim |
 
-1. **External mount:** the browser sees an opaque prefix such as `https://ha.example/api/hassio_ingress/TOKEN/`. A reverse proxy may strip that prefix before forwarding requests to the Python app; the backend sees `/`, `/assets/...`, or `/api/...`. It must not assume that its request path contains the external prefix or compare the externally visible `/prefix/assets/...` with an internal `/assets/...` verbatim.
-2. **Canonical HTML base:** generate relative references from the current canonical directory URL, ending with `/`. For the base page, use no root-relative asset/API URLs. A no-slash entry URL must be redirected to its slash-terminated **external** equivalent by the responsible reverse proxy, or the frontend must derive the correct directory base before loading relative assets; never issue a backend redirect to `/` that discards the external prefix. Verify that both direct navigation and refresh work. Avoid relying on `<base>` until its effects on fragment links, anchor navigation and downloads are tested.
-3. **Static assets:** from the canonical page URL, use relative `assets/...`; CSS `url(...)` is relative to the stylesheet location. Ace module/worker paths are explicit URLs constructed from that same base (`assets/ace/...`) rather than implicit CDN/default paths. They remain prefixed in the browser, even if the proxy strips that prefix at the backend.
-4. **Application APIs:** centralize URL construction using `new URL('api/...', applicationBase)` or equivalent, consistently for GET, POST, upload, download and file navigation. Do not call root-absolute `/api/*`. Route internal `/api/*` separately from `/assets/*` after the proxy's path translation.
-5. **Redirects and new tabs:** internal response `Location` should be relative to the current external base (or be rewritten by a trusted ingress proxy). Open new tabs with URLs derived from the same application base; use `noopener`/`noreferrer` as applicable. Do not generate origin-root URLs or leak access tokens in external links. Explicit external documentation navigation is an exception to offline network policy only upon user action.
-6. **WebSockets:** distinguish (a) optional Home Assistant API observer on a separately configured LAN endpoint from (b) any WebSocket served by this app through ingress. For (b), derive the `ws:` or `wss:` URL from the browser-visible `applicationBase`, preserving the external prefix. For (a), use the configured approved HA WS URL and no fallback to a public endpoint; WebSocket connection failure must not block local editing.
-7. **Prefix ownership / headers:** preferred mode is relative URL construction plus proxy path-strip semantics, **not** accepting arbitrary client `X-Ingress-Path`. If tests prove a trusted forwarded prefix is required for a response (e.g. absolute redirect), allow it only behind an explicitly configured, authenticated/trusted reverse proxy that strips client-supplied variants and injects a verified value; validate prefix syntax and never accept it from arbitrary direct clients. Otherwise omit such headers entirely. Document proxy/IP trust boundary and test spoofed headers.
-8. **Two acceptance gates:** **P0** simulated prefix reverse proxy + missing-slash, API, assets, redirect, new tab, and applicable WS tests; **P1** actual Home Assistant add-on ingress with browser devtools/netlog and compatible HA API behavior. These are distinct checks, not interchangeable.
+- A new build MUST get a new digest if any bundled byte or the asset map changes; all generated references including Ace lazy-loading MUST use the new digest.
+- The HTML entry MUST resolve the *current* digest. Reloading after add-on upgrade MUST fetch a new HTML entry and new asset set; cold-cache and warm-cache upgrades must both be tested under simulated ingress.
+- Already-open pages may reference an old asset set after in-place upgrade. Define deterministic recovery (reload prompt or maintained old assets for a rolling update); never silently load a different build's worker and script. Document HA add-on restart behavior.
+- Optional ETag/304 for immutable assets is allowed but not necessary; security header tests MUST verify no-store for sensitive responses.
+- Tests MUST cover version change, identical-build stability, correct MIME, root/prefix URLs and zero stale asset usage after reload.
 
-## Offline network policy
-Any attempted browser runtime request to a public external origin is a failure during supported scenarios—even a failed/nonblocking CDN fallback. Explicit user-opened external documentation links and explicitly allowlisted local/LAN HA REST/WS are the only exceptions; capture attempted requests and exceptions in E2E artifacts. Start a minimal smoke with static route work (#2), extend alongside #3–#5, finalize in #6.
+### CSP and frontend migration — P1, #13
+**ADR-008:** CSP is owned by [#13](https://github.com/undel-gh/hass-configurator/issues/13) alongside [#7](https://github.com/undel-gh/hass-configurator/issues/7) security review. The current inline scripts and inline handlers make immediate strict `script-src 'self'` infeasible. An honest staged plan is mandatory:
+- inventory execution surfaces, report-only violations and legitimate Ace workers / HA WS in a test matrix;
+- migrate the **minimum security-blocking inline JS and event handlers in P1** as required for an enforceable policy. Broad frontend refactoring remains P2, not a reason to defer P1 security indefinitely;
+- review `default-src`, `script-src`, `style-src`, `font-src`, `img-src`, `worker-src`, `connect-src`, `base-uri`, `object-src` and ingress framing policy;
+- test under actual HA Ingress and standalone; no silent acceptance of `unsafe-inline`/`unsafe-eval` as “hardened.” Residual exceptions or unenforced directives require explicit release-risk disposition, owner and follow-up, not a hidden waiver.
 
-## ADRs
-- ADR-001: implement on `master`, selectively port ideas from divergent `offline`.
-- ADR-002: never rely on CDN or dynamic Internet runtime downloads.
-- ADR-003: avoid full HTTP framework/UI rewrite until after verified offline MVP.
-- ADR-004: preserve relative ingress paths and root deployment.
-- ADR-005: security-sensitive API changes require independent regression tests.
+### External network policy
+**ADR-002:** all browser-initiated runtime requests during supported scenarios MUST be to the application's own origin or explicitly approved local/LAN HA REST/WS. Any attempted public-origin fetch MUST fail CI even if unsuccessful/fallback, including worker/CDN/font/image requests. Opening external documentation by a deliberate user action is an explicit exception; no automatic prefetch.
 
-## Threats and controls
-Path traversal (including encoded forms), symlink escape, TOCTOU, unauthorized mutating requests, secrets injected into HTML, XSS, permissive proxy trust, unsafe command/Git operations and library supply-chain risk. No arbitrary filesystem paths in static serving; least-privilege runtime. CSP restricted to self where compatible, with explicit optional LAN HA connect origin. Existing inline JS may require a staged CSP migration; do not claim strict CSP until verified.
+## ADR register and change governance
+
+| ADR | Decision | Owner / verification |
+| --- | --- | --- |
+| ADR-001 | Base implementation on `master`; review historical offline branch selectively | #1, PR review |
+| ADR-002 | No external-origin fetch attempts during normal runtime | #6/#14, browser attempt tracing |
+| ADR-003 | Permanent router/response boundary in P0, transport adapter retained | #2/#7, HTTP tests |
+| ADR-004 | Relative root/ingress URLs + trusted header policy | #2/#8, simulated and real ingress |
+| ADR-005 | Security-sensitive API changes have abuse/regression tests | #7, CI |
+| ADR-006 | One pinned, intact Ace build family from authoritative artifact | #1/#3, lock integrity + E2E |
+| ADR-007 | Normative docs and PR requirement-test traceability | #14, required review checklist |
+| ADR-008 | Staged CSP with explicit decision owner | #13/#7, policy tests |
+| ADR-009 | Fingerprinted assets, explicit per-resource cache headers | #2/#5/#6, upgrade/cache tests |
+
+**Change rule:** altering a normative ADR MUST update `docs/ARCHITECTURE.md`, `docs/SPECIFICATION.md`, `docs/TRACEABILITY.md`, relevant issues and test evidence in the same PR. Document exceptions by expiry and responsible issue.
+
+## Remaining security threats
+Filesystem root bypass, symlink/TOCTOU, unauthorized state-changing actions and CSRF, unsafe command/Git privileges, XSS/HTML interpolation, untrusted forwarded headers, leakage of API tokens, stale ingress caching, supply-chain drift and silent CDN fetches. P0 MUST NOT introduce new vulnerabilities; P1 release is blocked by unresolved high-severity findings.
