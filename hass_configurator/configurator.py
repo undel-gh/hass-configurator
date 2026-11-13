@@ -13,6 +13,7 @@ import ssl
 import socket
 import socketserver
 import base64
+import binascii
 import ipaddress
 import signal
 import cgi
@@ -1741,6 +1742,26 @@ class AuthHandler(RequestHandler):
         self.send_header('X-Content-Type-Options', 'nosniff')
         self.end_headers()
 
+    def _valid_basic(self, header):
+        """Malformed Authorization must be a challenge, never a 500 or crash."""
+        if not header or len(header) > 8192:
+            return False
+        try:
+            scheme, token = header.split(" ", 1)
+            if scheme.lower() != "basic":
+                return False
+            decoded = base64.b64decode(token, validate=True).decode("utf-8")
+            username, password = decoded.split(":", 1)
+            if not USERNAME or not PASSWORD:
+                return False
+            if PASSWORD.startswith("{sha256}"):
+                password = "{sha256}%s" % hashlib.sha256(
+                    password.encode("utf-8")).hexdigest()
+            return (hmac.compare_digest(username.encode("utf-8"), USERNAME.encode("utf-8"))
+                    and hmac.compare_digest(password.encode("utf-8"), PASSWORD.encode("utf-8")))
+        except (ValueError, UnicodeError, binascii.Error, AttributeError, TypeError):
+            return False
+
     def do_GET(self):
         if not verify_hostname(self.headers.get('Host', '')):
             self._send_block(403, "Forbidden")
@@ -1750,16 +1771,7 @@ class AuthHandler(RequestHandler):
             self._send_auth_challenge()
             self.wfile.write(bytes('no auth header received', 'utf-8'))
         else:
-            authorization = header.split()
-            if len(authorization) == 2 and authorization[0] == "Basic":
-                plain = base64.b64decode(authorization[1]).decode("utf-8")
-                parts = plain.split(':')
-                username = parts[0]
-                password = ":".join(parts[1:])
-                if PASSWORD.startswith("{sha256}"):
-                    password = "{sha256}%s" % hashlib.sha256(password.encode("utf-8")).hexdigest()
-                if (hmac.compare_digest(username, USERNAME)
-                        and hmac.compare_digest(password, PASSWORD)):
+            if self._valid_basic(header):
                     if BANLIMIT:
                         FAIL2BAN_IPS.pop(self.client_address[0], None)
                     self._authenticated_basic = True
@@ -1784,16 +1796,7 @@ class AuthHandler(RequestHandler):
             self._send_auth_challenge()
             self.wfile.write(bytes('no auth header received', 'utf-8'))
         else:
-            authorization = header.split()
-            if len(authorization) == 2 and authorization[0] == "Basic":
-                plain = base64.b64decode(authorization[1]).decode("utf-8")
-                parts = plain.split(':')
-                username = parts[0]
-                password = ":".join(parts[1:])
-                if PASSWORD.startswith("{sha256}"):
-                    password = "{sha256}%s" % hashlib.sha256(password.encode("utf-8")).hexdigest()
-                if (hmac.compare_digest(username, USERNAME)
-                        and hmac.compare_digest(password, PASSWORD)):
+            if self._valid_basic(header):
                     if BANLIMIT:
                         FAIL2BAN_IPS.pop(self.client_address[0], None)
                     self._authenticated_basic = True
