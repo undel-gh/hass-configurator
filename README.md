@@ -3,7 +3,7 @@
 ### Configuration UI for Home Assistant
 
 The HASS Configurator is a small webapp (you access it via web browser) that provides a filesystem-browser and text-editor to modify files on the machine the configurator is running on. It has been created to allow easy configuration of [Home Assistant](https://home-assistant.io/). It is powered by [Ace editor](https://ace.c9.io/), which supports syntax highlighting for various code/markup languages. [YAML](https://en.wikipedia.org/wiki/YAML) files (the default language for Home Assistant configuration files) will be automatically checked for syntax errors while editing.  
-__FORK STATUS:__ This fork now bundles its editor JavaScript, CSS, icons and fonts locally. Its P0 browser/packaging checks cover offline operation, including simulated Ingress. This is **not yet an approved public/HA OS release**: real Supervisor Ingress, auth/CSRF/CSP and license/SBOM reviews remain separate P1 gates. See [P0 packaging](docs/P0_PACKAGING.md) and [the release matrix](docs/TRACEABILITY.md).
+__FORK STATUS:__ This fork now bundles its editor JavaScript, CSS, icons and fonts locally. Its P0 browser/packaging checks cover offline operation, including simulated Ingress. This is **not yet an approved public/HA OS release**: real Supervisor Ingress, final security review/CSP and license/SBOM reviews remain separate P1 gates. Issue #7 authentication/CSRF and filesystem confinement are under review in [draft PR #21](https://github.com/undel-gh/hass-configurator/pull/21); do not deploy that branch to production. See [P0 packaging](docs/P0_PACKAGING.md) and [the release matrix](docs/TRACEABILITY.md).
 
 ### Feature list:
 
@@ -13,7 +13,7 @@ __FORK STATUS:__ This fork now bundles its editor JavaScript, CSS, icons and fon
 - Home Assistant event observer (connect to Home Assistant via WebSocket and see all the events that happen)
 - Restart Home Assistant directly with the click of a button
 - SSL support
-- Optional authentication and IP filtering for added security
+- Mandatory authenticated API/HTML access for network listeners, or local-only testing on a loopback-bound listener; IP filtering remains additional defense
 - Direct links to Home Assistant documentation and icons
 - Execute shell commands
 - Stage and commit changes in Git repositories, create and switch between branches, push to SSH remotes
@@ -25,6 +25,25 @@ __FORK STATUS:__ This fork now bundles its editor JavaScript, CSS, icons and fon
 
 If there is anything you want to have differently, feel free to fork and enhance. And if something is not working, create an issue here and I will have a look at it.  
 _WARNING_: This tool allows you to browse your filesystem and modify files. So be careful which files you edit, or you might break critical parts of your system.
+
+### P1 security changes — draft PR #21 (not released)
+
+The current security branch changes defaults and routes intentionally. An
+editor bound to `0.0.0.0` without credentials can no longer serve dynamic UI
+or API responses. Configure `USERNAME` and `PASSWORD` for remote access,
+and HTTPS or a trusted authenticated transport. For standalone development
+use `--listen 127.0.0.1` with no untrusted local proxy in front of it.
+
+All browser mutations now send `X-CSRF-Token`. Home Assistant restart,
+check-config and reload actions require POST instead of GET. File access is
+restricted to the configured `BASEPATH` even when legacy settings request
+`ENFORCE_BASEPATH=false`. Git, shell, network administration and HA control
+are disabled by default until explicitly enabled in settings. Shell execution
+also needs an absolute-path `EXEC_ALLOWED_BINARIES` allowlist.
+
+See [P1 API security threat model](docs/P1_API_SECURITY.md) before testing.
+**Do not use these draft changes as proof of actual Home Assistant OS Ingress
+authentication or a secure deployment.**
 
 ### Installation
 Possible methods to install the configurator are documented in the Wiki: [Installation](https://github.com/danielperna84/hass-configurator/wiki/Installation)
