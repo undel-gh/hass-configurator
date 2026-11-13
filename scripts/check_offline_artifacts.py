@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Validate that wheel/sdist contain the exact committed offline assets."""
 import hashlib
+from email.parser import BytesParser
 import json
 from pathlib import Path
 import sys
@@ -8,6 +9,7 @@ import tarfile
 import zipfile
 
 from hass_configurator.http_routing import PACKAGE_ASSETS
+from hass_configurator._version import VERSION
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = json.loads((ROOT / "hass_configurator/vendor/manifest.json").read_text("utf8"))
@@ -31,6 +33,9 @@ def verify(files, label):
     if missing or different:
         raise RuntimeError("%s incomplete/corrupted packaged resources: missing=%s changed=%s" %
                            (label, missing[:5], different[:5]))
+    version_file = "hass_configurator/_version.py"
+    if files.get(version_file) != (ROOT / version_file).read_bytes():
+        raise RuntimeError("%s missing or stale shared runtime version file" % label)
     extra_manifest = files.get("hass_configurator/vendor/manifest.json")
     if extra_manifest is None:
         raise RuntimeError("%s missing the vendor integrity manifest" % label)
@@ -40,23 +45,45 @@ def verify(files, label):
           (label, len(MANIFEST["resources"]), len(PACKAGE_ASSETS)))
 
 
+
+def assert_metadata(payload, label):
+    metadata = BytesParser().parsebytes(payload)
+    if metadata.get("Version") != VERSION or metadata.get("Name", "").lower().replace("_", "-") != "hass-configurator":
+        raise RuntimeError("%s wrong distribution metadata: %s/%s; expected hass-configurator/%s" %
+                           (label, metadata.get("Name"), metadata.get("Version"), VERSION))
+
+
+
 def main(wheel_dir, sdist_dir):
     wheels = list(wheel_dir.glob("*.whl"))
     sdists = list(sdist_dir.glob("*.tar.gz"))
     if len(wheels) != 1 or len(sdists) != 1:
         raise RuntimeError("Expected exactly one wheel and one sdist")
     with zipfile.ZipFile(wheels[0]) as archive:
+        dist_info = [n for n in archive.namelist() if n.endswith(".dist-info/METADATA")]
+        if len(dist_info) != 1:
+            raise RuntimeError("wheel missing unique distribution METADATA")
+        assert_metadata(archive.read(dist_info[0]), "wheel")
         verify({n: archive.read(n) for n in archive.namelist() if
                 n.startswith("hass_configurator/vendor/") or
+                n == "hass_configurator/_version.py" or
                 n in {"hass_configurator/" + filename for filename in PACKAGE_ASSETS}},
                "wheel")
     with tarfile.open(sdists[0], "r:gz") as archive:
         files = {}
+        top_metadata = [
+            member for member in archive.getmembers()
+            if member.isfile() and member.name.count("/") == 1
+            and member.name.endswith("/PKG-INFO")
+        ]
+        if len(top_metadata) != 1:
+            raise RuntimeError("sdist missing unique root PKG-INFO")
+        assert_metadata(archive.extractfile(top_metadata[0]).read(), "sdist")
         for member in archive.getmembers():
             if not member.isfile() or "hass_configurator/" not in member.name:
                 continue
             path = member.name[member.name.index("hass_configurator/"):]
-            if path.startswith("hass_configurator/vendor/") or path in {
+            if path.startswith("hass_configurator/vendor/") or path == "hass_configurator/_version.py" or path in {
                     "hass_configurator/" + name for name in PACKAGE_ASSETS}:
                 files[path] = archive.extractfile(member).read()
         verify(files, "sdist")
