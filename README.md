@@ -1,5 +1,5 @@
 # HASS Configurator
-[P0 CI workflow](https://github.com/undel-gh/hass-configurator/actions/workflows/offline-foundation.yml)
+[![Offline foundation CI](https://github.com/undel-gh/hass-configurator/actions/workflows/offline-foundation.yml/badge.svg?branch=master)](https://github.com/undel-gh/hass-configurator/actions/workflows/offline-foundation.yml)
 ### Configuration UI for Home Assistant
 
 The HASS Configurator is a small webapp (you access it via web browser) that provides a filesystem-browser and text-editor to modify files on the machine the configurator is running on. It has been created to allow easy configuration of [Home Assistant](https://home-assistant.io/). It is powered by [Ace editor](https://ace.c9.io/), which supports syntax highlighting for various code/markup languages. [YAML](https://en.wikipedia.org/wiki/YAML) files (the default language for Home Assistant configuration files) will be automatically checked for syntax errors while editing.  
