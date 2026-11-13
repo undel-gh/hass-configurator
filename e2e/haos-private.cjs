@@ -6,9 +6,23 @@ function parseIngressUrl(value) {
   catch { return null; } // URL parsing diagnostics can echo input secrets.
 }
 
+function readPrivateStorageState(path) {
+  if (!path) return null;
+  try {
+    const state = JSON.parse(fs.readFileSync(path, 'utf8'));
+    if (!state || !Array.isArray(state.cookies) || !Array.isArray(state.origins)) {
+      return null;
+    }
+    return state;
+  } catch {
+    // Read errors can contain absolute file paths and must not reach Playwright.
+    return null;
+  }
+}
+
 function assertStorageState(path) {
-  if (!path || !fs.existsSync(path) || !fs.statSync(path).isFile()) {
-    throw new Error('HAOS_STORAGE_STATE is missing or unreadable (private path omitted).');
+  if (!readPrivateStorageState(path)) {
+    throw new Error('HAOS_STORAGE_STATE is missing, unreadable or invalid (private path omitted).');
   }
 }
 
@@ -35,4 +49,4 @@ async function waitPrivatePopup(popup) {
   }
 }
 
-module.exports = { parseIngressUrl, assertStorageState, redactIngressText, navigatePrivate, waitPrivatePopup };
+module.exports = { parseIngressUrl, readPrivateStorageState, assertStorageState, redactIngressText, navigatePrivate, waitPrivatePopup };
