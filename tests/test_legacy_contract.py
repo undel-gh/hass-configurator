@@ -17,7 +17,7 @@ from hass_configurator.http_routing import Assets, GET_API, POST_API, Router
 
 EXPECTED_GET = {
     "/api/file", "/api/download", "/api/listdir", "/api/abspath",
-    "/api/parent", "/api/prefs", "/api/netstat", "/api/restart",
+    "/api/parent", "/api/prefs", "/api/version", "/api/netstat", "/api/restart",
     "/api/check_config", "/api/reload_automations", "/api/reload_scripts",
     "/api/reload_groups", "/api/reload_core",
 }
