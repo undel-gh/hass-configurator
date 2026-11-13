@@ -31,6 +31,11 @@ test('release identity agrees between HTML About dialog and API without external
   expect(api.cache).toContain('no-store');
   expect(api.version).toMatch(/^\d+\.\d+\.\d+/);
   await expect(page.locator('#modal_about .modal-content')).toContainText('Version: ' + api.version);
+  await expect(page.locator('#modal_about .modal-content a[href*="/releases"]'))
+    .toHaveAttribute('href', 'https://github.com/undel-gh/hass-configurator/releases');
+  // The fork release link must not erase attribution to the original author.
+  await expect(page.locator('#modal_about a[href="https://github.com/danielperna84"]'))
+    .toContainText('Daniel Perna');
   expect(pageErrors).toEqual([]);
   expect(publicAttempts).toEqual([]);
 });
