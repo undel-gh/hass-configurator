@@ -405,33 +405,20 @@ def get_dircontent(path, repo=None):
         staged = {}
         unstaged = {}
 
-    def sorted_file_list():
-        """Sort list of files / directories."""
-        dirlist = [x for x in os.listdir(path) if os.path.isdir(os.path.join(path, x))]
-        filelist = [x for x in os.listdir(path) if not os.path.isdir(os.path.join(path, x))]
-        if HIDEHIDDEN:
-            dirlist = [x for x in dirlist if not x.startswith('.')]
-            filelist = [x for x in filelist if not x.startswith('.')]
-        if DIRSFIRST:
-            return sorted(dirlist, key=lambda x: x.lower()) + \
-                sorted(filelist, key=lambda x: x.lower())
-        return sorted(dirlist + filelist, key=lambda x: x.lower())
+    # Listing and metadata come from one pinned directory descriptor:
+    # no os.listdir(path) / os.stat(path) race and no symlink follow.
+    entries = _fs().scan_dir(path)
+    if HIDEHIDDEN:
+        entries = [item for item in entries if not item["name"].startswith('.')]
+    entries.sort(key=lambda item: (
+        0 if DIRSFIRST and item["type"] == "dir" else 1,
+        item["name"].lower(),
+    ))
 
-    for elem in sorted_file_list():
-        edata = {}
-        edata['name'] = elem
+    for entry in entries:
+        edata = dict(entry)
         edata['dir'] = path
-        edata['fullpath'] = os.path.abspath(os.path.join(path, elem))
-        edata['type'] = 'dir' if os.path.isdir(edata['fullpath']) else 'file'
-        try:
-            stats = os.stat(os.path.join(path, elem))
-            edata['size'] = stats.st_size
-            edata['modified'] = stats.st_mtime
-            edata['created'] = stats.st_ctime
-        except Exception:
-            edata['size'] = 0
-            edata['modified'] = 0
-            edata['created'] = 0
+        edata['fullpath'] = os.path.abspath(os.path.join(path, entry["name"]))
         edata['changetype'] = None
         edata['gitstatus'] = bool(repo)
         edata['gittracked'] = 'untracked' if edata['fullpath'] in untracked else 'tracked'
