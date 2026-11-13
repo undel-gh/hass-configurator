@@ -147,3 +147,40 @@ The one-time vendor-download workflow was removed after generating the pinned bi
 Immutable container-base and transitive dependency locks remain #5/#9.
 P1 auth, filesystem confinement, real Supervisor Ingress and CSP remain
 independent release gates (#7/#8/#13).
+
+## PR #19 — immutable release Docker build paths
+
+- `Dockerfile` — official Python OCI index digest shared across stages,
+  image-local Git/OpenSSH/CA tools without `apt-get`; isolated hash-checked
+  dependency downloader, no-index fork wheel builder and offline runtime
+  installation through read-only bind mounts, without COPY/removal whiteout
+  layers. The runtime keeps the lock for audit.
+- `requirements/docker-runtime.lock` — five pinned direct and transitive
+  Python distributions with per-wheel SHA-256. Binary-only restriction.
+- `requirements/normalize_mtimes.py` — build-only fixed-epoch mtime
+  normalization for generated/downloading wheels and installed package files.
+- `scripts/check_docker_runtime_lock.py` — standard-library lock syntax,
+  direct dependency closure, exact wheel payload and installed version checks.
+- `tests/test_docker_runtime_lock.py`,
+  `tests/test_docker_mtime_normalizer.py` — negative hash/closure tests
+  and deterministic timestamp fixtures.
+- `.github/workflows/offline-foundation.yml` — official pinned base
+  smoke, wheelhouse hash verification, two BuildKit `--no-cache` images
+  compared byte-identically at local Docker image-ID level, plus existing
+  browser tests on the produced runtime image.
+
+Real HAOS/Ingress acceptance (#8), privileged API security (#7/#13) and
+full supply-chain licensing/vulnerability/SBOM review (#9) are separate.
+
+
+### Independent-review source and provenance invariants
+
+- `.github/workflows/offline-foundation.yml`: all four checkout steps select
+  PR HEAD or push SHA explicitly; the container-build step requires
+  `git rev-parse HEAD` to match that value before recording the exact commit,
+  epoch and reproducible image IDs.
+- `Dockerfile`: the official pinned OCI base digest is not a build ARG.
+  Its fixed OCI labels therefore cannot accidentally describe an overridden
+  foreign image.
+- `tests/test_docker_layer_diagnostics.py`: catches changed file bytes
+  behind identical saved layer archive member paths.

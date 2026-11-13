@@ -160,3 +160,38 @@ operation risks. Do not mark AT-11/AT-12, #7, #9, #13 or full #5 verified
 from this implementation. Reproducible build of transitive Python packages
 and immutable Docker base still requires a reviewed pin/update process. See
 [docs/P0_PACKAGING.md](P0_PACKAGING.md).
+
+## PR #19 — immutable Docker runtime closure, deterministic build release gate (#5)
+
+**No real HA OS/Supervisor checks are performed by this PR.** Record a green
+run for the exact reviewed HEAD before promoting any state to verified.
+
+| Requirement / gate | Automated evidence | Review boundary |
+| --- | --- | --- |
+| NFR-002 / NFR-011 / ADR-006 | Official `python:3.11.18-bookworm` index digest is pinned in the Dockerfile; the full `requirements/docker-runtime.lock` lists direct/transitive distributions with binary wheel SHA-256; `scripts/check_docker_runtime_lock.py` plus `tests/test_docker_runtime_lock.py` enforce exact hash, unique versions and setup requirements | Base image is larger than slim; supply-chain license/SBOM/vulnerability adjudication remains #9 |
+| NFR-007 / FR-008 / AT-08 | Fork wheel built with `--no-index --no-build-isolation --no-deps`; runtime deps installed from an offline wheelhouse with `--require-hashes` and `pip check`; container's installed versions and origin are verified with network disabled | Only linux/amd64 is demonstrated in CI; multi-architecture reproducibility not claimed |
+| NFR-009 / ADR-009 / AT-09 | CI performs **two no-cache BuildKit builds from one commit and SOURCE_DATE_EPOCH with `rewrite-timestamp=true`**, compares Docker image IDs, then runs installed-container/browser tests and preserves the existing root/Ingress A→B asset warm-cache tests | Registry push artifacts/attestations may have different OCI manifest digests; real Supervisor upgrades remain #8 |
+
+A matching browser asset digest alone is never sufficient as proof that the
+entire image is repeatable. See `docs/P0_PACKAGING.md` for source-epoch and
+lock regeneration. Real HA OS Ingress and privileged API hardening remain
+separate P1 acceptance (#8/#7/#13).
+
+
+### Independent review follow-up on PR #19 (source SHA/provenance)
+
+- Pull-request checks explicitly checkout PR **head SHA**, not GitHub's
+  default synthetic `refs/pull/N/merge`. Push checks checkout `github.sha`.
+  The Docker job compares checked-out HEAD to the expected event SHA,
+  derives `SOURCE_DATE_EPOCH` from that exact commit, and emits matching
+  `source_commit` / `event_source_commit` fields for audit.
+- All three Dockerfile `FROM` entries use the same literal official digest.
+  `PYTHON_BASE` cannot be silently overridden while the OCI provenance
+  labels remain pinned to the default.
+- `scripts/diagnose_docker_layers.py` compares layer member bytes and
+  metadata even if two archive entries reuse identical paths. A synthetic
+  malformed Docker-save fixture in `tests/test_docker_layer_diagnostics.py`
+  demonstrates the negative case.
+- Installed-file RECORD verification remains optional defense-in-depth
+  beyond the existing exact-wheel SHA-256 / `--require-hashes` checks.
+  Do not present wheel-RECORD hashing as independent source authenticity.
