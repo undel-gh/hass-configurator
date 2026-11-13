@@ -45,7 +45,9 @@ jobs:
   early-browser-smoke:
     name: Network-attempt smoke (Chromium)
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 25
+    env:
+      E2E_WORKSPACE: /tmp/hass-configurator-e2e-sandbox
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -64,7 +66,8 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Start standalone editor
         run: |
-          python -m hass_configurator.configurator --standalone --listen 127.0.0.1 --port 3218 > /tmp/configurator.log 2>&1 &
+          mkdir -p "$E2E_WORKSPACE"
+          python -m hass_configurator.configurator --standalone --listen 127.0.0.1 --port 3218 --basepath "$E2E_WORKSPACE" --enforce > /tmp/configurator.log 2>&1 &
           echo $! > /tmp/configurator.pid
           for i in $(seq 1 40); do
             if curl -fsS http://127.0.0.1:3218/api/prefs >/dev/null; then exit 0; fi
@@ -72,7 +75,7 @@ jobs:
           done
           cat /tmp/configurator.log
           exit 1
-      - name: Browser smoke and known offline debt
+      - name: Full browser E2E matrix (disposable workspace)
         working-directory: e2e
         run: npm test
       - name: Store browser audit and traces
