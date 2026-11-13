@@ -7,7 +7,13 @@ NAME = "hass-configurator"
 PACKAGE_NAME = "hass_configurator"
 # Parse the shared runtime version without importing runtime dependencies.
 version_source = (Path(__file__).resolve().parent / PACKAGE_NAME / "_version.py").read_text(encoding="utf-8")
-match = re.search(r'^VERSION = "([0-9]+\.[0-9]+\.[0-9]+(?:[a-zA-Z0-9.+-]*)?)"
+match = re.search(
+    r'^VERSION = "([0-9]+\.[0-9]+\.[0-9]+(?:[a-zA-Z0-9.+-]*)?)"$',
+    version_source, re.MULTILINE,
+)
+if not match:
+    raise RuntimeError("Missing or invalid VERSION in hass_configurator/_version.py")
+VERSION = match.group(1)
 
 setup(name=NAME,
       version=VERSION,
