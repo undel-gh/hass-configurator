@@ -9,6 +9,29 @@ permissions:
   contents: read
 
 jobs:
+  reproducible-lock-discovery:
+    name: TEMP discover base digest and runtime wheels
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - name: Pin official Python base and inspect CLI dependency coverage
+        run: |
+          set -euo pipefail
+          docker pull --platform linux/amd64 python:3.11.18-bookworm
+          docker buildx imagetools inspect python:3.11.18-bookworm | head -17
+          docker run --rm --platform linux/amd64 python:3.11.18-bookworm sh -c 'git --version; ssh -V; test -f /etc/ssl/certs/ca-certificates.crt; python --version'
+      - name: Capture all exact hashes from binary-only PyPI wheel closure
+        run: |
+          set -euo pipefail
+          docker run --rm --platform linux/amd64 python:3.11.18-bookworm sh -ec '
+            mkdir -p /tmp/hc-wheel-discovery
+            python -m pip download --disable-pip-version-check --only-binary=:all: --dest /tmp/hc-wheel-discovery pyotp==2.10.0 GitPython==3.2.1 legacy-cgi==2.6.4
+            echo BEGIN_SHA256_WHEEL_CLOSURE
+            cd /tmp/hc-wheel-discovery
+            sha256sum *.whl | sort -k2
+            echo END_SHA256_WHEEL_CLOSURE
+            python -m pip list --format=freeze | head -15
+          '
   routing-and-inventory:
     name: Routing / inventory (Python)
     runs-on: ubuntu-24.04
