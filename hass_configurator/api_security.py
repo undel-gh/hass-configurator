@@ -10,6 +10,7 @@ import os
 from pathlib import Path
 import secrets
 from contextlib import contextmanager
+from urllib.parse import urlsplit
 
 from hass_configurator.http_routing import Response
 
@@ -48,13 +49,28 @@ class ApiPolicy:
         except (ValueError, IndexError, TypeError):
             return False
 
+    @staticmethod
+    def _local_host_only(handler):
+        """Deny DNS rebinding against an unauthenticated loopback-only UI."""
+        raw = handler.headers.get("Host", "")
+        if not isinstance(raw, str) or any(ord(ch) < 32 or ord(ch) == 127 for ch in raw):
+            return False
+        try:
+            parsed = urlsplit("//" + raw)
+            return (parsed.hostname or "").lower() in {"localhost", "127.0.0.1", "::1"}
+        except ValueError:
+            return False
+
     def authorize(self, handler, method, path, *, allow_shell=False,
                   allow_git=False, allow_network=False, allow_ha_control=False):
         # The Basic handler must successfully authenticate this REQUEST, not
         # just present a proxy forwarding header or stale handler instance.
-        if not (getattr(handler, "_authenticated_basic", False)
-                or self._loopback_bound(handler)):
+        authenticated = bool(getattr(handler, "_authenticated_basic", False))
+        local_peer_and_listener = self._loopback_bound(handler)
+        if not (authenticated or local_peer_and_listener):
             return self._deny(403, "Authentication required (Basic Auth or loopback-only binding)")
+        if not authenticated and not self._local_host_only(handler):
+            return self._deny(403, "Untrusted Host on loopback-only editor")
         if method == "POST" and path in HA_CONTROL and not allow_ha_control:
             return self._deny(403, "HA control is disabled")
         if method == "POST":
