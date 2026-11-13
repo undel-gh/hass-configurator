@@ -70,8 +70,12 @@ OpenSSH and CA certificates, verified with a network-disabled container, so
 the fork Dockerfile performs **no apt operations**. The tradeoff is a larger
 base image and greater preinstalled OS-package surface than the slim build.
 The base's complete filesystem, including OS package versions and bundled
-Python build tools, is fixed by the digest. Refresh that digest deliberately
-after security/compatibility review; do not rely on a mutable tag.
+Python build tools, is fixed by the digest. The Dockerfile uses the same
+**literal digest in all three `FROM` stages** and intentionally has no
+`PYTHON_BASE` build argument: allowing overrides while keeping hard-coded
+OCI `org.opencontainers.image.base.*` labels would create false provenance.
+To change the base, update and review the stages, OCI labels and test pins
+together, then rerun the full release gate. Do not rely on a mutable tag.
 
 All direct and transitive Python runtime dependencies are fixed by
 `requirements/docker-runtime.lock` with one **exact version and SHA-256
@@ -98,12 +102,27 @@ The image build has three stages:
    `/usr/local/share/hass-configurator/`.
    No pip/npm/apt updates are attempted at runtime.
 
-To reproduce the CI build with a given Git commit, check out that exact
-commit and use the same epoch and platform:
+For **pull requests**, Actions explicitly checks out
+`${{ github.event.pull_request.head.sha }}`, not the default synthetic
+`refs/pull/N/merge` commit. For **push**, it checks out `${{ github.sha }}`.
+The Docker job asserts that `git rev-parse HEAD` equals the expected event
+source SHA before selecting `SOURCE_DATE_EPOCH` from **that same SHA**.
+The provenance artifact records both `source_commit` and
+`event_source_commit` (which must match), plus epoch and image IDs.
+Previously the default PR checkout used a synthetic merge commit; its
+different timestamp meant that even two matching CI image IDs could not
+necessarily be reproduced from the reviewed PR HEAD locally.
+
+To reproduce the CI build, check out the **exact source_commit** from the
+matching run's `docker-build-provenance.txt`, verify it matches HEAD, and
+use the same epoch and platform:
 
 ```sh
 export DOCKER_BUILDKIT=1
-export SOURCE_DATE_EPOCH="$(git log -1 --format=%ct)"
+# Use the exact reviewed source_commit, not the PR's synthetic merge ref.
+git checkout --detach <source_commit-from-provenance>
+test "$(git rev-parse HEAD)" = "<source_commit-from-provenance>"
+export SOURCE_DATE_EPOCH="$(git show -s --format=%ct "$(git rev-parse HEAD)")"
 docker buildx build --no-cache --platform linux/amd64 \
   --output type=docker,rewrite-timestamp=true \
   --build-arg SOURCE_DATE_EPOCH="$SOURCE_DATE_EPOCH" \
@@ -129,8 +148,10 @@ will produce different image IDs even with identical wheel payloads.
 The CI gate **fails** if two independent, cache-disabled builds differ in
 their local image IDs. This is a stronger repeatability check than comparing
 only the `assets/v<digest>/` namespace. For release provenance also retain
-the tested Git SHA, `SOURCE_DATE_EPOCH`, exact image ID, base digest, lock,
-architecture and CI log. Avoid claiming identical pushed registry digest
+the **checked-out source Git SHA (not the PR merge SHA)**,
+`SOURCE_DATE_EPOCH`, exact image ID, base digest, lock, architecture and CI log.
+On a PR, a separate synthetic merge-result validation would be a different
+source/epoch and is not established by the PR-head reproducibility check. Avoid claiming identical pushed registry digest
 or cross-architecture bit-for-bit reproduction based on a local image ID
 check alone; registry manifest compression and attestations can differ.
 
