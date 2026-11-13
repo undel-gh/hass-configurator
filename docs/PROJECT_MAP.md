@@ -153,7 +153,8 @@ independent release gates (#7/#8/#13).
 - `Dockerfile` — official Python OCI index digest shared across stages,
   image-local Git/OpenSSH/CA tools without `apt-get`; isolated hash-checked
   dependency downloader, no-index fork wheel builder and offline runtime
-  installation. The runtime keeps the lock for audit.
+  installation through read-only bind mounts, without COPY/removal whiteout
+  layers. The runtime keeps the lock for audit.
 - `requirements/docker-runtime.lock` — five pinned direct and transitive
   Python distributions with per-wheel SHA-256. Binary-only restriction.
 - `requirements/normalize_mtimes.py` — build-only fixed-epoch mtime
