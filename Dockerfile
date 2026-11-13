@@ -1,23 +1,52 @@
-# Fork-built offline editor image. All browser runtime assets come from THIS
-# checkout; never install the unrelated published PyPI hass-configurator.
-# Supply an immutable digest-pinned PYTHON_BASE for a release build (P0 #5).
-ARG PYTHON_BASE=python:3.11-slim-bookworm
-FROM ${PYTHON_BASE} AS wheel-builder
+# syntax=docker/dockerfile:1
+# Release default is the verified official *multiarch index* digest from
+# GitHub Actions run #172 (2026-11-13), not a mutable tag.
+# This non-slim bookworm image already contains git, OpenSSH and CA trust,
+# eliminating mutable apt repositories from the fork's own Docker build.
+# Its larger size is a deliberate repeatability tradeoff; see #5/#9.
+ARG PYTHON_BASE=docker.io/library/python:3.11.18-bookworm@sha256:726d304906fa5eb468e5531e366548d1903286352f5adb54ef508ac01fbd80c6
+ARG SOURCE_DATE_EPOCH=1704067200
+
+FROM ${PYTHON_BASE} AS dependency-wheelhouse
+WORKDIR /lock
+COPY requirements/docker-runtime.lock ./runtime.lock
+# Fetch is permitted ONLY here, with a complete version/hash-locked list.
+# Every wheel is byte-checked by pip; no sdist or arbitrary resolver upgrades.
+RUN python -m pip download --disable-pip-version-check --no-cache-dir \
+    --only-binary=:all: --require-hashes -r runtime.lock -d /locked-wheels
+
+FROM ${PYTHON_BASE} AS fork-wheel-builder
+ARG SOURCE_DATE_EPOCH
+ENV SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH} PYTHONDONTWRITEBYTECODE=1
 WORKDIR /src
 COPY setup.py MANIFEST.in ./
 COPY hass_configurator/ hass_configurator/
-RUN python -m pip wheel --no-deps --wheel-dir /wheelhouse .
+# The official digest-pinned base already contains the wheel build toolchain.
+# No build-isolation/PEP517 package fetch, no external dependencies.
+RUN python -m pip wheel --disable-pip-version-check --no-index \
+    --no-build-isolation --no-deps --wheel-dir /fork-wheel .
 
 FROM ${PYTHON_BASE}
+ARG SOURCE_DATE_EPOCH
 LABEL org.opencontainers.image.source="https://github.com/undel-gh/hass-configurator"
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    git openssh-client ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
-COPY --from=wheel-builder /wheelhouse/ /wheelhouse/
-# All Python installs occur when BUILDING the image. Runtime does not
-# execute pip, npm, curl or fetch the offline UI assets.
-RUN python -m pip install --no-cache-dir /wheelhouse/hass_configurator-*.whl \
-    && rm -rf /wheelhouse
+LABEL org.opencontainers.image.base.name="docker.io/library/python:3.11.18-bookworm"
+LABEL org.opencontainers.image.base.digest="sha256:726d304906fa5eb468e5531e366548d1903286352f5adb54ef508ac01fbd80c6"
+ENV SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH} PYTHONDONTWRITEBYTECODE=1 PIP_NO_INDEX=1
+COPY --from=dependency-wheelhouse /locked-wheels/ /opt/hc-locked-wheels/
+COPY --from=fork-wheel-builder /fork-wheel/ /opt/hc-fork-wheel/
+COPY requirements/docker-runtime.lock /usr/local/share/hass-configurator/runtime.lock
+# Install the five reviewed third-party wheels from an OFFLINE wheelhouse,
+# re-checking their hashes. Install only THIS fork's locally built wheel.
+# No external Python/OS package repository is contacted in final stage.
+RUN python -m pip install --disable-pip-version-check --no-index --no-compile \
+      --find-links=/opt/hc-locked-wheels --require-hashes \
+      -r /usr/local/share/hass-configurator/runtime.lock \
+    && python -m pip install --disable-pip-version-check --no-index \
+      --no-compile --no-deps /opt/hc-fork-wheel/hass_configurator-*.whl \
+    && python -m pip check \
+    && git --version && ssh -V \
+    && rm -rf /opt/hc-locked-wheels /opt/hc-fork-wheel
+
 EXPOSE 3218
 VOLUME /config
 WORKDIR /config
