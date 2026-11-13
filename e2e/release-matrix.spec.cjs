@@ -131,12 +131,12 @@ test('new tab retains the application base, including simulated ingress', async 
   });
   await page.goto(server + '/ingress/test/', { waitUntil: 'domcontentloaded' });
   await expect.poll(() => page.evaluate(() => Boolean(window.editor))).toBe(true);
-  const promise = page.waitForEvent('popup');
-  await page.evaluate(() => window.open(window.location.origin + window.location.pathname,
-                                        '_blank', 'noopener'));
-  // "noopener" intentionally may suppress the popup event in some browsers;
-  // the production New tab action is tested via its own literal handler below.
-  const popup = await promise;
+  // Click the real settings menu item instead of synthesizing window.open().
+  await page.locator('a[data-activates="dropdown_menu"]').first().click();
+  await expect(page.locator('#dropdown_menu')).toBeVisible();
+  const popupPromise = page.waitForEvent('popup');
+  await page.locator('#dropdown_menu > li > a').first().click();
+  const popup = await popupPromise;
   await popup.waitForLoadState('domcontentloaded');
   expect(new URL(popup.url()).pathname).toBe('/ingress/test/');
   await popup.close();
