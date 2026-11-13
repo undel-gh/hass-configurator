@@ -180,6 +180,10 @@ class Router:
 
     def __init__(self, assets=None):
         self.assets = assets if assets is not None else Assets()
+        # Security admission is owned by the permanent router, not by
+        # ad-hoc legacy handler conditions. Import after Response is defined.
+        from hass_configurator.api_security import ApiPolicy
+        self.security = ApiPolicy()
 
     def match(self, method, url):
         try:
