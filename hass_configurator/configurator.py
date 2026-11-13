@@ -794,156 +794,6 @@ class RequestHandler(BaseHTTPRequestHandler):
             }
             self.wfile.write(bytes(json.dumps(res), "utf8"))
             return
-        elif req.path == '/api/restart':
-            LOG.info("/api/restart")
-            self.send_header('Content-type', 'text/json')
-            self.end_headers()
-            res = {"restart": False}
-            try:
-                headers = {
-                    "Content-Type": "application/json"
-                }
-                if HASS_API_PASSWORD:
-                    if is_jwt(HASS_API_PASSWORD):
-                        headers["Authorization"] = "Bearer %s" % HASS_API_PASSWORD
-                    else:
-                        headers["x-ha-access"] = HASS_API_PASSWORD
-                req = urllib.request.Request(
-                    "%sservices/homeassistant/restart" % HASS_API,
-                    headers=headers, method='POST')
-                with urllib.request.urlopen(req) as response:
-                    res = json.loads(response.read().decode('utf-8'))
-                    LOG.debug(res)
-            except Exception as err:
-                LOG.warning(err)
-                res['restart'] = str(err)
-            self.wfile.write(bytes(json.dumps(res), "utf8"))
-            return
-        elif req.path == '/api/check_config':
-            LOG.info("/api/check_config")
-            self.send_header('Content-type', 'text/json')
-            self.end_headers()
-            res = {"check_config": False}
-            try:
-                headers = {
-                    "Content-Type": "application/json"
-                }
-                if HASS_API_PASSWORD:
-                    if is_jwt(HASS_API_PASSWORD):
-                        headers["Authorization"] = "Bearer %s" % HASS_API_PASSWORD
-                    else:
-                        headers["x-ha-access"] = HASS_API_PASSWORD
-                req = urllib.request.Request(
-                    "%sconfig/core/check_config" % HASS_API,
-                    headers=headers, method='POST')
-                with urllib.request.urlopen(req) as response:
-                    res = json.loads(response.read().decode('utf-8'))
-                    LOG.debug(res)
-            except Exception as err:
-                LOG.warning(err)
-                res['errors'] = str(err)
-            self.wfile.write(bytes(json.dumps(res), "utf8"))
-            return
-        elif req.path == '/api/reload_automations':
-            LOG.info("/api/reload_automations")
-            self.send_header('Content-type', 'text/json')
-            self.end_headers()
-            res = {"reload_automations": False}
-            try:
-                headers = {
-                    "Content-Type": "application/json"
-                }
-                if HASS_API_PASSWORD:
-                    if is_jwt(HASS_API_PASSWORD):
-                        headers["Authorization"] = "Bearer %s" % HASS_API_PASSWORD
-                    else:
-                        headers["x-ha-access"] = HASS_API_PASSWORD
-                req = urllib.request.Request(
-                    "%sservices/automation/reload" % HASS_API,
-                    headers=headers, method='POST')
-                with urllib.request.urlopen(req) as response:
-                    LOG.debug(json.loads(response.read().decode('utf-8')))
-                    res['service'] = "called successfully"
-            except Exception as err:
-                LOG.warning(err)
-                res['restart'] = str(err)
-            self.wfile.write(bytes(json.dumps(res), "utf8"))
-            return
-        elif req.path == '/api/reload_scripts':
-            LOG.info("/api/reload_scripts")
-            self.send_header('Content-type', 'text/json')
-            self.end_headers()
-            res = {"reload_scripts": False}
-            try:
-                headers = {
-                    "Content-Type": "application/json"
-                }
-                if HASS_API_PASSWORD:
-                    if is_jwt(HASS_API_PASSWORD):
-                        headers["Authorization"] = "Bearer %s" % HASS_API_PASSWORD
-                    else:
-                        headers["x-ha-access"] = HASS_API_PASSWORD
-                req = urllib.request.Request(
-                    "%sservices/script/reload" % HASS_API,
-                    headers=headers, method='POST')
-                with urllib.request.urlopen(req) as response:
-                    LOG.debug(json.loads(response.read().decode('utf-8')))
-                    res['service'] = "called successfully"
-            except Exception as err:
-                LOG.warning(err)
-                res['restart'] = str(err)
-            self.wfile.write(bytes(json.dumps(res), "utf8"))
-            return
-        elif req.path == '/api/reload_groups':
-            LOG.info("/api/reload_groups")
-            self.send_header('Content-type', 'text/json')
-            self.end_headers()
-            res = {"reload_groups": False}
-            try:
-                headers = {
-                    "Content-Type": "application/json"
-                }
-                if HASS_API_PASSWORD:
-                    if is_jwt(HASS_API_PASSWORD):
-                        headers["Authorization"] = "Bearer %s" % HASS_API_PASSWORD
-                    else:
-                        headers["x-ha-access"] = HASS_API_PASSWORD
-                req = urllib.request.Request(
-                    "%sservices/group/reload" % HASS_API,
-                    headers=headers, method='POST')
-                with urllib.request.urlopen(req) as response:
-                    LOG.debug(json.loads(response.read().decode('utf-8')))
-                    res['service'] = "called successfully"
-            except Exception as err:
-                LOG.warning(err)
-                res['restart'] = str(err)
-            self.wfile.write(bytes(json.dumps(res), "utf8"))
-            return
-        elif req.path == '/api/reload_core':
-            LOG.info("/api/reload_core")
-            self.send_header('Content-type', 'text/json')
-            self.end_headers()
-            res = {"reload_core": False}
-            try:
-                headers = {
-                    "Content-Type": "application/json"
-                }
-                if HASS_API_PASSWORD:
-                    if is_jwt(HASS_API_PASSWORD):
-                        headers["Authorization"] = "Bearer %s" % HASS_API_PASSWORD
-                    else:
-                        headers["x-ha-access"] = HASS_API_PASSWORD
-                req = urllib.request.Request(
-                    "%sservices/homeassistant/reload_core_config" % HASS_API,
-                    headers=headers, method='POST')
-                with urllib.request.urlopen(req) as response:
-                    LOG.debug(json.loads(response.read().decode('utf-8')))
-                    res['service'] = "called successfully"
-            except Exception as err:
-                LOG.warning(err)
-                res['restart'] = str(err)
-            self.wfile.write(bytes(json.dumps(res), "utf8"))
-            return
         elif req.path.endswith('/'):
             self.send_header('Content-type', 'text/html')
             self.end_headers()
@@ -1669,6 +1519,162 @@ class RequestHandler(BaseHTTPRequestHandler):
                         LOG.warning(err)
             else:
                 response['message'] = "Missing IP"
+        elif req.path == '/api/restart':
+            LOG.info("/api/restart")
+            self.send_response(200)
+            self.send_header('Content-type', 'text/json')
+            self.end_headers()
+            res = {"restart": False}
+            try:
+                headers = {
+                    "Content-Type": "application/json"
+                }
+                if HASS_API_PASSWORD:
+                    if is_jwt(HASS_API_PASSWORD):
+                        headers["Authorization"] = "Bearer %s" % HASS_API_PASSWORD
+                    else:
+                        headers["x-ha-access"] = HASS_API_PASSWORD
+                req = urllib.request.Request(
+                    "%sservices/homeassistant/restart" % HASS_API,
+                    headers=headers, method='POST')
+                with urllib.request.urlopen(req) as response:
+                    res = json.loads(response.read().decode('utf-8'))
+                    LOG.debug(res)
+            except Exception as err:
+                LOG.warning(err)
+                res['restart'] = str(err)
+            self.wfile.write(bytes(json.dumps(res), "utf8"))
+            return
+        elif req.path == '/api/check_config':
+            LOG.info("/api/check_config")
+            self.send_response(200)
+            self.send_header('Content-type', 'text/json')
+            self.end_headers()
+            res = {"check_config": False}
+            try:
+                headers = {
+                    "Content-Type": "application/json"
+                }
+                if HASS_API_PASSWORD:
+                    if is_jwt(HASS_API_PASSWORD):
+                        headers["Authorization"] = "Bearer %s" % HASS_API_PASSWORD
+                    else:
+                        headers["x-ha-access"] = HASS_API_PASSWORD
+                req = urllib.request.Request(
+                    "%sconfig/core/check_config" % HASS_API,
+                    headers=headers, method='POST')
+                with urllib.request.urlopen(req) as response:
+                    res = json.loads(response.read().decode('utf-8'))
+                    LOG.debug(res)
+            except Exception as err:
+                LOG.warning(err)
+                res['errors'] = str(err)
+            self.wfile.write(bytes(json.dumps(res), "utf8"))
+            return
+        elif req.path == '/api/reload_automations':
+            LOG.info("/api/reload_automations")
+            self.send_response(200)
+            self.send_header('Content-type', 'text/json')
+            self.end_headers()
+            res = {"reload_automations": False}
+            try:
+                headers = {
+                    "Content-Type": "application/json"
+                }
+                if HASS_API_PASSWORD:
+                    if is_jwt(HASS_API_PASSWORD):
+                        headers["Authorization"] = "Bearer %s" % HASS_API_PASSWORD
+                    else:
+                        headers["x-ha-access"] = HASS_API_PASSWORD
+                req = urllib.request.Request(
+                    "%sservices/automation/reload" % HASS_API,
+                    headers=headers, method='POST')
+                with urllib.request.urlopen(req) as response:
+                    LOG.debug(json.loads(response.read().decode('utf-8')))
+                    res['service'] = "called successfully"
+            except Exception as err:
+                LOG.warning(err)
+                res['restart'] = str(err)
+            self.wfile.write(bytes(json.dumps(res), "utf8"))
+            return
+        elif req.path == '/api/reload_scripts':
+            LOG.info("/api/reload_scripts")
+            self.send_response(200)
+            self.send_header('Content-type', 'text/json')
+            self.end_headers()
+            res = {"reload_scripts": False}
+            try:
+                headers = {
+                    "Content-Type": "application/json"
+                }
+                if HASS_API_PASSWORD:
+                    if is_jwt(HASS_API_PASSWORD):
+                        headers["Authorization"] = "Bearer %s" % HASS_API_PASSWORD
+                    else:
+                        headers["x-ha-access"] = HASS_API_PASSWORD
+                req = urllib.request.Request(
+                    "%sservices/script/reload" % HASS_API,
+                    headers=headers, method='POST')
+                with urllib.request.urlopen(req) as response:
+                    LOG.debug(json.loads(response.read().decode('utf-8')))
+                    res['service'] = "called successfully"
+            except Exception as err:
+                LOG.warning(err)
+                res['restart'] = str(err)
+            self.wfile.write(bytes(json.dumps(res), "utf8"))
+            return
+        elif req.path == '/api/reload_groups':
+            LOG.info("/api/reload_groups")
+            self.send_response(200)
+            self.send_header('Content-type', 'text/json')
+            self.end_headers()
+            res = {"reload_groups": False}
+            try:
+                headers = {
+                    "Content-Type": "application/json"
+                }
+                if HASS_API_PASSWORD:
+                    if is_jwt(HASS_API_PASSWORD):
+                        headers["Authorization"] = "Bearer %s" % HASS_API_PASSWORD
+                    else:
+                        headers["x-ha-access"] = HASS_API_PASSWORD
+                req = urllib.request.Request(
+                    "%sservices/group/reload" % HASS_API,
+                    headers=headers, method='POST')
+                with urllib.request.urlopen(req) as response:
+                    LOG.debug(json.loads(response.read().decode('utf-8')))
+                    res['service'] = "called successfully"
+            except Exception as err:
+                LOG.warning(err)
+                res['restart'] = str(err)
+            self.wfile.write(bytes(json.dumps(res), "utf8"))
+            return
+        elif req.path == '/api/reload_core':
+            LOG.info("/api/reload_core")
+            self.send_response(200)
+            self.send_header('Content-type', 'text/json')
+            self.end_headers()
+            res = {"reload_core": False}
+            try:
+                headers = {
+                    "Content-Type": "application/json"
+                }
+                if HASS_API_PASSWORD:
+                    if is_jwt(HASS_API_PASSWORD):
+                        headers["Authorization"] = "Bearer %s" % HASS_API_PASSWORD
+                    else:
+                        headers["x-ha-access"] = HASS_API_PASSWORD
+                req = urllib.request.Request(
+                    "%sservices/homeassistant/reload_core_config" % HASS_API,
+                    headers=headers, method='POST')
+                with urllib.request.urlopen(req) as response:
+                    LOG.debug(json.loads(response.read().decode('utf-8')))
+                    res['service'] = "called successfully"
+            except Exception as err:
+                LOG.warning(err)
+                res['restart'] = str(err)
+            self.wfile.write(bytes(json.dumps(res), "utf8"))
+            return
         elif req.path == '/api/prefs':
             try:
                 body = self.rfile.read(length).decode('utf-8')
