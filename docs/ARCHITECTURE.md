@@ -133,7 +133,9 @@ package-index network only in a download stage that verifies hashes; the
 fork wheel and final runtime stage install without network/index access.
 
 CI supplies one `SOURCE_DATE_EPOCH` (reviewed Git commit timestamp) to
-both completely cache-disabled builds; it compares full image IDs, not only
+both completely cache-disabled builds and uses BuildKit's Docker exporter
+with `rewrite-timestamp=true`; without that option source timestamps in layer
+files can still vary. It compares full image IDs, not only
 the first-party resource namespace. Normalization of generated/installed
 file timestamps prevents package download/build time from contaminating
 layers. The full binary dependency lock is authoritative for Docker; the
