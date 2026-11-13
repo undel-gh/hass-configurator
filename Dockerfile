@@ -4,10 +4,11 @@
 # This non-slim bookworm image already contains git, OpenSSH and CA trust,
 # eliminating mutable apt repositories from the fork's own Docker build.
 # Its larger size is a deliberate repeatability tradeoff; see #5/#9.
-ARG PYTHON_BASE=docker.io/library/python:3.11.18-bookworm@sha256:726d304906fa5eb468e5531e366548d1903286352f5adb54ef508ac01fbd80c6
+# Base is deliberately not an ARG: permitting a different FROM would
+# invalidate the fixed OCI base provenance labels and image security review.
 ARG SOURCE_DATE_EPOCH=1704067200
 
-FROM ${PYTHON_BASE} AS dependency-wheelhouse
+FROM docker.io/library/python:3.11.18-bookworm@sha256:726d304906fa5eb468e5531e366548d1903286352f5adb54ef508ac01fbd80c6 AS dependency-wheelhouse
 ARG SOURCE_DATE_EPOCH
 WORKDIR /lock
 COPY requirements/docker-runtime.lock ./runtime.lock
@@ -19,7 +20,7 @@ RUN python -m pip download --disable-pip-version-check --no-cache-dir \
     && python /tmp/normalize_mtimes.py --epoch "$SOURCE_DATE_EPOCH" \
          --tree /locked-wheels
 
-FROM ${PYTHON_BASE} AS fork-wheel-builder
+FROM docker.io/library/python:3.11.18-bookworm@sha256:726d304906fa5eb468e5531e366548d1903286352f5adb54ef508ac01fbd80c6 AS fork-wheel-builder
 ARG SOURCE_DATE_EPOCH
 ENV SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH} PYTHONDONTWRITEBYTECODE=1
 WORKDIR /src
@@ -33,7 +34,7 @@ RUN python -m pip wheel --disable-pip-version-check --no-index \
     && python /tmp/normalize_mtimes.py --epoch "$SOURCE_DATE_EPOCH" \
          --tree /fork-wheel
 
-FROM ${PYTHON_BASE}
+FROM docker.io/library/python:3.11.18-bookworm@sha256:726d304906fa5eb468e5531e366548d1903286352f5adb54ef508ac01fbd80c6
 ARG SOURCE_DATE_EPOCH
 LABEL org.opencontainers.image.source="https://github.com/undel-gh/hass-configurator"
 LABEL org.opencontainers.image.base.name="docker.io/library/python:3.11.18-bookworm"
