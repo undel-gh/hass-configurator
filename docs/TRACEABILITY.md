@@ -70,7 +70,7 @@ Copy one row per impacted requirement:
 No implementation PR should leave unfilled evidence fields when claiming a `verified` requirement.
 
 
-## Implementation checkpoint — draft PR #15 (#1, #2, #14)
+## Implementation checkpoint — PR #15 (#1, #2, #14)
 
 **Not a release sign-off.** Full P0 NFR-001, FR-001, AT-01, AT-03, AT-05, AT-09 and HA OS P1 acceptance remain pending. No requirement row above is changed to `verified` by this checkpoint.
 
@@ -84,5 +84,12 @@ No implementation PR should leave unfilled evidence fields when claiming a `veri
 | NFR-002 / NFR-011 / ADR-006 | `docs/ace-builds-1.9.6-lock.json`, `scripts/verify_ace_archive.py` official npm SRI + full file hashes | **partial**; 3 obsolete modes / dynamic closure #3 pending |
 | NFR-008 / ADR-007 | `.github/workflows/offline-foundation.yml`, `tests/test_traceability.py`, PR checklist | **partial**; CI HEAD outcome and repo branch protection not yet recorded |
 | NFR-005 | Minimum Chromium smoke plus Python routing tests, early CI | **partial**; full E2E gate #6 pending |
+
+### Independent review follow-up (two reviews)
+- `e2e/offline-smoke.spec.cjs` now opens **real HTML at /ingress/test/** and asserts browser-requested same-prefix JS, CSS, font and `api/prefs`. The original synthetic `page.setContent` test has been removed.
+- `tests/test_legacy_contract.py` independently pins all GET/POST legacy routes and executes safe `POST /api/prefs`, `POST /api/save` and `GET /api/file?filename=...` round trips. Both unauthenticated and successful authenticated `AuthHandler` access to API/static are covered.
+- HEAD, PUT and DELETE are intentionally **unimplemented 501** (rather than a superficially implemented but unauthenticated HEAD). Future HEAD support requires safe RFC-compliant semantics without replaying state-changing GET routes.
+- `e2e/package-lock.json` pins transitive Playwright packages, installed by `npm ci`. Source-level JS MIME is now `text/javascript` per RFC 9239; Supervisor Ingress rewriting must be tested by behavior, not exact backend header equality.
+- Local-assets-on-startup fail-fast, root-path compatibility change and operational consequences are documented in `FOUNDATION_IMPLEMENTATION.md`. Required P1 release scenarios **remain pending**.
 
 For the current/last CI runs and exact commit evidence see [PR #15](https://github.com/undel-gh/hass-configurator/pull/15) checks and [foundation notes](FOUNDATION_IMPLEMENTATION.md). Avoid copying an obsolete CI run ID as evidence for a newer commit.
