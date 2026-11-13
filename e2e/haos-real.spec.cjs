@@ -8,8 +8,7 @@
  */
 const { test, expect } = require('@playwright/test');
 const path = require('node:path');
-const fs = require('node:fs');
-const { parseIngressUrl, assertStorageState, redactIngressText, navigatePrivate, waitPrivatePopup } = require('./haos-private.cjs');
+const { parseIngressUrl, readPrivateStorageState, assertStorageState, redactIngressText, navigatePrivate, waitPrivatePopup } = require('./haos-private.cjs');
 
 const ingress = process.env.HAOS_INGRESS_URL || '';
 const storageState = process.env.HAOS_STORAGE_STATE || '';
@@ -21,8 +20,8 @@ const prefix = base ? base.pathname.replace(/\/?$/, '/') : '';
 
 // A mistyped private state path must not fail during context initialization,
 // before a helpful sanitized error can be emitted by the suite itself.
-const existingState = Boolean(storageState && fs.existsSync(storageState));
-test.use({ storageState: existingState ? storageState : { cookies: [], origins: [] } });
+const parsedState = readPrivateStorageState(storageState);
+test.use({ storageState: parsedState || { cookies: [], origins: [] } });
 test.beforeEach(() => {
   if (!enabled) return;
   assertStorageState(storageState);
