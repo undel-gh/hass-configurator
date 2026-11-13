@@ -48,8 +48,10 @@ file-edit round trip.
 
 Wheel/sdist installation is tested separately in isolated venvs, outside
 the source checkout; CI prints installed site-packages import origins.
-Both distributions validate all 460 vendor and six first-party resources,
-plus the shared version file and distribution metadata. The asset version
+Both distributions validate all 460 vendor assets plus seven first-party
+resources (**the six asset routes and the complete `dev.html` UI page**),
+plus the shared version file and distribution metadata. The archive verifier
+also rejects a removed or modified `dev.html` (negative tests). The asset version
 continues to be a content-derived digest, not the software release string.
 
 ## Reproducibility boundary
@@ -57,7 +59,11 @@ continues to be a content-derived digest, not the software release string.
 The **asset/payload and fork origin** are verified automatically, but
 byte-for-byte repeatable Docker image builds across time are **not yet
 claimed**: the default Python base image tag and transitive Python package
-dependencies are not fully digest/hash locked. Before any release, pass
+dependencies are not fully digest/hash locked. The current runtime Docker
+stage resolves `pyotp`, `gitpython`, `legacy-cgi` and their transitive packages
+from package indexes **during image build**, without `--require-hashes`.
+Future #5 work should install from a reviewed, pinned hash-locked requirements
+file (and distinguish build-time access from runtime networkless startup). Before any release, pass
 an approved immutable base image reference:
 
 ```sh
