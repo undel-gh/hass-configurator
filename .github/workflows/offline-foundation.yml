@@ -189,8 +189,9 @@ jobs:
           expected_digest=$(python -c 'from hass_configurator.http_routing import Assets; print(Assets().version)')
           echo "Expected fork version=$expected_version static fingerprint=$expected_digest"
 
-          # The image must contain the bundled fork wheel and validate fully
-          # even with *no network interfaces*. Never silently import checkout.
+          # Verify the package installed FROM the fork-built wheel, not a
+          # wheel retained in the final image. Network access is disabled
+          # and imports must not resolve to the checkout.
           docker run --rm --network none -i \
             --env EXPECTED_VERSION="$expected_version" \
             --env EXPECTED_DIGEST="$expected_digest" \
