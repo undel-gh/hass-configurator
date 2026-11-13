@@ -1,6 +1,15 @@
-# Offline foundation implementation notes (PR #15)
+# Offline foundation implementation notes (PR #15) — historical baseline
 
-**Status:** implementation in PR #15 (review fixes in progress). The application is **not fully offline**. P0 mandatory external-request policy (NFR-001) is not yet satisfied; #3, #4 and #6 remain responsible for removing external loads and lifting the expected-failure test.
+**Historical snapshot only, not the current release status.** This file
+records the initial findings and implementation boundaries of PR #15.
+Its original warnings that Ace, CSS and MDI still required remote
+requests, that the browser test was expected to fail, and that #3/#4 were
+unresolved refer specifically to **PR #15 before PR #16 and PR #17**.
+Current `master` has the local asset closure, strict passing browser
+network-attempt tests and reproducible fork Docker as of PRs #16–#19.
+Read `docs/P0_CLOSEOUT.md` and the current top-level
+`docs/TRACEABILITY.md` matrix for present P0/P1 state. Actual Supervisor
+Ingress and privileged API security are still NOT VERIFIED (#8/#7/#13).
 
 ## #1 — source inventory and Ace provenance
 - Machine inventory: `docs/runtime-dependencies.json`, checked by `python scripts/audit_runtime_assets.py`. Source-level baseline records **five** CDN URL references (Ace core + two extensions, Materialize CSS and MDI CSS), **13** auto-loaded GitHub avatar images, **137** advertised Ace language modes, and **35** themes. External documentation URLs are listed separately.
