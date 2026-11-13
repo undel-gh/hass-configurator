@@ -56,17 +56,17 @@ class PolicyTests(unittest.TestCase):
             ("POST", "/api/exec_command"),
             ("POST", "/api/push"),
             ("POST", "/api/allowed_networks"),
-            ("GET", "/api/restart"),
+            ("POST", "/api/restart"),
         ):
             with self.subTest(method=method, path=path):
                 self.assertEqual(policy.authorize(h, method, path).status, 403)
         self.assertEqual(
-            policy.authorize(h, "GET", "/api/restart", allow_ha_control=True),
+            policy.authorize(h, "POST", "/api/restart", allow_ha_control=True),
             None,
         )
         h.headers = {}
         self.assertEqual(
-            policy.authorize(h, "GET", "/api/restart", allow_ha_control=True).status,
+            policy.authorize(h, "POST", "/api/restart", allow_ha_control=True).status,
             403,
         )
 
@@ -195,12 +195,15 @@ class SecurityLoopbackTests(unittest.TestCase):
         self.assertFalse(json.loads(raw)["error"])
         self.assertEqual(target.read_text(), "safe: true")
 
-    def test_sensitive_get_needs_csrf_and_capability(self):
+    def test_ha_control_requires_post_csrf_and_capability(self):
         with patch("urllib.request.urlopen") as urlopen:
-            status, _, _ = http_request(self.server, "GET", "/api/restart")
+            status, headers, _ = http_request(self.server, "GET", "/api/restart")
+            self.assertEqual(status, 405)
+            self.assertEqual(headers.get("Allow"), "POST")
+            status, _, _ = http_request(self.server, "POST", "/api/restart", b"")
             self.assertEqual(status, 403)
             status, _, _ = http_request(
-                self.server, "GET", "/api/restart",
+                self.server, "POST", "/api/restart", b"",
                 headers={"X-CSRF-Token": cfg.HTTP_ROUTER.security.csrf_token})
             self.assertEqual(status, 403)
             urlopen.assert_not_called()
