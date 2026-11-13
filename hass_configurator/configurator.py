@@ -1525,7 +1525,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                                     ALLOWED_NETWORKS.append(network)
                             response['error'] = False
                         else:
-                            response['error'] = True
+                            raise ValueError("Invalid network administration method")
                         self.send_response(200)
                         self.send_header('Content-type', 'text/json')
                         self.end_headers()
@@ -1558,15 +1558,18 @@ class RequestHandler(BaseHTTPRequestHandler):
                                     BANNED_IPS.remove(ip_address)
                             response['error'] = False
                         elif method == 'ban':
-                            ipaddress.ip_network(ip_address)
+                            # The access check compares exact IP addresses;
+                            # accepting a CIDR here would silently fail to ban.
+                            ipaddress.ip_address(ip_address)
                             with NETWORK_ADMIN_LOCK:
                                 if ip_address not in BANNED_IPS:
                                     BANNED_IPS.append(ip_address)
                         else:
-                            response['error'] = True
+                            raise ValueError("Invalid ban administration method")
                         self.send_response(200)
                         self.send_header('Content-type', 'text/json')
                         self.end_headers()
+                        response['error'] = False
                         response['message'] = "BANNED_IPS (%s): %s" % (method, ip_address)
                         self.wfile.write(bytes(json.dumps(response), "utf8"))
                         return
