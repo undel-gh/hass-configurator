@@ -72,6 +72,9 @@ test('file browser → open → edit → save → reopen and download', async ({
     await expect(page.locator('#fbheader')).toHaveText(directory);
     const entry = page.locator('#fbelements li[title="' + name + '"]');
     await expect(entry).toBeVisible();
+    // The file list sits inside Materialize's off-canvas side navigation.
+    // Open the actual browser panel before clicking a file entry.
+    await page.locator('a.files-collapse').first().click();
     await entry.locator('a').first().click();
     await expect(page.locator('#currentfile')).toHaveValue(filename);
     await expect.poll(() => page.evaluate(() => editor.getValue())).toBe('before: value\n');
