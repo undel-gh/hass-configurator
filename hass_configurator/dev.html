@@ -2325,7 +2325,7 @@ jQuery.ajaxPrefilter(function(options, ignored, xhr) {
     }
 
     function check_config() {
-        $.get("api/check_config", function (resp) {
+        $.post("api/check_config", function (resp) {
             if (resp.result === "valid") {
                 var $toastContent = $("<div><pre>Configuration seems valid.</pre></div>");
                 Materialize.toast($toastContent, 2000);
@@ -2343,35 +2343,35 @@ jQuery.ajaxPrefilter(function(options, ignored, xhr) {
     }
 
     function reload_automations() {
-        $.get("api/reload_automations", function (resp) {
+        $.post("api/reload_automations", function (resp) {
             var $toastContent = $("<div>Automations reloaded</div>");
             Materialize.toast($toastContent, 2000);
         });
     }
 
     function reload_scripts() {
-        $.get("api/reload_scripts", function (resp) {
+        $.post("api/reload_scripts", function (resp) {
             var $toastContent = $("<div>Scripts reloaded</div>");
             Materialize.toast($toastContent, 2000);
         });
     }
 
     function reload_groups() {
-        $.get("api/reload_groups", function (resp) {
+        $.post("api/reload_groups", function (resp) {
             var $toastContent = $("<div><pre>Groups reloaded</pre></div>");
             Materialize.toast($toastContent, 2000);
         });
     }
 
     function reload_core() {
-        $.get("api/reload_core", function (resp) {
+        $.post("api/reload_core", function (resp) {
             var $toastContent = $("<div><pre>Core reloaded</pre></div>");
             Materialize.toast($toastContent, 2000);
         });
     }
 
     function restart() {
-        $.get("api/restart", function (resp) {
+        $.post("api/restart", function (resp) {
             if (resp.length == 0) {
                 var $toastContent = $("<div><pre>Restarting Home Assistant</pre></div>");
                 Materialize.toast($toastContent, 2000);
