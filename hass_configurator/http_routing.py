@@ -103,8 +103,8 @@ class Assets:
             if name in self._vendor_hashes and self._vendor_hashes[name] != hashed:
                 raise RuntimeError("Vendored asset digest mismatch: " + name)
             self._snapshot[name] = content
-            hashes.append(name.encode("ascii") + b"\\x00" + hashed.encode("ascii"))
-        self.version = sha256(b"\\n".join(hashes)).hexdigest()[:16]
+            hashes.append(name.encode("ascii") + b"\x00" + hashed.encode("ascii"))
+        self.version = sha256(b"\n".join(hashes)).hexdigest()[:16]
 
     @staticmethod
     def _guess_mime(name):
