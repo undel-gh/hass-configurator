@@ -108,7 +108,7 @@ def package_license(archive, name, output_map):
     return found
 
 
-def build(archives, integrity_values):
+def build(archives, integrity_values, verify_only=False):
     resources = {}
     provenance = {}
     for alias, (package, version, archive_prefix) in SOURCES.items():
@@ -163,12 +163,30 @@ def build(archives, integrity_values):
         "provenance": provenance,
         "resources": {"vendor/" + k: digest(resources[k]) for k in keys},
     }
+    existing_path = OUTPUT / "manifest.json"
+    if existing_path.exists():
+        existing = json.loads(existing_path.read_text(encoding="utf8"))
+        # The archive metadata is pinned. Updating a dependency must be an
+        # explicit source/manifest review, never an accidental npm refresh.
+        if existing["provenance"] != manifest["provenance"]:
+            raise RuntimeError("Pinned upstream npm provenance has changed; "
+                               "review and update the lock explicitly")
+    if verify_only:
+        if not existing_path.exists() or existing != manifest:
+            raise RuntimeError("Committed vendor manifest does not match exact npm archives")
+        for name, data in resources.items():
+            target = OUTPUT / name
+            if not target.is_file() or target.read_bytes() != data:
+                raise RuntimeError("Committed vendor resource differs from archive: " + name)
+        print("Verified all %d vendored files against pinned upstream archives." %
+              len(resources))
+        return manifest
     OUTPUT.mkdir(parents=True, exist_ok=True)
     for name, data in resources.items():
         dest = OUTPUT / name
         dest.parent.mkdir(parents=True, exist_ok=True)
         dest.write_bytes(data)
-    (OUTPUT / "manifest.json").write_text(
+    existing_path.write_text(
         json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf8")
     print("Vendored %s resources: Ace=%d; other=%d" %
           (len(resources), len(ACE_LOCK["files_sha256"]),
@@ -184,11 +202,14 @@ def main():
     ap.add_argument("--mdi", type=Path, required=True)
     ap.add_argument("--sri-file", type=Path,
                     help="JSON mapping aliases to immutable npm integrity values")
+    ap.add_argument("--verify-only", action="store_true",
+                    help="Do not modify tree; compare every source archive byte to committed assets")
     opts = ap.parse_args()
     sri = {}
     if opts.sri_file:
         sri = json.loads(opts.sri_file.read_text("utf8"))
-    build({k: getattr(opts, k) for k in SOURCES}, sri)
+    build({k: getattr(opts, k) for k in SOURCES}, sri,
+          verify_only=opts.verify_only)
 
 
 if __name__ == "__main__":
