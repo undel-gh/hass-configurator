@@ -9,29 +9,34 @@ permissions:
   contents: read
 
 jobs:
-  reproducible-lock-discovery:
-    name: TEMP discover base digest and runtime wheels
+  hash-locked-docker-dependencies:
+    name: P0 immutable Docker base and exact Python wheel closure
     runs-on: ubuntu-24.04
-    timeout-minutes: 12
+    timeout-minutes: 14
     steps:
-      - name: Pin official Python base and inspect CLI dependency coverage
+      - uses: actions/checkout@v4
+      - name: Check pinned lock and official digest-pinned OS toolchain
         run: |
           set -euo pipefail
-          docker pull --platform linux/amd64 python:3.11.18-bookworm
-          docker buildx imagetools inspect python:3.11.18-bookworm | sed -n '1,18p'
-          docker run --rm --platform linux/amd64 python:3.11.18-bookworm sh -c 'git --version; ssh -V; test -f /etc/ssl/certs/ca-certificates.crt; python --version'
-      - name: Capture all exact hashes from binary-only PyPI wheel closure
+          BASE="docker.io/library/python:3.11.18-bookworm@sha256:726d304906fa5eb468e5531e366548d1903286352f5adb54ef508ac01fbd80c6"
+          python scripts/check_docker_runtime_lock.py --lock requirements/docker-runtime.lock
+          docker pull --platform linux/amd64 "$BASE"
+          docker run --rm --network none --platform linux/amd64 "$BASE" sh -ec \
+            'git --version; ssh -V; test -f /etc/ssl/certs/ca-certificates.crt; python --version'
+      - name: Resolve the complete dependency closure using ONLY reviewed SHA-256 wheels
         run: |
           set -euo pipefail
-          docker run --rm --platform linux/amd64 python:3.11.18-bookworm sh -ec '
-            mkdir -p /tmp/hc-wheel-discovery
-            python -m pip download --disable-pip-version-check --only-binary=:all: --dest /tmp/hc-wheel-discovery pyotp==2.10.0 GitPython==3.2.1 legacy-cgi==2.6.4
-            echo BEGIN_SHA256_WHEEL_CLOSURE
-            cd /tmp/hc-wheel-discovery
-            sha256sum *.whl | sort -k2
-            echo END_SHA256_WHEEL_CLOSURE
-            python -m pip list --format=freeze | head -15
-          '
+          BASE="docker.io/library/python:3.11.18-bookworm@sha256:726d304906fa5eb468e5531e366548d1903286352f5adb54ef508ac01fbd80c6"
+          docker run --rm --platform linux/amd64 \
+            -v "$PWD:/repo:ro" -w /tmp "$BASE" sh -ec '
+              python -m pip download --disable-pip-version-check \
+                --no-cache-dir --only-binary=:all: --require-hashes \
+                -r /repo/requirements/docker-runtime.lock -d /tmp/p0-wheels
+              python /repo/scripts/check_docker_runtime_lock.py \
+                --lock /repo/requirements/docker-runtime.lock \
+                --wheelhouse /tmp/p0-wheels
+            '
+
   routing-and-inventory:
     name: Routing / inventory (Python)
     runs-on: ubuntu-24.04
@@ -207,7 +212,24 @@ jobs:
       - name: Build fork Docker image, verify identity offline, test real container browser
         run: |
           set -euo pipefail
-          docker build --tag hc-fork-p0:ci .
+          # Two independent BuildKit builds WITHOUT layer cache, from one
+          # reviewed commit and a fixed SOURCE_DATE_EPOCH.
+          export DOCKER_BUILDKIT=1
+          epoch=$(git log -1 --format=%ct)
+          docker build --no-cache --build-arg SOURCE_DATE_EPOCH="$epoch" \
+            --tag hc-fork-p0:build-a .
+          docker build --no-cache --build-arg SOURCE_DATE_EPOCH="$epoch" \
+            --tag hc-fork-p0:build-b .
+          id_a=$(docker image inspect --format '{{.Id}}' hc-fork-p0:build-a)
+          id_b=$(docker image inspect --format '{{.Id}}' hc-fork-p0:build-b)
+          echo "Independent no-cache image IDs: A=$id_a B=$id_b"
+          if [ "$id_a" != "$id_b" ]; then
+            echo "ERROR: Clean builds produced different image IDs" >&2
+            docker image inspect hc-fork-p0:build-a hc-fork-p0:build-b \
+              --format '{{json .RootFS.Layers}}'
+            exit 1
+          fi
+          docker tag hc-fork-p0:build-a hc-fork-p0:ci
           expected_version=$(python -c 'from hass_configurator._version import VERSION; print(VERSION)')
           expected_digest=$(python -c 'from hass_configurator.http_routing import Assets; print(Assets().version)')
           echo "Expected fork version=$expected_version static fingerprint=$expected_digest"
@@ -235,6 +257,11 @@ jobs:
                             "fingerprint": Assets().version,
                             "imported_module": configurator.__file__}))
           PY
+
+          docker run --rm --network none -v "$PWD:/repo:ro" \
+            --workdir /tmp --entrypoint python hc-fork-p0:ci \
+            /repo/scripts/check_docker_runtime_lock.py \
+            --lock /repo/requirements/docker-runtime.lock --installed
 
           docker run --detach --rm --network none \
             --name hc-fork-p0-networkless hc-fork-p0:ci
