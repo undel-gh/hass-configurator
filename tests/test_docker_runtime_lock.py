@@ -25,8 +25,12 @@ class DockerRuntimeLockTests(unittest.TestCase):
 
         source = (REPO / "Dockerfile").read_text("utf8")
         digest = "sha256:726d304906fa5eb468e5531e366548d1903286352f5adb54ef508ac01fbd80c6"
-        self.assertIn("ARG PYTHON_BASE=docker.io/library/python:3.11.18-bookworm@" +
-                      digest, source)
+        # Release provenance must not be falsifiable through build-arg
+        # overrides of FROM: all three stages use the same literal digest.
+        pinned_from = "FROM docker.io/library/python:3.11.18-bookworm@" + digest
+        self.assertEqual(source.count(pinned_from), 3)
+        self.assertNotIn("ARG PYTHON_BASE", source)
+        self.assertNotIn("${PYTHON_BASE}", source)
         self.assertIn('org.opencontainers.image.base.digest="' + digest + '"',
                       source)
         self.assertIn("COPY requirements/docker-runtime.lock", source)
@@ -48,6 +52,24 @@ class DockerRuntimeLockTests(unittest.TestCase):
         self.assertIn('id_a=$(docker image inspect', workflow)
         self.assertIn('id_b=$(docker image inspect', workflow)
         self.assertIn('if [ "$id_a" != "$id_b" ]', workflow)
+
+    def test_ci_checks_out_exact_pr_head_and_verifies_source_commit(self):
+        from scripts.check_docker_runtime_lock import REPO
+
+        workflow = (REPO / ".github/workflows/offline-foundation.yml").read_text(
+            "utf8")
+        event_sha = "${{ github.event.pull_request.head.sha || github.sha }}"
+        self.assertEqual(workflow.count("ref: " + event_sha), 4)
+        self.assertIn("EXPECTED_SOURCE_SHA: " + event_sha, workflow)
+        self.assertIn("source_commit=$(git rev-parse HEAD)", workflow)
+        self.assertIn('if [ "$source_commit" != "$EXPECTED_SOURCE_SHA" ]; then',
+                      workflow)
+        self.assertIn('epoch=$(git show -s --format=%ct "$source_commit")',
+                      workflow)
+        self.assertIn("'source_commit=%s\\n' \"$source_commit\"", workflow)
+        self.assertIn("'event_source_commit=%s\\n' \"$EXPECTED_SOURCE_SHA\"",
+                      workflow)
+        self.assertNotIn("epoch=$(git log -1 --format=%ct)", workflow)
 
     def test_rejects_unhashed_duplicate_and_unpinned_runtime_dependency(self):
         original = LOCK.read_text("utf8")
