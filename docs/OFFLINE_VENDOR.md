@@ -44,8 +44,11 @@ Review new npm SRI with the lock manifest before updating a published bundle. Ar
 
 - `python scripts/audit_runtime_assets.py --strict-offline` confirms **no external automatic resources in the HTML** and checks mode/theme selector drift.
 - `python -m unittest discover -s tests -p 'test_*.py' -v` verifies the 460 bundled resources, hashes, original Ace lock, route allowlisting, CSS font closure and MIME.
-- `python scripts/check_offline_artifacts.py` validates exact vendored contents in built wheel and sdist.
+- `python scripts/check_offline_artifacts.py` validates all **460 vendored resources plus six first-party JS/CSS/font files** byte-for-byte in the built wheel and sdist.
 - `cd e2e && npm ci && npx playwright install chromium && npm test`: cold-cache external-request interception, real HTML through simulated Ingress, modal/UI initialization, Ace dynamic mode/theme/keyboard paths and worker-related behavior, local MDI/Roboto/Material Icons fonts.
+- The simulated-Ingress browser test now performs **dynamic** Ace mode/theme/Vim switching and an actual YAML worker invalid→corrected cycle; every lazy script/worker resource must be requested successfully under the browser-visible `/ingress/test/assets/v…/vendor/ace/` prefix, with no root-relative escapes, public-origin attempts or JS errors.
+- The cold-cache browser test writes `runtime-attempts.json` as valid newline-terminated JSON and parses the file back in CI, so the downloadable audit artifact is machine-readable.
+- The asset version digest retains the P0 formula with a NUL byte between filename and file hash and a newline byte between records; `tests/test_routing.py` pins this behavior.
 - The former expected-failure strict-offline test was made a **required passing test**, not converted to a skip.
 
 ## Follow-ups before a stable/public release
