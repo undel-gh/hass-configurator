@@ -55,8 +55,6 @@ test('HA REST and observer WS unavailable: editor still opens, edits and saves',
   ], { stdio: 'ignore' });
   const external = [];
   const scriptErrors = [];
-  const wsAttempts = [];
-  page.on('websocket', ws => wsAttempts.push(ws.url()));
   page.on('pageerror', err => scriptErrors.push(err.message));
   await page.route('**/*', async route => {
     const url = new URL(route.request().url());
@@ -73,10 +71,24 @@ test('HA REST and observer WS unavailable: editor still opens, edits and saves',
     expect(documentResponse.status()).toBe(200);
     await expect.poll(() => page.evaluate(() => Boolean(window.editor))).toBe(true);
     await expect(page.locator('#ws_uri')).toHaveValue(socket);
+    // A refused WS handshake may never produce a Playwright "websocket"
+    // event, so assert attempted construction directly while preserving the
+    // browser's real native WebSocket connection/close behavior.
+    await page.evaluate(() => {
+      const NativeSocket = window.WebSocket;
+      window.WebSocket = class extends NativeSocket {
+        constructor(url, protocols) {
+          window.__e2eAttemptedSocket = String(url);
+          if (protocols === undefined) super(url);
+          else super(url, protocols);
+        }
+      };
+    });
     await page.evaluate(() => ws_connect());
+    await expect.poll(() => page.evaluate(() => window.__e2eAttemptedSocket))
+      .toBe(socket);
     await expect.poll(() => page.locator('#ws_events').inputValue(),
       { timeout: 12000 }).toContain('Socket closed');
-    expect(wsAttempts).toEqual([socket]);
     await page.evaluate(name => loadfile(name, 'ha-failure-edit.yaml'), filename);
     await expect(page.locator('#currentfile')).toHaveValue(filename);
     await expect.poll(() => page.evaluate(() => editor.getValue())).toBe('initial: 1\n');
