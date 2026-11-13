@@ -212,7 +212,7 @@ class ConfinedFS:
         with self._parent(value) as (fd, name):
             flags = (os.O_WRONLY | os.O_CREAT | getattr(os, "O_NOFOLLOW", 0)
                      | getattr(os, "O_NONBLOCK", 0)
-                     | (os.O_EXCL if exclusive else os.O_TRUNC))
+                     | (os.O_EXCL if exclusive else 0))
             # Check an existing target's type before opening with O_TRUNC:
             # a named pipe/device in the workspace must not be truncated.
             # O_NONBLOCK avoids waiting on a FIFO while denying it.
@@ -227,6 +227,9 @@ class ConfinedFS:
             try:
                 if not stat.S_ISREG(os.fstat(out).st_mode):
                     raise PermissionError("Only regular files may be written")
+                # Validate the opened inode BEFORE truncating; a race that
+                # replaces the name cannot redirect the write to a device.
+                os.ftruncate(out, 0)
                 with os.fdopen(out, "wb") as stream:
                     out = None
                     stream.write(payload)
