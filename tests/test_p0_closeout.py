@@ -174,7 +174,7 @@ class P0CloseoutTests(unittest.TestCase):
         for number in (7, 8, 9, 13):
             self.assertIn("#%d" % number, closeout)
         self.assertIn("NOT VERIFIED", closeout)
-        self.assertIn("PR HEAD", closeout)
+        self.assertIn("exact-HEAD", closeout)
         self.assertNotIn("all runtime requirements are PENDING", trace)
         self.assertIn("P0 automated", trace)
         self.assertIn("P1", trace)
