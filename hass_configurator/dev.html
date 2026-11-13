@@ -2135,7 +2135,7 @@ jQuery.ajaxPrefilter(function(options, ignored, xhr) {
                 var dd_gitdiff = document.createElement('li');
                 var dd_gitdiff_a = document.createElement('a');
                 dd_gitdiff_a.classList.add('waves-effect', 'fb_dd', 'modal-trigger');
-                dd_gitdiff_a.setAttribute('onclick', "gitdiff()");
+                dd_gitdiff_a.addEventListener('click', function() { gitdiff(); });
                 dd_gitdiff_a.innerHTML = "git diff";
                 dd_gitdiff.appendChild(dd_gitdiff_a);
                 dropdown.appendChild(dd_gitdiff);
@@ -2213,7 +2213,9 @@ jQuery.ajaxPrefilter(function(options, ignored, xhr) {
         }
 
         var uplink = document.getElementById('uplink');
-        uplink.setAttribute("onclick", "listdir('" + encodeURI(dirdata.parent) + "')")
+        uplink.addEventListener('click', function() {
+            listdir(encodeURI(dirdata.parent));
+        });
 
         for (var i = 0; i < dirdata.content.length; i++) {
             fbelements.appendChild(renderitem(dirdata.content[i], i));
@@ -2415,7 +2417,11 @@ jQuery.ajaxPrefilter(function(options, ignored, xhr) {
                     li_a_i.classList.add("mdi-delete");
                     li_a_i.innerText = "Remove";
                     li_a.appendChild(li_a_i);
-                    li_a.setAttribute("onclick", "helper_a_net_remove('" + resp.allowed_networks[i] + "')");
+                    (function(address) {
+                    li_a.addEventListener('click', function() {
+                        helper_a_net_remove(address);
+                    });
+                })(resp.allowed_networks[i]);
                     li_div.appendChild(li_a);
                     li.appendChild(li_div);
                     allowed_list.appendChild(li);
@@ -2450,7 +2456,11 @@ jQuery.ajaxPrefilter(function(options, ignored, xhr) {
                     li_a_i.classList.add("mdi-delete");
                     li_a_i.innerText = "Unban";
                     li_a.appendChild(li_a_i);
-                    li_a.setAttribute("onclick", "helper_banned_unban('" + resp.banned_ips[i] + "')");
+                    (function(address) {
+                    li_a.addEventListener('click', function() {
+                        helper_banned_unban(address);
+                    });
+                })(resp.banned_ips[i]);
                     li_div.appendChild(li_a);
                     li.appendChild(li_div);
                     banlist.appendChild(li);
