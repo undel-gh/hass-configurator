@@ -71,6 +71,23 @@ class PolicyTests(unittest.TestCase):
         )
 
 
+class HostHeaderTests(unittest.TestCase):
+    def test_host_must_match_exact_name_not_substring_or_userinfo(self):
+        with patch.object(cfg, "VERIFY_HOSTNAME", "trusted.example"):
+            for valid in ("trusted.example", "TRUSTED.EXAMPLE", "trusted.example:3218"):
+                self.assertTrue(cfg.verify_hostname(valid))
+            for invalid in ("attacker-trusted.example", "trusted.example.evil",
+                            "trusted.example@evil.example", "trusted.example/path",
+                            "trusted.example\\r\\nX-Evil: 1"):
+                self.assertFalse(cfg.verify_hostname(invalid))
+
+    def test_configured_host_port_must_match(self):
+        with patch.object(cfg, "VERIFY_HOSTNAME", "trusted.example:443"):
+            self.assertTrue(cfg.verify_hostname("trusted.example:443"))
+            self.assertFalse(cfg.verify_hostname("trusted.example:444"))
+            self.assertFalse(cfg.verify_hostname("trusted.example"))
+
+
 class ConfinedFileTests(unittest.TestCase):
     def setUp(self):
         self.parent = tempfile.TemporaryDirectory()
@@ -124,6 +141,17 @@ class ConfinedFileTests(unittest.TestCase):
         self.fs.remove(second)
         self.fs.remove(folder, is_dir=True)
         self.assertFalse(folder.exists())
+
+    def test_directory_scan_uses_descriptor_and_omits_symlink_entries(self):
+        nested = self.root / "nested"
+        self.fs.mkdir(nested)
+        self.fs.write_bytes(nested / "real.yaml", b"a: 1")
+        (nested / "outside").symlink_to(self.sibling, target_is_directory=True)
+        names = {item["name"] for item in self.fs.scan_dir(nested)}
+        self.assertIn("real.yaml", names)
+        self.assertNotIn("outside", names)
+        with self.assertRaises(OSError):
+            self.fs.scan_dir(nested / "outside")
 
     def test_no_root_removal(self):
         with self.assertRaises(PermissionError):
@@ -239,6 +267,47 @@ class SecurityLoopbackTests(unittest.TestCase):
         self.assertIn(b"hc-csrf-token", html)
         self.assertNotIn(b"</script><script>window.attacked", html)
         self.assertIn(b"\\u003c/script\\u003e", html)
+
+    def test_network_allowlist_cannot_be_cleared_by_admin(self):
+        original = list(cfg.ALLOWED_NETWORKS)
+        cfg.ALLOWED_NETWORKS[:] = ["127.0.0.1/32"]
+        try:
+            with patch.object(cfg, "ALLOW_NETWORK_ADMIN", True):
+                payload = urlencode({"network": "127.0.0.1/32", "method": "remove"}).encode()
+                status, _, data = http_request(
+                    self.server, "POST", "/api/allowed_networks", payload,
+                    {"Content-Type": "application/x-www-form-urlencoded",
+                     "X-CSRF-Token": cfg.HTTP_ROUTER.security.csrf_token})
+                self.assertEqual(status, 200)
+                self.assertTrue(json.loads(data)["error"])
+                self.assertEqual(cfg.ALLOWED_NETWORKS, ["127.0.0.1/32"])
+        finally:
+            cfg.ALLOWED_NETWORKS[:] = original
+
+    def test_ha_control_real_outbound_post_only_after_all_gates(self):
+        class Reply:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                pass
+
+            def read(self):
+                return b"{}"
+
+        with patch.object(cfg, "ALLOW_HA_CONTROL", True), \
+             patch.object(cfg, "HASS_API", "http://127.0.0.1:8123/api/"), \
+             patch("urllib.request.urlopen", return_value=Reply()) as opener:
+            status, _, content = http_request(
+                self.server, "POST", "/api/restart", b"",
+                {"X-CSRF-Token": cfg.HTTP_ROUTER.security.csrf_token})
+            self.assertEqual(status, 200)
+            self.assertIn(b"{}", content)
+            self.assertEqual(opener.call_count, 1)
+            req = opener.call_args.args[0]
+            self.assertEqual(req.get_method(), "POST")
+            self.assertEqual(req.full_url,
+                             "http://127.0.0.1:8123/api/services/homeassistant/restart")
 
     def test_unsupported_internal_http_verbs_are_501(self):
         for method in ("AUTHHEAD", "BLOCK"):
