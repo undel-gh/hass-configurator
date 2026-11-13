@@ -51,7 +51,9 @@ class PolicyTests(unittest.TestCase):
 
         policy = ApiPolicy()
         h = Handler()
-        for host in ("evil.example", "127.0.0.1.evil.example", "localhost.evil.example"):
+        for host in ("evil.example", "127.0.0.1.evil.example", "localhost.evil.example",
+                     "evil@localhost:3218", "localhost:3218/anything",
+                     "localhost:notaport", "localhost:3218 ", "localhost\\\\evil"):
             h.headers = {"Host": host}
             with self.subTest(host=host):
                 self.assertEqual(policy.authorize(h, "GET", "/").status, 403)
@@ -59,6 +61,32 @@ class PolicyTests(unittest.TestCase):
             h.headers = {"Host": host}
             with self.subTest(host=host):
                 self.assertIsNone(policy.authorize(h, "GET", "/"))
+
+    def test_privileged_flags_require_literal_boolean_true(self):
+        class Handler:
+            headers = {"Host": "127.0.0.1:3218"}
+            client_address = ("127.0.0.1", 12345)
+            server = type("Server", (), {"server_address": ("127.0.0.1", 3218)})()
+
+        policy = ApiPolicy()
+        h = Handler()
+        h.headers = {"Host": "127.0.0.1:3218", "X-CSRF-Token": policy.csrf_token}
+        for endpoint, arg in (
+            ("/api/exec_command", {"allow_shell": "false"}),
+            ("/api/push", {"allow_git": "false"}),
+            ("/api/allowed_networks", {"allow_network": "false"}),
+            ("/api/restart", {"allow_ha_control": "false"}),
+        ):
+            with self.subTest(endpoint=endpoint):
+                self.assertEqual(policy.authorize(h, "POST", endpoint, **arg).status, 403)
+        for name in ("ALLOW_SHELL_COMMANDS", "ALLOW_GIT_OPERATIONS",
+                     "ALLOW_NETWORK_ADMIN", "ALLOW_HA_CONTROL"):
+            with self.subTest(name=name):
+                self.assertFalse(cfg._secure_flag({name: False}, name, False))
+                self.assertTrue(cfg._secure_flag({name: True}, name, False))
+                for invalid in ("false", "true", 0, 1, None, []):
+                    with self.assertRaises(ValueError):
+                        cfg._secure_flag({name: invalid}, name, False)
 
     def test_privileged_operations_disabled_even_with_valid_csrf(self):
         class Handler:
