@@ -53,11 +53,16 @@ class ApiPolicy:
     def _local_host_only(handler):
         """Deny DNS rebinding against an unauthenticated loopback-only UI."""
         raw = handler.headers.get("Host", "")
-        if not isinstance(raw, str) or any(ord(ch) < 32 or ord(ch) == 127 for ch in raw):
+        if (not isinstance(raw, str) or raw != raw.strip()
+                or any(ord(ch) < 32 or ord(ch) == 127 for ch in raw)
+                or any(ch in raw for ch in "@/?#\\\\")):
             return False
         try:
             parsed = urlsplit("//" + raw)
-            return (parsed.hostname or "").lower() in {"localhost", "127.0.0.1", "::1"}
+            # Accessing port also rejects malformed numeric ports.
+            _ = parsed.port
+            return (not parsed.path and not parsed.query and not parsed.fragment
+                    and (parsed.hostname or "").lower() in {"localhost", "127.0.0.1", "::1"})
         except ValueError:
             return False
 
@@ -71,14 +76,14 @@ class ApiPolicy:
             return self._deny(403, "Authentication required (Basic Auth or loopback-only binding)")
         if not authenticated and not self._local_host_only(handler):
             return self._deny(403, "Untrusted Host on loopback-only editor")
-        if method == "POST" and path in HA_CONTROL and not allow_ha_control:
+        if method == "POST" and path in HA_CONTROL and allow_ha_control is not True:
             return self._deny(403, "HA control is disabled")
         if method == "POST":
-            if path in SHELL and not allow_shell:
+            if path in SHELL and allow_shell is not True:
                 return self._deny(403, "Command execution is disabled")
-            if path in GIT and not allow_git:
+            if path in GIT and allow_git is not True:
                 return self._deny(403, "Git operations are disabled")
-            if path in NETWORK and not allow_network:
+            if path in NETWORK and allow_network is not True:
                 return self._deny(403, "Network administration is disabled")
 
         if method == "POST":
