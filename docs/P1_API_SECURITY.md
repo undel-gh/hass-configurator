@@ -25,6 +25,9 @@ The old default of listening on `0.0.0.0` without credentials is no longer
 sufficient to open an editable UI: dynamic HTML and API requests are **403**.
 For standalone local testing use `--listen 127.0.0.1` (and bind the backend
 socket directly; do **not** forward an unauthenticated reverse proxy to it).
+Unauthenticated local access also requires a strict loopback HTTP `Host`
+(`localhost`, `127.0.0.1`, or `[::1]` with an optional valid port), rejecting
+DNS-rebinding aliases and malformed Host authority strings.
 For network access configure `USERNAME`/`PASSWORD` (or CLI equivalents),
 TLS or a reviewed secure proxy, and restrictive network/firewall rules.
 
@@ -35,7 +38,10 @@ through the editor. Symlinked directories and files are not supported.
 
 Privileged actions now require explicit booleans, all **false** by default:
 `ALLOW_SHELL_COMMANDS`, `ALLOW_GIT_OPERATIONS`, `ALLOW_NETWORK_ADMIN`,
-`ALLOW_HA_CONTROL`. Shell execution additionally requires a nonempty list
+`ALLOW_HA_CONTROL`. Settings loaded from JSON/environment must contain actual
+boolean values: `true` or `false`. String values such as `"false"`, numeric `0`/`1`
+and `null` are rejected at startup, and the HTTP admission boundary never
+treats a truthy value as an opt-in. Shell execution additionally requires a nonempty list
 `EXEC_ALLOWED_BINARIES`, whose entries must be absolute executable paths.
 Do not grant access to interpreters such as `python` or `bash` unless arbitrary
 command execution as the service user is explicitly acceptable.
