@@ -175,12 +175,83 @@ jobs:
               cd e2e
               EDITOR_URL="http://127.0.0.1:$port" \
               E2E_WORKSPACE="$work" E2E_PYTHON="$venv/bin/python" \
-                npm test -- --grep 'full UI attempts|real HTML resolves|Ace modes, themes|file browser'
+                npm test -- --grep 'full UI attempts|real HTML resolves|Ace modes, themes|file browser|release identity'
             )
             kill "$app_pid"
             wait "$app_pid" || true
             trap - EXIT
           done
+      - name: Build fork Docker image, verify identity offline, test real container browser
+        run: |
+          set -euo pipefail
+          docker build --tag hc-fork-p0:ci .
+          expected_version=$(python -c 'from hass_configurator._version import VERSION; print(VERSION)')
+          expected_digest=$(python -c 'from hass_configurator.http_routing import Assets; print(Assets().version)')
+          echo "Expected fork version=$expected_version static fingerprint=$expected_digest"
+
+          # Verify the package installed FROM the fork-built wheel, not a
+          # wheel retained in the final image. Network access is disabled
+          # and imports must not resolve to the checkout.
+          docker run --rm --network none -i \
+            --env EXPECTED_VERSION="$expected_version" \
+            --env EXPECTED_DIGEST="$expected_digest" \
+            --entrypoint python hc-fork-p0:ci - <<'PY'
+          import importlib.metadata
+          import json
+          import os
+          from pathlib import Path
+          from hass_configurator._version import VERSION
+          from hass_configurator import configurator
+          from hass_configurator.http_routing import Assets
+
+          assert importlib.metadata.version("hass-configurator") == VERSION
+          assert VERSION == os.environ["EXPECTED_VERSION"]
+          assert Assets().version == os.environ["EXPECTED_DIGEST"]
+          assert "site-packages" in str(Path(configurator.__file__).resolve())
+          print(json.dumps({"fork_image_version": VERSION,
+                            "fingerprint": Assets().version,
+                            "imported_module": configurator.__file__}))
+          PY
+
+          docker run --detach --rm --network none \
+            --name hc-fork-p0-networkless hc-fork-p0:ci
+          trap 'docker rm -f hc-fork-p0-networkless hc-fork-p0-browser 2>/dev/null || true' EXIT
+          ready=0
+          for i in $(seq 1 40); do
+            if docker exec hc-fork-p0-networkless python -c \
+              'import json,urllib.request; u=urllib.request.urlopen("http://127.0.0.1:3218/api/version",timeout=2); assert u.status==200 and json.loads(u.read())["version"]' \
+              >/dev/null 2>&1; then
+              ready=1
+              break
+            fi
+            sleep 1
+          done
+          test "$ready" -eq 1 || { docker logs hc-fork-p0-networkless; exit 1; }
+          docker rm -f hc-fork-p0-networkless
+          mkdir -p /tmp/hc-fork-p0-sandbox
+          docker run --detach --rm --name hc-fork-p0-browser \
+            -p 127.0.0.1:3221:3218 \
+            -v /tmp/hc-fork-p0-sandbox:/config \
+            hc-fork-p0:ci
+          ready=0
+          for i in $(seq 1 40); do
+            if curl -fsS http://127.0.0.1:3221/api/version >/dev/null; then
+              ready=1
+              break
+            fi
+            sleep 1
+          done
+          test "$ready" -eq 1 || { docker logs hc-fork-p0-browser; exit 1; }
+          (
+            cd e2e
+            EDITOR_URL=http://127.0.0.1:3221 \
+            E2E_WORKSPACE=/tmp/hc-fork-p0-sandbox \
+            E2E_CONTAINER_PATH=/config \
+              npm test -- --grep 'fork-built Docker|full UI attempts|real HTML resolves|Ace modes, themes|release identity'
+          )
+          docker rm -f hc-fork-p0-browser
+          trap - EXIT
+
       - name: Store browser audit and traces
         if: always()
         uses: actions/upload-artifact@v4

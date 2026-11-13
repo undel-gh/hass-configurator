@@ -25,6 +25,7 @@ import mimetypes
 from string import Template
 from http.server import BaseHTTPRequestHandler
 from hass_configurator.http_routing import Router, error_response, send_response as write_http_response
+from hass_configurator._version import VERSION
 import urllib.request
 from urllib.parse import urlparse, parse_qs, unquote
 
@@ -111,7 +112,6 @@ SO.setLevel(LOGLEVEL)
 SO.setFormatter(
     logging.Formatter('%(levelname)s:%(asctime)s:%(name)s:%(message)s'))
 LOG.addHandler(SO)
-VERSION = "0.7.0"
 HTTP_ROUTER = Router()
 BASEDIR = "."
 DEV = False
@@ -560,7 +560,12 @@ class RequestHandler(BaseHTTPRequestHandler):
         query = parse_qs(req.query)
         self.send_response(200)
         # pylint: disable=no-else-return
-        if req.path == '/api/file':
+        if req.path == '/api/version':
+            self.send_header('Content-type', 'application/json; charset=utf-8')
+            self.end_headers()
+            self.wfile.write(json.dumps({'version': VERSION}).encode('utf-8'))
+            return
+        elif req.path == '/api/file':
             content = ""
             filename = query.get('filename', None)
             try:

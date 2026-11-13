@@ -1,0 +1,24 @@
+.git
+.github
+.vscode
+__pycache__
+*.pyc
+*.pyo
+*.egg-info
+dist
+build
+e2e
+tests
+scripts
+docs
+haos-fixture
+screenshots
+*.log
+.env
+.env.*
+
+# Legacy root-level files are not inputs to the fork's package build.
+/configurator.py
+/dev.html
+/hass-poc-configurator.png
+/changelog.txt

@@ -125,3 +125,25 @@ flowchart TD
 | `.github/workflows/offline-foundation.yml` | **Implemented** pinned runtime / browser tests, npm archive checks, wheel+sdist contents; real HA OS Ingress remains #8 |
 
 The one-time vendor-download workflow was removed after generating the pinned binary commit. The generator remains available for reviewed dependency updates. The existing `BaseHTTPRequestHandler` legacy API controllers have **not** been migrated to new security policies; #7 retains ownership.
+
+## PR #18 — P0 distribution and container provenance
+
+- `hass_configurator/_version.py`: release string shared by runtime, UI,
+  read-only `GET /api/version` and `setup.py` metadata, with Python/browser
+  contract tests for equality.
+- `Dockerfile`: fork-built multistage image installing a wheel built from
+  this checkout (no public PyPI hass-configurator substitution); rootless
+  hardening of privileged legacy APIs is still #7.
+- `.dockerignore`: excludes tests, source-control metadata, private local
+  artifacts and unrelated fixture sources from the production image context.
+- `e2e/docker-runtime.spec.cjs`: isolated bind-mounted file round trip
+  against actual fork-built container, strict automatic remote-origin denial.
+- `tests/test_p0_failure_gates.py`: explicit negative CI fixtures for
+  outbound script injection, missing first-party and missing declared vendor.
+- `scripts/check_offline_artifacts.py`: also verifies shared version file
+  and distribution metadata in both wheel and sdist.
+- `docs/P0_PACKAGING.md`: CI reproduction guide and distinct P0/P1 bounds.
+
+Immutable container-base and transitive dependency locks remain #5/#9.
+P1 auth, filesystem confinement, real Supervisor Ingress and CSP remain
+independent release gates (#7/#8/#13).
