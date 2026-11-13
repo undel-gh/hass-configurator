@@ -171,3 +171,16 @@ independent release gates (#7/#8/#13).
 
 Real HAOS/Ingress acceptance (#8), privileged API security (#7/#13) and
 full supply-chain licensing/vulnerability/SBOM review (#9) are separate.
+
+
+### Independent-review source and provenance invariants
+
+- `.github/workflows/offline-foundation.yml`: all four checkout steps select
+  PR HEAD or push SHA explicitly; the container-build step requires
+  `git rev-parse HEAD` to match that value before recording the exact commit,
+  epoch and reproducible image IDs.
+- `Dockerfile`: the official pinned OCI base digest is not a build ARG.
+  Its fixed OCI labels therefore cannot accidentally describe an overridden
+  foreign image.
+- `tests/test_docker_layer_diagnostics.py`: catches changed file bytes
+  behind identical saved layer archive member paths.
