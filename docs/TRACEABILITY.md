@@ -32,7 +32,7 @@ scope, AT-01–AT-10 tests, and external maintainer controls.
 | FR-001 | #3, #4 | `e2e/offline-smoke.spec.cjs`, `e2e/offline-dynamic.spec.cjs`, `tests/test_vendored_assets.py` | verified (P0 automated; offline UI/assets) |
 | FR-002 | #3, #6 | `e2e/offline-dynamic.spec.cjs`, `e2e/release-matrix.spec.cjs` | verified (P0 automated; supported modes/workers) |
 | FR-003 | #2, #6 | `e2e/release-matrix.spec.cjs`, `e2e/ingress-operations.spec.cjs`, `tests/test_legacy_contract.py` | verified (P0 automated; safe file round trips) |
-| FR-004 | #7, #8 | `docs/HAOS_REAL_INGRESS.md`, #7 security policy | pending (P1 privileged APIs and real HA) |
+| FR-004 | #7, #8 | `docs/P1_API_SECURITY.md`, `tests/test_api_security.py`, P1 real HA OS #8 | partial (P1 #7 candidate in PR #21; real HA OS #8 pending) |
 | FR-005 | #2, #8 | `e2e/ingress-operations.spec.cjs`, `e2e/offline-smoke.spec.cjs`, `tests/test_ingress_redirect.py` | partial (P0 simulated verified; P1 real Ingress #8 pending) |
 | FR-006 | #6, #8 | `e2e/ha-outage.spec.cjs` | partial (P0 outage verified; P1 real REST/WS #8 pending) |
 | FR-007 | #1, #6 | `e2e/offline-smoke.spec.cjs`, `docs/runtime-dependencies.json` | verified (P0 automated; no automatic public links) |
@@ -45,14 +45,14 @@ scope, AT-01–AT-10 tests, and external maintainer controls.
 | --- | --- | --- | --- |
 | NFR-001 | #6, #14 | `e2e/offline-smoke.spec.cjs`, `tests/test_p0_failure_gates.py` | verified (P0 automated; attempted public requests) |
 | NFR-002 | #1, #3, #5, #9 | `docs/ace-builds-1.9.6-lock.json`, `hass_configurator/vendor/manifest.json`, `requirements/docker-runtime.lock` | partial (P0 origin/integrity verified; P1 license/SBOM #9 pending) |
-| NFR-003 | #2, #7 | `tests/test_routing.py`, `tests/test_p0_closeout.py` | partial (P0 route/static verified; P1 privileged filesystem #7 pending) |
+| NFR-003 | #2, #7 | `tests/test_routing.py`, `tests/test_api_security.py`, `hass_configurator/api_security.py` | partial (P0 verified; P1 dir-fd confined operations in PR #21, security review pending) |
 | NFR-004 | #2 | `tests/test_routing.py`, `tests/test_legacy_contract.py`, `tests/test_p0_closeout.py` | partial (P0 router-owned writer verified; legacy API direct response migration #7 pending) |
 | NFR-005 | #2, #6 | `.github/workflows/offline-foundation.yml`, `e2e/offline-smoke.spec.cjs` | verified (P0 automated; source and installed E2E) |
-| NFR-006 | #7 | `docs/ARCHITECTURE.md`, #7 | pending (P1 auth/CSRF/command confinement) |
+| NFR-006 | #7 | `hass_configurator/api_security.py`, `tests/test_api_security.py`, `e2e/security.spec.cjs`, `docs/P1_API_SECURITY.md` | partial (P1 #7 implementation candidate; independent security review and final exact-HEAD CI pending) |
 | NFR-007 | #5, #10 | `scripts/check_offline_artifacts.py`, `e2e/version-identity.spec.cjs`, Docker CI | verified (P0 automated; installed artifact identity) |
 | NFR-008 | #14 | `.github/workflows/offline-foundation.yml`, `tests/test_traceability.py`, PR template | partial (P0 CI governance verified; branch required-check settings NOT VERIFIED) |
 | NFR-009 | #2, #5, #6 | `tests/test_routing.py`, `e2e/cache-upgrade.spec.cjs` | partial (P0 immutable/warm verified; P1 real upgrade #8 pending) |
-| NFR-010 | #13, #7 | CSP design in `docs/ARCHITECTURE.md` | pending (P1 CSP enforcement) |
+| NFR-010 | #13, #7 | `docs/P1_API_SECURITY.md`, `e2e/security.spec.cjs`, CSP design in `docs/ARCHITECTURE.md` | partial (#7 injection-sink mitigations in review; CSP enforcement #13 pending) |
 | NFR-011 | #1, #3 | `scripts/verify_ace_archive.py`, `tests/test_vendored_assets.py`, `tests/test_p0_closeout.py` | verified (P0 automated; single pinned Ace family) |
 
 ## Architectural decisions
@@ -63,7 +63,7 @@ scope, AT-01–AT-10 tests, and external maintainer controls.
 | ADR-002 | #6, #14 | `e2e/offline-smoke.spec.cjs` request-attempt gate | verified (P0 automated; browser external requests) |
 | ADR-003 | #2, #7 | `hass_configurator/http_routing.py`, `tests/test_legacy_contract.py` | partial (P0 permanent exact router; P1 legacy controllers #7 pending) |
 | ADR-004 | #2, #8 | `tests/test_ingress_redirect.py`, `e2e/ingress-operations.spec.cjs` | partial (P0 simulated; P1 real ingress #8 pending) |
-| ADR-005 | #7 | `docs/ARCHITECTURE.md` | pending (P1 privileged API security) |
+| ADR-005 | #7 | `docs/P1_API_SECURITY.md`, `tests/test_api_security.py`, `hass_configurator/api_security.py` | partial (#7 candidate; review/CI pending) |
 | ADR-006 | #1, #3 | `docs/ace-builds-1.9.6-lock.json`, `scripts/verify_ace_archive.py` | verified (P0 automated; Ace SRI/closure) |
 | ADR-007 | #14 | PR template, CI, `tests/test_traceability.py` | partial (P0 code/CI contract verified; maintainer branch rules pending / NOT VERIFIED) |
 | ADR-008 | #13 | CSP design in `docs/ARCHITECTURE.md` | pending (P1 CSP) |
@@ -91,6 +91,22 @@ test container is not evidence of real Supervisor Ingress.
 The PR body must supply its own exact reviewed HEAD and CI run. Closeout
 review must also confirm whether branch protection is enabled; do not infer
 that from the workflow.
+
+## P1 security implementation checkpoint — draft PR #21 (Issue #7)
+
+**Not a release acceptance.** This checkpoint documents the current
+security implementation candidate and its test obligations. It does not
+overwrite the P0 accepted CI baseline or declare AT-12 verified.
+
+| Requirement / ADR | Candidate implementation | Evidence still required |
+| --- | --- | --- |
+| FR-004 / NFR-006 / ADR-005 | `Router.security` admission, Basic Auth, CSRF for every POST, deny-by-default high-risk capabilities and POST-only HA control | Current **exact PR HEAD** CI run, source/wheel/sdist/Docker regression, independent security review |
+| NFR-003 / ADR-003 | `ConfinedFS` no-follow descriptor-based file reads/mutations/listing, strict workspace root, Git worktree validation | Symlink, sibling, special-file, race and upload/browser regression tests and review |
+| NFR-010 / ADR-008 | Dynamic file/branch/error display changed to safe text, script JSON escaped, server-held HA password removed from HTML | Browser XSS abuse tests on current PR HEAD; strict CSP still **pending #13** |
+| AT-12 | `tests/test_api_security.py`, `tests/test_legacy_contract.py`, `e2e/security.spec.cjs` | Not verified until CI and independent review; actual Supervisor security/Ingress #8 and CSP #13 are separate |
+
+Review threat model [`docs/P1_API_SECURITY.md`](P1_API_SECURITY.md).
+Issue #7 remains open until scope is accepted after independent review.
 
 ## Historical implementation checkpoints
 
