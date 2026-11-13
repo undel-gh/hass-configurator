@@ -1,33 +1,11 @@
 {
   "schema_version": 1,
-  "source_branch": "master",
+  "source_branch": "feat/offline-vendored-ace-styles",
   "audited_date": "2026-11-13",
-  "status": "static source inventory, NOT a cold-browser trace (pending #6)",
-  "required_runtime_origins": [
-    "https://cdnjs.cloudflare.com"
-  ],
-  "required_external_files": [
-    "https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/3.4.93/css/materialdesignicons.min.css",
-    "https://cdnjs.cloudflare.com/ajax/libs/ace/1.9.6/ace.js",
-    "https://cdnjs.cloudflare.com/ajax/libs/ace/1.9.6/ext-language_tools.js",
-    "https://cdnjs.cloudflare.com/ajax/libs/ace/1.9.6/ext-modelist.js",
-    "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css"
-  ],
-  "auto_loaded_external_images": [
-    "https://avatars.githubusercontent.com/u/114901470?v=4&s=400",
-    "https://avatars.githubusercontent.com/u/20040931?v=4&s=400",
-    "https://avatars.githubusercontent.com/u/613272?v=4&s=400",
-    "https://avatars.githubusercontent.com/u/85389871?v=4&s=400",
-    "https://avatars.githubusercontent.com/u/874635?v=4&s=400",
-    "https://avatars0.githubusercontent.com/u/1294876?s=400&v=4",
-    "https://avatars0.githubusercontent.com/u/1525413?v=4&s=400",
-    "https://avatars0.githubusercontent.com/u/646513?s=400&v=4",
-    "https://avatars2.githubusercontent.com/u/1399443?s=460&v=4",
-    "https://avatars2.githubusercontent.com/u/1509640?v=4&s=400",
-    "https://avatars3.githubusercontent.com/u/14281572?s=400&v=4",
-    "https://avatars3.githubusercontent.com/u/1561226?s=400&v=4",
-    "https://avatars3.githubusercontent.com/u/7396998?v=4&s=400"
-  ],
+  "status": "All known browser-automatic public origins removed from HTML; dynamic browser E2E verification still required",
+  "required_runtime_origins": [],
+  "required_external_files": [],
+  "auto_loaded_external_images": [],
   "optional_documentation_links": [
     "http://materializecss.com/",
     "https://ace.c9.io/",
@@ -64,7 +42,7 @@
     "flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2"
   ],
   "ace": {
-    "currently_loaded_core": "https://cdnjs.cloudflare.com/ajax/libs/ace/1.9.6/ace.js",
+    "currently_loaded_core": "assets/v<digest>/vendor/ace/ace.js",
     "proposed_package": "ace-builds",
     "proposed_version": "1.9.6",
     "candidate_archive_url": "https://registry.npmjs.org/ace-builds/-/ace-builds-1.9.6.tgz",
@@ -81,7 +59,6 @@
       "assembly_x86",
       "autohotkey",
       "batchfile",
-      "bro",
       "c9search",
       "c_cpp",
       "cirru",
@@ -99,8 +76,6 @@
       "dockerfile",
       "dot",
       "drools",
-      "dummy",
-      "dummysyntax",
       "eiffel",
       "ejs",
       "elixir",
@@ -251,20 +226,17 @@
       "vim",
       "emacs"
     ],
-    "dynamic_modules_status": "Tarball closure verified for 440 files (11 workers); actual browser dynamic fetch trace pending #6, 3 old UI modes absent and must be addressed by #3.",
+    "dynamic_modules_status": "All 440 files from pinned src-min-noconflict npm archive are bundled locally; dynamic loading must be exercised by browser tests.",
     "archive_sha256": "b9facb2b1187cd1b0792eb5b23aac2faae772ea293d128c70c13c7a4f9f2c61d",
     "lock_file": "docs/ace-builds-1.9.6-lock.json",
-    "missing_ui_modes": [
-      "bro",
-      "dummy",
-      "dummysyntax"
-    ]
+    "missing_ui_modes": []
   },
   "notes": [
-    "The HTML still attempts CDN scripts and CSS. No complete offline compliance is claimed.",
-    "Remote contributor avatars are automatically loaded images, not user-initiated documentation.",
-    "Local HA REST/WebSocket traffic is not public Internet and is separately configurable.",
-    "The first loaded Ace core/extras are currently cdnjs build; the proposed npm build family must be validated before switching.",
-    "Trace is static extraction only; full dynamic requests are pending Playwright capture."
-  ]
+    "Known CDN script/stylesheet requests and remote GitHub avatar images removed. Strict runtime browser attempt gate is the source of truth.",
+    "Optional documentation links are only opened on deliberate user action; no preload.",
+    "Locally configured Home Assistant REST/WebSocket is a separate optional network exception, not a public Internet dependency.",
+    "Three old Ace selector modes (bro, dummy, dummysyntax) were removed because upstream Ace 1.9.6 archive does not include the corresponding module files.",
+    "Vendor origin package SRI, tarball SHA-256, file SHA-256 and licenses are recorded in hass_configurator/vendor/manifest.json."
+  ],
+  "vendor_manifest": "hass_configurator/vendor/manifest.json"
 }
