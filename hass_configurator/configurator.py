@@ -24,6 +24,7 @@ import hashlib
 import mimetypes
 from string import Template
 from http.server import BaseHTTPRequestHandler
+from hass_configurator.http_routing import Router, error_response, send_response as write_http_response
 import urllib.request
 from urllib.parse import urlparse, parse_qs, unquote
 
@@ -111,6 +112,7 @@ SO.setFormatter(
     logging.Formatter('%(levelname)s:%(asctime)s:%(name)s:%(message)s'))
 LOG.addHandler(SO)
 VERSION = "0.7.0"
+HTTP_ROUTER = Router()
 BASEDIR = "."
 DEV = False
 LISTENPORT = None
@@ -480,6 +482,30 @@ class RequestHandler(BaseHTTPRequestHandler):
     def log_message(self, format, *args):
         LOG.info("%s - %s", self.client_address[0], format % args)
 
+    def _dispatch_route(self, method):
+        """Shared exact-route boundary for static and transitional legacy API."""
+        match = HTTP_ROUTER.match(method, self.path)
+        self._legacy_route = match.kind in ("legacy_api", "legacy_page")
+        if self._legacy_route:
+            return True
+        if match.kind == "asset":
+            response = HTTP_ROUTER.assets.response(match)
+        elif match.kind == "bad_request":
+            response = error_response(400)
+        elif match.kind == "method_not_allowed":
+            response = error_response(405, allow=match.allow)
+        else:
+            response = error_response(404)
+        write_http_response(self, response)
+        return False
+
+    def end_headers(self):
+        """Legacy HTML and API outputs must never enter shared caches."""
+        if getattr(self, "_legacy_route", False):
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("X-Content-Type-Options", "nosniff")
+        super().end_headers()
+
     # pylint: disable=invalid-name
     def do_BLOCK(self, status=420, reason="Policy not fulfilled"):
         """Customized do_BLOCK method."""
@@ -501,9 +527,8 @@ class RequestHandler(BaseHTTPRequestHandler):
                     ALLOWED_NETWORKS.append(self.client_address[0])
                 if self.client_address[0] in BANNED_IPS:
                     BANNED_IPS.remove(self.client_address[0])
-                url = req.path[:req.path.rfind(chunk)]
                 self.send_response(302)
-                self.send_header('Location', url)
+                self.send_header('Location', './')
                 self.end_headers()
                 data = {
                     "title": "HASS Configurator - SESAME access",
@@ -517,9 +542,8 @@ class RequestHandler(BaseHTTPRequestHandler):
                     ALLOWED_NETWORKS.append(self.client_address[0])
                 if self.client_address[0] in BANNED_IPS:
                     BANNED_IPS.remove(self.client_address[0])
-                url = req.path[:req.path.rfind(chunk)]
                 self.send_response(302)
-                self.send_header('Location', url)
+                self.send_header('Location', './')
                 self.end_headers()
                 data = {
                     "title": "HASS Configurator - SESAME access",
@@ -531,10 +555,12 @@ class RequestHandler(BaseHTTPRequestHandler):
         if not check_access(self.client_address[0]):
             self.do_BLOCK()
             return
+        if not self._dispatch_route("GET"):
+            return
         query = parse_qs(req.query)
         self.send_response(200)
         # pylint: disable=no-else-return
-        if req.path.endswith('/api/file'):
+        if req.path == '/api/file':
             content = ""
             filename = query.get('filename', None)
             try:
@@ -568,7 +594,7 @@ class RequestHandler(BaseHTTPRequestHandler):
             else:
                 self.wfile.write(bytes(content, "utf8"))
             return
-        elif req.path.endswith('/api/download'):
+        elif req.path == '/api/download':
             content = ""
             filename = query.get('filename', None)
             try:
@@ -593,7 +619,7 @@ class RequestHandler(BaseHTTPRequestHandler):
             self.send_header('Content-type', 'text/text')
             self.wfile.write(bytes(content, "utf8"))
             return
-        elif req.path.endswith('/api/listdir'):
+        elif req.path == '/api/listdir':
             content = {'error': None}
             self.send_header('Content-type', 'text/json')
             self.end_headers()
@@ -636,7 +662,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                 content['error'] = str(err)
                 self.wfile.write(bytes(json.dumps(content), "utf8"))
             return
-        elif req.path.endswith('/api/abspath'):
+        elif req.path == '/api/abspath':
             content = ""
             self.send_header('Content-type', 'text/text')
             self.end_headers()
@@ -649,7 +675,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                 if os.path.isdir(dirpath):
                     self.wfile.write(os.path.abspath(dirpath))
             return
-        elif req.path.endswith('/api/parent'):
+        elif req.path == '/api/parent':
             content = ""
             self.send_header('Content-type', 'text/text')
             self.end_headers()
@@ -662,12 +688,12 @@ class RequestHandler(BaseHTTPRequestHandler):
                 if os.path.isdir(dirpath):
                     self.wfile.write(os.path.abspath(os.path.dirname(dirpath)))
             return
-        elif req.path.endswith('/api/prefs'):
+        elif req.path == '/api/prefs':
             self.send_header('Content-type', 'text/json')
             self.end_headers()
             self.wfile.write(bytes(json.dumps(load_prefs()), "utf8"))
             return
-        elif req.path.endswith('/api/netstat'):
+        elif req.path == '/api/netstat':
             content = ""
             self.send_header('Content-type', 'text/json')
             self.end_headers()
@@ -677,7 +703,7 @@ class RequestHandler(BaseHTTPRequestHandler):
             }
             self.wfile.write(bytes(json.dumps(res), "utf8"))
             return
-        elif req.path.endswith('/api/restart'):
+        elif req.path == '/api/restart':
             LOG.info("/api/restart")
             self.send_header('Content-type', 'text/json')
             self.end_headers()
@@ -702,7 +728,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                 res['restart'] = str(err)
             self.wfile.write(bytes(json.dumps(res), "utf8"))
             return
-        elif req.path.endswith('/api/check_config'):
+        elif req.path == '/api/check_config':
             LOG.info("/api/check_config")
             self.send_header('Content-type', 'text/json')
             self.end_headers()
@@ -727,7 +753,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                 res['errors'] = str(err)
             self.wfile.write(bytes(json.dumps(res), "utf8"))
             return
-        elif req.path.endswith('/api/reload_automations'):
+        elif req.path == '/api/reload_automations':
             LOG.info("/api/reload_automations")
             self.send_header('Content-type', 'text/json')
             self.end_headers()
@@ -752,7 +778,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                 res['restart'] = str(err)
             self.wfile.write(bytes(json.dumps(res), "utf8"))
             return
-        elif req.path.endswith('/api/reload_scripts'):
+        elif req.path == '/api/reload_scripts':
             LOG.info("/api/reload_scripts")
             self.send_header('Content-type', 'text/json')
             self.end_headers()
@@ -777,7 +803,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                 res['restart'] = str(err)
             self.wfile.write(bytes(json.dumps(res), "utf8"))
             return
-        elif req.path.endswith('/api/reload_groups'):
+        elif req.path == '/api/reload_groups':
             LOG.info("/api/reload_groups")
             self.send_header('Content-type', 'text/json')
             self.end_headers()
@@ -802,7 +828,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                 res['restart'] = str(err)
             self.wfile.write(bytes(json.dumps(res), "utf8"))
             return
-        elif req.path.endswith('/api/reload_core'):
+        elif req.path == '/api/reload_core':
             LOG.info("/api/reload_core")
             self.send_header('Content-type', 'text/json')
             self.end_headers()
@@ -910,77 +936,13 @@ class RequestHandler(BaseHTTPRequestHandler):
                     hass_ws_address=ws_api,
                     api_password=HASS_API_PASSWORD if HASS_API_PASSWORD else "",
                     standalone=standalone,
-                    ui_theme=load_prefs().get('ui_theme', 'auto'))
+                    ui_theme=load_prefs().get('ui_theme', 'auto'),
+                    asset_version=HTTP_ROUTER.assets.version)
             except Exception as err:
                 LOG.warning("Error getting html: %s", err)
                 html = ERROR_HTML
             self.wfile.write(bytes(html, "utf8"))
             return
-        elif req.path.endswith('/jquery-3.6.0.min.js'):
-            try:
-                data = load_file("jquery-3.6.0.min.js", static=True)
-            except Exception as err:
-                self.send_response(404)
-                self.end_headers()
-                self.wfile.write(bytes("File not found", "utf8"))
-            self.send_header('Content-type', 'application/javascript')
-            self.end_headers()
-            self.wfile.write(data)
-        elif req.path.endswith('/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2'):
-            try:
-                data = load_file("flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2", static=True)
-            except Exception as err:
-                self.send_response(404)
-                self.end_headers()
-                self.wfile.write(bytes("File not found", "utf8"))
-            self.send_header('Content-type', 'font/woff')
-            self.end_headers()
-            self.wfile.write(data)
-        elif req.path.endswith('/js-yaml.min.js'):
-            try:
-                data = load_file("js-yaml.min.js", static=True)
-            except Exception as err:
-                self.send_response(404)
-                self.end_headers()
-                self.wfile.write(bytes("File not found", "utf8"))
-            self.send_header('Content-type', 'application/javascript')
-            self.end_headers()
-            self.wfile.write(data)
-        elif req.path.endswith('/materialize.min.js'):
-            try:
-                data = load_file("materialize.min.js", static=True)
-            except Exception as err:
-                self.send_response(404)
-                self.end_headers()
-                self.wfile.write(bytes("File not found", "utf8"))
-            self.send_header('Content-type', 'application/javascript')
-            self.end_headers()
-            self.wfile.write(data)
-        elif req.path.endswith('/material-icons.fallback.css'):
-            try:
-                data = load_file("material-icons.fallback.css", static=True)
-            except Exception as err:
-                self.send_response(404)
-                self.end_headers()
-                self.wfile.write(bytes("File not found", "utf8"))
-            self.send_header('Content-type', 'text/css')
-            self.end_headers()
-            self.wfile.write(data)
-        elif req.path.endswith('/style.css'):
-            try:
-                data = load_file("style.css", static=True)
-            except Exception as err:
-                self.send_response(404)
-                self.end_headers()
-                self.wfile.write(bytes("File not found", "utf8"))
-            self.send_header('Content-type', 'text/css')
-            self.end_headers()
-            self.wfile.write(data)
-        else:
-            self.send_response(404)
-            self.end_headers()
-            self.wfile.write(bytes("File not found", "utf8"))
-
     # pylint: disable=invalid-name
     def do_POST(self):
         """Customized do_POST method."""
@@ -992,6 +954,8 @@ class RequestHandler(BaseHTTPRequestHandler):
             self.do_BLOCK()
             return
         req = urlparse(self.path)
+        if not self._dispatch_route("POST"):
+            return
 
         response = {
             "error": True,
@@ -999,7 +963,7 @@ class RequestHandler(BaseHTTPRequestHandler):
         }
 
         length = int(self.headers['content-length'])
-        if req.path.endswith('/api/save'):
+        if req.path == '/api/save':
             try:
                 postvars = parse_qs(self.rfile.read(length).decode('utf-8'),
                                     keep_blank_values=1)
@@ -1026,7 +990,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         LOG.warning(err)
             else:
                 response['message'] = "Missing filename or text"
-        elif req.path.endswith('/api/upload'):
+        elif req.path == '/api/upload':
             if length > 104857600: #100 MB for now
                 read = 0
                 while read < length:
@@ -1056,7 +1020,7 @@ class RequestHandler(BaseHTTPRequestHandler):
             response['message'] = "Upload successful"
             self.wfile.write(bytes(json.dumps(response), "utf8"))
             return
-        elif req.path.endswith('/api/rename'):
+        elif req.path == '/api/rename':
             try:
                 postvars = parse_qs(self.rfile.read(length).decode('utf-8'),
                                     keep_blank_values=1)
@@ -1090,7 +1054,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         LOG.warning(err)
             else:
                 response['message'] = "Missing filename or text"
-        elif req.path.endswith('/api/delete'):
+        elif req.path == '/api/delete':
             try:
                 postvars = parse_qs(self.rfile.read(length).decode('utf-8'),
                                     keep_blank_values=1)
@@ -1125,7 +1089,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         LOG.warning(err)
             else:
                 response['message'] = "Missing filename or text"
-        elif req.path.endswith('/api/exec_command'):
+        elif req.path == '/api/exec_command':
             try:
                 postvars = parse_qs(self.rfile.read(length).decode('utf-8'),
                                     keep_blank_values=1)
@@ -1175,7 +1139,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         LOG.warning(err)
             else:
                 response['message'] = "Missing command"
-        elif req.path.endswith('/api/gitadd'):
+        elif req.path == '/api/gitadd':
             try:
                 postvars = parse_qs(self.rfile.read(length).decode('utf-8'),
                                     keep_blank_values=1)
@@ -1212,7 +1176,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         LOG.warning(err)
             else:
                 response['message'] = "Missing filename"
-        elif req.path.endswith('/api/gitdiff'):
+        elif req.path == '/api/gitdiff':
             try:
                 postvars = parse_qs(self.rfile.read(length).decode('utf-8'),
                                     keep_blank_values=1)
@@ -1251,7 +1215,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         LOG.warning(err)
             else:
                 response['message'] = "Missing filename"
-        elif req.path.endswith('/api/commit'):
+        elif req.path == '/api/commit':
             try:
                 postvars = parse_qs(self.rfile.read(length).decode('utf-8'),
                                     keep_blank_values=1)
@@ -1287,7 +1251,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         LOG.warning("Exception (no repo): %s", str(err))
             else:
                 response['message'] = "Missing path"
-        elif req.path.endswith('/api/checkout'):
+        elif req.path == '/api/checkout':
             try:
                 postvars = parse_qs(self.rfile.read(length).decode('utf-8'),
                                     keep_blank_values=1)
@@ -1324,7 +1288,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         LOG.warning("Exception (no repo): %s", str(err))
             else:
                 response['message'] = "Missing path or branch"
-        elif req.path.endswith('/api/newbranch'):
+        elif req.path == '/api/newbranch':
             try:
                 postvars = parse_qs(self.rfile.read(length).decode('utf-8'),
                                     keep_blank_values=1)
@@ -1360,7 +1324,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         LOG.warning("Exception (no repo): %s", str(err))
             else:
                 response['message'] = "Missing path or branch"
-        elif req.path.endswith('/api/init'):
+        elif req.path == '/api/init':
             try:
                 postvars = parse_qs(self.rfile.read(length).decode('utf-8'),
                                     keep_blank_values=1)
@@ -1392,7 +1356,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         LOG.warning("Exception (no repo): %s", str(err))
             else:
                 response['message'] = "Missing path or branch"
-        elif req.path.endswith('/api/push'):
+        elif req.path == '/api/push':
             try:
                 postvars = parse_qs(self.rfile.read(length).decode('utf-8'),
                                     keep_blank_values=1)
@@ -1434,7 +1398,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         LOG.warning("Exception (no repo): %s", str(err))
             else:
                 response['message'] = "Missing path or branch"
-        elif req.path.endswith('/api/stash'):
+        elif req.path == '/api/stash':
             try:
                 postvars = parse_qs(self.rfile.read(length).decode('utf-8'),
                                     keep_blank_values=1)
@@ -1468,7 +1432,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         LOG.warning("Exception (no repo): %s", str(err))
             else:
                 response['message'] = "Missing path or branch"
-        elif req.path.endswith('/api/newfolder'):
+        elif req.path == '/api/newfolder':
             try:
                 postvars = parse_qs(self.rfile.read(length).decode('utf-8'),
                                     keep_blank_values=1)
@@ -1498,7 +1462,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                     except Exception as err:
                         response['message'] = "%s" % (str(err))
                         LOG.warning(err)
-        elif req.path.endswith('/api/newfile'):
+        elif req.path == '/api/newfile':
             try:
                 postvars = parse_qs(self.rfile.read(length).decode('utf-8'),
                                     keep_blank_values=1)
@@ -1531,7 +1495,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         LOG.warning(err)
             else:
                 response['message'] = "Missing filename or text"
-        elif req.path.endswith('/api/allowed_networks'):
+        elif req.path == '/api/allowed_networks':
             try:
                 postvars = parse_qs(self.rfile.read(length).decode('utf-8'),
                                     keep_blank_values=1)
@@ -1569,7 +1533,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         LOG.warning(err)
             else:
                 response['message'] = "Missing network"
-        elif req.path.endswith('/api/banned_ips'):
+        elif req.path == '/api/banned_ips':
             try:
                 postvars = parse_qs(self.rfile.read(length).decode('utf-8'),
                                     keep_blank_values=1)
@@ -1603,7 +1567,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         LOG.warning(err)
             else:
                 response['message'] = "Missing IP"
-        elif req.path.endswith('/api/prefs'):
+        elif req.path == '/api/prefs':
             try:
                 body = self.rfile.read(length).decode('utf-8')
                 new_prefs = json.loads(body)
