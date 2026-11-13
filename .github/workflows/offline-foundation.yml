@@ -216,9 +216,16 @@ jobs:
           # reviewed commit and a fixed SOURCE_DATE_EPOCH.
           export DOCKER_BUILDKIT=1
           epoch=$(git log -1 --format=%ct)
-          docker build --no-cache --build-arg SOURCE_DATE_EPOCH="$epoch" \
+          # SOURCE_DATE_EPOCH alone fixes OCI metadata but not layer file
+          # timestamps. BuildKit's Docker exporter must explicitly rewrite
+          # layer timestamps, otherwise independent image IDs drift.
+          docker buildx build --no-cache --platform linux/amd64 \
+            --output type=docker,rewrite-timestamp=true \
+            --build-arg SOURCE_DATE_EPOCH="$epoch" \
             --tag hc-fork-p0:build-a .
-          docker build --no-cache --build-arg SOURCE_DATE_EPOCH="$epoch" \
+          docker buildx build --no-cache --platform linux/amd64 \
+            --output type=docker,rewrite-timestamp=true \
+            --build-arg SOURCE_DATE_EPOCH="$epoch" \
             --tag hc-fork-p0:build-b .
           id_a=$(docker image inspect --format '{{.Id}}' hc-fork-p0:build-a)
           id_b=$(docker image inspect --format '{{.Id}}' hc-fork-p0:build-b)
