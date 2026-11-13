@@ -140,9 +140,17 @@ class ConfinedFS:
         if not pieces:
             return str(self.root)
         with self._parent(value) as (fd, name):
-            flags = self._dirflags if directory else os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)
+            flags = (self._dirflags if directory else os.O_RDONLY
+                     | getattr(os, "O_NOFOLLOW", 0)
+                     | getattr(os, "O_NONBLOCK", 0))
             opened = os.open(name, flags, dir_fd=fd)
-            os.close(opened)
+            try:
+                import stat
+                mode = os.fstat(opened).st_mode
+                if not (stat.S_ISDIR(mode) if directory else stat.S_ISREG(mode)):
+                    raise PermissionError("Only ordinary files and directories are allowed")
+            finally:
+                os.close(opened)
         return str(self.root.joinpath(*pieces))
 
     @contextmanager
@@ -205,9 +213,18 @@ class ConfinedFS:
             flags = (os.O_WRONLY | os.O_CREAT | getattr(os, "O_NOFOLLOW", 0)
                      | getattr(os, "O_NONBLOCK", 0)
                      | (os.O_EXCL if exclusive else os.O_TRUNC))
+            # Check an existing target's type before opening with O_TRUNC:
+            # a named pipe/device in the workspace must not be truncated.
+            # O_NONBLOCK avoids waiting on a FIFO while denying it.
+            import stat
+            try:
+                existing = os.stat(name, dir_fd=fd, follow_symlinks=False)
+            except FileNotFoundError:
+                existing = None
+            if existing is not None and not stat.S_ISREG(existing.st_mode):
+                raise PermissionError("Only regular files may be written")
             out = os.open(name, flags, 0o600, dir_fd=fd)
             try:
-                import stat
                 if not stat.S_ISREG(os.fstat(out).st_mode):
                     raise PermissionError("Only regular files may be written")
                 with os.fdopen(out, "wb") as stream:
