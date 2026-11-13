@@ -336,6 +336,13 @@ def is_jwt(token):
     """Perform basic check if token is a JWT token."""
     return len(token.split('.')) == 3
 
+
+def _js_safe(value):
+    """Escape HTML/script terminators inside a JSON expression."""
+    return (value.replace("<", r"\u003c").replace(">", r"\u003e")
+            .replace("&", r"\u0026")
+            .replace("\u2028", r"\u2028").replace("\u2029", r"\u2029"))
+
 def _fs():
     """Resolve the currently configured workspace for every request."""
     return ConfinedFS(BASEPATH or BASEDIR)
@@ -923,10 +930,8 @@ class RequestHandler(BaseHTTPRequestHandler):
             self.end_headers()
 
             loadfile = query.get('loadfile', [None])[0]
-            if loadfile is None:
-                loadfile = 'null'
-            else:
-                loadfile = "'%s'" % loadfile
+            # Query-supplied file names must never become raw JS source.
+            loadfile = _js_safe(json.dumps(loadfile, ensure_ascii=True))
             services = "[]"
             events = "[]"
             states = "[]"
@@ -985,20 +990,20 @@ class RequestHandler(BaseHTTPRequestHandler):
             try:
                 html = Template(load_file("dev.html", static=True).decode('utf-8'))
                 html = html.safe_substitute(
-                    services=services,
-                    events=events,
-                    states=states,
+                    services=_js_safe(services),
+                    events=_js_safe(events),
+                    states=_js_safe(states),
                     loadfile=loadfile,
                     current=VERSION,
                     versionclass=color,
                     githidden="" if GIT else "hiddendiv",
                     # pylint: disable=anomalous-backslash-in-string
                     separator="\%s" % os.sep if os.sep == "\\" else os.sep,
-                    your_address=self.client_address[0],
-                    listening_address="%s://%s:%i" % (
-                        'https' if SSL_CERTIFICATE else 'http', LISTENIP, PORT),
-                    hass_api_address="%s" % (HASS_API, ),
-                    hass_ws_address=ws_api,
+                    your_address=html.escape(self.client_address[0], quote=True),
+                    listening_address=html.escape("%s://%s:%i" % (
+                        'https' if SSL_CERTIFICATE else 'http', LISTENIP, PORT), quote=True),
+                    hass_api_address=html.escape("%s" % (HASS_API, ), quote=True),
+                    hass_ws_address=html.escape(ws_api, quote=True),
                     # Never embed server-held HA credentials into HTML/DOM.
                     api_password="",
                     csrf_token=HTTP_ROUTER.security.csrf_token,
