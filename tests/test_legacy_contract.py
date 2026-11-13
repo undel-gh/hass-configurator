@@ -17,9 +17,7 @@ from hass_configurator.http_routing import Assets, GET_API, POST_API, Router
 
 EXPECTED_GET = {
     "/api/file", "/api/download", "/api/listdir", "/api/abspath",
-    "/api/parent", "/api/prefs", "/api/version", "/api/netstat", "/api/restart",
-    "/api/check_config", "/api/reload_automations", "/api/reload_scripts",
-    "/api/reload_groups", "/api/reload_core",
+    "/api/parent", "/api/prefs", "/api/version", "/api/netstat",
 }
 EXPECTED_POST = {
     "/api/save", "/api/upload", "/api/rename", "/api/delete",
@@ -27,6 +25,8 @@ EXPECTED_POST = {
     "/api/checkout", "/api/newbranch", "/api/init", "/api/push",
     "/api/stash", "/api/newfolder", "/api/newfile",
     "/api/allowed_networks", "/api/banned_ips", "/api/prefs",
+    "/api/restart", "/api/check_config", "/api/reload_automations",
+    "/api/reload_scripts", "/api/reload_groups", "/api/reload_core",
 }
 
 
