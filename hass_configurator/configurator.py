@@ -180,6 +180,17 @@ def signal_handler(sig, frame):
     HTTPD.server_close()
     sys.exit(0)
 
+def _redacted_settings(settings):
+    """Never log credential values, even at debug verbosity."""
+    return {
+        key: ("<redacted>" if any(
+            marker in key.lower() for marker in
+            ("password", "secret", "token", "credential", "private_key")
+        ) else value)
+        for key, value in settings.items()
+    }
+
+
 def load_settings(args):
     """Load settings from file and environment."""
     global LISTENIP, LISTENPORT, BASEPATH, SSL_CERTIFICATE, SSL_KEY, HASS_API, \
@@ -195,7 +206,7 @@ def load_settings(args):
             if os.path.isfile(settingsfile):
                 settings = json.loads(load_file(settingsfile).decode("utf-8"))
                 LOG.debug("Settings from file:")
-                LOG.debug(settings)
+                LOG.debug(_redacted_settings(settings))
             else:
                 LOG.warning("File not found: %s", settingsfile)
         except Exception as err:
@@ -218,7 +229,7 @@ def load_settings(args):
                 value = value.split(',')
             settings[key[len(ENV_PREFIX):]] = value
     LOG.debug("Settings after looking at environment:")
-    LOG.debug(settings)
+    LOG.debug(_redacted_settings(settings))
     if args.git:
         GIT = args.git
     else:
