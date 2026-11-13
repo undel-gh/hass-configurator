@@ -139,3 +139,24 @@ from public CI. Its test URLs and session state MUST remain private. All real In
 
 For exact run/commit evidence consult [PR #17](https://github.com/undel-gh/hass-configurator/pull/17)
 and its checks rather than treating an older run identifier as permanent proof.
+
+## PR #18 — automated P0 fork packaging and release identity (#5, #6, #14)
+
+**Scope-specific evidence; not full P0/P1 release sign-off.** Reference the
+current PR HEAD check run; no verification claim is inherited from #17.
+The runtime/package version is now read from a single
+`hass_configurator/_version.py` file; the read-only `GET /api/version`
+uses an exact method-aware router route and `no-store` caching.
+
+| ID / gate | Implemented check | Pending boundary |
+| --- | --- | --- |
+| FR-008 / NFR-007 / AT-08 | `setup.py`, `hass_configurator/_version.py`, `tests/test_legacy_contract.py`: metadata=runtime=UI=API; `scripts/check_offline_artifacts.py` verifies wheel/sdist distribution metadata, shared version file and all 460 vendor + 6 first-party resources | Release image base digest/transitive dependencies not hash-pinned; full byte-identical builds still #5/#9 |
+| NFR-002 / NFR-007 / NFR-011 / AT-08 | New multistage main `Dockerfile` installs **this checkout's wheel**; `e2e/docker-runtime.spec.cjs` exercises local editor/file operations on the actual fork-built image; CI checks resource fingerprint matches source and image can boot with `--network none` | Real HA OS app integration/HTTP ingress remains separate P1; Docker image is not the official File Editor |
+| NFR-001 / NFR-005 / AT-10 | `tests/test_p0_failure_gates.py` injects an external script and simulates absent local/vendor assets, asserting negative failures; existing browser tests preserve strict public-origin attempt checks | Owner #14 for repository branch protection settings |
+| NFR-009 / ADR-009 / AT-09 | Existing root + prefixed warm A→B tests retained; expected same exact immutable fingerprint across source, installed packages and container | Actual Supervisor warm upgrade remains pending |
+
+The new distribution API does not eliminate authentication, CSRF or privileged
+operation risks. Do not mark AT-11/AT-12, #7, #9, #13 or full #5 verified
+from this implementation. Reproducible build of transitive Python packages
+and immutable Docker base still requires a reviewed pin/update process. See
+[docs/P0_PACKAGING.md](P0_PACKAGING.md).
