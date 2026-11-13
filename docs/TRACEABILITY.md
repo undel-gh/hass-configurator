@@ -110,3 +110,33 @@ For the current/last CI runs and exact commit evidence see [PR #15](https://gith
 | NFR-007 | Wheel and sdist include all local assets and manifest | `scripts/check_offline_artifacts.py` in GitHub Actions; **partial**, single version source and fork-built Docker #5 pending |
 
 **Verification pointer:** [PR #16 checks](https://github.com/undel-gh/hass-configurator/pull/16). Review the CI run on the implementing HEAD, not an earlier branch commit. The independent strict-offline browser test is now a real passing assertion; no `test.fail()` or skip is used.
+
+## PR #17 — Expanded P0 E2E matrix and P1 real Ingress validation kit (#6, #8)
+
+**Do not equate an executable HA OS test fixture with a completed AT-11.** The
+following results concern CI on an isolated runner and a synthetic Ingress
+prefix only. Real Home Assistant Core/Supervisor traffic has not been tested
+and the P1 acceptance rows remain **pending**.
+
+| Scenario / Requirement | Implemented evidence | State / remaining work |
+| --- | --- | --- |
+| AT-01 / FR-001 / NFR-001 | `e2e/offline-smoke.spec.cjs`, `e2e/offline-dynamic.spec.cjs`, new UI interaction tests; abort and count every attempted unapproved browser origin | **scoped pass** on tested browser paths; complete UI matrix review pending |
+| AT-02 / FR-002 / FR-003 | `e2e/offline-dynamic.spec.cjs` real YAML worker invalid→corrected, `e2e/release-matrix.spec.cjs` browse/edit/save/reload/download | **scoped pass** in temporary workspace |
+| AT-03 / FR-002 / NFR-011 | Existing dynamic Ace mode/theme/keybindings, language tools, workers including prefixed loads | **scoped pass** |
+| AT-04 / FR-003 | `e2e/release-matrix.spec.cjs` opens/closes all 30 dialogs **without executing privileged confirmation actions**; file navigation, upload/download, new-tab and theme smoke | **partial**: individual privileged business operations are intentionally not executed; #7 owns security |
+| AT-05 / FR-005 / ADR-004 | Real HTML through simulated prefix; new `e2e/ingress-operations.spec.cjs` verifies GET file/listdir/download and POST save/upload; `tests/test_ingress_redirect.py` checks 302 Location './' | **partial**: no actual Supervisor, trailing slash variations require real check |
+| AT-06 / FR-006 / FR-009 | `e2e/ha-outage.spec.cjs` uses a disconnected local HA REST endpoint and refused client WS; local editor still saves | **scoped pass**, real HA WS authentication pending #8/#7 |
+| AT-07 / NFR-003 / NFR-004 | Existing router/method/traversal/cache/symlink tests retained | **scoped pass** |
+| AT-08 / NFR-007 | wheel/sdist byte-exact tests (460 vendor + 6 first-party) plus selected browser tests against each installed artifact; temporary HA OS app container build/health/ACL smoke | **partial**: production fork Docker image reproducibility/version is #5 |
+| AT-09 / FR-008 / NFR-009 | `e2e/cache-upgrade.spec.cjs` runs two real app instances with changed first-party stylesheet in same Chromium warm browser; asserts new URL digest, no-store HTML, immutable resources, YAML worker B | **scoped pass**; real HA OS warm upgrade pending |
+| AT-10 / NFR-005 | CI browser interception fixture proves public-origin denial, integrity tests reject missing/corrupt vendored file; traceability assertions | **scoped pass**; branch protection remains repository setting |
+| AT-11 / FR-005 / ADR-004 | `haos-fixture/`, `scripts/prepare_haos_ingress_fixture.py`, `e2e/haos-real.spec.cjs`, `docs/HAOS_REAL_INGRESS.md` | **NOT VERIFIED:** a real Home Assistant OS device, Supervisor session and redacted evidence required; HA REST/WS and warm upgrade remain untested |
+| AT-12 / NFR-006 / NFR-010 | Security issues #7/#13 own auth, CSRF, filesystem, CSP | **pending**, not included in #17 |
+
+The actual `e2e/haos-real.spec.cjs` suite is **opt-in** through
+`npm run test:haos` with local authenticated browser state, and is excluded
+from public CI. Its test URLs and session state MUST remain private. No
+script should log or publish an opaque Ingress token.
+
+For exact run/commit evidence consult [PR #17](https://github.com/undel-gh/hass-configurator/pull/17)
+and its checks rather than treating an older run identifier as permanent proof.
