@@ -234,6 +234,12 @@ jobs:
             echo "ERROR: Clean builds produced different image IDs" >&2
             docker image inspect hc-fork-p0:build-a hc-fork-p0:build-b \
               --format '{{json .RootFS.Layers}}'
+            # Inspect ONLY temporary test images; print first 12 differences
+            # per layer, never raw file data or sensitive Ingress URLs.
+            docker save hc-fork-p0:build-a -o /tmp/hc-image-a.tar
+            docker save hc-fork-p0:build-b -o /tmp/hc-image-b.tar
+            python scripts/diagnose_docker_layers.py \
+              /tmp/hc-image-a.tar /tmp/hc-image-b.tar
             exit 1
           fi
           docker tag hc-fork-p0:build-a hc-fork-p0:ci
