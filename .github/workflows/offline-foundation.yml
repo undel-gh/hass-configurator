@@ -27,6 +27,12 @@ jobs:
           npm view ace-builds@1.9.6 dist.integrity dist.tarball --json
           npm pack ace-builds@1.9.6 --silent --pack-destination /tmp
           python scripts/verify_ace_archive.py /tmp/ace-builds-1.9.6.tgz
+          npm pack materialize-css@0.100.2 --silent --pack-destination /tmp
+          npm pack @mdi/font@3.4.93 --silent --pack-destination /tmp
+          python scripts/vendor_offline_assets.py --verify-only \
+            --ace /tmp/ace-builds-1.9.6.tgz \
+            --materialize /tmp/materialize-css-0.100.2.tgz \
+            --mdi /tmp/mdi-font-3.4.93.tgz
       - name: Routing and loopback HTTP tests
         run: python -m unittest discover -s tests -p 'test_*.py' -v
       - name: Build distribution artifacts and validate vendored payloads
