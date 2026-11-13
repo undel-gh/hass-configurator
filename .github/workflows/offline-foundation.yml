@@ -237,6 +237,21 @@ jobs:
             exit 1
           fi
           docker tag hc-fork-p0:build-a hc-fork-p0:ci
+          # Nonsecret, machine-readable inventory for release provenance and
+          # future #9 vulnerability/SBOM review; no credentials or Ingress URLs.
+          mkdir -p e2e/artifacts
+          {
+            printf 'source_commit=%s\\n' "$(git rev-parse HEAD)"
+            printf 'source_date_epoch=%s\\n' "$epoch"
+            printf 'image_id_a=%s\\nimage_id_b=%s\\n' "$id_a" "$id_b"
+            printf 'base_index_digest=%s\\n' \
+              'sha256:726d304906fa5eb468e5531e366548d1903286352f5adb54ef508ac01fbd80c6'
+            sha256sum requirements/docker-runtime.lock
+          } > e2e/artifacts/docker-build-provenance.txt
+          docker run --rm --network none --entrypoint python hc-fork-p0:ci \
+            -m pip freeze --all > e2e/artifacts/docker-python-packages.txt
+          docker run --rm --network none --entrypoint dpkg-query hc-fork-p0:ci \
+            -W | LC_ALL=C sort > e2e/artifacts/docker-os-packages.txt
           expected_version=$(python -c 'from hass_configurator._version import VERSION; print(VERSION)')
           expected_digest=$(python -c 'from hass_configurator.http_routing import Assets; print(Assets().version)')
           echo "Expected fork version=$expected_version static fingerprint=$expected_digest"
