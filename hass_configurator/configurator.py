@@ -496,7 +496,7 @@ class RequestHandler(BaseHTTPRequestHandler):
             response = error_response(405, allow=match.allow)
         else:
             response = error_response(404)
-        write_http_response(self, response, head=(method == "HEAD"))
+        write_http_response(self, response)
         return False
 
     def end_headers(self):
@@ -505,19 +505,6 @@ class RequestHandler(BaseHTTPRequestHandler):
             self.send_header("Cache-Control", "no-store")
             self.send_header("X-Content-Type-Options", "nosniff")
         super().end_headers()
-
-    def do_HEAD(self):
-        """Never bypass the authentication applied to GET and POST."""
-        if not verify_hostname(self.headers.get("Host", "")):
-            self.do_BLOCK(403, "Forbidden")
-            return
-        self._dispatch_route("HEAD")
-
-    def do_PUT(self):
-        self._dispatch_route("PUT")
-
-    def do_DELETE(self):
-        self._dispatch_route("DELETE")
 
     # pylint: disable=invalid-name
     def do_BLOCK(self, status=420, reason="Policy not fulfilled"):
