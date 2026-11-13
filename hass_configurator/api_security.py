@@ -145,6 +145,46 @@ class ConfinedFS:
             os.close(opened)
         return str(self.root.joinpath(*pieces))
 
+    @contextmanager
+    def _directory(self, value):
+        """Hold the actual directory inode across scan/stat operations."""
+        pieces = self._parts(value)
+        if not pieces:
+            fd = os.open(self.root, self._dirflags)
+            try:
+                yield fd
+            finally:
+                os.close(fd)
+        else:
+            with self._parent(value) as (parent, name):
+                fd = os.open(name, self._dirflags, dir_fd=parent)
+                try:
+                    yield fd
+                finally:
+                    os.close(fd)
+
+    def scan_dir(self, value):
+        """Return metadata without following symlinks or reopening by path."""
+        import stat
+        items = []
+        with self._directory(value) as fd:
+            for name in os.listdir(fd):
+                try:
+                    meta = os.stat(name, dir_fd=fd, follow_symlinks=False)
+                except (OSError, ValueError):
+                    continue
+                if stat.S_ISLNK(meta.st_mode):
+                    # UI must not advertise symlinks it cannot safely open.
+                    continue
+                items.append({
+                    "name": name,
+                    "type": "dir" if stat.S_ISDIR(meta.st_mode) else "file",
+                    "size": meta.st_size,
+                    "modified": meta.st_mtime,
+                    "created": meta.st_ctime,
+                })
+        return items
+
     def read_bytes(self, value):
         with self._parent(value) as (fd, name):
             flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0)
