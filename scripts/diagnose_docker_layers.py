@@ -58,6 +58,8 @@ def main(first, second):
             lb = inventory(b, right)
             changed = [p for p in sorted(set(la) | set(lb))
                        if la.get(p) != lb.get(p)]
+            if not changed:
+                continue
             altered = sum(la.get(p, ((), None))[1] !=
                           lb.get(p, ((), None))[1] for p in changed)
             print("Layer %d: %d changed paths; %d changed contents" %
