@@ -101,15 +101,24 @@ commit and use the same epoch and platform:
 ```sh
 export DOCKER_BUILDKIT=1
 export SOURCE_DATE_EPOCH="$(git log -1 --format=%ct)"
-docker build --no-cache --platform linux/amd64 \
+docker buildx build --no-cache --platform linux/amd64 \
+  --output type=docker,rewrite-timestamp=true \
   --build-arg SOURCE_DATE_EPOCH="$SOURCE_DATE_EPOCH" \
   -t hc-fork:build-a .
-docker build --no-cache --platform linux/amd64 \
+docker buildx build --no-cache --platform linux/amd64 \
+  --output type=docker,rewrite-timestamp=true \
   --build-arg SOURCE_DATE_EPOCH="$SOURCE_DATE_EPOCH" \
   -t hc-fork:build-b .
 docker image inspect --format '{{.Id}}' hc-fork:build-a
 docker image inspect --format '{{.Id}}' hc-fork:build-b
 ```
+
+The BuildKit exporter flag `rewrite-timestamp=true` is **mandatory**:
+`SOURCE_DATE_EPOCH` alone sets image/config timestamps but does not rewrite
+the filesystem timestamps in exported image layers. The offline wheel and
+installed-file normalizer handles artifacts at their creation point, and the
+exporter normalizes the final layer metadata. Omitting the exporter flag
+will produce different image IDs even with identical wheel payloads.
 
 The CI gate **fails** if two independent, cache-disabled builds differ in
 their local image IDs. This is a stronger repeatability check than comparing
