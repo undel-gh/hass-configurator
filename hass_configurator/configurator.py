@@ -356,7 +356,7 @@ def validated_repo(path, **kwargs):
         raise PermissionError("Git integration is disabled")
     checked = _fs().resolve_for_read(
         path, directory=os.path.isdir(path))
-    repo = REPO(checked, **kwargs)
+    repo = validated_repo(checked, **kwargs)
     root = _fs()
     try:
         root.resolve_for_read(repo.working_dir, directory=True)
@@ -631,17 +631,17 @@ class RequestHandler(BaseHTTPRequestHandler):
                     filename = unquote(filename[0]).encode('utf-8')
                     if ENFORCE_BASEPATH and not is_safe_path(BASEPATH, filename):
                         raise OSError('Access denied.')
-                    filepath = os.path.join(BASEDIR.encode('utf-8'), filename)
+                    filepath = _fs().resolve_for_read(filename).encode('utf-8')
                     if os.path.isfile(filepath):
                         mimetype = mimetypes.guess_type(filepath.decode('utf-8'))
                         if mimetype[0] is not None:
                             if mimetype[0].split('/')[0] == 'image':
                                 is_raw = True
                         if is_raw:
-                            content = load_file(filepath)
+                            content = _fs().read_bytes(filename)
                             self.send_header('Content-type', mimetype[0])
                         else:
-                            content = load_file(filepath).decode("utf-8")
+                            content = _fs().read_bytes(filename).decode("utf-8")
                             self.send_header('Content-type', 'text/text')
                     else:
                         self.send_header('Content-type', 'text/text')
@@ -665,9 +665,9 @@ class RequestHandler(BaseHTTPRequestHandler):
                     if ENFORCE_BASEPATH and not is_safe_path(BASEPATH, filename):
                         raise OSError('Access denied.')
                     LOG.info(filename)
-                    filepath = os.path.join(BASEDIR.encode('utf-8'), filename)
+                    filepath = _fs().resolve_for_read(filename).encode('utf-8')
                     if os.path.isfile(filepath):
-                        filecontent = load_file(filepath)
+                        filecontent = _fs().read_bytes(filename)
                         self.send_header(
                             'Content-Disposition',
                             'attachment; filename=%s' % filename.decode('utf-8').split(os.sep)[-1])
@@ -689,10 +689,8 @@ class RequestHandler(BaseHTTPRequestHandler):
             try:
                 if dirpath:
                     dirpath = unquote(dirpath[0]).encode('utf-8')
+                    dirpath = _fs().resolve_for_read(dirpath, directory=True).encode('utf-8')
                     if os.path.isdir(dirpath):
-                        if ENFORCE_BASEPATH and not is_safe_path(BASEPATH,
-                                                                 dirpath):
-                            raise OSError('Access denied.')
                         repo = None
                         activebranch = None
                         dirty = False
@@ -700,7 +698,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         if REPO:
                             try:
                                 # pylint: disable=not-callable
-                                repo = REPO(dirpath.decode('utf-8'),
+                                repo = validated_repo(dirpath.decode('utf-8'),
                                             search_parent_directories=True)
                                 activebranch = repo.active_branch.name
                                 dirty = repo.is_dirty()
@@ -731,11 +729,12 @@ class RequestHandler(BaseHTTPRequestHandler):
             dirpath = query.get('path', None)
             if dirpath:
                 dirpath = unquote(dirpath[0]).encode('utf-8')
-                LOG.debug(dirpath)
-                absp = os.path.abspath(dirpath)
-                LOG.debug(absp)
-                if os.path.isdir(dirpath):
-                    self.wfile.write(os.path.abspath(dirpath))
+                try:
+                    absp = _fs().resolve_for_read(dirpath, directory=True).encode('utf-8')
+                except OSError:
+                    return
+                if os.path.isdir(absp):
+                    self.wfile.write(absp)
             return
         elif req.path == '/api/parent':
             content = ""
@@ -744,11 +743,16 @@ class RequestHandler(BaseHTTPRequestHandler):
             dirpath = query.get('path', None)
             if dirpath:
                 dirpath = unquote(dirpath[0]).encode('utf-8')
-                LOG.debug(dirpath)
-                absp = os.path.abspath(dirpath)
-                LOG.debug(absp)
-                if os.path.isdir(dirpath):
-                    self.wfile.write(os.path.abspath(os.path.dirname(dirpath)))
+                try:
+                    absp = _fs().resolve_for_read(dirpath, directory=True).encode('utf-8')
+                except OSError:
+                    return
+                if os.path.isdir(absp):
+                    self.wfile.write(
+                        _fs().resolve_for_read(
+                            os.path.dirname(absp), directory=True).encode('utf-8')
+                        if os.path.dirname(absp) != os.fsencode(_fs().root)
+                        else absp)
             return
         elif req.path == '/api/prefs':
             self.send_header('Content-type', 'text/json')
@@ -1040,8 +1044,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                     try:
                         filename = unquote(postvars['filename'][0])
                         response['file'] = filename
-                        with open(filename, 'wb') as fptr:
-                            fptr.write(bytes(postvars['text'][0], "utf-8"))
+                        _fs().write_bytes(filename, postvars['text'][0].encode("utf-8"))
                         self.send_response(200)
                         self.send_header('Content-type', 'text/json')
                         self.end_headers()
@@ -1074,9 +1077,12 @@ class RequestHandler(BaseHTTPRequestHandler):
                     'CONTENT_TYPE': self.headers['Content-Type'],
                 })
             filename = form['file'].filename
-            filepath = form['path'].file.read()
+            filepath = form['path'].file.read().decode("utf-8")
+            if (not filename or os.path.basename(filename) != filename
+                    or filename in (".", "..")):
+                raise PermissionError("Invalid upload filename")
             data = form['file'].file.read()
-            open("%s%s%s" % (filepath, os.sep, filename), "wb").write(data)
+            _fs().write_bytes(os.path.join(filepath, filename), data)
             self.send_response(200)
             self.send_header('Content-type', 'text/json')
             self.end_headers()
@@ -1097,10 +1103,13 @@ class RequestHandler(BaseHTTPRequestHandler):
                     try:
                         src = unquote(postvars['src'][0])
                         dstfilename = unquote(postvars['dstfilename'][0])
-                        renamepath = src[:src.index(os.path.basename(src))] + dstfilename
+                        if (not dstfilename or os.path.basename(dstfilename) != dstfilename
+                                or dstfilename in (".", "..")):
+                            raise PermissionError("Invalid destination name")
+                        renamepath = os.path.join(os.path.dirname(src), dstfilename)
                         response['path'] = renamepath
                         try:
-                            os.rename(src, renamepath)
+                            _fs().rename(src, renamepath)
                             self.send_response(200)
                             self.send_header('Content-type', 'text/json')
                             self.end_headers()
@@ -1133,9 +1142,9 @@ class RequestHandler(BaseHTTPRequestHandler):
                         response['path'] = delpath
                         try:
                             if os.path.isdir(delpath):
-                                os.rmdir(delpath)
+                                _fs().remove(delpath, is_dir=True)
                             else:
-                                os.unlink(delpath)
+                                _fs().remove(delpath)
                             self.send_response(200)
                             self.send_header('Content-type', 'text/json')
                             self.end_headers()
@@ -1216,7 +1225,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                     try:
                         addpath = unquote(postvars['path'][0])
                         # pylint: disable=not-callable
-                        repo = REPO(addpath,
+                        repo = validated_repo(addpath,
                                     search_parent_directories=True)
                         filepath = "/".join(
                             addpath.split(os.sep)[len(repo.working_dir.split(os.sep)):])
@@ -1253,7 +1262,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                     try:
                         diffpath = unquote(postvars['path'][0])
                         # pylint: disable=not-callable
-                        repo = REPO(diffpath,
+                        repo = validated_repo(diffpath,
                                     search_parent_directories=True)
                         filepath = "/".join(
                             diffpath.split(os.sep)[len(repo.working_dir.split(os.sep)):])
@@ -1294,7 +1303,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         response['path'] = commitpath
                         message = unquote(postvars['message'][0])
                         # pylint: disable=not-callable
-                        repo = REPO(commitpath,
+                        repo = validated_repo(commitpath,
                                     search_parent_directories=True)
                         try:
                             repo.index.commit(message)
@@ -1330,7 +1339,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         response['path'] = branchpath
                         branch = unquote(postvars['branch'][0])
                         # pylint: disable=not-callable
-                        repo = REPO(branchpath,
+                        repo = validated_repo(branchpath,
                                     search_parent_directories=True)
                         try:
                             head = [h for h in repo.heads if h.name == branch][0]
@@ -1367,7 +1376,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         response['path'] = branchpath
                         branch = unquote(postvars['branch'][0])
                         # pylint: disable=not-callable
-                        repo = REPO(branchpath,
+                        repo = validated_repo(branchpath,
                                     search_parent_directories=True)
                         try:
                             repo.git.checkout("HEAD", b=branch)
@@ -1402,7 +1411,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         repopath = unquote(postvars['path'][0])
                         response['path'] = repopath
                         try:
-                            repo = REPO.init(repopath)
+                            repo = REPO.init(_fs().resolve_for_read(repopath, directory=True))
                             response['error'] = False
                             response['message'] = "Initialized repository in %s" % repopath
                             self.send_response(200)
@@ -1435,7 +1444,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         response['path'] = repopath
                         try:
                             # pylint: disable=not-callable
-                            repo = REPO(repopath)
+                            repo = validated_repo(repopath)
                             urls = []
                             if repo.remotes:
                                 for url in repo.remotes.origin.urls:
@@ -1477,7 +1486,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         response['path'] = repopath
                         try:
                             # pylint: disable=not-callable
-                            repo = REPO(repopath)
+                            repo = validated_repo(repopath)
                             returnvalue = repo.git.stash()
                             response['error'] = False
                             response['message'] = "%s\n%s" % (returnvalue, repopath)
@@ -1511,7 +1520,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         name = unquote(postvars['name'][0])
                         response['path'] = os.path.join(basepath, name)
                         try:
-                            os.makedirs(response['path'])
+                            _fs().mkdir(response['path'])
                             self.send_response(200)
                             self.send_header('Content-type', 'text/json')
                             self.end_headers()
@@ -1541,8 +1550,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         name = unquote(postvars['name'][0])
                         response['path'] = os.path.join(basepath, name)
                         try:
-                            with open(response['path'], 'w') as fptr:
-                                fptr.write("")
+                            _fs().write_bytes(response['path'], b"", exclusive=True)
                             self.send_response(200)
                             self.send_header('Content-type', 'text/json')
                             self.end_headers()
