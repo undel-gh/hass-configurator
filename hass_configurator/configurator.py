@@ -734,7 +734,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         activebranch = None
                         dirty = False
                         branches = []
-                        if REPO:
+                        if REPO and ALLOW_GIT_OPERATIONS:
                             try:
                                 # pylint: disable=not-callable
                                 repo = validated_repo(dirpath.decode('utf-8'),
@@ -878,7 +878,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                     loadfile=loadfile,
                     current=VERSION,
                     versionclass=color,
-                    githidden="" if GIT else "hiddendiv",
+                    githidden="" if GIT and ALLOW_GIT_OPERATIONS else "hiddendiv",
                     # pylint: disable=anomalous-backslash-in-string
                     separator="\%s" % os.sep if os.sep == "\\" else os.sep,
                     your_address=html_escape.escape(self.client_address[0], quote=True),
