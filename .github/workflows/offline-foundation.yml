@@ -305,6 +305,8 @@ jobs:
           from hass_configurator import configurator
           from hass_configurator.http_routing import Assets
 
+          assert os.geteuid() == 10001, "Fork image must not run as root"
+          assert os.getegid() == 10001, "Fork group must not be privileged"
           assert importlib.metadata.version("hass-configurator") == VERSION
           assert VERSION == os.environ["EXPECTED_VERSION"]
           assert Assets().version == os.environ["EXPECTED_DIGEST"]
@@ -340,6 +342,10 @@ jobs:
           test "$ready" -eq 1 || { docker logs hc-fork-p0-networkless; exit 1; }
           docker rm -f hc-fork-p0-networkless
           mkdir -p /tmp/hc-fork-p0-sandbox
+          # Disposable CI bind mount: host Playwright and container UID 10001
+          # both write test fixtures. Do not apply these test permissions to
+          # production configuration directories.
+          chmod 0777 /tmp/hc-fork-p0-sandbox
           docker run --detach --rm --name hc-fork-p0-browser \
             -e HC_USERNAME="$basic_user" -e HC_PASSWORD="$basic_password" \
             -p 127.0.0.1:3221:3218 \
