@@ -54,28 +54,81 @@ plus the shared version file and distribution metadata. The archive verifier
 also rejects a removed or modified `dev.html` (negative tests). The asset version
 continues to be a content-derived digest, not the software release string.
 
-## Reproducibility boundary
+## Reproducible Docker release build (P0 #5)
 
-The **asset/payload and fork origin** are verified automatically, but
-byte-for-byte repeatable Docker image builds across time are **not yet
-claimed**: the default Python base image tag and transitive Python package
-dependencies are not fully digest/hash locked. The current runtime Docker
-stage resolves `pyotp`, `gitpython`, `legacy-cgi` and their transitive packages
-from package indexes **during image build**, without `--require-hashes`.
-Future #5 work should install from a reviewed, pinned hash-locked requirements
-file (and distinguish build-time access from runtime networkless startup). Before any release, pass
-an approved immutable base image reference:
+The default Docker base is now the **verified official digest**, not a mutable
+`python:3.11-slim-bookworm` tag:
 
-```sh
-docker build --build-arg PYTHON_BASE='python:3.11-slim-bookworm@sha256:REVIEWED_DIGEST' \
-  -t hc-fork:release .
+```
+docker.io/library/python:3.11.18-bookworm@sha256:726d304906fa5eb468e5531e366548d1903286352f5adb54ef508ac01fbd80c6
 ```
 
-Replace `REVIEWED_DIGEST` with a *verified published digest*; it is
-intentionally not invented here. Full image dependency freezing and
-license/SBOM audit remain #5/#9 release work, not implied by a passing P0
-smoke. Likewise the old `python_requires='>=3'` metadata does not establish
-compatibility with every future Python major version.
+This is the multi-platform OCI index (checked against the official registry
+in CI; the Linux amd64 manifest was also independently inspected). The **tested
+release target is linux/amd64**. The full non-slim image includes Git,
+OpenSSH and CA certificates, verified with a network-disabled container, so
+the fork Dockerfile performs **no apt operations**. The tradeoff is a larger
+base image and greater preinstalled OS-package surface than the slim build.
+The base's complete filesystem, including OS package versions and bundled
+Python build tools, is fixed by the digest. Refresh that digest deliberately
+after security/compatibility review; do not rely on a mutable tag.
+
+All direct and transitive Python runtime dependencies are fixed by
+`requirements/docker-runtime.lock` with one **exact version and SHA-256
+of a py3-none-any wheel per distribution**: PyOTP 2.10.0, GitPython 3.2.1,
+legacy-cgi 2.6.4, gitdb 4.0.12 and smmap 5.0.3. They were resolved and
+independently hashed in CI #172; `scripts/check_docker_runtime_lock.py`
+checks their identity, closure and exact downloaded wheel bytes. A new
+dependency in `setup.py` without an explicit lock entry fails CI.
+
+The image build has three stages:
+
+1. `dependency-wheelhouse` downloads **only** permitted binary wheels,
+   with `pip download --require-hashes`. This is the only package-index
+   access in the Dockerfile.
+2. `fork-wheel-builder` builds the fork wheel **offline** with
+   `--no-index --no-build-isolation --no-deps`, using a fixed
+   `SOURCE_DATE_EPOCH` so wheel member dates cannot drift.
+3. The runtime image installs only local wheels with
+   `--no-index --require-hashes`, then installs the fork wheel with
+   `--no-deps` and runs `pip check`. The temporary wheelhouse is deleted
+   but the lock remains under `/usr/local/share/hass-configurator/`.
+   No pip/npm/apt updates are attempted at runtime.
+
+To reproduce the CI build with a given Git commit, check out that exact
+commit and use the same epoch and platform:
+
+```sh
+export DOCKER_BUILDKIT=1
+export SOURCE_DATE_EPOCH="$(git log -1 --format=%ct)"
+docker build --no-cache --platform linux/amd64 \
+  --build-arg SOURCE_DATE_EPOCH="$SOURCE_DATE_EPOCH" \
+  -t hc-fork:build-a .
+docker build --no-cache --platform linux/amd64 \
+  --build-arg SOURCE_DATE_EPOCH="$SOURCE_DATE_EPOCH" \
+  -t hc-fork:build-b .
+docker image inspect --format '{{.Id}}' hc-fork:build-a
+docker image inspect --format '{{.Id}}' hc-fork:build-b
+```
+
+The CI gate **fails** if two independent, cache-disabled builds differ in
+their local image IDs. This is a stronger repeatability check than comparing
+only the `assets/v<digest>/` namespace. For release provenance also retain
+the tested Git SHA, `SOURCE_DATE_EPOCH`, exact image ID, base digest, lock,
+architecture and CI log. Avoid claiming identical pushed registry digest
+or cross-architecture bit-for-bit reproduction based on a local image ID
+check alone; registry manifest compression and attestations can differ.
+
+To update dependencies, choose reviewed versions, obtain binary wheels from
+the official index, compute and verify each SHA-256, regenerate the **complete**
+lock, and run the negative lock tests plus all wheel/sdist/Docker E2E tests.
+Never use `pip freeze` from an arbitrary developer environment as release
+provenance. A reviewed update of the official base digest is an explicit
+security update even when the application files are unchanged.
+
+The comprehensive third-party license, vulnerability, attestation and SBOM
+audit remains **P1 #9**. A successful build is not a security clearance;
+P1 #7/#13 still protect privileged routes, filesystem operations and CSP.
 
 ## Negative controls and release gates
 
