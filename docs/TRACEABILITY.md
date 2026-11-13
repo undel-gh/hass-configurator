@@ -93,3 +93,20 @@ No implementation PR should leave unfilled evidence fields when claiming a `veri
 - Local-assets-on-startup fail-fast, root-path compatibility change and operational consequences are documented in `FOUNDATION_IMPLEMENTATION.md`. Required P1 release scenarios **remain pending**.
 
 For the current/last CI runs and exact commit evidence see [PR #15](https://github.com/undel-gh/hass-configurator/pull/15) checks and [foundation notes](FOUNDATION_IMPLEMENTATION.md). Avoid copying an obsolete CI run ID as evidence for a newer commit.
+
+## PR #16 — Offline Ace and CSS/MDI implementation checkpoint (#3, #4)
+
+**Full application release gates remain pending.** This checkpoint records tested implementation scope without upgrading P1 real HA OS Ingress, Docker deployment, CSRF/security, warm-cache upgrade, all-dialog E2E or SBOM to `verified`.
+
+| Requirement | Implementation | Evidence / status |
+| --- | --- | --- |
+| FR-001 | All Ace, Materialize CSS, MDI icons, Roboto and fallback fonts served from local versioned static paths | `tests/test_vendored_assets.py`, `e2e/offline-smoke.spec.cjs`, `e2e/offline-dynamic.spec.cjs`; scoped **verified in CI**, full release pending |
+| FR-002 | YAML worker diagnostics, language modes, theme loading, keyboard modules, language tools | `e2e/offline-dynamic.spec.cjs`: invalid→corrected YAML annotations and lazy loads; **partial** until broad UI matrix #6 |
+| FR-005 / ADR-004 | App-relative URLs and Ace dynamic worker/config paths behind simulated prefix | Actual HTML + fonts and API exercised in Playwright; **partial**, real HA OS #8 pending |
+| NFR-001 / ADR-002 | All five initial CDN loads replaced; all 13 automatic external avatars removed; cold-cache browser attempts blocked/checked | `scripts/audit_runtime_assets.py --strict-offline` and Playwright root+simulated ingress; **partial**, full #6 scenarios pending |
+| NFR-002 / ADR-006 | npm tarballs pinned by SHA-512 SRI + SHA-256; all 460 resources verified by digest, complete archive reconstruction CI | `hass_configurator/vendor/manifest.json`, `scripts/vendor_offline_assets.py --verify-only`; **partial**, license/SBOM review #9 pending |
+| NFR-011 | Single `ace-builds@1.9.6` `src-min-noconflict` build (440 files), all currently offered modes available | `scripts/verify_ace_archive.py`, `tests/test_vendored_assets.py`; three obsolete selectors removed, **verified for supported UI choices** |
+| NFR-009 / ADR-009 | Bundled resources in fingerprinted immutable namespace; SHA digest and MIME verified | `tests/test_vendored_assets.py`; warm-cache upgrades remain **pending** #5/#6 |
+| NFR-007 | Wheel and sdist include all local assets and manifest | `scripts/check_offline_artifacts.py` in GitHub Actions; **partial**, single version source and fork-built Docker #5 pending |
+
+**Verification pointer:** [PR #16 checks](https://github.com/undel-gh/hass-configurator/pull/16). Review the CI run on the implementing HEAD, not an earlier branch commit. The independent strict-offline browser test is now a real passing assertion; no `test.fail()` or skip is used.
