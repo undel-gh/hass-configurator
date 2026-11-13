@@ -19,7 +19,10 @@ def verify(files, label):
     required = dict(MANIFEST["resources"])
     # Bundle integrity is not complete if the six application-owned static
     # resources are missing, even when the third-party vendor tree is intact.
-    for name in PACKAGE_ASSETS:
+    # dev.html is the primary first-party UI entrypoint. It is not a
+    # fingerprinted /assets/ route, but MUST be byte-exact in both archives.
+    first_party = set(PACKAGE_ASSETS) | {"dev.html"}
+    for name in first_party:
         required[name] = hashlib.sha256(
             (ROOT / "hass_configurator" / name).read_bytes()).hexdigest()
     missing = []
@@ -41,8 +44,8 @@ def verify(files, label):
         raise RuntimeError("%s missing the vendor integrity manifest" % label)
     if json.loads(extra_manifest)["resources"] != MANIFEST["resources"]:
         raise RuntimeError("%s embedded manifest differs from source" % label)
-    print("%s: %d vendor resources, %d first-party resources and manifest validated" %
-          (label, len(MANIFEST["resources"]), len(PACKAGE_ASSETS)))
+    print("%s: %d vendor resources, %d first-party resources (including dev.html) and manifest validated" %
+          (label, len(MANIFEST["resources"]), len(first_party)))
 
 
 
@@ -72,7 +75,7 @@ def main(wheel_dir, sdist_dir):
         verify({n: archive.read(n) for n in archive.namelist() if
                 n.startswith("hass_configurator/vendor/") or
                 n == "hass_configurator/_version.py" or
-                n in {"hass_configurator/" + filename for filename in PACKAGE_ASSETS}},
+                n in {"hass_configurator/" + filename for filename in (set(PACKAGE_ASSETS) | {"dev.html"})}},
                "wheel")
     with tarfile.open(sdists[0], "r:gz") as archive:
         files = {}
@@ -89,7 +92,7 @@ def main(wheel_dir, sdist_dir):
                 continue
             path = member.name[member.name.index("hass_configurator/"):]
             if path.startswith("hass_configurator/vendor/") or path == "hass_configurator/_version.py" or path in {
-                    "hass_configurator/" + name for name in PACKAGE_ASSETS}:
+                    "hass_configurator/" + name for name in (set(PACKAGE_ASSETS) | {"dev.html"})}:
                 files[path] = archive.extractfile(member).read()
         verify(files, "sdist")
 
