@@ -11,7 +11,7 @@ permissions:
 jobs:
   routing-and-inventory:
     name: Routing / inventory (Python)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
@@ -22,12 +22,17 @@ jobs:
         run: python -m pip install --disable-pip-version-check -e .
       - name: Verify static resource inventory
         run: python scripts/audit_runtime_assets.py
+      - name: Inspect official Ace 1.9.6 archive and full build family
+        run: |
+          npm view ace-builds@1.9.6 dist.integrity dist.tarball --json
+          npm pack ace-builds@1.9.6 --silent --pack-destination /tmp
+          python scripts/verify_ace_archive.py /tmp/ace-builds-1.9.6.tgz
       - name: Routing and loopback HTTP tests
         run: python -m unittest discover -s tests -p 'test_*.py' -v
 
   early-browser-smoke:
     name: Network-attempt smoke (Chromium)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
@@ -67,5 +72,4 @@ jobs:
             e2e/artifacts/
             e2e/test-results/
             e2e/playwright-report/
-            /tmp/configurator.log
           if-no-files-found: ignore
