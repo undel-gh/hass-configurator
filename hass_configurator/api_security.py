@@ -14,9 +14,9 @@ from contextlib import contextmanager
 from hass_configurator.http_routing import Response
 
 
-# GET endpoints retained for old frontend compatibility but are NOT safe:
-# they trigger outbound Home Assistant service POSTs and require a CSRF header.
-SIDE_EFFECT_GET = frozenset({
+# Legacy HA control actions perform outbound service POSTs; they must be
+# routed as POST, with the same CSRF and capability checks as other mutations.
+HA_CONTROL = frozenset({
     "/api/restart", "/api/check_config", "/api/reload_automations",
     "/api/reload_scripts", "/api/reload_groups", "/api/reload_core",
 })
@@ -26,7 +26,6 @@ GIT = frozenset({
     "/api/newbranch", "/api/init", "/api/push", "/api/stash",
 })
 NETWORK = frozenset({"/api/allowed_networks", "/api/banned_ips"})
-HA_CONTROL = SIDE_EFFECT_GET
 
 
 class ApiPolicy:
@@ -56,9 +55,8 @@ class ApiPolicy:
         if not (getattr(handler, "_authenticated_basic", False)
                 or self._loopback_bound(handler)):
             return self._deny(403, "Authentication required (Basic Auth or loopback-only binding)")
-        if method == "GET" and path in SIDE_EFFECT_GET:
-            if not allow_ha_control:
-                return self._deny(403, "HA control is disabled")
+        if method == "POST" and path in HA_CONTROL and not allow_ha_control:
+            return self._deny(403, "HA control is disabled")
         if method == "POST":
             if path in SHELL and not allow_shell:
                 return self._deny(403, "Command execution is disabled")
@@ -67,7 +65,7 @@ class ApiPolicy:
             if path in NETWORK and not allow_network:
                 return self._deny(403, "Network administration is disabled")
 
-        if method == "POST" or (method == "GET" and path in SIDE_EFFECT_GET):
+        if method == "POST":
             # Browsers cannot send a custom header from a foreign origin
             # without CORS preflight. Also reject same-site cookie CSRF;
             # request Origin/Referer are not sufficient authorization.
