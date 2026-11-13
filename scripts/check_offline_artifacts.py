@@ -48,6 +48,11 @@ def verify(files, label):
 
 def assert_metadata(payload, label):
     metadata = BytesParser().parsebytes(payload)
+    # A same-named public PyPI package must not masquerade as this fork.
+    homepage = metadata.get("Home-page", "")
+    if homepage != "https://github.com/undel-gh/hass-configurator":
+        raise RuntimeError("%s distribution metadata points outside the fork: %s" %
+                           (label, homepage))
     if metadata.get("Version") != VERSION or metadata.get("Name", "").lower().replace("_", "-") != "hass-configurator":
         raise RuntimeError("%s wrong distribution metadata: %s/%s; expected hass-configurator/%s" %
                            (label, metadata.get("Name"), metadata.get("Version"), VERSION))
