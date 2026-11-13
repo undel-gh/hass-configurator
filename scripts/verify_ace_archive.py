@@ -56,12 +56,32 @@ def main():
     print("ACE_LOCK_CANDIDATE_BEGIN")
     print(json.dumps(report, indent=2, sort_keys=True))
     print("ACE_LOCK_CANDIDATE_END")
-    if report["missing_required_files"]:
-        print("Ace candidate family is incomplete for current UI options.",
-              file=sys.stderr)
+    # Commit-based supply-chain lock makes upstream tarball changes visible.
+    lock = json.loads((ROOT / "docs" / "ace-builds-1.9.6-lock.json")
+                      .read_text(encoding="utf-8"))
+    for key in ("sha256", "family", "worker_files", "missing_required_files",
+                "files_sha256"):
+        if lock[key] != report[key]:
+            print("Pinned Ace archive mismatch: " + key, file=sys.stderr)
+            return 1
+    import base64
+    payload = args.tarball.read_bytes()
+    computed_integrity = "sha512-" + base64.b64encode(
+        hashlib.sha512(payload).digest()).decode("ascii")
+    if computed_integrity != lock["npm_integrity"]:
+        print("npm SRI mismatch", file=sys.stderr)
         return 1
-    print("Ace archive family includes all %d required files." %
-          report["required_files_checked"])
+
+    # These obsolete UI entries do not exist in this exact Ace package.
+    # Preserve the finding as debt for #3, rather than silently claiming
+    # that all 137 advertised modes are currently supported.
+    known_missing = {"mode-bro.js", "mode-dummy.js", "mode-dummysyntax.js"}
+    if set(report["missing_required_files"]) != known_missing:
+        print("Unexpected Ace mode compatibility change", file=sys.stderr)
+        return 1
+    print("Pinned Ace archive verified: %d files; %d missing obsolete "
+          "UI modes tracked in #3." %
+          (len(report["files_sha256"]), len(known_missing)))
     return 0
 
 
