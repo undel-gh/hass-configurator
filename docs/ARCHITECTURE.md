@@ -121,3 +121,27 @@ This does **not** certify image bit-for-bit reproducibility across build
 dates: base-image digests and transitive build/runtime dependencies require
 separate verified immutable locks (#5/#9). Nor does it certify external
 Supervisor Ingress or protect legacy privileged endpoints (#8/#7/#13).
+
+## ADR-009 implementation — immutable Docker build inputs (#5 / PR #19)
+
+The Docker release path now pins an official Python Bookworm *OCI index*
+digest and a complete Python dependency wheel SHA-256 closure. Git, OpenSSH,
+Debian libraries and certificates come from this pinned base filesystem;
+there is no apt repository access in our Dockerfile. The larger base is an
+explicit tradeoff versus a mutable slim-base apt install. The build permits
+package-index network only in a download stage that verifies hashes; the
+fork wheel and final runtime stage install without network/index access.
+
+CI supplies one `SOURCE_DATE_EPOCH` (reviewed Git commit timestamp) to
+both completely cache-disabled builds; it compares full image IDs, not only
+the first-party resource namespace. Normalization of generated/installed
+file timestamps prevents package download/build time from contaminating
+layers. The full binary dependency lock is authoritative for Docker; the
+separate package's `install_requires` remains compatibility metadata and
+must be a subset of the reviewed lock.
+
+Reproducibility is verified for **linux/amd64** only. Moving the base digest,
+dependency versions or build epoch requires fresh evidence. P1 supply-chain
+vulnerability/license/SBOM sign-off belongs to #9, not to this repeatability
+contract. Neither successful image checks nor simulated prefix tests
+verify actual HA OS Core/Supervisor Ingress (#8).
