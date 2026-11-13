@@ -141,8 +141,9 @@ def get_prefs_path():
 def load_prefs():
     """Load UI preferences from disk, return defaults on any error."""
     try:
-        with open(get_prefs_path(), 'r') as fptr:
-            data = json.loads(fptr.read())
+        # Preferences are controlled by the same workspace boundary as editor
+        # files. Never follow an attacker-created prefs symlink out of root.
+        data = json.loads(_fs().read_bytes(get_prefs_path()).decode("utf-8"))
             # Ensure all default keys exist
             for k, v in DEFAULT_PREFS.items():
                 data.setdefault(k, v)
@@ -153,8 +154,7 @@ def load_prefs():
 def save_prefs(prefs):
     """Persist UI preferences to disk."""
     try:
-        with open(get_prefs_path(), 'w') as fptr:
-            fptr.write(json.dumps(prefs))
+        _fs().write_bytes(get_prefs_path(), json.dumps(prefs).encode("utf-8"))
         return True
     except Exception as err:
         LOG.warning("Could not save preferences: %s", err)
