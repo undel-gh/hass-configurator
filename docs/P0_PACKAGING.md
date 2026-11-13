@@ -91,8 +91,11 @@ The image build has three stages:
    `SOURCE_DATE_EPOCH` so wheel member dates cannot drift.
 3. The runtime image installs only local wheels with
    `--no-index --require-hashes`, then installs the fork wheel with
-   `--no-deps` and runs `pip check`. The temporary wheelhouse is deleted
-   but the lock remains under `/usr/local/share/hass-configurator/`.
+   `--no-deps` and runs `pip check`. Both wheel directories enter the
+   runtime stage as **read-only BuildKit bind mounts**, not COPY layers.
+   Consequently there are no temporary wheel files to remove and no
+   nondeterministic whiteout entries. The reviewed lock remains under
+   `/usr/local/share/hass-configurator/`.
    No pip/npm/apt updates are attempted at runtime.
 
 To reproduce the CI build with a given Git commit, check out that exact
@@ -117,7 +120,10 @@ The BuildKit exporter flag `rewrite-timestamp=true` is **mandatory**:
 `SOURCE_DATE_EPOCH` alone sets image/config timestamps but does not rewrite
 the filesystem timestamps in exported image layers. The offline wheel and
 installed-file normalizer handles artifacts at their creation point, and the
-exporter normalizes the final layer metadata. Omitting the exporter flag
+exporter normalizes the final layer metadata. CI additionally normalizes
+runtime parent directories; a prior proof showed the wheel **bytes** already
+matched while directory and deletion-whiteout timestamps differed. Omitting
+the exporter flag
 will produce different image IDs even with identical wheel payloads.
 
 The CI gate **fails** if two independent, cache-disabled builds differ in
