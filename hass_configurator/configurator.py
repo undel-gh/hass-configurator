@@ -369,7 +369,7 @@ def validated_repo(path, **kwargs):
         raise PermissionError("Git integration is disabled")
     checked = _fs().resolve_for_read(
         path, directory=os.path.isdir(path))
-    repo = validated_repo(checked, **kwargs)
+    repo = REPO(checked, **kwargs)
     root = _fs()
     try:
         root.resolve_for_read(repo.working_dir, directory=True)
