@@ -1,0 +1,196 @@
+"""Server-side authorization, CSRF and directory-fd confined file operations.
+
+Do not infer an authenticated user from X-Forwarded-*, X-Ingress-Path, Host,
+or an Origin header. Actual Supervisor identity/trusted proxy semantics are
+separately gated by real HA OS testing (#8).
+"""
+import hmac
+import ipaddress
+import os
+from pathlib import Path
+import secrets
+from contextlib import contextmanager
+
+from hass_configurator.http_routing import Response
+
+
+# GET endpoints retained for old frontend compatibility but are NOT safe:
+# they trigger outbound Home Assistant service POSTs and require a CSRF header.
+SIDE_EFFECT_GET = frozenset({
+    "/api/restart", "/api/check_config", "/api/reload_automations",
+    "/api/reload_scripts", "/api/reload_groups", "/api/reload_core",
+})
+SHELL = frozenset({"/api/exec_command"})
+GIT = frozenset({
+    "/api/gitadd", "/api/gitdiff", "/api/commit", "/api/checkout",
+    "/api/newbranch", "/api/init", "/api/push", "/api/stash",
+})
+NETWORK = frozenset({"/api/allowed_networks", "/api/banned_ips"})
+HA_CONTROL = SIDE_EFFECT_GET
+
+
+class ApiPolicy:
+    """One request-admission policy shared by all Router legacy API entries."""
+
+    def __init__(self):
+        self._token = secrets.token_urlsafe(32)
+
+    @property
+    def csrf_token(self):
+        return self._token
+
+    @staticmethod
+    def _loopback_bound(handler):
+        """Not the client IP alone: 0.0.0.0 bound servers are not trusted."""
+        try:
+            server = ipaddress.ip_address(handler.server.server_address[0])
+            client = ipaddress.ip_address(handler.client_address[0])
+            return server.is_loopback and client.is_loopback
+        except (ValueError, IndexError, TypeError):
+            return False
+
+    def authorize(self, handler, method, path, *, allow_shell=False,
+                  allow_git=False, allow_network=False, allow_ha_control=False):
+        # The Basic handler must successfully authenticate this REQUEST, not
+        # just present a proxy forwarding header or stale handler instance.
+        if not (getattr(handler, "_authenticated_basic", False)
+                or self._loopback_bound(handler)):
+            return self._deny(403, "Authentication required (Basic Auth or loopback-only binding)")
+        if method == "GET" and path in SIDE_EFFECT_GET:
+            if not allow_ha_control:
+                return self._deny(403, "HA control is disabled")
+        if method == "POST":
+            if path in SHELL and not allow_shell:
+                return self._deny(403, "Command execution is disabled")
+            if path in GIT and not allow_git:
+                return self._deny(403, "Git operations are disabled")
+            if path in NETWORK and not allow_network:
+                return self._deny(403, "Network administration is disabled")
+
+        if method == "POST" or (method == "GET" and path in SIDE_EFFECT_GET):
+            # Browsers cannot send a custom header from a foreign origin
+            # without CORS preflight. Also reject same-site cookie CSRF;
+            # request Origin/Referer are not sufficient authorization.
+            received = handler.headers.get("X-CSRF-Token", "")
+            if not hmac.compare_digest(received, self._token):
+                return self._deny(403, "Missing or invalid CSRF token")
+        return None
+
+    @staticmethod
+    def _deny(status, message):
+        return Response(status, message.encode("utf8"),
+                        headers=(("Cache-Control", "no-store"),))
+
+
+class ConfinedFS:
+    """Directory-descriptor path operations; reject symlinks in every component.
+
+    The trusted root is opened by descriptor. Relative and absolute client
+    paths are accepted only if they reside under that root, by COMPONENT,
+    not string-prefix. Every intermediate component is opened O_NOFOLLOW.
+    """
+
+    def __init__(self, root):
+        self.root = Path(root).resolve(strict=True)
+        if not self.root.is_dir():
+            raise ValueError("Filesystem root must be a directory")
+        self._dirflags = os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | getattr(os, "O_NOFOLLOW", 0)
+
+    def _parts(self, value):
+        if isinstance(value, bytes):
+            value = os.fsdecode(value)
+        if not isinstance(value, str) or not value or "\x00" in value:
+            raise PermissionError("Invalid file path")
+        path = Path(value)
+        if not path.is_absolute():
+            path = self.root / path
+        # Do not resolve symlinks before taking the directory fd: we must
+        # *reject*, not traverse, client-controlled symlinks.
+        parts = path.parts
+        root_parts = self.root.parts
+        if parts[:len(root_parts)] != root_parts:
+            raise PermissionError("Path is outside configured filesystem root")
+        inside = parts[len(root_parts):]
+        if any(component in ("", ".", "..") for component in inside):
+            raise PermissionError("Unsafe file component")
+        return inside
+
+    @contextmanager
+    def _parent(self, value):
+        parts = self._parts(value)
+        if not parts:
+            raise PermissionError("Cannot modify filesystem root")
+        fd = os.open(self.root, self._dirflags)
+        try:
+            for piece in parts[:-1]:
+                next_fd = os.open(piece, self._dirflags, dir_fd=fd)
+                os.close(fd)
+                fd = next_fd
+            yield fd, parts[-1]
+        finally:
+            os.close(fd)
+
+    def resolve_for_read(self, value, directory=False):
+        """Compatibility with legacy listdir/Git code; component safety only.
+
+        Use read_bytes() for a truly descriptor-confined read. Callers doing
+        multi-step metadata queries cannot rely on this for TOCTOU safety.
+        """
+        pieces = self._parts(value)
+        if not pieces:
+            return str(self.root)
+        with self._parent(value) as (fd, name):
+            flags = self._dirflags if directory else os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)
+            opened = os.open(name, flags, dir_fd=fd)
+            os.close(opened)
+        return str(self.root.joinpath(*pieces))
+
+    def read_bytes(self, value):
+        with self._parent(value) as (fd, name):
+            flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0)
+            opened = os.open(name, flags, dir_fd=fd)
+            try:
+                import stat
+                if not stat.S_ISREG(os.fstat(opened).st_mode):
+                    raise PermissionError("Only regular files may be read")
+                with os.fdopen(opened, "rb") as stream:
+                    opened = None
+                    return stream.read()
+            finally:
+                if opened is not None:
+                    os.close(opened)
+
+    def write_bytes(self, value, payload, exclusive=False):
+        with self._parent(value) as (fd, name):
+            flags = (os.O_WRONLY | os.O_CREAT | getattr(os, "O_NOFOLLOW", 0)
+                     | (os.O_EXCL if exclusive else os.O_TRUNC))
+            out = os.open(name, flags, 0o600, dir_fd=fd)
+            try:
+                import stat
+                if not stat.S_ISREG(os.fstat(out).st_mode):
+                    raise PermissionError("Only regular files may be written")
+                with os.fdopen(out, "wb") as stream:
+                    out = None
+                    stream.write(payload)
+            finally:
+                if out is not None:
+                    os.close(out)
+
+    def mkdir(self, value):
+        with self._parent(value) as (fd, name):
+            os.mkdir(name, mode=0o700, dir_fd=fd)
+
+    def remove(self, value, is_dir=False):
+        with self._parent(value) as (fd, name):
+            # Never recursively delete; symlinks may be unlinked but their
+            # targets cannot be reached because parent descriptors are pinned.
+            if is_dir:
+                os.rmdir(name, dir_fd=fd)
+            else:
+                os.unlink(name, dir_fd=fd)
+
+    def rename(self, source, target):
+        with self._parent(source) as (src_fd, src_name):
+            with self._parent(target) as (dst_fd, dst_name):
+                os.rename(src_name, dst_name,
+                          src_dir_fd=src_fd, dst_dir_fd=dst_fd)
