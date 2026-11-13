@@ -18,7 +18,7 @@ jobs:
         run: |
           set -euo pipefail
           docker pull --platform linux/amd64 python:3.11.18-bookworm
-          docker buildx imagetools inspect python:3.11.18-bookworm | head -17
+          docker buildx imagetools inspect python:3.11.18-bookworm | sed -n '1,18p'
           docker run --rm --platform linux/amd64 python:3.11.18-bookworm sh -c 'git --version; ssh -V; test -f /etc/ssl/certs/ca-certificates.crt; python --version'
       - name: Capture all exact hashes from binary-only PyPI wheel closure
         run: |
