@@ -882,7 +882,9 @@ class RequestHandler(BaseHTTPRequestHandler):
                     api_password="",
                     csrf_token=HTTP_ROUTER.security.csrf_token,
                     standalone=standalone,
-                    ui_theme=load_prefs().get('ui_theme', 'auto'),
+                    ui_theme=(load_prefs().get('ui_theme', 'auto')
+                              if load_prefs().get('ui_theme', 'auto')
+                              in ('light', 'dark', 'auto') else 'auto'),
                     asset_version=HTTP_ROUTER.assets.version)
             except Exception as err:
                 LOG.warning("Error getting html: %s", err)
