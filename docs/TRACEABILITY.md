@@ -65,7 +65,7 @@ scope, AT-01–AT-10 tests, and external maintainer controls.
 | ADR-004 | #2, #8 | `tests/test_ingress_redirect.py`, `e2e/ingress-operations.spec.cjs` | partial (P0 simulated; P1 real ingress #8 pending) |
 | ADR-005 | #7 | `docs/ARCHITECTURE.md` | pending (P1 privileged API security) |
 | ADR-006 | #1, #3 | `docs/ace-builds-1.9.6-lock.json`, `scripts/verify_ace_archive.py` | verified (P0 automated; Ace SRI/closure) |
-| ADR-007 | #14 | PR template, CI, `tests/test_traceability.py` | partial (P0 code/CI contract; maintainer branch rules NOT VERIFIED) |
+| ADR-007 | #14 | PR template, CI, `tests/test_traceability.py` | partial (P0 code/CI contract verified; maintainer branch rules pending / NOT VERIFIED) |
 | ADR-008 | #13 | CSP design in `docs/ARCHITECTURE.md` | pending (P1 CSP) |
 | ADR-009 | #2, #5, #6 | `tests/test_routing.py`, `e2e/cache-upgrade.spec.cjs` | partial (P0 cache/warm verified; P1 real upgrade #8 pending) |
 
