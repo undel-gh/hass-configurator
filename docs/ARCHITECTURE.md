@@ -61,7 +61,7 @@ Official HA guidance: [Contributors ingress guide](https://contributors.home-ass
 
 | Resource | Cache policy | Extra controls |
 | --- | --- | --- |
-| Fingerprinted static JS/CSS/fonts/worker scripts | `Cache-Control: public, max-age=31536000, immutable` | `Content-Type`, `X-Content-Type-Options: nosniff`; served from package only |
+| Fingerprinted static JS/CSS/fonts/worker scripts | `Cache-Control: private, max-age=31536000, immutable` | `Content-Type`, `X-Content-Type-Options: nosniff`; served from package only; avoid shared-proxy cache of ingress-token URLs |
 | HTML/bootstrap, auth/session-aware redirects, error pages | `Cache-Control: no-store` | Never expose ingress tokens or HA credentials to shared caches |
 | `/api/*` including file payload, edits, preferences, privileged ops | `Cache-Control: no-store` | Authorization, content type, no cache of secrets |
 | Unversioned compatibility static endpoints (if temporarily retained) | `Cache-Control: no-cache, must-revalidate` | Remove after consumers migrate; no immutable claim |
