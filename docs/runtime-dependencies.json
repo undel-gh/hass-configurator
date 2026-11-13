@@ -70,7 +70,7 @@
     "candidate_archive_url": "https://registry.npmjs.org/ace-builds/-/ace-builds-1.9.6.tgz",
     "selected_build_family": "src-min-noconflict",
     "archive_integrity": "sha512-M/Li4hPruMSbkkg35LgdbsIBq0WuwrV4ztP2pKaww47rC/MvDc1bOrYxwJrfgxdlzyLKrja5bn+9KwwuzqB2xQ==",
-    "archive_integrity_status": "VERIFIED in Actions run 43439821481; locked digests for all 440 files",
+    "archive_integrity_status": "Pinned and checked by scripts/verify_ace_archive.py in GitHub Actions; matching npm SRI, tarball SHA-256 and per-file hashes required on each tested commit. A prior workflow run does not verify future HEADs.",
     "language_modes_offered": [
       "abap",
       "abc",
