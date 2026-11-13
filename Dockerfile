@@ -69,7 +69,13 @@ RUN groupadd --gid 10001 configurator \
     && useradd --uid 10001 --gid 10001 --no-create-home \
        --home-dir /config --shell /usr/sbin/nologin configurator \
     && mkdir -p /config \
-    && chown 10001:10001 /config
+    && chown 10001:10001 /config \
+    # useradd/groupadd touch passwd/group/shadow and parent directories
+    # with wall-clock timestamps. Normalize exactly those layer entries
+    # to preserve the two independent no-cache image-ID P0 check.
+    && touch -d "@$SOURCE_DATE_EPOCH" \
+       /config /etc /etc/passwd /etc/group /etc/shadow /etc/gshadow \
+       /etc/subuid /etc/subgid
 EXPOSE 3218
 VOLUME /config
 WORKDIR /config
