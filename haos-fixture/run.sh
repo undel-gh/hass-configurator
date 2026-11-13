@@ -5,7 +5,11 @@ umask 077
 # No /config, /share, /media or host Docker socket is mounted.
 test_root=/data/hc-ingress-validation
 mkdir -p "$test_root"
+# Supervisor's /data is commonly root-only (0700); allow traversal without
+# allowing users to enumerate or modify other app data.
+chmod 0711 /data
 chown configurator-e2e:configurator-e2e "$test_root"
+chmod 0700 "$test_root"
 
 # Drop application privileges; it can edit only its own temporary /data folder.
 runuser -u configurator-e2e -- \
