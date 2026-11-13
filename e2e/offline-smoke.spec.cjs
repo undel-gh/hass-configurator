@@ -129,7 +129,11 @@ test('full UI attempts no public-origin requests with cold cache', async ({ page
   await page.waitForTimeout(600);
   fs.mkdirSync(path.join(__dirname, 'artifacts'), { recursive: true });
   fs.writeFileSync(path.join(__dirname, 'artifacts', 'runtime-attempts.json'),
-                   JSON.stringify(attempts, null, 2) + '\\n');
+                   JSON.stringify(attempts, null, 2) + '\n');
+  // Keep the downloadable CI artifact independently machine-readable.
+  const recordedAttempts = JSON.parse(fs.readFileSync(
+    path.join(__dirname, 'artifacts', 'runtime-attempts.json'), 'utf8'));
+  expect(recordedAttempts).toEqual(attempts);
   await test.info().attach('runtime-attempts.json', {
     body: Buffer.from(JSON.stringify(attempts, null, 2)),
     contentType: 'application/json',
