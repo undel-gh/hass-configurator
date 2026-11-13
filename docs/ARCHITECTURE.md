@@ -148,3 +148,21 @@ dependency versions or build epoch requires fresh evidence. P1 supply-chain
 vulnerability/license/SBOM sign-off belongs to #9, not to this repeatability
 contract. Neither successful image checks nor simulated prefix tests
 verify actual HA OS Core/Supervisor Ingress (#8).
+
+
+### PR #19 independent review: exact source identity
+
+All CI jobs check out `${{ github.event.pull_request.head.sha || github.sha }}`.
+In the Docker job, the checked-out commit is asserted equal to the event
+source SHA before choosing that commit's timestamp as `SOURCE_DATE_EPOCH`
+and writing `docker-build-provenance.txt`. The standard GitHub PR
+`refs/pull/N/merge` commit is **not** used as source in the image-ID
+repeatability proof; it has a different commit timestamp and may yield a
+different Docker ID when locally reproducing from PR HEAD. Push runs use
+their actual `github.sha`. A separate synthetic-merge integration build
+would constitute additional evidence rather than reuse this provenance.
+
+The immutable base digest is literal in **every** Dockerfile `FROM` stage.
+There is no overridable `PYTHON_BASE` build ARG because a different base
+would make the static base-provenance OCI labels inaccurate. Changes to
+the base require reviewing the FROM lines, labels, lock and CI together.
