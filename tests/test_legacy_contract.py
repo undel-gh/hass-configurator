@@ -34,7 +34,13 @@ def make_request(server, method, route, body=None, headers=None):
     connection = http.client.HTTPConnection(
         "127.0.0.1", server.server_address[1], timeout=5)
     try:
-        connection.request(method, route, body=body, headers=headers or {})
+        request_headers = dict(headers or {})
+        # This helper models the first-party AJAX client. Negative CSRF and
+        # forged-client cases are tested separately in test_api_security.py.
+        if method == "POST":
+            request_headers.setdefault(
+                "X-CSRF-Token", cfg.HTTP_ROUTER.security.csrf_token)
+        connection.request(method, route, body=body, headers=request_headers)
         response = connection.getresponse()
         result = (response.status, dict(response.getheaders()), response.read())
         return result
