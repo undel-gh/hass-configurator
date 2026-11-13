@@ -100,9 +100,17 @@ test('real HTML resolves local assets and API under simulated ingress prefix', a
 
   expect(requested.filter((p) => p.startsWith('/assets/') ||
     p.startsWith('/api/'))).toEqual([]);
-  // CDN is still tracked debt #3/#4: attempted external requests remain
-  // intercepted and blocked, not exempted as a passing offline UI.
-  expect(external.every((item) => new URL(item.url).origin !== appOrigin)).toBe(true);
+  // These are genuine attempts from the actual HTML, even when the
+  // browser intercepts/blocks them. Pin known offline debt without marking
+  // this test as a strict offline pass (the next test is expected to fail).
+  const expectedExternal = [
+    'https://cdnjs.cloudflare.com/ajax/libs/ace/1.9.6/ace.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/3.4.93/css/materialdesignicons.min.css',
+  ];
+  for (const url of expectedExternal) {
+    await expect.poll(() => external.some((attempt) => attempt.url === url),
+      { message: 'Expected existing CDN request attempt: ' + url }).toBe(true);
+  }
 });
 
 test('full UI sends no public-origin requests (KNOWN OFFLINE DEBT #3/#4)', async ({ page }) => {
