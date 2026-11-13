@@ -43,6 +43,7 @@ BASEPATH = None
 ENFORCE_BASEPATH = True
 # Privileged capabilities are disabled unless explicitly opted into.
 ALLOW_SHELL_COMMANDS = False
+EXEC_ALLOWED_BINARIES = []  # absolute reviewed executable paths, empty = deny
 ALLOW_GIT_OPERATIONS = False
 ALLOW_NETWORK_ADMIN = False
 ALLOW_HA_CONTROL = False
@@ -185,7 +186,7 @@ def load_settings(args):
     DEV, IGNORE_PATTERN, DIRSFIRST, SESAME, VERIFY_HOSTNAME, ENFORCE_BASEPATH, \
     ENV_PREFIX, NOTIFY_SERVICE, USERNAME, PASSWORD, SESAME_TOTP_SECRET, TOTP, \
     GIT, REPO, PORT, IGNORE_SSL, HASS_WS_API, ALLOWED_DOMAINS, HIDEHIDDEN, \
-    ALLOW_SHELL_COMMANDS, ALLOW_GIT_OPERATIONS, ALLOW_NETWORK_ADMIN, ALLOW_HA_CONTROL
+    ALLOW_SHELL_COMMANDS, EXEC_ALLOWED_BINARIES, ALLOW_GIT_OPERATIONS, ALLOW_NETWORK_ADMIN, ALLOW_HA_CONTROL
     settings = {}
     settingsfile = args.settings
     if settingsfile:
@@ -212,7 +213,7 @@ def load_settings(args):
             elif value.isnumeric():
                 value = int(value)
             # Make lists out of comma separated values for list-settings
-            elif key[len(ENV_PREFIX):] in ["ALLOWED_NETWORKS", "BANNED_IPS", "IGNORE_PATTERN"]:
+            elif key[len(ENV_PREFIX):] in ["ALLOWED_NETWORKS", "BANNED_IPS", "IGNORE_PATTERN", "EXEC_ALLOWED_BINARIES"]:
                 value = value.split(',')
             settings[key[len(ENV_PREFIX):]] = value
     LOG.debug("Settings after looking at environment:")
@@ -249,6 +250,11 @@ def load_settings(args):
     if settings.get("ENFORCE_BASEPATH") is False:
         LOG.warning("ENFORCE_BASEPATH=false ignored: P1 confinement is mandatory")
     ALLOW_SHELL_COMMANDS = settings.get("ALLOW_SHELL_COMMANDS", ALLOW_SHELL_COMMANDS)
+    EXEC_ALLOWED_BINARIES = settings.get("EXEC_ALLOWED_BINARIES", EXEC_ALLOWED_BINARIES)
+    if not isinstance(EXEC_ALLOWED_BINARIES, list) or any(
+            not isinstance(name, str) or not os.path.isabs(name)
+            for name in EXEC_ALLOWED_BINARIES):
+        raise ValueError("EXEC_ALLOWED_BINARIES must be a list of absolute paths")
     ALLOW_GIT_OPERATIONS = settings.get("ALLOW_GIT_OPERATIONS", ALLOW_GIT_OPERATIONS)
     ALLOW_NETWORK_ADMIN = settings.get("ALLOW_NETWORK_ADMIN", ALLOW_NETWORK_ADMIN)
     ALLOW_HA_CONTROL = settings.get("ALLOW_HA_CONTROL", ALLOW_HA_CONTROL)
@@ -547,7 +553,7 @@ class RequestHandler(BaseHTTPRequestHandler):
         if self._legacy_route:
             denied = HTTP_ROUTER.security.authorize(
                 self, method, match.path,
-                allow_shell=ALLOW_SHELL_COMMANDS,
+                allow_shell=ALLOW_SHELL_COMMANDS and bool(EXEC_ALLOWED_BINARIES),
                 allow_git=ALLOW_GIT_OPERATIONS and bool(GIT),
                 allow_network=ALLOW_NETWORK_ADMIN,
                 allow_ha_control=ALLOW_HA_CONTROL,
@@ -1054,16 +1060,29 @@ class RequestHandler(BaseHTTPRequestHandler):
                 if postvars['command']:
                     try:
                         command = shlex.split(postvars['command'][0])
+                        if (not command or not os.path.isabs(command[0]) or
+                                os.path.realpath(command[0]) not in
+                                {os.path.realpath(p) for p in EXEC_ALLOWED_BINARIES}):
+                            raise PermissionError("Executable not in approved command allowlist")
                         timeout = 15
                         if 'timeout' in postvars.keys():
                             if postvars['timeout']:
                                 timeout = int(postvars['timeout'][0])
+                        if timeout < 1 or timeout > 30:
+                            raise ValueError("Command timeout must be between 1 and 30 seconds")
                         try:
                             proc = subprocess.Popen(
                                 command,
+                                cwd=str(_fs().root),
+                                env={"PATH": "/usr/bin:/bin", "HOME": str(_fs().root)},
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE)
-                            stdout, stderr = proc.communicate(timeout=timeout)
+                            try:
+                                stdout, stderr = proc.communicate(timeout=timeout)
+                            except subprocess.TimeoutExpired:
+                                proc.kill()
+                                proc.communicate()
+                                raise
                             self.send_response(200)
                             self.send_header('Content-type', 'text/json')
                             self.end_headers()
