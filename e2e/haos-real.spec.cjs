@@ -8,28 +8,35 @@
  */
 const { test, expect } = require('@playwright/test');
 const path = require('node:path');
+const fs = require('node:fs');
+const { parseIngressUrl, assertStorageState, redactIngressText, navigatePrivate, waitPrivatePopup } = require('./haos-private.cjs');
 
 const ingress = process.env.HAOS_INGRESS_URL || '';
 const storageState = process.env.HAOS_STORAGE_STATE || '';
 const mayMutate = process.env.HAOS_TEST_MUTATIONS === '1';
 const fixtureRoot = '/data/hc-ingress-validation';
 const enabled = Boolean(ingress && storageState);
-const base = enabled ? new URL(ingress) : null;
+const base = parseIngressUrl(ingress);
 const prefix = base ? base.pathname.replace(/\/?$/, '/') : '';
 
-test.use({ storageState: storageState || { cookies: [], origins: [] } });
-
-function redactPath(p) {
-  return p.replace(/\/api\/hassio_ingress\/[^/]+/g,
-                   '/api/hassio_ingress/<REDACTED>');
-}
+// A mistyped private state path must not fail during context initialization,
+// before a helpful sanitized error can be emitted by the suite itself.
+const existingState = Boolean(storageState && fs.existsSync(storageState));
+test.use({ storageState: existingState ? storageState : { cookies: [], origins: [] } });
+test.beforeEach(() => {
+  if (!enabled) return;
+  assertStorageState(storageState);
+  if (!base || !['http:', 'https:'].includes(base.protocol)) {
+    throw new Error('HAOS_INGRESS_URL is invalid (private value omitted).');
+  }
+});
 
 function guardBrowser(page) {
   const failedPublic = [];
   const jsErrors = [];
   const requestPaths = [];
   const successfulResources = [];
-  page.on('pageerror', err => jsErrors.push(redactPath(err.message)));
+  page.on('pageerror', err => jsErrors.push(redactIngressText(err.message)));
   page.on('request', req => {
     const url = new URL(req.url());
     if (url.origin === base.origin) requestPaths.push(url.pathname);
@@ -69,9 +76,9 @@ function guardBrowser(page) {
 test('real HA OS Ingress: full HTML, font, API, route and cache behavior', async ({ page }) => {
   test.skip(!enabled, 'Requires local HAOS_INGRESS_URL + HAOS_STORAGE_STATE');
   test.setTimeout(90000);
-  expect(base.pathname).toMatch(/^\/api\/hassio_ingress\/[^/]+\/$/);
+  expect(/^\/api\/hassio_ingress\/[^/]+\/$/.test(base.pathname)).toBe(true);
   const guard = await guardBrowser(page);
-  await page.goto(ingress, { waitUntil: 'domcontentloaded' });
+  await navigatePrivate(page, ingress);
   await expect.poll(() => page.evaluate(() => Boolean(window.editor && window.ace)))
     .toBe(true);
   const staticResponses = guard.successfulResources;
@@ -131,13 +138,13 @@ test('real HA OS Ingress: Settings > New tab retains opaque base', async ({ page
   test.skip(!enabled, 'Requires local HAOS_INGRESS_URL + HAOS_STORAGE_STATE');
   test.setTimeout(90000);
   const guard = await guardBrowser(page);
-  await page.goto(ingress, { waitUntil: 'domcontentloaded' });
+  await navigatePrivate(page, ingress);
   await expect.poll(() => page.evaluate(() => Boolean(window.editor))).toBe(true);
   await page.locator('a[data-activates="dropdown_menu"]').first().click();
   const popupPromise = page.waitForEvent('popup');
   await page.locator('#dropdown_menu > li > a').first().click();
   const popup = await popupPromise;
-  await popup.waitForLoadState('domcontentloaded');
+  await waitPrivatePopup(popup);
   expect(new URL(popup.url()).pathname === prefix).toBe(true);
   await popup.close();
   guard.assert();
@@ -147,7 +154,7 @@ test('real HA OS Ingress: upload and download in isolated fixture ONLY', async (
   test.skip(!enabled || !mayMutate, 'Requires HAOS_TEST_MUTATIONS=1 on disposable fixture');
   test.setTimeout(90000);
   const guard = await guardBrowser(page);
-  await page.goto(ingress, { waitUntil: 'domcontentloaded' });
+  await navigatePrivate(page, ingress);
   await expect.poll(() => page.evaluate(() => Boolean(window.editor))).toBe(true);
   const name = 'haos-ingress-upload-check-' + Date.now().toString(36) + '.txt';
   await page.evaluate(root => listdir(root), fixtureRoot);
