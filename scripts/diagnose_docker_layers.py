@@ -51,8 +51,9 @@ def main(first, second):
         if len(alayers) != len(blayers):
             print("Layer count differs:", len(alayers), len(blayers))
         for index, (left, right) in enumerate(zip(alayers, blayers)):
-            if left == right:
-                continue
+            # Do not assume identical layer archive paths imply identical
+            # bytes: real docker save paths are content-addressed, but an
+            # intentionally malformed/constructed archive could reuse names.
             la = inventory(a, left)
             lb = inventory(b, right)
             changed = [p for p in sorted(set(la) | set(lb))
