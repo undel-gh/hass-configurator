@@ -1480,9 +1480,12 @@ class RequestHandler(BaseHTTPRequestHandler):
                         method = unquote(postvars['method'][0])
                         if method == 'remove':
                             if network in ALLOWED_NETWORKS:
+                                # Empty allowlist means "allow all" in
+                                # check_access(): removing the final entry
+                                # would silently unlock remote access.
+                                if len(ALLOWED_NETWORKS) == 1:
+                                    raise PermissionError("Cannot remove final allowed network")
                                 ALLOWED_NETWORKS.remove(network)
-                                # Never broaden a restricted allowlist
-                                # to all IPv4 addresses as a side effect.
                             response['error'] = False
                         elif method == 'add':
                             ipaddress.ip_network(network)
