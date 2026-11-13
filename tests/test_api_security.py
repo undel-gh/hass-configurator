@@ -43,6 +43,23 @@ class PolicyTests(unittest.TestCase):
         h.headers["X-CSRF-Token"] = "invalid"
         self.assertEqual(policy.authorize(h, "POST", "/api/save").status, 403)
 
+    def test_loopback_access_rejects_dns_rebinding_host(self):
+        class Handler:
+            headers = {"Host": "evil.example"}
+            client_address = ("127.0.0.1", 12345)
+            server = type("Server", (), {"server_address": ("127.0.0.1", 3218)})()
+
+        policy = ApiPolicy()
+        h = Handler()
+        for host in ("evil.example", "127.0.0.1.evil.example", "localhost.evil.example"):
+            h.headers = {"Host": host}
+            with self.subTest(host=host):
+                self.assertEqual(policy.authorize(h, "GET", "/").status, 403)
+        for host in ("localhost:3218", "127.0.0.1:3218", "[::1]:3218"):
+            h.headers = {"Host": host}
+            with self.subTest(host=host):
+                self.assertIsNone(policy.authorize(h, "GET", "/"))
+
     def test_privileged_operations_disabled_even_with_valid_csrf(self):
         class Handler:
             headers = {}
@@ -51,7 +68,8 @@ class PolicyTests(unittest.TestCase):
 
         policy = ApiPolicy()
         h = Handler()
-        h.headers = {"X-CSRF-Token": policy.csrf_token}
+        h.headers = {"X-CSRF-Token": policy.csrf_token,
+                     "Host": "127.0.0.1:3218"}
         for method, path in (
             ("POST", "/api/exec_command"),
             ("POST", "/api/push"),
