@@ -21,11 +21,14 @@ import subprocess
 import logging
 import fnmatch
 import hashlib
+import hmac
+import html
 import mimetypes
 from string import Template
 from http.server import BaseHTTPRequestHandler
 from hass_configurator.http_routing import Router, error_response, send_response as write_http_response
 from hass_configurator._version import VERSION
+from hass_configurator.api_security import ConfinedFS
 import urllib.request
 from urllib.parse import urlparse, parse_qs, unquote
 
@@ -37,7 +40,12 @@ PORT = 3218
 BASEPATH = None
 # Set ENFORCE_BASEPATH to True to lock the configurator into the basepath and
 # thereby prevent it from opening files outside of the BASEPATH
-ENFORCE_BASEPATH = False
+ENFORCE_BASEPATH = True
+# Privileged capabilities are disabled unless explicitly opted into.
+ALLOW_SHELL_COMMANDS = False
+ALLOW_GIT_OPERATIONS = False
+ALLOW_NETWORK_ADMIN = False
+ALLOW_HA_CONTROL = False
 # Set the paths to a certificate and the key if you're using SSL,
 # e.g "/etc/ssl/certs/mycert.pem"
 SSL_CERTIFICATE = None
@@ -176,7 +184,8 @@ def load_settings(args):
     HASS_API_PASSWORD, CREDENTIALS, ALLOWED_NETWORKS, BANNED_IPS, BANLIMIT, \
     DEV, IGNORE_PATTERN, DIRSFIRST, SESAME, VERIFY_HOSTNAME, ENFORCE_BASEPATH, \
     ENV_PREFIX, NOTIFY_SERVICE, USERNAME, PASSWORD, SESAME_TOTP_SECRET, TOTP, \
-    GIT, REPO, PORT, IGNORE_SSL, HASS_WS_API, ALLOWED_DOMAINS, HIDEHIDDEN
+    GIT, REPO, PORT, IGNORE_SSL, HASS_WS_API, ALLOWED_DOMAINS, HIDEHIDDEN, \
+    ALLOW_SHELL_COMMANDS, ALLOW_GIT_OPERATIONS, ALLOW_NETWORK_ADMIN, ALLOW_HA_CONTROL
     settings = {}
     settingsfile = args.settings
     if settingsfile:
@@ -236,7 +245,13 @@ def load_settings(args):
     if args.enforce:
         ENFORCE_BASEPATH = True
     else:
-        ENFORCE_BASEPATH = settings.get("ENFORCE_BASEPATH", ENFORCE_BASEPATH)
+        ENFORCE_BASEPATH = True
+    if settings.get("ENFORCE_BASEPATH") is False:
+        LOG.warning("ENFORCE_BASEPATH=false ignored: P1 confinement is mandatory")
+    ALLOW_SHELL_COMMANDS = settings.get("ALLOW_SHELL_COMMANDS", ALLOW_SHELL_COMMANDS)
+    ALLOW_GIT_OPERATIONS = settings.get("ALLOW_GIT_OPERATIONS", ALLOW_GIT_OPERATIONS)
+    ALLOW_NETWORK_ADMIN = settings.get("ALLOW_NETWORK_ADMIN", ALLOW_NETWORK_ADMIN)
+    ALLOW_HA_CONTROL = settings.get("ALLOW_HA_CONTROL", ALLOW_HA_CONTROL)
     SSL_CERTIFICATE = settings.get("SSL_CERTIFICATE", SSL_CERTIFICATE)
     SSL_KEY = settings.get("SSL_KEY", SSL_KEY)
     if args.standalone:
@@ -321,13 +336,33 @@ def is_jwt(token):
     """Perform basic check if token is a JWT token."""
     return len(token.split('.')) == 3
 
+def _fs():
+    """Resolve the currently configured workspace for every request."""
+    return ConfinedFS(BASEPATH or BASEDIR)
+
+
 def is_safe_path(basedir, path, follow_symlinks=True):
-    """Check path for malicious traversal."""
-    if basedir is None:
+    """Legacy compatibility check using component boundaries, no symlinks."""
+    try:
+        ConfinedFS(basedir or BASEDIR).resolve_for_read(path)
         return True
-    if follow_symlinks:
-        return os.path.realpath(path).startswith(basedir.encode('utf-8'))
-    return os.path.abspath(path).startswith(basedir.encode('utf-8'))
+    except (OSError, ValueError, TypeError):
+        return False
+
+
+def validated_repo(path, **kwargs):
+    """Never let search_parent_directories escape the workspace root."""
+    if REPO is None:
+        raise PermissionError("Git integration is disabled")
+    checked = _fs().resolve_for_read(
+        path, directory=os.path.isdir(path))
+    repo = REPO(checked, **kwargs)
+    root = _fs()
+    try:
+        root.resolve_for_read(repo.working_dir, directory=True)
+    except OSError as err:
+        raise PermissionError("Git worktree outside configured root") from err
+    return repo
 
 def get_dircontent(path, repo=None):
     """Get content of directory."""
@@ -487,6 +522,16 @@ class RequestHandler(BaseHTTPRequestHandler):
         match = HTTP_ROUTER.match(method, self.path)
         self._legacy_route = match.kind in ("legacy_api", "legacy_page")
         if self._legacy_route:
+            denied = HTTP_ROUTER.security.authorize(
+                self, method, match.path,
+                allow_shell=ALLOW_SHELL_COMMANDS,
+                allow_git=ALLOW_GIT_OPERATIONS and bool(GIT),
+                allow_network=ALLOW_NETWORK_ADMIN,
+                allow_ha_control=ALLOW_HA_CONTROL,
+            )
+            if denied is not None:
+                write_http_response(self, denied)
+                return False
             return True
         if match.kind == "asset":
             response = HTTP_ROUTER.assets.response(match)
@@ -951,7 +996,9 @@ class RequestHandler(BaseHTTPRequestHandler):
                         'https' if SSL_CERTIFICATE else 'http', LISTENIP, PORT),
                     hass_api_address="%s" % (HASS_API, ),
                     hass_ws_address=ws_api,
-                    api_password=HASS_API_PASSWORD if HASS_API_PASSWORD else "",
+                    # Never embed server-held HA credentials into HTML/DOM.
+                    api_password="",
+                    csrf_token=HTTP_ROUTER.security.csrf_token,
                     standalone=standalone,
                     ui_theme=load_prefs().get('ui_theme', 'auto'),
                     asset_version=HTTP_ROUTER.assets.version)
@@ -1623,7 +1670,7 @@ class AuthHandler(RequestHandler):
         return super().do_BLOCK(status, reason)
 
     # pylint: disable=invalid-name
-    def do_AUTHHEAD(self):
+    def _send_auth_challenge(self):
         """Request authorization."""
         LOG.info("Requesting authorization")
         self.send_response(401)
@@ -1639,7 +1686,7 @@ class AuthHandler(RequestHandler):
             return
         header = self.headers.get('Authorization', None)
         if header is None:
-            self.do_AUTHHEAD()
+            self._send_auth_challenge()
             self.wfile.write(bytes('no auth header received', 'utf-8'))
         else:
             authorization = header.split()
@@ -1650,9 +1697,11 @@ class AuthHandler(RequestHandler):
                 password = ":".join(parts[1:])
                 if PASSWORD.startswith("{sha256}"):
                     password = "{sha256}%s" % hashlib.sha256(password.encode("utf-8")).hexdigest()
-                if username == USERNAME and password == PASSWORD:
+                if (hmac.compare_digest(username, USERNAME)
+                        and hmac.compare_digest(password, PASSWORD)):
                     if BANLIMIT:
                         FAIL2BAN_IPS.pop(self.client_address[0], None)
+                    self._authenticated_basic = True
                     super().do_GET()
                     return
             if BANLIMIT:
@@ -1662,7 +1711,7 @@ class AuthHandler(RequestHandler):
                     self.do_BLOCK()
                     return
                 FAIL2BAN_IPS[self.client_address[0]] = bancounter + 1
-            self.do_AUTHHEAD()
+            self._send_auth_challenge()
             self.wfile.write(bytes('Authentication required', 'utf-8'))
 
     def do_POST(self):
@@ -1671,7 +1720,7 @@ class AuthHandler(RequestHandler):
             return
         header = self.headers.get('Authorization', None)
         if header is None:
-            self.do_AUTHHEAD()
+            self._send_auth_challenge()
             self.wfile.write(bytes('no auth header received', 'utf-8'))
         else:
             authorization = header.split()
@@ -1682,9 +1731,11 @@ class AuthHandler(RequestHandler):
                 password = ":".join(parts[1:])
                 if PASSWORD.startswith("{sha256}"):
                     password = "{sha256}%s" % hashlib.sha256(password.encode("utf-8")).hexdigest()
-                if username == USERNAME and password == PASSWORD:
+                if (hmac.compare_digest(username, USERNAME)
+                        and hmac.compare_digest(password, PASSWORD)):
                     if BANLIMIT:
                         FAIL2BAN_IPS.pop(self.client_address[0], None)
+                    self._authenticated_basic = True
                     super().do_POST()
                     return
             if BANLIMIT:
@@ -1694,7 +1745,7 @@ class AuthHandler(RequestHandler):
                     self.do_BLOCK()
                     return
                 FAIL2BAN_IPS[self.client_address[0]] = bancounter + 1
-            self.do_AUTHHEAD()
+            self._send_auth_challenge()
             self.wfile.write(bytes('Authentication required', 'utf-8'))
 
 class SimpleServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
