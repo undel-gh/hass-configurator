@@ -144,10 +144,10 @@ def load_prefs():
         # Preferences are controlled by the same workspace boundary as editor
         # files. Never follow an attacker-created prefs symlink out of root.
         data = json.loads(_fs().read_bytes(get_prefs_path()).decode("utf-8"))
-            # Ensure all default keys exist
-            for k, v in DEFAULT_PREFS.items():
-                data.setdefault(k, v)
-            return data
+        # Ensure all default keys exist.
+        for k, v in DEFAULT_PREFS.items():
+            data.setdefault(k, v)
+        return data
     except Exception:
         return dict(DEFAULT_PREFS)
 
