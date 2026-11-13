@@ -949,13 +949,24 @@ class RequestHandler(BaseHTTPRequestHandler):
                     'REQUEST_METHOD': 'POST',
                     'CONTENT_TYPE': self.headers['Content-Type'],
                 })
-            filename = form['file'].filename
-            filepath = form['path'].file.read().decode("utf-8")
-            if (not filename or os.path.basename(filename) != filename
-                    or filename in (".", "..")):
-                raise PermissionError("Invalid upload filename")
-            data = form['file'].file.read()
-            _fs().write_bytes(os.path.join(filepath, filename), data)
+            try:
+                filename = form['file'].filename
+                filepath = form['path'].file.read()
+                if isinstance(filepath, bytes):
+                    filepath = filepath.decode("utf-8")
+                if (not filename or os.path.basename(filename) != filename
+                        or filename in (".", "..")):
+                    raise PermissionError("Invalid upload filename")
+                data = form['file'].file.read()
+                _fs().write_bytes(os.path.join(filepath, filename), data)
+            except (KeyError, AttributeError, OSError, ValueError, TypeError) as err:
+                LOG.warning("Upload rejected: %s", err)
+                response['message'] = "Invalid or disallowed upload"
+                self.send_response(400)
+                self.send_header('Content-type', 'application/json; charset=utf-8')
+                self.end_headers()
+                self.wfile.write(json.dumps(response).encode('utf-8'))
+                return
             self.send_response(200)
             self.send_header('Content-type', 'text/json')
             self.end_headers()
