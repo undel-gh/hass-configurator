@@ -14,9 +14,7 @@ import re
 # Explicitly enumerate the existing public routes; suffix matching is forbidden.
 GET_API = frozenset((
     "/api/file", "/api/download", "/api/listdir", "/api/abspath",
-    "/api/parent", "/api/prefs", "/api/version", "/api/netstat", "/api/restart",
-    "/api/check_config", "/api/reload_automations", "/api/reload_scripts",
-    "/api/reload_groups", "/api/reload_core",
+    "/api/parent", "/api/prefs", "/api/version", "/api/netstat",
 ))
 POST_API = frozenset((
     "/api/save", "/api/upload", "/api/rename", "/api/delete",
@@ -24,6 +22,8 @@ POST_API = frozenset((
     "/api/checkout", "/api/newbranch", "/api/init", "/api/push",
     "/api/stash", "/api/newfolder", "/api/newfile",
     "/api/allowed_networks", "/api/banned_ips", "/api/prefs",
+    "/api/restart", "/api/check_config", "/api/reload_automations",
+    "/api/reload_scripts", "/api/reload_groups", "/api/reload_core",
 ))
 # Transitional aliases remain revalidated for existing clients. New HTML uses
 # versioned paths and no permanent redirect is necessary.
