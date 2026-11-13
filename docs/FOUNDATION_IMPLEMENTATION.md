@@ -1,6 +1,6 @@
 # Offline foundation implementation notes (PR #15)
 
-**Status:** implementation in draft PR #15. The application is **not fully offline**. P0 mandatory external-request policy (NFR-001) is not yet satisfied; #3, #4 and #6 remain responsible for removing external loads and lifting the expected-failure test.
+**Status:** implementation in PR #15 (review fixes in progress). The application is **not fully offline**. P0 mandatory external-request policy (NFR-001) is not yet satisfied; #3, #4 and #6 remain responsible for removing external loads and lifting the expected-failure test.
 
 ## #1 — source inventory and Ace provenance
 - Machine inventory: `docs/runtime-dependencies.json`, checked by `python scripts/audit_runtime_assets.py`. Source-level baseline records **five** CDN URL references (Ace core + two extensions, Materialize CSS and MDI CSS), **13** auto-loaded GitHub avatar images, **137** advertised Ace language modes, and **35** themes. External documentation URLs are listed separately.
@@ -20,7 +20,7 @@
 
 ## #14 — early CI and traceability
 - `.github/workflows/offline-foundation.yml` uses a pinned Ubuntu 24.04 runner; launches Python unittest and early Chromium Playwright smoke, records browser attempts and verifies the official Ace artifact.
-- `tests/test_routing.py` covers exact route/method behavior, immutable cache, denied traversal and wrong paths, response headers, optional HA API, and spoofed ingress header.
+- `tests/test_routing.py` and `tests/test_legacy_contract.py` cover exact route/method behavior, immutable cache, denied traversal and wrong paths, response headers, optional HA API, and spoofed ingress header.
 - `tests/test_traceability.py` ensures every FR/NFR/ADR row has a tracked Issue and planned/verified evidence slot.
 - `.github/pull_request_template.md` requires tests and requirement impacts. CI **does not automatically force branch protection**; a repo administrator must configure required checks separately.
 - Full UI offline test is **expected to fail** until #3/#4; this is a visible tracked debt, not a waived P0 gate for a stable release.
@@ -38,7 +38,7 @@ python scripts/verify_ace_archive.py /tmp/ace-builds-1.9.6.tgz
 
 python -m hass_configurator.configurator --standalone --listen 127.0.0.1 --port 3218
 # In another shell:
-cd e2e && npm install && npx playwright install chromium && npm test
+cd e2e && npm ci && npx playwright install chromium && npm test
 ```
 
 **Never run `python scripts/audit_runtime_assets.py --strict-offline` expecting success yet**: it intentionally fails as long as remote UI dependencies remain. Run the strict mode to measure progress in #3/#4.
@@ -48,3 +48,14 @@ cd e2e && npm install && npx playwright install chromium && npm test
 - Per-resource cache digest is start-up stable. Real rolling upgrades/open old pages require #5/#6 warm-cache tests.
 - Legacy privileged file, Git and command API security is P1 #7, while CSP is P1 #13.
 - Build packaging, single version authority (0.6.0 vs 0.7.0) and full vendored asset closure remain #5.
+
+## Review follow-up and compatibility changelog
+
+- **Ingress regression test:** exercises real HTML at `/ingress/test/` with browser-visible prefix and proxy stripping, not fabricated `page.setContent`/absolute script URLs. Asserts relative asset references, same-origin JS/CSS/font loads and the relative `api/prefs` fetch. This is still P0 simulation, not real Supervisor Ingress.
+- **Legacy API regression:** independently enumerated GET/POST API routes, a real `POST /api/prefs` JSON round-trip, `POST /api/save` to a temporary file, `GET /api/file?filename=...`, and Basic Auth tests. Dangerous mutating Git/shell/restart routes are tested for registration only, never executed.
+- **Unsupported HTTP verbs:** removed transitional `do_HEAD`, `do_PUT`, `do_DELETE`. All now return path-independent `501 Not Implemented` from the standard transport; there is no cross-method authorization bypass or route enumeration through `404/405`. HEAD is **not yet implemented**, including static resources. Implementing RFC 9110 HEAD for the full GET API requires a separate carefully audited design: some legacy GET endpoints are state-changing and cannot be called to synthesize HEAD without side effects. Future HEAD support MUST include dedicated Basic Auth tests and proper body suppression; do not silently route HEAD into GET. This is a known limitation rather than a claim of complete HTTP method conformance.
+- **Behavior change:** the legacy server previously returned the main HTML for **any** URL whose path ended in `/` (due to `endswith('/')`). The new exact router returns the page **only** at internal `/`. Standalone deep bookmarks such as `/foo/` now return `404`. Under ingress, prefix stripping must map the external app root to internal `/`; route compatibility was deliberately narrowed to avoid suffix-based ambiguity.
+- **MIME:** local JavaScript assets now use `text/javascript; charset=utf-8` (RFC 9239). Tests can assert that on the **direct** Python server, but **actual Supervisor Ingress may rewrite/filter Content-Type**. The real Ingress acceptance check in #8/#6 MUST assert browser functionality, recognized MIME and successful loads, **not byte-for-byte header equality** with the direct backend. Confirm this on supported HA Core versions (see reported home-assistant/core#186376).
+- **Fail-fast assets:** `Assets.__init__` intentionally raises `RuntimeError` at application startup if a declared packaged asset is missing. This avoids partially started releases and misleading immutable manifests. An absent runtime request path still yields `404`; an incomplete **installed artifact** is a startup/packaging failure. #5 MUST validate every wheel/sdist/image manifest before deployment; #10 MUST document operator diagnosis and rollback. No fallback to remote CDN is allowed.
+- **E2E reproducibility:** npm lockfile will be committed and the workflow will run `npm ci`, so transitive browser-test dependencies are not silently refreshed.
+- **Integrity metadata:** `runtime-dependencies.json` describes the verification *procedure* rather than treating a historical GitHub Actions run ID as proof that every future commit is verified; CI on each PR head provides current evidence.
