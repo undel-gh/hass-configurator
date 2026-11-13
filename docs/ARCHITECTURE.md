@@ -100,3 +100,24 @@ Official HA guidance: [Contributors ingress guide](https://contributors.home-ass
 
 ## Remaining security threats
 Filesystem root bypass, symlink/TOCTOU, unauthorized state-changing actions and CSRF, unsafe command/Git privileges, XSS/HTML interpolation, untrusted forwarded headers, leakage of API tokens, stale ingress caching, supply-chain drift and silent CDN fetches. P0 MUST NOT introduce new vulnerabilities; P1 release is blocked by unresolved high-severity findings.
+
+## PR #18: P0 distribution identity and offline container contract
+
+Packaging/runtime identity is now a single value in
+`hass_configurator/_version.py`, parsed by `setup.py` without runtime
+imports and imported by `configurator.py`. The UI About dialog and
+read-only `GET /api/version` report this same value; all dynamic
+HTML/API responses remain `Cache-Control: no-store`. The *resource URL*
+fingerprint under ADR-009 remains a digest of packaged asset bytes,
+**independent of the software version number**.
+
+The main Dockerfile must build a wheel from **this fork's checkout**, install
+that wheel into the runtime image, and never implicitly substitute a
+same-named public PyPI release. The CI release gate checks a local-networkless
+container boot and a real browser loading/editing from the fork container.
+Wheel/sdist/Docker asset bytes, package version and fingerprint must agree.
+
+This does **not** certify image bit-for-bit reproducibility across build
+dates: base-image digests and transitive build/runtime dependencies require
+separate verified immutable locks (#5/#9). Nor does it certify external
+Supervisor Ingress or protect legacy privileged endpoints (#8/#7/#13).
