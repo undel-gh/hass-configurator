@@ -32,31 +32,77 @@ test('network interceptor sees even a blocked external request', async ({ page }
   expect(attempts[0].url).toContain('example.invalid');
 });
 
-test('local immutable assets load through simulated ingress prefix', async ({ page, request }) => {
-  const html = await (await request.get(server + '/')).text();
-  const match = /assets\/v([a-f0-9]{16})\/jquery-3\.6\.0\.min\.js/.exec(html);
-  expect(match, 'HTML should refer to fingerprinted local jQuery').not.toBeNull();
-  const version = match[1];
+test('real HTML resolves local assets and API under simulated ingress prefix', async ({ page }) => {
   const external = await interceptAttempts(page);
+  const requested = [];
+  const assets = [];
+  page.on('request', (request) => {
+    const url = new URL(request.url());
+    if (url.origin === appOrigin) requested.push(url.pathname);
+  });
+  page.on('response', (response) => {
+    const url = new URL(response.url());
+    if (url.origin === appOrigin && url.pathname.includes('/assets/')) {
+      assets.push({ path: url.pathname, status: response.status() });
+    }
+  });
 
-  // Emulate Home Assistant ingress stripping an opaque prefix before forwarding.
+  // Load the actual dev.html at the external URL. Simulate Supervisor
+  // stripping the opaque prefix before forwarding to HASS Configurator.
   await page.route('**/ingress/test/**', async (route) => {
     const incoming = new URL(route.request().url());
+    if (!incoming.pathname.startsWith('/ingress/test/')) {
+      throw new Error('Unexpected ingress request: ' + incoming.pathname);
+    }
     incoming.pathname = incoming.pathname.replace(/^\/ingress\/test\//, '/');
     const response = await route.fetch({ url: incoming.toString() });
     await route.fulfill({ response });
   });
 
-  await page.goto(server + '/api/prefs');
-  await page.setContent('<html><head></head><body><script src="' +
-    server + '/ingress/test/assets/v' + version +
-    '/jquery-3.6.0.min.js"></script></body></html>');
+  await page.goto(server + '/ingress/test/', { waitUntil: 'domcontentloaded' });
   await expect.poll(() => page.evaluate(() => typeof window.jQuery)).toBe('function');
-  expect(external).toEqual([]);
+  const refs = await page.evaluate(() => [
+    ...document.querySelectorAll('link[href],script[src]'),
+  ].map((node) => node.getAttribute('href') || node.getAttribute('src')));
+  // This fails if dev.html regresses from assets/... to /assets/...
+  for (const filename of ['jquery-3.6.0.min.js', 'style.css',
+                          'material-icons.fallback.css', 'materialize.min.js',
+                          'js-yaml.min.js']) {
+    expect(refs.some((ref) => /^assets\/v[a-f0-9]{16}\//.test(ref) &&
+      ref.endsWith('/' + filename)), filename + ' must use a relative URL').toBe(true);
+    await expect.poll(() => assets.some((r) =>
+      r.path.endsWith('/' + filename) && r.status === 200)).toBe(true);
+    expect(requested.some((p) =>
+      /^\/ingress\/test\/assets\/v[a-f0-9]{16}\//.test(p) &&
+      p.endsWith('/' + filename)), filename + ' must load under the prefix').toBe(true);
+  }
 
-  const response = await request.get(server + '/assets/v' + version + '/style.css');
-  expect(response.status()).toBe(200);
-  expect(response.headers()['cache-control']).toContain('immutable');
+  // Exercise an actual font from dev.html's fallback stylesheet.
+  await page.evaluate(async () => {
+    const icon = document.createElement('span');
+    icon.className = 'material-icons';
+    icon.textContent = 'home';
+    document.body.appendChild(icon);
+    await document.fonts.load('24px "Material Icons"', 'home');
+  });
+  await expect.poll(() => assets.some((r) =>
+    r.path.endsWith('/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2') &&
+    r.status === 200)).toBe(true);
+
+  // Browser resolves this relative API URL against the real ingress document.
+  const prefs = await page.evaluate(async () => {
+    const response = await fetch('api/prefs');
+    if (!response.ok) throw new Error('API: ' + response.status);
+    return response.json();
+  });
+  expect(prefs).toHaveProperty('ui_theme');
+  expect(requested).toContain('/ingress/test/api/prefs');
+
+  expect(requested.filter((p) => p.startsWith('/assets/') ||
+    p.startsWith('/api/'))).toEqual([]);
+  // CDN is still tracked debt #3/#4: attempted external requests remain
+  // intercepted and blocked, not exempted as a passing offline UI.
+  expect(external.every((item) => new URL(item.url).origin !== appOrigin)).toBe(true);
 });
 
 test('full UI sends no public-origin requests (KNOWN OFFLINE DEBT #3/#4)', async ({ page }) => {
