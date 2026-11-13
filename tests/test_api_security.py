@@ -268,6 +268,29 @@ class SecurityLoopbackTests(unittest.TestCase):
         self.assertNotIn(b"</script><script>window.attacked", html)
         self.assertIn(b"\\u003c/script\\u003e", html)
 
+    def test_shell_allowlist_denies_unlisted_executable_before_subprocess(self):
+        payload = urlencode({"command": "/bin/sh -c whoami", "timeout": "1"}).encode()
+        with patch.object(cfg, "ALLOW_SHELL_COMMANDS", True), \
+             patch.object(cfg, "EXEC_ALLOWED_BINARIES", ["/usr/bin/true"]), \
+             patch("subprocess.Popen") as popen:
+            status, _, raw = http_request(
+                self.server, "POST", "/api/exec_command", payload,
+                {"Content-Type": "application/x-www-form-urlencoded",
+                 "X-CSRF-Token": cfg.HTTP_ROUTER.security.csrf_token})
+            self.assertEqual(status, 200)
+            self.assertTrue(json.loads(raw)["error"])
+            popen.assert_not_called()
+
+    def test_git_parent_search_cannot_escape_workspace(self):
+        from types import SimpleNamespace
+        root = Path(self.workspace.name)
+        inside = root / "trusted-repo"
+        inside.mkdir(exist_ok=True)
+        with patch.object(cfg, "REPO", return_value=SimpleNamespace(
+                working_dir=str(root.parent))):
+            with self.assertRaises(PermissionError):
+                cfg.validated_repo(str(inside), search_parent_directories=True)
+
     def test_preferences_symlink_cannot_overwrite_file_outside_workspace(self):
         prefs = Path(self.workspace.name) / cfg.PREFS_FILENAME
         with tempfile.TemporaryDirectory() as external:
