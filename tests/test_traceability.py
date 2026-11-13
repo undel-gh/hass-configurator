@@ -25,9 +25,14 @@ class TraceabilityTests(unittest.TestCase):
                     r"^\|\s*" + re.escape(requirement_id) +
                     r"\s*\|([^\n]+)$", canonical_trace, re.MULTILINE)
                 self.assertEqual(len(matches), 1)
-                self.assertIn("#", matches[0], "Every requirement needs an Issue")
-                self.assertTrue("pending" in matches[0] or
-                                "verified" in matches[0])
+                # Validate the *status column*, not an arbitrary word in
+                # the owner/evidence prose. Partial P0/P1 scope is a first-
+                # class state; it must never be silently promoted to verified.
+                cells = [cell.strip() for cell in matches[0].split("|")]
+                self.assertGreaterEqual(len(cells), 3)
+                self.assertIn("#", cells[0], "Every requirement needs an Issue")
+                self.assertTrue(cells[1], "Every requirement needs test evidence")
+                self.assertRegex(cells[2], r"^(?:pending|partial|verified)\b")
 
     def test_pr_template_requires_evidence(self):
         template = (ROOT / ".github/pull_request_template.md").read_text()

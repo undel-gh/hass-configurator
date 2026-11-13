@@ -2,7 +2,7 @@
   "schema_version": 1,
   "source_branch": "feat/offline-vendored-ace-styles",
   "audited_date": "2026-11-13",
-  "status": "All known browser-automatic public origins removed from HTML; dynamic browser E2E verification still required",
+  "status": "P0 static HTML inventory and supported dynamic browser-origin attempts are clean under strict CI; real Supervisor Ingress and license/SBOM acceptance are separate P1 tasks",
   "required_runtime_origins": [],
   "required_external_files": [],
   "auto_loaded_external_images": [],
@@ -226,10 +226,11 @@
       "vim",
       "emacs"
     ],
-    "dynamic_modules_status": "All 440 files from pinned src-min-noconflict npm archive are bundled locally; dynamic loading must be exercised by browser tests.",
+    "dynamic_modules_status": "All 440 files of pinned src-min-noconflict package are local; supported UI modes/themes, YAML worker and keybindings have active Playwright runtime tests",
     "archive_sha256": "b9facb2b1187cd1b0792eb5b23aac2faae772ea293d128c70c13c7a4f9f2c61d",
     "lock_file": "docs/ace-builds-1.9.6-lock.json",
-    "missing_ui_modes": []
+    "missing_ui_modes": [],
+    "selection_status": "accepted P0: 1.9.6 src-min-noconflict and all currently selectable modes are present; original three absent selectors were intentionally removed in PR #16"
   },
   "notes": [
     "Known CDN script/stylesheet requests and remote GitHub avatar images removed. Strict runtime browser attempt gate is the source of truth.",
@@ -238,5 +239,16 @@
     "Three old Ace selector modes (bro, dummy, dummysyntax) were removed because upstream Ace 1.9.6 archive does not include the corresponding module files.",
     "Vendor origin package SRI, tarball SHA-256, file SHA-256 and licenses are recorded in hass_configurator/vendor/manifest.json."
   ],
-  "vendor_manifest": "hass_configurator/vendor/manifest.json"
+  "vendor_manifest": "hass_configurator/vendor/manifest.json",
+  "validation": {
+    "evidence_baseline": "GitHub Actions #206 on PR #19 source HEAD b111986521d7c769ea339f2ba5a1aabb21ba4c62",
+    "ci_rule": "Each new PR must pass strict static inventory and real Chromium attempted-request E2E on its exact source SHA; prior runs are historical",
+    "simulated_ingress_only": true,
+    "p1_exclusions": [
+      "#8 real HA OS Supervisor Ingress",
+      "#9 license/SBOM/vulnerability decisions",
+      "#7 privileged API security",
+      "#13 CSP"
+    ]
+  }
 }

@@ -508,8 +508,10 @@ class RequestHandler(BaseHTTPRequestHandler):
 
     # pylint: disable=invalid-name
     def do_BLOCK(self, status=420, reason="Policy not fulfilled"):
-        """Customized do_BLOCK method."""
+        """Reject a pre-router request without permitting shared caching."""
         self.send_response(status)
+        self.send_header('Cache-Control', 'no-store')
+        self.send_header('X-Content-Type-Options', 'nosniff')
         self.end_headers()
         self.wfile.write(bytes(reason, "utf8"))
 
@@ -529,6 +531,11 @@ class RequestHandler(BaseHTTPRequestHandler):
                     BANNED_IPS.remove(self.client_address[0])
                 self.send_response(302)
                 self.send_header('Location', './')
+                # Access-token redirects execute before the shared router.
+                # They must still be explicitly non-cacheable, including
+                # behind a prefix-stripping proxy.
+                self.send_header('Cache-Control', 'no-store')
+                self.send_header('X-Content-Type-Options', 'nosniff')
                 self.end_headers()
                 data = {
                     "title": "HASS Configurator - SESAME access",
@@ -544,6 +551,11 @@ class RequestHandler(BaseHTTPRequestHandler):
                     BANNED_IPS.remove(self.client_address[0])
                 self.send_response(302)
                 self.send_header('Location', './')
+                # Access-token redirects execute before the shared router.
+                # They must still be explicitly non-cacheable, including
+                # behind a prefix-stripping proxy.
+                self.send_header('Cache-Control', 'no-store')
+                self.send_header('X-Content-Type-Options', 'nosniff')
                 self.end_headers()
                 data = {
                     "title": "HASS Configurator - SESAME access",
@@ -1607,9 +1619,8 @@ class RequestHandler(BaseHTTPRequestHandler):
 class AuthHandler(RequestHandler):
     """Handler to verify auth header."""
     def do_BLOCK(self, status=420, reason="Policy not fulfilled"):
-        self.send_response(status)
-        self.end_headers()
-        self.wfile.write(bytes(reason, "utf8"))
+        # Reuse the same pre-router denial policy as RequestHandler.
+        return super().do_BLOCK(status, reason)
 
     # pylint: disable=invalid-name
     def do_AUTHHEAD(self):
@@ -1618,6 +1629,8 @@ class AuthHandler(RequestHandler):
         self.send_response(401)
         self.send_header('WWW-Authenticate', 'Basic realm=\"HASS Configurator\"')
         self.send_header('Content-type', 'text/html')
+        self.send_header('Cache-Control', 'no-store')
+        self.send_header('X-Content-Type-Options', 'nosniff')
         self.end_headers()
 
     def do_GET(self):

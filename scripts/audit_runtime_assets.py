@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Check inventory drift against shipped HTML; no claim of offline readiness.
+"""Check HTML source inventory drift; strict mode rejects automatic public loads.
 
 Run: python scripts/audit_runtime_assets.py [--strict-offline]
-The normal mode is a baseline gate. Strict mode is intentionally not green
-until all CDN/images and dynamic Ace dependencies are localized (#3/#4/#6).
+The static inventory gate is intentionally narrower than browser validation:
+strict offline readiness also requires the runtime-attempt Playwright E2E
+suite, dynamic Ace tests and packaging verification in P0 CI.
 """
 import argparse
 import json

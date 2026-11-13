@@ -1,74 +1,103 @@
 # Requirements and evidence traceability
 
-**Status: all runtime requirements are PENDING.** This is a normative **tracking contract**, not evidence of implementation. CI has not yet been configured in this documentation PR. Mark `verified` only after referencing reproducible passing automated checks or recorded manual artifacts on the matching commit.
+**Current status (2026-11-14): P0 automated evidence is verified for the
+scoped scenarios below; P1 is NOT VERIFIED.** Historical rows in the lower
+half of this document describe the development state at the time of each
+PR and are not a live release-readiness verdict. See
+[the P0 closeout acceptance matrix](P0_CLOSEOUT.md) for the issue-by-issue
+scope, AT-01–AT-10 tests, and external maintainer controls.
 
 ## Usage rules
-- Every code PR MUST identify impacted requirement IDs and controlling ADRs, GitHub Issue(s), test paths and CI run numbers; if no test is appropriate, include rationale and a named manual validation record.
-- Change `Status` to `verified` only when linkable tests have passed against the relevant implementation commit. On changed requirements or regressions, reset to `pending` until re-verified. Never mark a requirement verified simply because a document or Issue exists.
-- A risk waiver MUST identify severity, owner, remediation Issue and expiry; it cannot silently override high-severity release blockers.
-- The paths in the `Planned evidence` column are proposals, not claims that files or CI jobs already exist. They can change, but ownership/coverage cannot disappear without updated ADR and reviewer approval.
-- Root and simulated ingress tests are P0; actual HA OS add-on Ingress is P1.
+
+- Every code PR MUST identify impacted requirement IDs and controlling ADRs,
+  GitHub Issue(s), test paths, and exact source-commit CI evidence. Do not
+  reuse a synthetic pull-request merge-commit SHA as the tested PR HEAD.
+- “verified (P0 automated)” means only the supported **standalone and
+  simulated Ingress** scenario named in the evidence; it never implies a
+  real Supervisor, safe privileged action, or CSP acceptance.
+- “partial” means some in-scope checks pass but an explicitly named separate
+  boundary remains pending. Keep those checks in the matrix; do not
+  promote the entire multi-phase requirement to verified.
+- Risks and waivers require owner, expiry and linked follow-up. High-severity
+  blockers cannot be waived silently.
+- No CI file change can prove that GitHub required checks are actually
+  enforced in branch protection. Maintainer settings review is separate.
+- Preserve a record of the historic baselines and compare new changes to
+  **the exact HEAD** of this PR.
 
 ## Functional requirements
 
-| ID | Owner Issues | Planned evidence | Status |
+| ID | Owner Issues | Current P0 evidence | Status |
 | --- | --- | --- | --- |
-| FR-001 | #3, #4 | e2e/offline.spec: cold start, styles, icons, images, Ace files | pending |
-| FR-002 | #3, #6 | e2e/offline.spec: YAML/lint/themes/modes/workers | pending |
-| FR-003 | #2, #6 | tests/test_routing.py + e2e/offline.spec: read/edit/save/upload/download | pending |
-| FR-004 | #7, #8 | tests/test_api_security.py + HA OS manual matrix | pending |
-| FR-005 | #2, #8 | e2e/ingress.spec (P0 simulated), HA OS Ingress test record (P1) | pending |
-| FR-006 | #6, #8 | e2e/offline.spec: HA REST/WS unavailable | pending |
-| FR-007 | #1, #6 | e2e/offline.spec: no link prefetch | pending |
-| FR-008 | #2, #5, #6 | e2e/cache-upgrade.spec: versions A→B | pending |
-| FR-009 | #2, #8 | browser test of configured `ws_uri`, no app WS endpoint | pending |
+| FR-001 | #3, #4 | `e2e/offline-smoke.spec.cjs`, `e2e/offline-dynamic.spec.cjs`, `tests/test_vendored_assets.py` | verified (P0 automated; offline UI/assets) |
+| FR-002 | #3, #6 | `e2e/offline-dynamic.spec.cjs`, `e2e/release-matrix.spec.cjs` | verified (P0 automated; supported modes/workers) |
+| FR-003 | #2, #6 | `e2e/release-matrix.spec.cjs`, `e2e/ingress-operations.spec.cjs`, `tests/test_legacy_contract.py` | verified (P0 automated; safe file round trips) |
+| FR-004 | #7, #8 | `docs/HAOS_REAL_INGRESS.md`, #7 security policy | pending (P1 privileged APIs and real HA) |
+| FR-005 | #2, #8 | `e2e/ingress-operations.spec.cjs`, `e2e/offline-smoke.spec.cjs`, `tests/test_ingress_redirect.py` | partial (P0 simulated verified; P1 real Ingress #8 pending) |
+| FR-006 | #6, #8 | `e2e/ha-outage.spec.cjs` | partial (P0 outage verified; P1 real REST/WS #8 pending) |
+| FR-007 | #1, #6 | `e2e/offline-smoke.spec.cjs`, `docs/runtime-dependencies.json` | verified (P0 automated; no automatic public links) |
+| FR-008 | #2, #5, #6 | `e2e/cache-upgrade.spec.cjs`, `scripts/check_offline_artifacts.py` | partial (P0 warm A→B verified; P1 real upgrade #8 pending) |
+| FR-009 | #2, #8 | `e2e/ha-outage.spec.cjs`, `docs/ARCHITECTURE.md` | partial (P0 optional HA WS outage; P1 live auth/connectivity #8 pending) |
 
 ## Nonfunctional requirements
 
-| ID | Owner Issues | Planned evidence | Status |
+| ID | Owner Issues | Current P0 evidence | Status |
 | --- | --- | --- | --- |
-| NFR-001 | #6, #14 | attempted-network-request intercept + deliberate exceptions | pending |
-| NFR-002 | #1, #3, #5, #9 | vendored artifact lock, integrity/hashes/license CI | pending |
-| NFR-003 | #2, #7 | tests/test_routing.py: exact-method, traversal, symlinks | pending |
-| NFR-004 | #2 | tests/test_routing.py: MIME, single response, 404/405/nosniff | pending |
-| NFR-005 | #2, #6 | early E2E GH Actions smoke, full E2E later | pending |
-| NFR-006 | #7 | tests/test_api_security.py: auth/CSRF/confinement/exec | pending |
-| NFR-007 | #5, #10 | installed wheel/sdist/container version tests | pending |
-| NFR-008 | #14 | GitHub Actions workflow + PR template + this matrix | pending |
-| NFR-009 | #2, #5, #6 | cache headers tests, warm upgrade, immutable digest | pending |
-| NFR-010 | #13, #7 | CSP header/report-only/enforcement/violation tests | pending |
-| NFR-011 | #1, #3 | Ace tarball integrity + single-family closure check | pending |
+| NFR-001 | #6, #14 | `e2e/offline-smoke.spec.cjs`, `tests/test_p0_failure_gates.py` | verified (P0 automated; attempted public requests) |
+| NFR-002 | #1, #3, #5, #9 | `docs/ace-builds-1.9.6-lock.json`, `hass_configurator/vendor/manifest.json`, `requirements/docker-runtime.lock` | partial (P0 origin/integrity verified; P1 license/SBOM #9 pending) |
+| NFR-003 | #2, #7 | `tests/test_routing.py`, `tests/test_p0_closeout.py` | partial (P0 route/static verified; P1 privileged filesystem #7 pending) |
+| NFR-004 | #2 | `tests/test_routing.py`, `tests/test_legacy_contract.py`, `tests/test_p0_closeout.py` | partial (P0 router-owned writer verified; legacy API direct response migration #7 pending) |
+| NFR-005 | #2, #6 | `.github/workflows/offline-foundation.yml`, `e2e/offline-smoke.spec.cjs` | verified (P0 automated; source and installed E2E) |
+| NFR-006 | #7 | `docs/ARCHITECTURE.md`, #7 | pending (P1 auth/CSRF/command confinement) |
+| NFR-007 | #5, #10 | `scripts/check_offline_artifacts.py`, `e2e/version-identity.spec.cjs`, Docker CI | verified (P0 automated; installed artifact identity) |
+| NFR-008 | #14 | `.github/workflows/offline-foundation.yml`, `tests/test_traceability.py`, PR template | partial (P0 CI governance verified; branch required-check settings NOT VERIFIED) |
+| NFR-009 | #2, #5, #6 | `tests/test_routing.py`, `e2e/cache-upgrade.spec.cjs` | partial (P0 immutable/warm verified; P1 real upgrade #8 pending) |
+| NFR-010 | #13, #7 | CSP design in `docs/ARCHITECTURE.md` | pending (P1 CSP enforcement) |
+| NFR-011 | #1, #3 | `scripts/verify_ace_archive.py`, `tests/test_vendored_assets.py`, `tests/test_p0_closeout.py` | verified (P0 automated; single pinned Ace family) |
 
 ## Architectural decisions
 
-| ID | Owner Issues | Planned evidence | Status |
+| ID | Owner Issues | Current P0 evidence | Status |
 | --- | --- | --- | --- |
-| ADR-001 | #1 | base branch and migration analysis documented | pending |
-| ADR-002 | #6, #14 | network-attempt E2E | pending |
-| ADR-003 | #2, #7 | permanent dispatcher contract and response tests | pending |
-| ADR-004 | #2, #8 | simulated/real ingress traces, trusted header tests | pending |
-| ADR-005 | #7 | API security regression suite | pending |
-| ADR-006 | #1, #3 | ace-builds@1.9.6 lock + family compatibility validation | pending |
-| ADR-007 | #14 | PR checklist + required CI/evidence policy | pending |
-| ADR-008 | #13 | CSP review, tests, release-risk disposition | pending |
-| ADR-009 | #2, #5, #6 | stable digest/headers/upgrade tests | pending |
+| ADR-001 | #1 | `docs/FOUNDATION_IMPLEMENTATION.md`, `docs/ARCHITECTURE.md` | verified (P0 documented scope/compatibility decision) |
+| ADR-002 | #6, #14 | `e2e/offline-smoke.spec.cjs` request-attempt gate | verified (P0 automated; browser external requests) |
+| ADR-003 | #2, #7 | `hass_configurator/http_routing.py`, `tests/test_legacy_contract.py` | partial (P0 permanent exact router; P1 legacy controllers #7 pending) |
+| ADR-004 | #2, #8 | `tests/test_ingress_redirect.py`, `e2e/ingress-operations.spec.cjs` | partial (P0 simulated; P1 real ingress #8 pending) |
+| ADR-005 | #7 | `docs/ARCHITECTURE.md` | pending (P1 privileged API security) |
+| ADR-006 | #1, #3 | `docs/ace-builds-1.9.6-lock.json`, `scripts/verify_ace_archive.py` | verified (P0 automated; Ace SRI/closure) |
+| ADR-007 | #14 | PR template, CI, `tests/test_traceability.py` | partial (P0 code/CI contract verified; maintainer branch rules pending / NOT VERIFIED) |
+| ADR-008 | #13 | CSP design in `docs/ARCHITECTURE.md` | pending (P1 CSP) |
+| ADR-009 | #2, #5, #6 | `tests/test_routing.py`, `e2e/cache-upgrade.spec.cjs` | partial (P0 cache/warm verified; P1 real upgrade #8 pending) |
 
 ## Release gates
 
 | Gate | Required scenarios | Verification state |
 | --- | --- | --- |
-| P0 | AT-01–AT-10 as applicable, with simulated ingress and blocked public Internet | pending |
-| P1 | P0 regression, AT-11 real HA OS Ingress, AT-12 API security+CSP and license/release checks | pending |
+| P0 | AT-01–AT-10 (supported low-risk scenarios), simulated Ingress and blocked public Internet | partial: historical CI evidence [#206](https://github.com/undel-gh/hass-configurator/actions/runs/43502177693); consult [closeout PR #20](https://github.com/undel-gh/hass-configurator/pull/20) for exact-HEAD revalidation; maintainer required-check settings NOT VERIFIED |
+| P1 | Real Supervisor Ingress (#8), authenticated privileged API hardening (#7), SBOM/licenses (#9), CSP (#13) | pending; NOT VERIFIED |
+
+For **per-scenario** AT-01–AT-10 status and limitations, see
+[docs/P0_CLOSEOUT.md](P0_CLOSEOUT.md). AT-04 privileged confirmations are
+explicitly outside the safe P0 browser gate; this is a **partial** scenario
+rather than a claim that they were executed. A simulated prefix or a booting
+test container is not evidence of real Supervisor Ingress.
 
 ## PR evidence log template
-Copy one row per impacted requirement:
 
 | Requirement | Issue | Implementing PR/commit | Test path | CI run or manual evidence | Status |
 | --- | --- | --- | --- | --- | --- |
-| FR-005 | #2 | — | planned e2e/ingress.spec | — | pending |
+| FR-005 | #2, #8 | PR #17 (P0 simulated) | `e2e/ingress-operations.spec.cjs` | [PR #17](https://github.com/undel-gh/hass-configurator/pull/17) | partial; real #8 pending |
 
-No implementation PR should leave unfilled evidence fields when claiming a `verified` requirement.
+The PR body must supply its own exact reviewed HEAD and CI run. Closeout
+review must also confirm whether branch protection is enabled; do not infer
+that from the workflow.
 
+## Historical implementation checkpoints
+
+The sections below document what was true at the time of the referenced PR.
+Statements like “#3 is pending” or “Docker base not locked” in a historical
+checkpoint are not a contradiction of the current top-level matrix; use the
+latest accepted PR and current HEAD CI to determine present state.
 
 ## Implementation checkpoint — PR #15 (#1, #2, #14)
 
