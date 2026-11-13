@@ -160,6 +160,17 @@ class P0CloseoutTests(unittest.TestCase):
         trace = (ROOT / "docs" / "TRACEABILITY.md").read_text("utf8")
         for number in (1, 2, 6, 14):
             self.assertIn("#%d" % number, closeout)
+        # Every required safe P0 acceptance scenario must retain an explicit
+        # test/evidence row. This is documentation coverage, not a substitute
+        # for CI executing the referenced browser and Python test suites.
+        for number in range(1, 11):
+            self.assertEqual(
+                closeout.count("| AT-%02d |" % number), 1,
+                "Missing/duplicate AT-%02d closeout row" % number,
+            )
+        self.assertIn("| AT-04 |", closeout)
+        self.assertIn("privileged confirmations intentionally excluded (#7)",
+                      closeout)
         for number in (7, 8, 9, 13):
             self.assertIn("#%d" % number, closeout)
         self.assertIn("NOT VERIFIED", closeout)
