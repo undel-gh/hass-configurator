@@ -268,6 +268,39 @@ class SecurityLoopbackTests(unittest.TestCase):
         self.assertNotIn(b"</script><script>window.attacked", html)
         self.assertIn(b"\\u003c/script\\u003e", html)
 
+    def test_preferences_symlink_cannot_overwrite_file_outside_workspace(self):
+        prefs = Path(self.workspace.name) / cfg.PREFS_FILENAME
+        with tempfile.TemporaryDirectory() as external:
+            victim = Path(external) / "unrelated.txt"
+            victim.write_text("original secret", encoding="utf8")
+            if prefs.exists() or prefs.is_symlink():
+                self.skipTest("Unexpected existing preferences file")
+            prefs.symlink_to(victim)
+            try:
+                body = json.dumps({"ui_theme": "dark"}).encode("utf8")
+                status, _, raw = http_request(
+                    self.server, "POST", "/api/prefs", body,
+                    {"Content-Type": "application/json",
+                     "X-CSRF-Token": cfg.HTTP_ROUTER.security.csrf_token})
+                self.assertEqual(status, 200)
+                self.assertTrue(json.loads(raw)["error"])
+                self.assertEqual(victim.read_text(), "original secret")
+                self.assertEqual(cfg.load_prefs()["ui_theme"], "auto")
+            finally:
+                prefs.unlink()
+
+    def test_config_debug_settings_always_redact_secrets(self):
+        cleaned = cfg._redacted_settings({
+            "HASS_API_PASSWORD": "not-for-logs",
+            "SESAME_TOTP_SECRET": "not-for-logs",
+            "PASSWORD": "not-for-logs",
+            "HASS_API": "http://localhost:8123/api/",
+        })
+        self.assertEqual(cleaned["PASSWORD"], "<redacted>")
+        self.assertEqual(cleaned["HASS_API_PASSWORD"], "<redacted>")
+        self.assertEqual(cleaned["SESAME_TOTP_SECRET"], "<redacted>")
+        self.assertEqual(cleaned["HASS_API"], "http://localhost:8123/api/")
+
     def test_network_allowlist_cannot_be_cleared_by_admin(self):
         original = list(cfg.ALLOWED_NETWORKS)
         cfg.ALLOWED_NETWORKS[:] = ["127.0.0.1/32"]
