@@ -138,6 +138,14 @@ test('YAML syntax worker reports and clears errors with public network blocked',
     editor.getSession().getAnnotations().some(a => a.type === 'error')),
     { timeout: 12000, message: 'Ace YAML worker should report invalid YAML' }).toBe(true);
   await page.evaluate(() => editor.setValue('example: [valid]\\n', -1));
+  await page.waitForTimeout(1400);
+  console.log('YAML_WORKER_DIAGNOSTICS', JSON.stringify(await page.evaluate(() => ({
+    annotations: editor.getSession().getAnnotations(),
+    value: editor.getValue(),
+    mode: editor.getSession().getMode().$id,
+    workerEnabled: editor.getSession().getUseWorker(),
+  }))));
+  console.log('YAML_WORKER_URLS', JSON.stringify(workers));
   await expect.poll(() => page.evaluate(() =>
     editor.getSession().getAnnotations().filter(a => a.type === 'error').length),
     { timeout: 12000 }).toBe(0);
