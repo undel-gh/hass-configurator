@@ -282,6 +282,25 @@ class SecurityLoopbackTests(unittest.TestCase):
             self.assertEqual(status, 403)
             urlopen.assert_not_called()
 
+    def test_string_valued_privileged_flags_never_enable_http_routes(self):
+        # JSON configuration strings such as "false" must not be treated as opt-in.
+        headers = {"X-CSRF-Token": cfg.HTTP_ROUTER.security.csrf_token,
+                   "Content-Type": "application/x-www-form-urlencoded"}
+        with patch.object(cfg, "ALLOW_SHELL_COMMANDS", "false"), \
+             patch.object(cfg, "EXEC_ALLOWED_BINARIES", ["/usr/bin/true"]), \
+             patch.object(cfg, "ALLOW_GIT_OPERATIONS", "false"), \
+             patch.object(cfg, "GIT", True), \
+             patch.object(cfg, "ALLOW_NETWORK_ADMIN", "false"), \
+             patch.object(cfg, "ALLOW_HA_CONTROL", "false"), \
+             patch("urllib.request.urlopen") as opener:
+            for route in ("/api/exec_command", "/api/push",
+                          "/api/allowed_networks", "/api/restart"):
+                with self.subTest(route=route):
+                    status, _, _ = http_request(
+                        self.server, "POST", route, b"path=/&command=id", headers)
+                    self.assertEqual(status, 403)
+            opener.assert_not_called()
+
     def test_shell_git_and_network_mutations_denied_before_body(self):
         headers = {"X-CSRF-Token": cfg.HTTP_ROUTER.security.csrf_token,
                    "Content-Type": "application/x-www-form-urlencoded"}
