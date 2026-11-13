@@ -1,6 +1,6 @@
 # HASS Configurator — Project Map (normative ownership)
 
-**Status:** project map for PR #12. Paths marked **planned** do not yet exist. Owners are GitHub Issues, not individual maintainers.
+**Status:** original architectural map from PR #12, followed below by the actual P0 implementation map (PRs #15/#16). Paths in the conceptual tree remain illustrations rather than claims that exact directories exist. Owners are GitHub Issues, not individual maintainers.
 
 ## Current source map
 
@@ -106,3 +106,22 @@ flowchart TD
 - [Traceability register](TRACEABILITY.md)
 - [Issues](https://github.com/undel-gh/hass-configurator/issues)
 - [Home Assistant Ingress guide](https://contributors.home-assistant.io/apps/guides/ingress/)
+
+## Actual P0 implementation map (PR #15 / PR #16)
+
+| Actual path | Status and responsibility |
+| --- | --- |
+| `hass_configurator/http_routing.py` | **Implemented** permanent exact-method route dispatcher, single response writer for static/errors, manifest-backed nested asset allowlist, checksum and symlink checks, startup digest snapshot |
+| `hass_configurator/vendor/manifest.json` | **Implemented** immutable source SRI/tarball SHA-256 plus per-resource SHA-256 for all 460 Ace/CSS/icon/font/license files |
+| `hass_configurator/vendor/ace/` | **Implemented** 440 pinned `ace-builds@1.9.6` `src-min-noconflict` files including dynamic workers/snippets |
+| `hass_configurator/vendor/materialize/` | **Implemented** Materialize 0.100.2 stylesheet and all referenced Roboto font files |
+| `hass_configurator/vendor/mdi/` | **Implemented** Material Design Icons 3.4.93 stylesheet and all five referenced font formats |
+| `hass_configurator/vendor/licenses/` | **Implemented** upstream Ace, Materialize and MDI license texts; full downstream SBOM and Roboto license review remain #9 |
+| `scripts/vendor_offline_assets.py` | **Implemented** reproducible npm tarball importer and byte-exact `--verify-only` CI gate; runtime never downloads files |
+| `scripts/check_offline_artifacts.py` | **Implemented** wheel and sdist byte-exact vendor manifests verification; Docker and unified version source remain #5 |
+| `tests/test_vendored_assets.py` | **Implemented** unit checks for hash closure, URL/MIME, CSS font dependencies, missing/tampered resources |
+| `e2e/offline-dynamic.spec.cjs` | **Implemented** cold-cache browser tests for dynamic Ace mode/theme/keybindings, YAML worker diagnostics and local MDI/Roboto fonts |
+| `e2e/offline-smoke.spec.cjs` | **Implemented** strict zero-public-origin request attempts for root and simulated HA Ingress HTML |
+| `.github/workflows/offline-foundation.yml` | **Implemented** pinned runtime / browser tests, npm archive checks, wheel+sdist contents; real HA OS Ingress remains #8 |
+
+The one-time vendor-download workflow was removed after generating the pinned binary commit. The generator remains available for reviewed dependency updates. The existing `BaseHTTPRequestHandler` legacy API controllers have **not** been migrated to new security policies; #7 retains ownership.
