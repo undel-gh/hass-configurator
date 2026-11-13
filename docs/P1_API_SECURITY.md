@@ -36,6 +36,24 @@ ignored with an explicit warning. Use a dedicated low-privilege process account
 and a narrow `BASEPATH`. Only files under that path can be read and modified
 through the editor. Symlinked directories and files are not supported.
 
+**Fork Docker runs as non-root UID/GID 10001:10001** by default. Existing
+root-owned host bind mounts at `/config` may become unwritable: grant UID/GID
+10001 access to a dedicated configuration directory, using appropriate ACLs
+or ownership on the host. Example for an isolated local test:
+
+```sh
+sudo install -d -m 0750 -o 10001 -g 10001 /srv/hc-config
+docker run --rm -p 127.0.0.1:3218:3218 \
+  -v /srv/hc-config:/config \
+  -e HC_USERNAME=review-user -e HC_PASSWORD='replace-with-a-real-secret' \
+  <reviewed-fork-image>
+```
+
+The example still requires an authenticated HTTPS entry point and is **not**
+Home Assistant Supervisor Ingress validation. CI's temporary browser mount
+is deliberately writable by the host runner and container user; do **not**
+copy the CI fixture permissions into production.
+
 Privileged actions now require explicit booleans, all **false** by default:
 `ALLOW_SHELL_COMMANDS`, `ALLOW_GIT_OPERATIONS`, `ALLOW_NETWORK_ADMIN`,
 `ALLOW_HA_CONTROL`. Settings loaded from JSON/environment must contain actual
