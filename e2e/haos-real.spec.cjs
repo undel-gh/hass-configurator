@@ -29,7 +29,7 @@ function guardBrowser(page) {
   const jsErrors = [];
   const requestPaths = [];
   const successfulResources = [];
-  page.on('pageerror', err => jsErrors.push(err.message));
+  page.on('pageerror', err => jsErrors.push(redactPath(err.message)));
   page.on('request', req => {
     const url = new URL(req.url());
     if (url.origin === base.origin) requestPaths.push(url.pathname);
@@ -60,8 +60,8 @@ function guardBrowser(page) {
       expect(jsErrors).toEqual([]);
       // Ignore requests to HA's own authentication machinery. App-origin
       // resources must always remain below the opaque Ingress path.
-      expect(requestPaths.filter(p => p.includes('/assets/') &&
-        !p.startsWith(prefix))).toEqual([]);
+      expect(requestPaths.every(p => !p.includes('/assets/') ||
+        p.startsWith(prefix))).toBe(true);
     },
   }));
 }
@@ -96,8 +96,8 @@ test('real HA OS Ingress: full HTML, font, API, route and cache behavior', async
   const v = await page.evaluate(() => (
     ace.config.get('workerPath')
   ));
-  expect(new URL(v).pathname).toMatch(
-    /^\/api\/hassio_ingress\/[^/]+\/assets\/v[a-f0-9]{16}\/vendor\/ace\/$/);
+  expect(/^\/api\/hassio_ingress\/[^/]+\/assets\/v[a-f0-9]{16}\/vendor\/ace\/$/
+    .test(new URL(v).pathname)).toBe(true);
 
   await page.evaluate(() => {
     editor.setTheme('ace/theme/monokai');
@@ -138,7 +138,7 @@ test('real HA OS Ingress: Settings > New tab retains opaque base', async ({ page
   await page.locator('#dropdown_menu > li > a').first().click();
   const popup = await popupPromise;
   await popup.waitForLoadState('domcontentloaded');
-  expect(new URL(popup.url()).pathname).toBe(prefix);
+  expect(new URL(popup.url()).pathname === prefix).toBe(true);
   await popup.close();
   guard.assert();
 });
