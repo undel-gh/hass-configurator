@@ -1,5 +1,6 @@
 """P1 #7 API authorization, anti-CSRF, filesystem and XSS abuse tests."""
 import http.client
+import base64
 import ipaddress
 import json
 import os
@@ -132,6 +133,54 @@ class HostHeaderTests(unittest.TestCase):
             self.assertTrue(cfg.verify_hostname("trusted.example:443"))
             self.assertFalse(cfg.verify_hostname("trusted.example:444"))
             self.assertFalse(cfg.verify_hostname("trusted.example"))
+
+
+class BasicAuthConcurrencyTests(unittest.TestCase):
+    def test_parallel_bad_credentials_reach_ban_threshold_without_lost_updates(self):
+        previous = dict(cfg.FAIL2BAN_IPS)
+        cfg.FAIL2BAN_IPS.clear()
+        bad_basic = "Basic " + base64.b64encode(b"admin:wrong").decode("ascii")
+        server = None
+        worker = None
+        try:
+            with patch.object(cfg, "USERNAME", "admin"), \
+                 patch.object(cfg, "PASSWORD", "correct"), \
+                 patch.object(cfg, "BANLIMIT", 3):
+                server = cfg.SimpleServer(("127.0.0.1", 0), cfg.AuthHandler)
+                worker = threading.Thread(target=server.serve_forever, daemon=True)
+                worker.start()
+                results = []
+                failures = []
+                ready = threading.Barrier(9)
+
+                def wrong_login():
+                    try:
+                        ready.wait(timeout=5)
+                        code, _, _ = http_request(
+                            server, "GET", "/", headers={"Authorization": bad_basic})
+                        results.append(code)
+                    except Exception as exc:
+                        failures.append(exc)
+
+                callers = [threading.Thread(target=wrong_login) for _ in range(8)]
+                for caller in callers:
+                    caller.start()
+                ready.wait(timeout=5)
+                for caller in callers:
+                    caller.join(timeout=5)
+                self.assertFalse(any(caller.is_alive() for caller in callers))
+                self.assertFalse(failures)
+                self.assertEqual(len(results), 8)
+                self.assertEqual(results.count(401), 2)
+                self.assertEqual(results.count(420), 6)
+        finally:
+            if server is not None:
+                server.shutdown()
+                server.server_close()
+            if worker is not None:
+                worker.join(timeout=5)
+            cfg.FAIL2BAN_IPS.clear()
+            cfg.FAIL2BAN_IPS.update(previous)
 
 
 class ConfinedFileTests(unittest.TestCase):
