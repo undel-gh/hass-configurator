@@ -21,6 +21,9 @@ test('fork-built Docker browser: no external requests and file round trip', asyn
   const appOrigin = new URL(server).origin;
   fs.mkdirSync(workspace, { recursive: true });
   fs.writeFileSync(host, 'fork: true\n', 'utf8');
+  // This fixture alone is deliberately writable by the non-root Docker
+  // process (UID 10001), while the temporary host sandbox is disposable.
+  fs.chmodSync(host, 0o666);
   page.on('pageerror', err => errors.push(err.message));
   await page.route('**/*', async route => {
     const url = new URL(route.request().url());
