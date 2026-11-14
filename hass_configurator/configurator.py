@@ -132,6 +132,7 @@ LISTENPORT = None
 TOTP = None
 HTTPD = None
 FAIL2BAN_IPS = {}
+AUTH_FAILURE_LOCK = threading.Lock()
 REPO = None
 PREFS_FILENAME = ".hass_configurator_prefs.json"
 DEFAULT_PREFS = {"ui_theme": "auto"}
@@ -1767,6 +1768,25 @@ class RequestHandler(BaseHTTPRequestHandler):
         self.wfile.write(bytes(json.dumps(response), "utf8"))
         return
 
+def _clear_auth_failures(clientip):
+    """A successful Basic login clears the shared failure counter atomically."""
+    if BANLIMIT:
+        with AUTH_FAILURE_LOCK:
+            FAIL2BAN_IPS.pop(clientip, None)
+
+
+def _reject_failed_basic(clientip):
+    """Increment failed Basic attempts atomically across HTTP worker threads."""
+    if not BANLIMIT:
+        return False
+    with AUTH_FAILURE_LOCK:
+        attempts = FAIL2BAN_IPS.get(clientip, 1)
+        if attempts >= BANLIMIT:
+            return True
+        FAIL2BAN_IPS[clientip] = attempts + 1
+        return False
+
+
 class AuthHandler(RequestHandler):
     """Handler to verify auth header."""
     def _send_block(self, status=420, reason="Policy not fulfilled"):
@@ -1814,18 +1834,14 @@ class AuthHandler(RequestHandler):
             self.wfile.write(bytes('no auth header received', 'utf-8'))
         else:
             if self._valid_basic(header):
-                    if BANLIMIT:
-                        FAIL2BAN_IPS.pop(self.client_address[0], None)
+                    _clear_auth_failures(self.client_address[0])
                     self._authenticated_basic = True
                     super().do_GET()
                     return
-            if BANLIMIT:
-                bancounter = FAIL2BAN_IPS.get(self.client_address[0], 1)
-                if bancounter >= BANLIMIT:
-                    LOG.warning("Blocking access from %s", self.client_address[0])
-                    self._send_block()
-                    return
-                FAIL2BAN_IPS[self.client_address[0]] = bancounter + 1
+            if _reject_failed_basic(self.client_address[0]):
+                LOG.warning("Blocking access from %s", self.client_address[0])
+                self._send_block()
+                return
             self._send_auth_challenge()
             self.wfile.write(bytes('Authentication required', 'utf-8'))
 
@@ -1839,18 +1855,14 @@ class AuthHandler(RequestHandler):
             self.wfile.write(bytes('no auth header received', 'utf-8'))
         else:
             if self._valid_basic(header):
-                    if BANLIMIT:
-                        FAIL2BAN_IPS.pop(self.client_address[0], None)
+                    _clear_auth_failures(self.client_address[0])
                     self._authenticated_basic = True
                     super().do_POST()
                     return
-            if BANLIMIT:
-                bancounter = FAIL2BAN_IPS.get(self.client_address[0], 1)
-                if bancounter >= BANLIMIT:
-                    LOG.warning("Blocking access from %s", self.client_address[0])
-                    self._send_block()
-                    return
-                FAIL2BAN_IPS[self.client_address[0]] = bancounter + 1
+            if _reject_failed_basic(self.client_address[0]):
+                LOG.warning("Blocking access from %s", self.client_address[0])
+                self._send_block()
+                return
             self._send_auth_challenge()
             self.wfile.write(bytes('Authentication required', 'utf-8'))
 
