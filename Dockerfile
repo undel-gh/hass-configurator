@@ -65,14 +65,13 @@ RUN --mount=type=bind,from=dependency-wheelhouse,source=/locked-wheels,target=/m
 
 # Never run the network-facing editor as root by default. A host bind
 # mount at /config must be writable by UID/GID 10001; see P1_API_SECURITY.md.
+# useradd/groupadd touch passwd/group/shadow and parent directories with
+# wall-clock timestamps; normalize those layer entries with SOURCE_DATE_EPOCH.
 RUN groupadd --gid 10001 configurator \
     && useradd --uid 10001 --gid 10001 --no-create-home \
        --home-dir /config --shell /usr/sbin/nologin configurator \
     && mkdir -p /config \
     && chown 10001:10001 /config \
-    # useradd/groupadd touch passwd/group/shadow and parent directories
-    # with wall-clock timestamps. Normalize exactly those layer entries
-    # to preserve the two independent no-cache image-ID P0 check.
     && touch -d "@$SOURCE_DATE_EPOCH" \
        /config /etc /etc/passwd /etc/group /etc/shadow /etc/gshadow \
        /etc/subuid /etc/subgid
