@@ -2213,9 +2213,12 @@ jQuery.ajaxPrefilter(function(options, ignored, xhr) {
         }
 
         var uplink = document.getElementById('uplink');
-        uplink.addEventListener('click', function() {
+        // Replaced on every render: retaining listeners sends requests to
+        // historical parent paths after multiple directory navigations.
+        uplink.onclick = function(event) {
+            event.preventDefault();
             listdir(encodeURI(dirdata.parent));
-        });
+        };
 
         for (var i = 0; i < dirdata.content.length; i++) {
             fbelements.appendChild(renderitem(dirdata.content[i], i));
