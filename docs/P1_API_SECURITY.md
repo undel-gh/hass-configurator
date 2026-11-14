@@ -34,7 +34,12 @@ TLS or a reviewed secure proxy, and restrictive network/firewall rules.
 The file confinement root is always enforced. `ENFORCE_BASEPATH=false` is
 ignored with an explicit warning. Use a dedicated low-privilege process account
 and a narrow `BASEPATH`. Only files under that path can be read and modified
-through the editor. Symlinked directories and files are not supported.
+through the editor. Symlinked directories and files are not supported. Writing to regular
+files with multiple hardlinks is also refused, preventing a workspace hardlink
+from truncating an inode also named outside the workspace. A same-UID local
+attacker able to mutate filesystem links concurrently remains within the OS
+trust boundary; do not treat these checks as a sandbox for a compromised
+service account.
 
 **Fork Docker runs as non-root UID/GID 10001:10001** by default. Existing
 root-owned host bind mounts at `/config` may become unwritable: grant UID/GID
