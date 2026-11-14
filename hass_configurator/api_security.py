@@ -176,6 +176,12 @@ class ApiPolicy:
                         headers=(("Cache-Control", "no-store"),))
 
 
+class FileReadLimitExceeded(OSError):
+    """A read would exceed the configured in-memory response budget."""
+
+
+
+
 class ConfinedFS:
     """Directory-descriptor path operations; reject symlinks in every component.
 
@@ -289,17 +295,28 @@ class ConfinedFS:
                 })
         return items
 
-    def read_bytes(self, value):
+    def read_bytes(self, value, max_bytes=None):
         with self._parent(value) as (fd, name):
             flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0)
             opened = os.open(name, flags, dir_fd=fd)
             try:
                 import stat
-                if not stat.S_ISREG(os.fstat(opened).st_mode):
+                metadata = os.fstat(opened)
+                if not stat.S_ISREG(metadata.st_mode):
                     raise PermissionError("Only regular files may be read")
+                if max_bytes is not None and metadata.st_size > max_bytes:
+                    raise FileReadLimitExceeded("File exceeds %d-byte read limit" % max_bytes)
                 with os.fdopen(opened, "rb") as stream:
                     opened = None
-                    return stream.read()
+                    if max_bytes is None:
+                        return stream.read()
+                    # Reading at most limit + 1 handles files extended after
+                    # the initial fstat without unbounded worker allocations.
+                    result = stream.read(max_bytes + 1)
+                    if len(result) > max_bytes:
+                        raise FileReadLimitExceeded(
+                            "File exceeds %d-byte read limit" % max_bytes)
+                    return result
             finally:
                 if opened is not None:
                     os.close(opened)
