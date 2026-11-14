@@ -219,6 +219,16 @@ class ConfinedFileTests(unittest.TestCase):
                 operation()
         self.assertEqual(outside.read_bytes(), b"do not read or overwrite")
 
+    def test_workspace_hardlink_cannot_overwrite_external_inode(self):
+        victim = self.sibling / "sensitive.yaml"
+        victim.write_bytes(b"outside: unchanged")
+        linked = self.root / "hardlink.yaml"
+        os.link(victim, linked)
+        with self.assertRaises(PermissionError):
+            self.fs.write_bytes(linked, b"outside: changed")
+        self.assertEqual(victim.read_bytes(), b"outside: unchanged")
+        self.assertEqual(linked.read_bytes(), b"outside: unchanged")
+
     def test_fd_confined_write_read_rename_create_and_remove(self):
         folder = self.root / "dir"
         self.fs.mkdir(folder)
