@@ -60,7 +60,7 @@ RUN --mount=type=bind,from=dependency-wheelhouse,source=/locked-wheels,target=/m
     && python /tmp/normalize_mtimes.py --epoch "$SOURCE_DATE_EPOCH" \
       --installed /usr/local/share/hass-configurator/runtime.lock \
     && touch -d "@$SOURCE_DATE_EPOCH" \
-      /etc /opt /tmp /usr/local/share /usr/local/share/hass-configurator \
+      /mnt /etc /opt /tmp /usr/local/share /usr/local/share/hass-configurator \
       /usr/local/share/hass-configurator/runtime.lock
 
 # Never run the network-facing editor as root by default. A host bind
