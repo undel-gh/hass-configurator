@@ -619,7 +619,8 @@ class RequestHandler(BaseHTTPRequestHandler):
         """Bounded, descriptor-confined response for editor and downloads."""
         filename = query.get("filename", [None])[0]
         if not filename:
-            response = Response(400, b"Missing filename")
+            response = Response(400, b"Missing filename",
+                                headers=(("Cache-Control", "no-store"),))
         else:
             try:
                 payload = _fs().read_bytes(filename, max_bytes=MAX_FILE_READ_BYTES)
