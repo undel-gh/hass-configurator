@@ -275,6 +275,18 @@ def http_request(server, method, path, data=None, headers=None):
         conn.close()
 
 
+def http_raw_headers(server, method, path, data=None, headers=None):
+    conn = http.client.HTTPConnection("127.0.0.1", server.server_address[1], timeout=5)
+    try:
+        conn.request(method, path, body=data, headers=headers or {})
+        response = conn.getresponse()
+        result = response.status, list(response.getheaders())
+        response.read()
+        return result
+    finally:
+        conn.close()
+
+
 class SecurityLoopbackTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -304,6 +316,25 @@ class SecurityLoopbackTests(unittest.TestCase):
          cfg.ALLOW_GIT_OPERATIONS, cfg.ALLOW_NETWORK_ADMIN,
          cfg.ALLOW_HA_CONTROL, cfg.USERNAME, cfg.PASSWORD) = cls.old
         cls.workspace.cleanup()
+
+    def test_router_owned_denials_emit_single_security_header_pair(self):
+        token = cfg.HTTP_ROUTER.security.csrf_token
+        for path, method, headers, unauthorized in (
+            ("/api/save", "POST", {}, False),
+            ("/api/exec_command", "POST", {"X-CSRF-Token": token}, False),
+            ("/", "GET", {}, True),
+        ):
+            with self.subTest(path=path, method=method, unauthorized=unauthorized):
+                with patch.object(cfg.HTTP_ROUTER.security, "_loopback_bound", return_value=False) if unauthorized else patch.object(cfg, "ALLOW_SHELL_COMMANDS", False):
+                    status, raw_headers = http_raw_headers(
+                        self.server, method, path, b"" if method == "POST" else None,
+                        headers)
+                self.assertEqual(status, 403)
+                for name, expected in (("cache-control", "no-store"),
+                                       ("x-content-type-options", "nosniff")):
+                    matches = [v for k, v in raw_headers if k.lower() == name]
+                    self.assertEqual(matches, [expected],
+                                     "Duplicate or missing %s in %s" % (name, path))
 
     def test_missing_wrong_or_spoofed_csrf_never_writes_file(self):
         target = Path(self.workspace.name) / "csrf-target.yaml"
