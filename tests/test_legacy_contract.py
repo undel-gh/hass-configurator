@@ -17,9 +17,7 @@ from hass_configurator.http_routing import Assets, GET_API, POST_API, Router
 
 EXPECTED_GET = {
     "/api/file", "/api/download", "/api/listdir", "/api/abspath",
-    "/api/parent", "/api/prefs", "/api/version", "/api/netstat", "/api/restart",
-    "/api/check_config", "/api/reload_automations", "/api/reload_scripts",
-    "/api/reload_groups", "/api/reload_core",
+    "/api/parent", "/api/prefs", "/api/version", "/api/netstat",
 }
 EXPECTED_POST = {
     "/api/save", "/api/upload", "/api/rename", "/api/delete",
@@ -27,6 +25,8 @@ EXPECTED_POST = {
     "/api/checkout", "/api/newbranch", "/api/init", "/api/push",
     "/api/stash", "/api/newfolder", "/api/newfile",
     "/api/allowed_networks", "/api/banned_ips", "/api/prefs",
+    "/api/restart", "/api/check_config", "/api/reload_automations",
+    "/api/reload_scripts", "/api/reload_groups", "/api/reload_core",
 }
 
 
@@ -34,7 +34,13 @@ def make_request(server, method, route, body=None, headers=None):
     connection = http.client.HTTPConnection(
         "127.0.0.1", server.server_address[1], timeout=5)
     try:
-        connection.request(method, route, body=body, headers=headers or {})
+        request_headers = dict(headers or {})
+        # This helper models the first-party AJAX client. Negative CSRF and
+        # forged-client cases are tested separately in test_api_security.py.
+        if method == "POST":
+            request_headers.setdefault(
+                "X-CSRF-Token", cfg.HTTP_ROUTER.security.csrf_token)
+        connection.request(method, route, body=body, headers=request_headers)
         response = connection.getresponse()
         result = (response.status, dict(response.getheaders()), response.read())
         return result
@@ -211,6 +217,19 @@ class AuthLoopbackTests(unittest.TestCase):
         self.assertEqual(status, 200)
         self.assertIn("immutable", headers.get("Cache-Control", ""))
         self.assertGreater(len(body), 10)
+
+    def test_malformed_basic_credentials_always_challenge(self):
+        for method in ("GET", "POST"):
+            for value in ("Basic @@@", "Basic Zm9v", "Bearer arbitrary",
+                          "Basic  !!!!", "Basic " + "x" * 10000):
+                with self.subTest(method=method, authorization=value):
+                    status, headers, _ = make_request(
+                        self.server, method, "/api/prefs",
+                        b"{}" if method == "POST" else None,
+                        {"Authorization": value, "Content-Type": "application/json"})
+                    self.assertEqual(status, 401)
+                    self.assertIn("Basic", headers.get("WWW-Authenticate", ""))
+                    self.assertEqual(headers.get("Cache-Control"), "no-store")
 
     def test_unsupported_methods_do_not_disclose_route_existence(self):
         for method in ("HEAD", "PUT", "DELETE"):

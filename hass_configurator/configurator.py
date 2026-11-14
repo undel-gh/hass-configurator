@@ -12,7 +12,9 @@ import json
 import ssl
 import socket
 import socketserver
+import threading
 import base64
+import binascii
 import ipaddress
 import signal
 import cgi
@@ -21,13 +23,16 @@ import subprocess
 import logging
 import fnmatch
 import hashlib
+import hmac
+import html as html_escape
 import mimetypes
 from string import Template
 from http.server import BaseHTTPRequestHandler
-from hass_configurator.http_routing import Router, error_response, send_response as write_http_response
+from hass_configurator.http_routing import Router, Response, error_response, send_response as write_http_response
 from hass_configurator._version import VERSION
+from hass_configurator.api_security import ConfinedFS, FileReadLimitExceeded, run_bounded_command
 import urllib.request
-from urllib.parse import urlparse, parse_qs, unquote
+from urllib.parse import urlparse, parse_qs, unquote, quote
 
 ### Some options for you to change
 LISTENIP = "0.0.0.0"
@@ -37,7 +42,13 @@ PORT = 3218
 BASEPATH = None
 # Set ENFORCE_BASEPATH to True to lock the configurator into the basepath and
 # thereby prevent it from opening files outside of the BASEPATH
-ENFORCE_BASEPATH = False
+ENFORCE_BASEPATH = True
+# Privileged capabilities are disabled unless explicitly opted into.
+ALLOW_SHELL_COMMANDS = False
+EXEC_ALLOWED_BINARIES = []  # absolute reviewed executable paths, empty = deny
+ALLOW_GIT_OPERATIONS = False
+ALLOW_NETWORK_ADMIN = False
+ALLOW_HA_CONTROL = False
 # Set the paths to a certificate and the key if you're using SSL,
 # e.g "/etc/ssl/certs/mycert.pem"
 SSL_CERTIFICATE = None
@@ -60,6 +71,8 @@ PASSWORD = None
 # Limit access to the configurator by adding allowed IP addresses / networks to
 # the list, e.g ALLOWED_NETWORKS = ["192.168.0.0/24", "172.16.47.23"]
 ALLOWED_NETWORKS = []
+# Serializes allowlist and banlist mutations across threaded HTTP requests.
+NETWORK_ADMIN_LOCK = threading.RLock()
 # Allow access to the configurator to client IP addesses which match the result
 # of DNS lookups for the specified domains.
 ALLOWED_DOMAINS = []
@@ -119,8 +132,11 @@ LISTENPORT = None
 TOTP = None
 HTTPD = None
 FAIL2BAN_IPS = {}
+AUTH_FAILURE_LOCK = threading.Lock()
 REPO = None
 PREFS_FILENAME = ".hass_configurator_prefs.json"
+# Bound in-memory editor/download responses; aligned with upload ceiling.
+MAX_FILE_READ_BYTES = 100 * 1024 * 1024
 DEFAULT_PREFS = {"ui_theme": "auto"}
 
 def get_prefs_path():
@@ -131,20 +147,20 @@ def get_prefs_path():
 def load_prefs():
     """Load UI preferences from disk, return defaults on any error."""
     try:
-        with open(get_prefs_path(), 'r') as fptr:
-            data = json.loads(fptr.read())
-            # Ensure all default keys exist
-            for k, v in DEFAULT_PREFS.items():
-                data.setdefault(k, v)
-            return data
+        # Preferences are controlled by the same workspace boundary as editor
+        # files. Never follow an attacker-created prefs symlink out of root.
+        data = json.loads(_fs().read_bytes(get_prefs_path()).decode("utf-8"))
+        # Ensure all default keys exist.
+        for k, v in DEFAULT_PREFS.items():
+            data.setdefault(k, v)
+        return data
     except Exception:
         return dict(DEFAULT_PREFS)
 
 def save_prefs(prefs):
     """Persist UI preferences to disk."""
     try:
-        with open(get_prefs_path(), 'w') as fptr:
-            fptr.write(json.dumps(prefs))
+        _fs().write_bytes(get_prefs_path(), json.dumps(prefs).encode("utf-8"))
         return True
     except Exception as err:
         LOG.warning("Could not save preferences: %s", err)
@@ -170,13 +186,26 @@ def signal_handler(sig, frame):
     HTTPD.server_close()
     sys.exit(0)
 
+def _redacted_settings(settings):
+    """Never log credential values, even at debug verbosity."""
+    return {
+        key: ("<redacted>" if any(
+            marker in key.lower() for marker in
+            ("password", "secret", "token", "credential", "private_key", "sesame")
+        ) else "<redacted-url>" if key.upper() in ("HASS_API", "HASS_WS_API")
+               and value else value)
+        for key, value in settings.items()
+    }
+
+
 def load_settings(args):
     """Load settings from file and environment."""
     global LISTENIP, LISTENPORT, BASEPATH, SSL_CERTIFICATE, SSL_KEY, HASS_API, \
     HASS_API_PASSWORD, CREDENTIALS, ALLOWED_NETWORKS, BANNED_IPS, BANLIMIT, \
     DEV, IGNORE_PATTERN, DIRSFIRST, SESAME, VERIFY_HOSTNAME, ENFORCE_BASEPATH, \
     ENV_PREFIX, NOTIFY_SERVICE, USERNAME, PASSWORD, SESAME_TOTP_SECRET, TOTP, \
-    GIT, REPO, PORT, IGNORE_SSL, HASS_WS_API, ALLOWED_DOMAINS, HIDEHIDDEN
+    GIT, REPO, PORT, IGNORE_SSL, HASS_WS_API, ALLOWED_DOMAINS, HIDEHIDDEN, \
+    ALLOW_SHELL_COMMANDS, EXEC_ALLOWED_BINARIES, ALLOW_GIT_OPERATIONS, ALLOW_NETWORK_ADMIN, ALLOW_HA_CONTROL
     settings = {}
     settingsfile = args.settings
     if settingsfile:
@@ -184,7 +213,7 @@ def load_settings(args):
             if os.path.isfile(settingsfile):
                 settings = json.loads(load_file(settingsfile).decode("utf-8"))
                 LOG.debug("Settings from file:")
-                LOG.debug(settings)
+                LOG.debug(_redacted_settings(settings))
             else:
                 LOG.warning("File not found: %s", settingsfile)
         except Exception as err:
@@ -203,11 +232,11 @@ def load_settings(args):
             elif value.isnumeric():
                 value = int(value)
             # Make lists out of comma separated values for list-settings
-            elif key[len(ENV_PREFIX):] in ["ALLOWED_NETWORKS", "BANNED_IPS", "IGNORE_PATTERN"]:
+            elif key[len(ENV_PREFIX):] in ["ALLOWED_NETWORKS", "BANNED_IPS", "IGNORE_PATTERN", "EXEC_ALLOWED_BINARIES"]:
                 value = value.split(',')
             settings[key[len(ENV_PREFIX):]] = value
     LOG.debug("Settings after looking at environment:")
-    LOG.debug(settings)
+    LOG.debug(_redacted_settings(settings))
     if args.git:
         GIT = args.git
     else:
@@ -236,7 +265,18 @@ def load_settings(args):
     if args.enforce:
         ENFORCE_BASEPATH = True
     else:
-        ENFORCE_BASEPATH = settings.get("ENFORCE_BASEPATH", ENFORCE_BASEPATH)
+        ENFORCE_BASEPATH = True
+    if settings.get("ENFORCE_BASEPATH") is False:
+        LOG.warning("ENFORCE_BASEPATH=false ignored: P1 confinement is mandatory")
+    ALLOW_SHELL_COMMANDS = _secure_flag(settings, "ALLOW_SHELL_COMMANDS", ALLOW_SHELL_COMMANDS)
+    EXEC_ALLOWED_BINARIES = settings.get("EXEC_ALLOWED_BINARIES", EXEC_ALLOWED_BINARIES)
+    if not isinstance(EXEC_ALLOWED_BINARIES, list) or any(
+            not isinstance(name, str) or not os.path.isabs(name)
+            for name in EXEC_ALLOWED_BINARIES):
+        raise ValueError("EXEC_ALLOWED_BINARIES must be a list of absolute paths")
+    ALLOW_GIT_OPERATIONS = _secure_flag(settings, "ALLOW_GIT_OPERATIONS", ALLOW_GIT_OPERATIONS)
+    ALLOW_NETWORK_ADMIN = _secure_flag(settings, "ALLOW_NETWORK_ADMIN", ALLOW_NETWORK_ADMIN)
+    ALLOW_HA_CONTROL = _secure_flag(settings, "ALLOW_HA_CONTROL", ALLOW_HA_CONTROL)
     SSL_CERTIFICATE = settings.get("SSL_CERTIFICATE", SSL_CERTIFICATE)
     SSL_KEY = settings.get("SSL_KEY", SSL_KEY)
     if args.standalone:
@@ -321,13 +361,48 @@ def is_jwt(token):
     """Perform basic check if token is a JWT token."""
     return len(token.split('.')) == 3
 
+
+def _js_safe(value):
+    """Escape HTML/script terminators inside a JSON expression."""
+    return (value.replace("<", r"\u003c").replace(">", r"\u003e")
+            .replace("&", r"\u0026")
+            .replace("\u2028", r"\u2028").replace("\u2029", r"\u2029"))
+
+def _secure_flag(settings, name, default):
+    """Privileged capabilities require an actual JSON/env boolean, not a truthy string."""
+    value = settings.get(name, default)
+    if type(value) is not bool:
+        raise ValueError("%s must be a boolean (true or false)" % name)
+    return value
+
+
+def _fs():
+    """Resolve the currently configured workspace for every request."""
+    return ConfinedFS(BASEPATH or BASEDIR)
+
+
 def is_safe_path(basedir, path, follow_symlinks=True):
-    """Check path for malicious traversal."""
-    if basedir is None:
+    """Legacy compatibility check using component boundaries, no symlinks."""
+    try:
+        ConfinedFS(basedir or BASEDIR).resolve_for_read(path)
         return True
-    if follow_symlinks:
-        return os.path.realpath(path).startswith(basedir.encode('utf-8'))
-    return os.path.abspath(path).startswith(basedir.encode('utf-8'))
+    except (OSError, ValueError, TypeError):
+        return False
+
+
+def validated_repo(path, **kwargs):
+    """Never let search_parent_directories escape the workspace root."""
+    if REPO is None:
+        raise PermissionError("Git integration is disabled")
+    checked = _fs().resolve_for_read(
+        path, directory=os.path.isdir(path))
+    repo = REPO(checked, **kwargs)
+    root = _fs()
+    try:
+        root.resolve_for_read(repo.working_dir, directory=True)
+    except OSError as err:
+        raise PermissionError("Git worktree outside configured root") from err
+    return repo
 
 def get_dircontent(path, repo=None):
     """Get content of directory."""
@@ -357,33 +432,20 @@ def get_dircontent(path, repo=None):
         staged = {}
         unstaged = {}
 
-    def sorted_file_list():
-        """Sort list of files / directories."""
-        dirlist = [x for x in os.listdir(path) if os.path.isdir(os.path.join(path, x))]
-        filelist = [x for x in os.listdir(path) if not os.path.isdir(os.path.join(path, x))]
-        if HIDEHIDDEN:
-            dirlist = [x for x in dirlist if not x.startswith('.')]
-            filelist = [x for x in filelist if not x.startswith('.')]
-        if DIRSFIRST:
-            return sorted(dirlist, key=lambda x: x.lower()) + \
-                sorted(filelist, key=lambda x: x.lower())
-        return sorted(dirlist + filelist, key=lambda x: x.lower())
+    # Listing and metadata come from one pinned directory descriptor:
+    # no os.listdir(path) / os.stat(path) race and no symlink follow.
+    entries = _fs().scan_dir(path)
+    if HIDEHIDDEN:
+        entries = [item for item in entries if not item["name"].startswith('.')]
+    entries.sort(key=lambda item: (
+        0 if DIRSFIRST and item["type"] == "dir" else 1,
+        item["name"].lower(),
+    ))
 
-    for elem in sorted_file_list():
-        edata = {}
-        edata['name'] = elem
+    for entry in entries:
+        edata = dict(entry)
         edata['dir'] = path
-        edata['fullpath'] = os.path.abspath(os.path.join(path, elem))
-        edata['type'] = 'dir' if os.path.isdir(edata['fullpath']) else 'file'
-        try:
-            stats = os.stat(os.path.join(path, elem))
-            edata['size'] = stats.st_size
-            edata['modified'] = stats.st_mtime
-            edata['created'] = stats.st_ctime
-        except Exception:
-            edata['size'] = 0
-            edata['modified'] = 0
-            edata['created'] = 0
+        edata['fullpath'] = os.path.abspath(os.path.join(path, entry["name"]))
         edata['changetype'] = None
         edata['gitstatus'] = bool(repo)
         edata['gittracked'] = 'untracked' if edata['fullpath'] in untracked else 'tracked'
@@ -444,12 +506,15 @@ def password_problems(password, name="UNKNOWN"):
 def check_access(clientip):
     """Check if IP is allowed to access the configurator / API."""
     global BANNED_IPS
-    if clientip in BANNED_IPS:
+    with NETWORK_ADMIN_LOCK:
+        banned = clientip in BANNED_IPS
+        allowed_networks = tuple(ALLOWED_NETWORKS)
+    if banned:
         LOG.warning("Client IP banned.")
         return False
-    if not ALLOWED_NETWORKS:
+    if not allowed_networks:
         return True
-    for net in ALLOWED_NETWORKS:
+    for net in allowed_networks:
         ipobject = ipaddress.ip_address(clientip)
         if ipobject in ipaddress.ip_network(net):
             return True
@@ -466,15 +531,33 @@ def check_access(clientip):
                     if res[4][0] == clientip:
                         return True
         LOG.warning("Client IP not within allowed domains.")
-    BANNED_IPS.append(clientip)
+    with NETWORK_ADMIN_LOCK:
+        if clientip not in BANNED_IPS:
+            BANNED_IPS.append(clientip)
     return False
 
 def verify_hostname(request_hostname):
-    """Verify the provided host header is correct."""
-    if VERIFY_HOSTNAME:
-        if VERIFY_HOSTNAME not in request_hostname:
+    """Check the exact canonical Host, never a substring or forwarded value."""
+    if not isinstance(request_hostname, str) or any(
+            ord(ch) < 32 or ord(ch) == 127 for ch in request_hostname):
+        return False
+    if not VERIFY_HOSTNAME:
+        return True
+    try:
+        if any(ch in request_hostname for ch in "@/?#\\"):
             return False
-    return True
+        actual = urlparse("//" + request_hostname)
+        expected = urlparse("//" + VERIFY_HOSTNAME)
+        if not actual.hostname or not expected.hostname:
+            return False
+        # A configured port is mandatory when specified; otherwise Host may
+        # include the ordinary listener port used for this instance.
+        if expected.port is not None and actual.port != expected.port:
+            return False
+        return hmac.compare_digest(
+            actual.hostname.casefold(), expected.hostname.casefold())
+    except ValueError:
+        return False
 
 class RequestHandler(BaseHTTPRequestHandler):
     """Request handler."""
@@ -482,11 +565,28 @@ class RequestHandler(BaseHTTPRequestHandler):
     def log_message(self, format, *args):
         LOG.info("%s - %s", self.client_address[0], format % args)
 
+    def log_request(self, code="-", size="-"):
+        """Do not log raw request targets: SESAME/TOTP and query args are secrets."""
+        LOG.info("%s - %s %s", self.client_address[0], self.command, code)
+
     def _dispatch_route(self, method):
         """Shared exact-route boundary for static and transitional legacy API."""
         match = HTTP_ROUTER.match(method, self.path)
         self._legacy_route = match.kind in ("legacy_api", "legacy_page")
         if self._legacy_route:
+            denied = HTTP_ROUTER.security.authorize(
+                self, method, match.path,
+                allow_shell=(ALLOW_SHELL_COMMANDS is True) and bool(EXEC_ALLOWED_BINARIES),
+                allow_git=(ALLOW_GIT_OPERATIONS is True) and bool(GIT),
+                allow_network=(ALLOW_NETWORK_ADMIN is True),
+                allow_ha_control=(ALLOW_HA_CONTROL is True),
+            )
+            if denied is not None:
+                # Central responses own their own headers. Legacy end_headers
+                # injects no-store/nosniff only for direct legacy emitters.
+                self._legacy_route = False
+                write_http_response(self, denied)
+                return False
             return True
         if match.kind == "asset":
             response = HTTP_ROUTER.assets.response(match)
@@ -507,7 +607,7 @@ class RequestHandler(BaseHTTPRequestHandler):
         super().end_headers()
 
     # pylint: disable=invalid-name
-    def do_BLOCK(self, status=420, reason="Policy not fulfilled"):
+    def _send_block(self, status=420, reason="Policy not fulfilled"):
         """Reject a pre-router request without permitting shared caching."""
         self.send_response(status)
         self.send_header('Cache-Control', 'no-store')
@@ -515,20 +615,66 @@ class RequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(bytes(reason, "utf8"))
 
+    def _serve_file(self, route, query):
+        """Bounded, descriptor-confined response for editor and downloads."""
+        filename = query.get("filename", [None])[0]
+        if not filename:
+            response = Response(400, b"Missing filename",
+                                headers=(("Cache-Control", "no-store"),))
+        else:
+            try:
+                payload = _fs().read_bytes(filename, max_bytes=MAX_FILE_READ_BYTES)
+                if route == "/api/file":
+                    guessed, _ = mimetypes.guess_type(filename)
+                    content_type = (guessed if guessed and guessed.startswith("image/")
+                                    else "text/plain; charset=utf-8")
+                    if not (guessed and guessed.startswith("image/")):
+                        payload.decode("utf-8")  # Preserve text-editor UTF-8 contract.
+                    headers = (("Cache-Control", "no-store"),)
+                else:
+                    safe_name = quote(os.path.basename(filename), safe="")
+                    content_type = "application/octet-stream"
+                    headers = (
+                        ("Cache-Control", "no-store"),
+                        ("Content-Disposition",
+                         "attachment; filename*=UTF-8''%s" % safe_name),
+                    )
+                response = Response(200, payload, content_type=content_type, headers=headers)
+            except FileReadLimitExceeded:
+                response = Response(413, b"File exceeds read limit",
+                                    headers=(("Cache-Control", "no-store"),))
+            except FileNotFoundError:
+                response = Response(404, b"File not found",
+                                    headers=(("Cache-Control", "no-store"),))
+            except PermissionError:
+                response = Response(403, b"Access denied",
+                                    headers=(("Cache-Control", "no-store"),))
+            except (UnicodeError, ValueError):
+                response = Response(400, b"Invalid file encoding or filename",
+                                    headers=(("Cache-Control", "no-store"),))
+            except OSError:
+                response = Response(400, b"Unable to read file",
+                                    headers=(("Cache-Control", "no-store"),))
+        # Router-owned file reply: legacy header injection would duplicate
+        # the no-store/nosniff pair already owned by this response writer.
+        self._legacy_route = False
+        write_http_response(self, response)
+
     # pylint: disable=invalid-name
     def do_GET(self):
         """Customized do_GET method."""
         if not verify_hostname(self.headers.get('Host', '')):
-            self.do_BLOCK(403, "Forbidden")
+            self._send_block(403, "Forbidden")
             return
         req = urlparse(self.path)
         if SESAME or TOTP:
             chunk = req.path.split("/")[-1]
             if SESAME and chunk == SESAME:
-                if self.client_address[0] not in ALLOWED_NETWORKS:
-                    ALLOWED_NETWORKS.append(self.client_address[0])
-                if self.client_address[0] in BANNED_IPS:
-                    BANNED_IPS.remove(self.client_address[0])
+                with NETWORK_ADMIN_LOCK:
+                    if self.client_address[0] not in ALLOWED_NETWORKS:
+                        ALLOWED_NETWORKS.append(self.client_address[0])
+                    if self.client_address[0] in BANNED_IPS:
+                        BANNED_IPS.remove(self.client_address[0])
                 self.send_response(302)
                 self.send_header('Location', './')
                 # Access-token redirects execute before the shared router.
@@ -545,10 +691,11 @@ class RequestHandler(BaseHTTPRequestHandler):
                 notify(**data)
                 return
             if TOTP and TOTP.verify(chunk):
-                if self.client_address[0] not in ALLOWED_NETWORKS:
-                    ALLOWED_NETWORKS.append(self.client_address[0])
-                if self.client_address[0] in BANNED_IPS:
-                    BANNED_IPS.remove(self.client_address[0])
+                with NETWORK_ADMIN_LOCK:
+                    if self.client_address[0] not in ALLOWED_NETWORKS:
+                        ALLOWED_NETWORKS.append(self.client_address[0])
+                    if self.client_address[0] in BANNED_IPS:
+                        BANNED_IPS.remove(self.client_address[0])
                 self.send_response(302)
                 self.send_header('Location', './')
                 # Access-token redirects execute before the shared router.
@@ -565,76 +712,20 @@ class RequestHandler(BaseHTTPRequestHandler):
                 notify(**data)
                 return
         if not check_access(self.client_address[0]):
-            self.do_BLOCK()
+            self._send_block()
             return
         if not self._dispatch_route("GET"):
             return
         query = parse_qs(req.query)
+        if req.path in ("/api/file", "/api/download"):
+            self._serve_file(req.path, query)
+            return
         self.send_response(200)
         # pylint: disable=no-else-return
         if req.path == '/api/version':
             self.send_header('Content-type', 'application/json; charset=utf-8')
             self.end_headers()
             self.wfile.write(json.dumps({'version': VERSION}).encode('utf-8'))
-            return
-        elif req.path == '/api/file':
-            content = ""
-            filename = query.get('filename', None)
-            try:
-                if filename:
-                    is_raw = False
-                    filename = unquote(filename[0]).encode('utf-8')
-                    if ENFORCE_BASEPATH and not is_safe_path(BASEPATH, filename):
-                        raise OSError('Access denied.')
-                    filepath = os.path.join(BASEDIR.encode('utf-8'), filename)
-                    if os.path.isfile(filepath):
-                        mimetype = mimetypes.guess_type(filepath.decode('utf-8'))
-                        if mimetype[0] is not None:
-                            if mimetype[0].split('/')[0] == 'image':
-                                is_raw = True
-                        if is_raw:
-                            content = load_file(filepath)
-                            self.send_header('Content-type', mimetype[0])
-                        else:
-                            content = load_file(filepath).decode("utf-8")
-                            self.send_header('Content-type', 'text/text')
-                    else:
-                        self.send_header('Content-type', 'text/text')
-                        content = "File not found"
-            except Exception as err:
-                LOG.warning(err)
-                self.send_header('Content-type', 'text/text')
-                content = str(err)
-            self.end_headers()
-            if is_raw:
-                self.wfile.write(content)
-            else:
-                self.wfile.write(bytes(content, "utf8"))
-            return
-        elif req.path == '/api/download':
-            content = ""
-            filename = query.get('filename', None)
-            try:
-                if filename:
-                    filename = unquote(filename[0]).encode('utf-8')
-                    if ENFORCE_BASEPATH and not is_safe_path(BASEPATH, filename):
-                        raise OSError('Access denied.')
-                    LOG.info(filename)
-                    filepath = os.path.join(BASEDIR.encode('utf-8'), filename)
-                    if os.path.isfile(filepath):
-                        filecontent = load_file(filepath)
-                        self.send_header(
-                            'Content-Disposition',
-                            'attachment; filename=%s' % filename.decode('utf-8').split(os.sep)[-1])
-                        self.end_headers()
-                        self.wfile.write(filecontent)
-                        return
-                    content = "File not found"
-            except Exception as err:
-                LOG.warning(err)
-                content = str(err)
-            self.send_header('Content-type', 'text/text')
-            self.wfile.write(bytes(content, "utf8"))
             return
         elif req.path == '/api/listdir':
             content = {'error': None}
@@ -644,18 +735,16 @@ class RequestHandler(BaseHTTPRequestHandler):
             try:
                 if dirpath:
                     dirpath = unquote(dirpath[0]).encode('utf-8')
+                    dirpath = _fs().resolve_for_read(dirpath, directory=True).encode('utf-8')
                     if os.path.isdir(dirpath):
-                        if ENFORCE_BASEPATH and not is_safe_path(BASEPATH,
-                                                                 dirpath):
-                            raise OSError('Access denied.')
                         repo = None
                         activebranch = None
                         dirty = False
                         branches = []
-                        if REPO:
+                        if REPO and ALLOW_GIT_OPERATIONS:
                             try:
                                 # pylint: disable=not-callable
-                                repo = REPO(dirpath.decode('utf-8'),
+                                repo = validated_repo(dirpath.decode('utf-8'),
                                             search_parent_directories=True)
                                 activebranch = repo.active_branch.name
                                 dirty = repo.is_dirty()
@@ -686,11 +775,12 @@ class RequestHandler(BaseHTTPRequestHandler):
             dirpath = query.get('path', None)
             if dirpath:
                 dirpath = unquote(dirpath[0]).encode('utf-8')
-                LOG.debug(dirpath)
-                absp = os.path.abspath(dirpath)
-                LOG.debug(absp)
-                if os.path.isdir(dirpath):
-                    self.wfile.write(os.path.abspath(dirpath))
+                try:
+                    absp = _fs().resolve_for_read(dirpath, directory=True).encode('utf-8')
+                except OSError:
+                    return
+                if os.path.isdir(absp):
+                    self.wfile.write(absp)
             return
         elif req.path == '/api/parent':
             content = ""
@@ -699,11 +789,15 @@ class RequestHandler(BaseHTTPRequestHandler):
             dirpath = query.get('path', None)
             if dirpath:
                 dirpath = unquote(dirpath[0]).encode('utf-8')
-                LOG.debug(dirpath)
-                absp = os.path.abspath(dirpath)
-                LOG.debug(absp)
-                if os.path.isdir(dirpath):
-                    self.wfile.write(os.path.abspath(os.path.dirname(dirpath)))
+                try:
+                    absp = _fs().resolve_for_read(dirpath, directory=True).encode('utf-8')
+                except OSError:
+                    return
+                if os.path.isdir(absp):
+                    self.wfile.write(
+                        absp if absp == os.fsencode(_fs().root)
+                        else _fs().resolve_for_read(
+                            os.path.dirname(absp), directory=True).encode('utf-8'))
             return
         elif req.path == '/api/prefs':
             self.send_header('Content-type', 'text/json')
@@ -720,165 +814,13 @@ class RequestHandler(BaseHTTPRequestHandler):
             }
             self.wfile.write(bytes(json.dumps(res), "utf8"))
             return
-        elif req.path == '/api/restart':
-            LOG.info("/api/restart")
-            self.send_header('Content-type', 'text/json')
-            self.end_headers()
-            res = {"restart": False}
-            try:
-                headers = {
-                    "Content-Type": "application/json"
-                }
-                if HASS_API_PASSWORD:
-                    if is_jwt(HASS_API_PASSWORD):
-                        headers["Authorization"] = "Bearer %s" % HASS_API_PASSWORD
-                    else:
-                        headers["x-ha-access"] = HASS_API_PASSWORD
-                req = urllib.request.Request(
-                    "%sservices/homeassistant/restart" % HASS_API,
-                    headers=headers, method='POST')
-                with urllib.request.urlopen(req) as response:
-                    res = json.loads(response.read().decode('utf-8'))
-                    LOG.debug(res)
-            except Exception as err:
-                LOG.warning(err)
-                res['restart'] = str(err)
-            self.wfile.write(bytes(json.dumps(res), "utf8"))
-            return
-        elif req.path == '/api/check_config':
-            LOG.info("/api/check_config")
-            self.send_header('Content-type', 'text/json')
-            self.end_headers()
-            res = {"check_config": False}
-            try:
-                headers = {
-                    "Content-Type": "application/json"
-                }
-                if HASS_API_PASSWORD:
-                    if is_jwt(HASS_API_PASSWORD):
-                        headers["Authorization"] = "Bearer %s" % HASS_API_PASSWORD
-                    else:
-                        headers["x-ha-access"] = HASS_API_PASSWORD
-                req = urllib.request.Request(
-                    "%sconfig/core/check_config" % HASS_API,
-                    headers=headers, method='POST')
-                with urllib.request.urlopen(req) as response:
-                    res = json.loads(response.read().decode('utf-8'))
-                    LOG.debug(res)
-            except Exception as err:
-                LOG.warning(err)
-                res['errors'] = str(err)
-            self.wfile.write(bytes(json.dumps(res), "utf8"))
-            return
-        elif req.path == '/api/reload_automations':
-            LOG.info("/api/reload_automations")
-            self.send_header('Content-type', 'text/json')
-            self.end_headers()
-            res = {"reload_automations": False}
-            try:
-                headers = {
-                    "Content-Type": "application/json"
-                }
-                if HASS_API_PASSWORD:
-                    if is_jwt(HASS_API_PASSWORD):
-                        headers["Authorization"] = "Bearer %s" % HASS_API_PASSWORD
-                    else:
-                        headers["x-ha-access"] = HASS_API_PASSWORD
-                req = urllib.request.Request(
-                    "%sservices/automation/reload" % HASS_API,
-                    headers=headers, method='POST')
-                with urllib.request.urlopen(req) as response:
-                    LOG.debug(json.loads(response.read().decode('utf-8')))
-                    res['service'] = "called successfully"
-            except Exception as err:
-                LOG.warning(err)
-                res['restart'] = str(err)
-            self.wfile.write(bytes(json.dumps(res), "utf8"))
-            return
-        elif req.path == '/api/reload_scripts':
-            LOG.info("/api/reload_scripts")
-            self.send_header('Content-type', 'text/json')
-            self.end_headers()
-            res = {"reload_scripts": False}
-            try:
-                headers = {
-                    "Content-Type": "application/json"
-                }
-                if HASS_API_PASSWORD:
-                    if is_jwt(HASS_API_PASSWORD):
-                        headers["Authorization"] = "Bearer %s" % HASS_API_PASSWORD
-                    else:
-                        headers["x-ha-access"] = HASS_API_PASSWORD
-                req = urllib.request.Request(
-                    "%sservices/script/reload" % HASS_API,
-                    headers=headers, method='POST')
-                with urllib.request.urlopen(req) as response:
-                    LOG.debug(json.loads(response.read().decode('utf-8')))
-                    res['service'] = "called successfully"
-            except Exception as err:
-                LOG.warning(err)
-                res['restart'] = str(err)
-            self.wfile.write(bytes(json.dumps(res), "utf8"))
-            return
-        elif req.path == '/api/reload_groups':
-            LOG.info("/api/reload_groups")
-            self.send_header('Content-type', 'text/json')
-            self.end_headers()
-            res = {"reload_groups": False}
-            try:
-                headers = {
-                    "Content-Type": "application/json"
-                }
-                if HASS_API_PASSWORD:
-                    if is_jwt(HASS_API_PASSWORD):
-                        headers["Authorization"] = "Bearer %s" % HASS_API_PASSWORD
-                    else:
-                        headers["x-ha-access"] = HASS_API_PASSWORD
-                req = urllib.request.Request(
-                    "%sservices/group/reload" % HASS_API,
-                    headers=headers, method='POST')
-                with urllib.request.urlopen(req) as response:
-                    LOG.debug(json.loads(response.read().decode('utf-8')))
-                    res['service'] = "called successfully"
-            except Exception as err:
-                LOG.warning(err)
-                res['restart'] = str(err)
-            self.wfile.write(bytes(json.dumps(res), "utf8"))
-            return
-        elif req.path == '/api/reload_core':
-            LOG.info("/api/reload_core")
-            self.send_header('Content-type', 'text/json')
-            self.end_headers()
-            res = {"reload_core": False}
-            try:
-                headers = {
-                    "Content-Type": "application/json"
-                }
-                if HASS_API_PASSWORD:
-                    if is_jwt(HASS_API_PASSWORD):
-                        headers["Authorization"] = "Bearer %s" % HASS_API_PASSWORD
-                    else:
-                        headers["x-ha-access"] = HASS_API_PASSWORD
-                req = urllib.request.Request(
-                    "%sservices/homeassistant/reload_core_config" % HASS_API,
-                    headers=headers, method='POST')
-                with urllib.request.urlopen(req) as response:
-                    LOG.debug(json.loads(response.read().decode('utf-8')))
-                    res['service'] = "called successfully"
-            except Exception as err:
-                LOG.warning(err)
-                res['restart'] = str(err)
-            self.wfile.write(bytes(json.dumps(res), "utf8"))
-            return
         elif req.path.endswith('/'):
             self.send_header('Content-type', 'text/html')
             self.end_headers()
 
             loadfile = query.get('loadfile', [None])[0]
-            if loadfile is None:
-                loadfile = 'null'
-            else:
-                loadfile = "'%s'" % loadfile
+            # Query-supplied file names must never become raw JS source.
+            loadfile = _js_safe(json.dumps(loadfile, ensure_ascii=True))
             services = "[]"
             events = "[]"
             states = "[]"
@@ -937,23 +879,27 @@ class RequestHandler(BaseHTTPRequestHandler):
             try:
                 html = Template(load_file("dev.html", static=True).decode('utf-8'))
                 html = html.safe_substitute(
-                    services=services,
-                    events=events,
-                    states=states,
+                    services=_js_safe(services),
+                    events=_js_safe(events),
+                    states=_js_safe(states),
                     loadfile=loadfile,
                     current=VERSION,
                     versionclass=color,
-                    githidden="" if GIT else "hiddendiv",
+                    githidden="" if GIT and ALLOW_GIT_OPERATIONS else "hiddendiv",
                     # pylint: disable=anomalous-backslash-in-string
                     separator="\%s" % os.sep if os.sep == "\\" else os.sep,
-                    your_address=self.client_address[0],
-                    listening_address="%s://%s:%i" % (
-                        'https' if SSL_CERTIFICATE else 'http', LISTENIP, PORT),
-                    hass_api_address="%s" % (HASS_API, ),
-                    hass_ws_address=ws_api,
-                    api_password=HASS_API_PASSWORD if HASS_API_PASSWORD else "",
+                    your_address=html_escape.escape(self.client_address[0], quote=True),
+                    listening_address=html_escape.escape("%s://%s:%i" % (
+                        'https' if SSL_CERTIFICATE else 'http', LISTENIP, PORT), quote=True),
+                    hass_api_address=html_escape.escape("%s" % (HASS_API, ), quote=True),
+                    hass_ws_address=html_escape.escape(ws_api, quote=True),
+                    # Never embed server-held HA credentials into HTML/DOM.
+                    api_password="",
+                    csrf_token=HTTP_ROUTER.security.csrf_token,
                     standalone=standalone,
-                    ui_theme=load_prefs().get('ui_theme', 'auto'),
+                    ui_theme=(load_prefs().get('ui_theme', 'auto')
+                              if load_prefs().get('ui_theme', 'auto')
+                              in ('light', 'dark', 'auto') else 'auto'),
                     asset_version=HTTP_ROUTER.assets.version)
             except Exception as err:
                 LOG.warning("Error getting html: %s", err)
@@ -965,10 +911,10 @@ class RequestHandler(BaseHTTPRequestHandler):
         """Customized do_POST method."""
         global ALLOWED_NETWORKS, BANNED_IPS
         if not verify_hostname(self.headers.get('Host', '')):
-            self.do_BLOCK(403, "Forbidden")
+            self._send_block(403, "Forbidden")
             return
         if not check_access(self.client_address[0]):
-            self.do_BLOCK()
+            self._send_block()
             return
         req = urlparse(self.path)
         if not self._dispatch_route("POST"):
@@ -979,7 +925,15 @@ class RequestHandler(BaseHTTPRequestHandler):
             "message": "Generic failure"
         }
 
-        length = int(self.headers['content-length'])
+        try:
+            length = int(self.headers.get('Content-Length', ''))
+            limit = 104857600 if req.path == '/api/upload' else 1048576
+            if length < 0 or length > limit:
+                raise ValueError("Invalid request size")
+        except (ValueError, TypeError):
+            self._legacy_route = False  # Router-owned 413 already supplies headers.
+            write_http_response(self, error_response(413))
+            return
         if req.path == '/api/save':
             try:
                 postvars = parse_qs(self.rfile.read(length).decode('utf-8'),
@@ -993,8 +947,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                     try:
                         filename = unquote(postvars['filename'][0])
                         response['file'] = filename
-                        with open(filename, 'wb') as fptr:
-                            fptr.write(bytes(postvars['text'][0], "utf-8"))
+                        _fs().write_bytes(filename, postvars['text'][0].encode("utf-8"))
                         self.send_response(200)
                         self.send_header('Content-type', 'text/json')
                         self.end_headers()
@@ -1026,10 +979,24 @@ class RequestHandler(BaseHTTPRequestHandler):
                     'REQUEST_METHOD': 'POST',
                     'CONTENT_TYPE': self.headers['Content-Type'],
                 })
-            filename = form['file'].filename
-            filepath = form['path'].file.read()
-            data = form['file'].file.read()
-            open("%s%s%s" % (filepath, os.sep, filename), "wb").write(data)
+            try:
+                filename = form['file'].filename
+                filepath = form['path'].file.read()
+                if isinstance(filepath, bytes):
+                    filepath = filepath.decode("utf-8")
+                if (not filename or os.path.basename(filename) != filename
+                        or filename in (".", "..")):
+                    raise PermissionError("Invalid upload filename")
+                data = form['file'].file.read()
+                _fs().write_bytes(os.path.join(filepath, filename), data)
+            except (KeyError, AttributeError, OSError, ValueError, TypeError) as err:
+                LOG.warning("Upload rejected: %s", err)
+                response['message'] = "Invalid or disallowed upload"
+                self.send_response(400)
+                self.send_header('Content-type', 'application/json; charset=utf-8')
+                self.end_headers()
+                self.wfile.write(json.dumps(response).encode('utf-8'))
+                return
             self.send_response(200)
             self.send_header('Content-type', 'text/json')
             self.end_headers()
@@ -1050,10 +1017,13 @@ class RequestHandler(BaseHTTPRequestHandler):
                     try:
                         src = unquote(postvars['src'][0])
                         dstfilename = unquote(postvars['dstfilename'][0])
-                        renamepath = src[:src.index(os.path.basename(src))] + dstfilename
+                        if (not dstfilename or os.path.basename(dstfilename) != dstfilename
+                                or dstfilename in (".", "..")):
+                            raise PermissionError("Invalid destination name")
+                        renamepath = os.path.join(os.path.dirname(src), dstfilename)
                         response['path'] = renamepath
                         try:
-                            os.rename(src, renamepath)
+                            _fs().rename(src, renamepath)
                             self.send_response(200)
                             self.send_header('Content-type', 'text/json')
                             self.end_headers()
@@ -1086,9 +1056,9 @@ class RequestHandler(BaseHTTPRequestHandler):
                         response['path'] = delpath
                         try:
                             if os.path.isdir(delpath):
-                                os.rmdir(delpath)
+                                _fs().remove(delpath, is_dir=True)
                             else:
-                                os.unlink(delpath)
+                                _fs().remove(delpath)
                             self.send_response(200)
                             self.send_header('Content-type', 'text/json')
                             self.end_headers()
@@ -1118,22 +1088,32 @@ class RequestHandler(BaseHTTPRequestHandler):
                 if postvars['command']:
                     try:
                         command = shlex.split(postvars['command'][0])
+                        if not command or not os.path.isabs(command[0]):
+                            raise PermissionError("Executable not in approved command allowlist")
+                        # Validate and EXECUTE the same resolved absolute path.
+                        # Otherwise an attacker could swap an allowlisted
+                        # symlink between the check and subprocess.Popen().
+                        resolved_binary = os.path.realpath(command[0])
+                        if resolved_binary not in {
+                                os.path.realpath(p) for p in EXEC_ALLOWED_BINARIES}:
+                            raise PermissionError("Executable not in approved command allowlist")
+                        command[0] = resolved_binary
                         timeout = 15
                         if 'timeout' in postvars.keys():
                             if postvars['timeout']:
                                 timeout = int(postvars['timeout'][0])
+                        if timeout < 1 or timeout > 30:
+                            raise ValueError("Command timeout must be between 1 and 30 seconds")
                         try:
-                            proc = subprocess.Popen(
-                                command,
-                                stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE)
-                            stdout, stderr = proc.communicate(timeout=timeout)
+                            returncode, stdout, stderr = run_bounded_command(
+                                command, timeout=timeout, cwd=str(_fs().root),
+                                env={"PATH": "/usr/bin:/bin", "HOME": str(_fs().root)})
                             self.send_response(200)
                             self.send_header('Content-type', 'text/json')
                             self.end_headers()
                             response['error'] = False
                             response['message'] = "Command executed: %s" % postvars['command'][0]
-                            response['returncode'] = proc.returncode
+                            response['returncode'] = returncode
                             try:
                                 response['stdout'] = stdout.decode(sys.getdefaultencoding())
                             except Exception as err:
@@ -1169,7 +1149,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                     try:
                         addpath = unquote(postvars['path'][0])
                         # pylint: disable=not-callable
-                        repo = REPO(addpath,
+                        repo = validated_repo(addpath,
                                     search_parent_directories=True)
                         filepath = "/".join(
                             addpath.split(os.sep)[len(repo.working_dir.split(os.sep)):])
@@ -1206,7 +1186,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                     try:
                         diffpath = unquote(postvars['path'][0])
                         # pylint: disable=not-callable
-                        repo = REPO(diffpath,
+                        repo = validated_repo(diffpath,
                                     search_parent_directories=True)
                         filepath = "/".join(
                             diffpath.split(os.sep)[len(repo.working_dir.split(os.sep)):])
@@ -1247,7 +1227,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         response['path'] = commitpath
                         message = unquote(postvars['message'][0])
                         # pylint: disable=not-callable
-                        repo = REPO(commitpath,
+                        repo = validated_repo(commitpath,
                                     search_parent_directories=True)
                         try:
                             repo.index.commit(message)
@@ -1283,7 +1263,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         response['path'] = branchpath
                         branch = unquote(postvars['branch'][0])
                         # pylint: disable=not-callable
-                        repo = REPO(branchpath,
+                        repo = validated_repo(branchpath,
                                     search_parent_directories=True)
                         try:
                             head = [h for h in repo.heads if h.name == branch][0]
@@ -1320,7 +1300,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         response['path'] = branchpath
                         branch = unquote(postvars['branch'][0])
                         # pylint: disable=not-callable
-                        repo = REPO(branchpath,
+                        repo = validated_repo(branchpath,
                                     search_parent_directories=True)
                         try:
                             repo.git.checkout("HEAD", b=branch)
@@ -1355,7 +1335,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         repopath = unquote(postvars['path'][0])
                         response['path'] = repopath
                         try:
-                            repo = REPO.init(repopath)
+                            repo = REPO.init(_fs().resolve_for_read(repopath, directory=True))
                             response['error'] = False
                             response['message'] = "Initialized repository in %s" % repopath
                             self.send_response(200)
@@ -1388,7 +1368,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         response['path'] = repopath
                         try:
                             # pylint: disable=not-callable
-                            repo = REPO(repopath)
+                            repo = validated_repo(repopath)
                             urls = []
                             if repo.remotes:
                                 for url in repo.remotes.origin.urls:
@@ -1430,7 +1410,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         response['path'] = repopath
                         try:
                             # pylint: disable=not-callable
-                            repo = REPO(repopath)
+                            repo = validated_repo(repopath)
                             returnvalue = repo.git.stash()
                             response['error'] = False
                             response['message'] = "%s\n%s" % (returnvalue, repopath)
@@ -1464,7 +1444,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         name = unquote(postvars['name'][0])
                         response['path'] = os.path.join(basepath, name)
                         try:
-                            os.makedirs(response['path'])
+                            _fs().mkdir(response['path'])
                             self.send_response(200)
                             self.send_header('Content-type', 'text/json')
                             self.end_headers()
@@ -1494,8 +1474,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         name = unquote(postvars['name'][0])
                         response['path'] = os.path.join(basepath, name)
                         try:
-                            with open(response['path'], 'w') as fptr:
-                                fptr.write("")
+                            _fs().write_bytes(response['path'], b"", exclusive=True)
                             self.send_response(200)
                             self.send_header('Content-type', 'text/json')
                             self.end_headers()
@@ -1526,17 +1505,22 @@ class RequestHandler(BaseHTTPRequestHandler):
                         network = unquote(postvars['network'][0])
                         method = unquote(postvars['method'][0])
                         if method == 'remove':
-                            if network in ALLOWED_NETWORKS:
-                                ALLOWED_NETWORKS.remove(network)
-                                if not ALLOWED_NETWORKS:
-                                    ALLOWED_NETWORKS.append("0.0.0.0/0")
+                            with NETWORK_ADMIN_LOCK:
+                                if network in ALLOWED_NETWORKS:
+                                    # Empty allowlist means allow-all: check
+                                    # and removal must be one atomic action.
+                                    if len(ALLOWED_NETWORKS) == 1:
+                                        raise PermissionError("Cannot remove final allowed network")
+                                    ALLOWED_NETWORKS.remove(network)
                             response['error'] = False
                         elif method == 'add':
                             ipaddress.ip_network(network)
-                            ALLOWED_NETWORKS.append(network)
+                            with NETWORK_ADMIN_LOCK:
+                                if network not in ALLOWED_NETWORKS:
+                                    ALLOWED_NETWORKS.append(network)
                             response['error'] = False
                         else:
-                            response['error'] = True
+                            raise ValueError("Invalid network administration method")
                         self.send_response(200)
                         self.send_header('Content-type', 'text/json')
                         self.end_headers()
@@ -1564,17 +1548,23 @@ class RequestHandler(BaseHTTPRequestHandler):
                         ip_address = unquote(postvars['ip'][0])
                         method = unquote(postvars['method'][0])
                         if method == 'unban':
-                            if ip_address in BANNED_IPS:
-                                BANNED_IPS.remove(ip_address)
+                            with NETWORK_ADMIN_LOCK:
+                                if ip_address in BANNED_IPS:
+                                    BANNED_IPS.remove(ip_address)
                             response['error'] = False
                         elif method == 'ban':
-                            ipaddress.ip_network(ip_address)
-                            BANNED_IPS.append(ip_address)
+                            # The access check compares exact IP addresses;
+                            # accepting a CIDR here would silently fail to ban.
+                            ipaddress.ip_address(ip_address)
+                            with NETWORK_ADMIN_LOCK:
+                                if ip_address not in BANNED_IPS:
+                                    BANNED_IPS.append(ip_address)
                         else:
-                            response['error'] = True
+                            raise ValueError("Invalid ban administration method")
                         self.send_response(200)
                         self.send_header('Content-type', 'text/json')
                         self.end_headers()
+                        response['error'] = False
                         response['message'] = "BANNED_IPS (%s): %s" % (method, ip_address)
                         self.wfile.write(bytes(json.dumps(response), "utf8"))
                         return
@@ -1584,6 +1574,162 @@ class RequestHandler(BaseHTTPRequestHandler):
                         LOG.warning(err)
             else:
                 response['message'] = "Missing IP"
+        elif req.path == '/api/restart':
+            LOG.info("/api/restart")
+            self.send_response(200)
+            self.send_header('Content-type', 'text/json')
+            self.end_headers()
+            res = {"restart": False}
+            try:
+                headers = {
+                    "Content-Type": "application/json"
+                }
+                if HASS_API_PASSWORD:
+                    if is_jwt(HASS_API_PASSWORD):
+                        headers["Authorization"] = "Bearer %s" % HASS_API_PASSWORD
+                    else:
+                        headers["x-ha-access"] = HASS_API_PASSWORD
+                req = urllib.request.Request(
+                    "%sservices/homeassistant/restart" % HASS_API,
+                    headers=headers, method='POST')
+                with urllib.request.urlopen(req) as response:
+                    res = json.loads(response.read().decode('utf-8'))
+                    LOG.debug(res)
+            except Exception as err:
+                LOG.warning(err)
+                res['restart'] = str(err)
+            self.wfile.write(bytes(json.dumps(res), "utf8"))
+            return
+        elif req.path == '/api/check_config':
+            LOG.info("/api/check_config")
+            self.send_response(200)
+            self.send_header('Content-type', 'text/json')
+            self.end_headers()
+            res = {"check_config": False}
+            try:
+                headers = {
+                    "Content-Type": "application/json"
+                }
+                if HASS_API_PASSWORD:
+                    if is_jwt(HASS_API_PASSWORD):
+                        headers["Authorization"] = "Bearer %s" % HASS_API_PASSWORD
+                    else:
+                        headers["x-ha-access"] = HASS_API_PASSWORD
+                req = urllib.request.Request(
+                    "%sconfig/core/check_config" % HASS_API,
+                    headers=headers, method='POST')
+                with urllib.request.urlopen(req) as response:
+                    res = json.loads(response.read().decode('utf-8'))
+                    LOG.debug(res)
+            except Exception as err:
+                LOG.warning(err)
+                res['errors'] = str(err)
+            self.wfile.write(bytes(json.dumps(res), "utf8"))
+            return
+        elif req.path == '/api/reload_automations':
+            LOG.info("/api/reload_automations")
+            self.send_response(200)
+            self.send_header('Content-type', 'text/json')
+            self.end_headers()
+            res = {"reload_automations": False}
+            try:
+                headers = {
+                    "Content-Type": "application/json"
+                }
+                if HASS_API_PASSWORD:
+                    if is_jwt(HASS_API_PASSWORD):
+                        headers["Authorization"] = "Bearer %s" % HASS_API_PASSWORD
+                    else:
+                        headers["x-ha-access"] = HASS_API_PASSWORD
+                req = urllib.request.Request(
+                    "%sservices/automation/reload" % HASS_API,
+                    headers=headers, method='POST')
+                with urllib.request.urlopen(req) as response:
+                    LOG.debug(json.loads(response.read().decode('utf-8')))
+                    res['service'] = "called successfully"
+            except Exception as err:
+                LOG.warning(err)
+                res['restart'] = str(err)
+            self.wfile.write(bytes(json.dumps(res), "utf8"))
+            return
+        elif req.path == '/api/reload_scripts':
+            LOG.info("/api/reload_scripts")
+            self.send_response(200)
+            self.send_header('Content-type', 'text/json')
+            self.end_headers()
+            res = {"reload_scripts": False}
+            try:
+                headers = {
+                    "Content-Type": "application/json"
+                }
+                if HASS_API_PASSWORD:
+                    if is_jwt(HASS_API_PASSWORD):
+                        headers["Authorization"] = "Bearer %s" % HASS_API_PASSWORD
+                    else:
+                        headers["x-ha-access"] = HASS_API_PASSWORD
+                req = urllib.request.Request(
+                    "%sservices/script/reload" % HASS_API,
+                    headers=headers, method='POST')
+                with urllib.request.urlopen(req) as response:
+                    LOG.debug(json.loads(response.read().decode('utf-8')))
+                    res['service'] = "called successfully"
+            except Exception as err:
+                LOG.warning(err)
+                res['restart'] = str(err)
+            self.wfile.write(bytes(json.dumps(res), "utf8"))
+            return
+        elif req.path == '/api/reload_groups':
+            LOG.info("/api/reload_groups")
+            self.send_response(200)
+            self.send_header('Content-type', 'text/json')
+            self.end_headers()
+            res = {"reload_groups": False}
+            try:
+                headers = {
+                    "Content-Type": "application/json"
+                }
+                if HASS_API_PASSWORD:
+                    if is_jwt(HASS_API_PASSWORD):
+                        headers["Authorization"] = "Bearer %s" % HASS_API_PASSWORD
+                    else:
+                        headers["x-ha-access"] = HASS_API_PASSWORD
+                req = urllib.request.Request(
+                    "%sservices/group/reload" % HASS_API,
+                    headers=headers, method='POST')
+                with urllib.request.urlopen(req) as response:
+                    LOG.debug(json.loads(response.read().decode('utf-8')))
+                    res['service'] = "called successfully"
+            except Exception as err:
+                LOG.warning(err)
+                res['restart'] = str(err)
+            self.wfile.write(bytes(json.dumps(res), "utf8"))
+            return
+        elif req.path == '/api/reload_core':
+            LOG.info("/api/reload_core")
+            self.send_response(200)
+            self.send_header('Content-type', 'text/json')
+            self.end_headers()
+            res = {"reload_core": False}
+            try:
+                headers = {
+                    "Content-Type": "application/json"
+                }
+                if HASS_API_PASSWORD:
+                    if is_jwt(HASS_API_PASSWORD):
+                        headers["Authorization"] = "Bearer %s" % HASS_API_PASSWORD
+                    else:
+                        headers["x-ha-access"] = HASS_API_PASSWORD
+                req = urllib.request.Request(
+                    "%sservices/homeassistant/reload_core_config" % HASS_API,
+                    headers=headers, method='POST')
+                with urllib.request.urlopen(req) as response:
+                    LOG.debug(json.loads(response.read().decode('utf-8')))
+                    res['service'] = "called successfully"
+            except Exception as err:
+                LOG.warning(err)
+                res['restart'] = str(err)
+            self.wfile.write(bytes(json.dumps(res), "utf8"))
+            return
         elif req.path == '/api/prefs':
             try:
                 body = self.rfile.read(length).decode('utf-8')
@@ -1616,14 +1762,33 @@ class RequestHandler(BaseHTTPRequestHandler):
         self.wfile.write(bytes(json.dumps(response), "utf8"))
         return
 
+def _clear_auth_failures(clientip):
+    """A successful Basic login clears the shared failure counter atomically."""
+    if BANLIMIT:
+        with AUTH_FAILURE_LOCK:
+            FAIL2BAN_IPS.pop(clientip, None)
+
+
+def _reject_failed_basic(clientip):
+    """Increment failed Basic attempts atomically across HTTP worker threads."""
+    if not BANLIMIT:
+        return False
+    with AUTH_FAILURE_LOCK:
+        attempts = FAIL2BAN_IPS.get(clientip, 1)
+        if attempts >= BANLIMIT:
+            return True
+        FAIL2BAN_IPS[clientip] = attempts + 1
+        return False
+
+
 class AuthHandler(RequestHandler):
     """Handler to verify auth header."""
-    def do_BLOCK(self, status=420, reason="Policy not fulfilled"):
+    def _send_block(self, status=420, reason="Policy not fulfilled"):
         # Reuse the same pre-router denial policy as RequestHandler.
-        return super().do_BLOCK(status, reason)
+        return super()._send_block(status, reason)
 
     # pylint: disable=invalid-name
-    def do_AUTHHEAD(self):
+    def _send_auth_challenge(self):
         """Request authorization."""
         LOG.info("Requesting authorization")
         self.send_response(401)
@@ -1633,68 +1798,66 @@ class AuthHandler(RequestHandler):
         self.send_header('X-Content-Type-Options', 'nosniff')
         self.end_headers()
 
+    def _valid_basic(self, header):
+        """Malformed Authorization must be a challenge, never a 500 or crash."""
+        if not header or len(header) > 8192:
+            return False
+        try:
+            scheme, token = header.split(" ", 1)
+            if scheme.lower() != "basic":
+                return False
+            decoded = base64.b64decode(token, validate=True).decode("utf-8")
+            username, password = decoded.split(":", 1)
+            if not USERNAME or not PASSWORD:
+                return False
+            if PASSWORD.startswith("{sha256}"):
+                password = "{sha256}%s" % hashlib.sha256(
+                    password.encode("utf-8")).hexdigest()
+            return (hmac.compare_digest(username.encode("utf-8"), USERNAME.encode("utf-8"))
+                    and hmac.compare_digest(password.encode("utf-8"), PASSWORD.encode("utf-8")))
+        except (ValueError, UnicodeError, binascii.Error, AttributeError, TypeError):
+            return False
+
     def do_GET(self):
         if not verify_hostname(self.headers.get('Host', '')):
-            self.do_BLOCK(403, "Forbidden")
+            self._send_block(403, "Forbidden")
             return
         header = self.headers.get('Authorization', None)
         if header is None:
-            self.do_AUTHHEAD()
+            self._send_auth_challenge()
             self.wfile.write(bytes('no auth header received', 'utf-8'))
         else:
-            authorization = header.split()
-            if len(authorization) == 2 and authorization[0] == "Basic":
-                plain = base64.b64decode(authorization[1]).decode("utf-8")
-                parts = plain.split(':')
-                username = parts[0]
-                password = ":".join(parts[1:])
-                if PASSWORD.startswith("{sha256}"):
-                    password = "{sha256}%s" % hashlib.sha256(password.encode("utf-8")).hexdigest()
-                if username == USERNAME and password == PASSWORD:
-                    if BANLIMIT:
-                        FAIL2BAN_IPS.pop(self.client_address[0], None)
+            if self._valid_basic(header):
+                    _clear_auth_failures(self.client_address[0])
+                    self._authenticated_basic = True
                     super().do_GET()
                     return
-            if BANLIMIT:
-                bancounter = FAIL2BAN_IPS.get(self.client_address[0], 1)
-                if bancounter >= BANLIMIT:
-                    LOG.warning("Blocking access from %s", self.client_address[0])
-                    self.do_BLOCK()
-                    return
-                FAIL2BAN_IPS[self.client_address[0]] = bancounter + 1
-            self.do_AUTHHEAD()
+            if _reject_failed_basic(self.client_address[0]):
+                LOG.warning("Blocking access from %s", self.client_address[0])
+                self._send_block()
+                return
+            self._send_auth_challenge()
             self.wfile.write(bytes('Authentication required', 'utf-8'))
 
     def do_POST(self):
         if not verify_hostname(self.headers.get('Host', '')):
-            self.do_BLOCK(403, "Forbidden")
+            self._send_block(403, "Forbidden")
             return
         header = self.headers.get('Authorization', None)
         if header is None:
-            self.do_AUTHHEAD()
+            self._send_auth_challenge()
             self.wfile.write(bytes('no auth header received', 'utf-8'))
         else:
-            authorization = header.split()
-            if len(authorization) == 2 and authorization[0] == "Basic":
-                plain = base64.b64decode(authorization[1]).decode("utf-8")
-                parts = plain.split(':')
-                username = parts[0]
-                password = ":".join(parts[1:])
-                if PASSWORD.startswith("{sha256}"):
-                    password = "{sha256}%s" % hashlib.sha256(password.encode("utf-8")).hexdigest()
-                if username == USERNAME and password == PASSWORD:
-                    if BANLIMIT:
-                        FAIL2BAN_IPS.pop(self.client_address[0], None)
+            if self._valid_basic(header):
+                    _clear_auth_failures(self.client_address[0])
+                    self._authenticated_basic = True
                     super().do_POST()
                     return
-            if BANLIMIT:
-                bancounter = FAIL2BAN_IPS.get(self.client_address[0], 1)
-                if bancounter >= BANLIMIT:
-                    LOG.warning("Blocking access from %s", self.client_address[0])
-                    self.do_BLOCK()
-                    return
-                FAIL2BAN_IPS[self.client_address[0]] = bancounter + 1
-            self.do_AUTHHEAD()
+            if _reject_failed_basic(self.client_address[0]):
+                LOG.warning("Blocking access from %s", self.client_address[0])
+                self._send_block()
+                return
+            self._send_auth_challenge()
             self.wfile.write(bytes('Authentication required', 'utf-8'))
 
 class SimpleServer(socketserver.ThreadingMixIn, socketserver.TCPServer):

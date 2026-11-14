@@ -60,12 +60,25 @@ RUN --mount=type=bind,from=dependency-wheelhouse,source=/locked-wheels,target=/m
     && python /tmp/normalize_mtimes.py --epoch "$SOURCE_DATE_EPOCH" \
       --installed /usr/local/share/hass-configurator/runtime.lock \
     && touch -d "@$SOURCE_DATE_EPOCH" \
-      /etc /opt /tmp /usr/local/share /usr/local/share/hass-configurator \
+      /mnt /etc /opt /tmp /usr/local/share /usr/local/share/hass-configurator \
       /usr/local/share/hass-configurator/runtime.lock
 
+# Never run the network-facing editor as root by default. A host bind
+# mount at /config must be writable by UID/GID 10001; see P1_API_SECURITY.md.
+# useradd/groupadd touch passwd/group/shadow and parent directories with
+# wall-clock timestamps; normalize those layer entries with SOURCE_DATE_EPOCH.
+RUN groupadd --gid 10001 configurator \
+    && useradd --uid 10001 --gid 10001 --no-create-home \
+       --home-dir /config --shell /usr/sbin/nologin configurator \
+    && mkdir -p /config \
+    && chown 10001:10001 /config \
+    && touch -d "@$SOURCE_DATE_EPOCH" \
+       /config /etc /etc/passwd /etc/group /etc/shadow /etc/gshadow \
+       /etc/subuid /etc/subgid
 EXPOSE 3218
 VOLUME /config
 WORKDIR /config
+USER 10001:10001
 ENV HC_GIT=false HC_BASEPATH=/config HC_ENFORCE_BASEPATH=true
 ENTRYPOINT ["hass-configurator"]
 CMD ["--standalone", "--listen", "0.0.0.0", "--port", "3218", "--basepath", "/config", "--enforce"]
