@@ -1091,10 +1091,16 @@ class RequestHandler(BaseHTTPRequestHandler):
                 if postvars['command']:
                     try:
                         command = shlex.split(postvars['command'][0])
-                        if (not command or not os.path.isabs(command[0]) or
-                                os.path.realpath(command[0]) not in
-                                {os.path.realpath(p) for p in EXEC_ALLOWED_BINARIES}):
+                        if not command or not os.path.isabs(command[0]):
                             raise PermissionError("Executable not in approved command allowlist")
+                        # Validate and EXECUTE the same resolved absolute path.
+                        # Otherwise an attacker could swap an allowlisted
+                        # symlink between the check and subprocess.Popen().
+                        resolved_binary = os.path.realpath(command[0])
+                        if resolved_binary not in {
+                                os.path.realpath(p) for p in EXEC_ALLOWED_BINARIES}:
+                            raise PermissionError("Executable not in approved command allowlist")
+                        command[0] = resolved_binary
                         timeout = 15
                         if 'timeout' in postvars.keys():
                             if postvars['timeout']:
