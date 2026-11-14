@@ -360,6 +360,29 @@ class SecurityLoopbackTests(unittest.TestCase):
                     self.assertEqual(status, 403)
             opener.assert_not_called()
 
+    def test_shell_executes_resolved_allowlisted_path_not_client_symlink(self):
+        command_link = Path(self.workspace.name) / "shell-allowlisted-symlink"
+        command_link.symlink_to("/usr/bin/true")
+        class FakeProcess:
+            returncode = 0
+
+            def communicate(self, timeout=None):
+                return b"", b""
+
+        with patch.object(cfg, "ALLOW_SHELL_COMMANDS", True), \
+             patch.object(cfg, "EXEC_ALLOWED_BINARIES", ["/usr/bin/true"]), \
+             patch("subprocess.Popen", return_value=FakeProcess()) as popen:
+            body = urlencode({"command": str(command_link)}).encode()
+            status, _, raw = http_request(
+                self.server, "POST", "/api/exec_command", body,
+                {"Content-Type": "application/x-www-form-urlencoded",
+                 "X-CSRF-Token": cfg.HTTP_ROUTER.security.csrf_token})
+            self.assertEqual(status, 200)
+            self.assertFalse(json.loads(raw)["error"])
+            self.assertEqual(popen.call_args.args[0][0],
+                             os.path.realpath("/usr/bin/true"))
+            self.assertNotEqual(popen.call_args.args[0][0], str(command_link))
+
     def test_shell_git_and_network_mutations_denied_before_body(self):
         headers = {"X-CSRF-Token": cfg.HTTP_ROUTER.security.csrf_token,
                    "Content-Type": "application/x-www-form-urlencoded"}
