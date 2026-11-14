@@ -246,8 +246,14 @@ class ConfinedFS:
                 raise PermissionError("Only regular files may be written")
             out = os.open(name, flags, 0o600, dir_fd=fd)
             try:
-                if not stat.S_ISREG(os.fstat(out).st_mode):
+                opened_meta = os.fstat(out)
+                if not stat.S_ISREG(opened_meta.st_mode):
                     raise PermissionError("Only regular files may be written")
+                # A hard link within the workspace can point at the same
+                # inode as a sensitive file outside the workspace. Never
+                # truncate an inode with multiple directory entries.
+                if opened_meta.st_nlink != 1:
+                    raise PermissionError("Hard-linked files cannot be modified")
                 # Validate the opened inode BEFORE truncating; a race that
                 # replaces the name cannot redirect the write to a device.
                 os.ftruncate(out, 0)
