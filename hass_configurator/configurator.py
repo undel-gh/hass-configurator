@@ -28,9 +28,9 @@ import html as html_escape
 import mimetypes
 from string import Template
 from http.server import BaseHTTPRequestHandler
-from hass_configurator.http_routing import Router, error_response, send_response as write_http_response
+from hass_configurator.http_routing import Router, Response, error_response, send_response as write_http_response
 from hass_configurator._version import VERSION
-from hass_configurator.api_security import ConfinedFS, run_bounded_command
+from hass_configurator.api_security import ConfinedFS, FileReadLimitExceeded, run_bounded_command
 import urllib.request
 from urllib.parse import urlparse, parse_qs, unquote, quote
 
@@ -135,6 +135,8 @@ FAIL2BAN_IPS = {}
 AUTH_FAILURE_LOCK = threading.Lock()
 REPO = None
 PREFS_FILENAME = ".hass_configurator_prefs.json"
+# Bound in-memory editor/download responses; aligned with upload ceiling.
+MAX_FILE_READ_BYTES = 100 * 1024 * 1024
 DEFAULT_PREFS = {"ui_theme": "auto"}
 
 def get_prefs_path():
@@ -613,6 +615,50 @@ class RequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(bytes(reason, "utf8"))
 
+    def _serve_file(self, route, query):
+        """Bounded, descriptor-confined response for editor and downloads."""
+        filename = query.get("filename", [None])[0]
+        if not filename:
+            response = Response(400, b"Missing filename")
+        else:
+            try:
+                payload = _fs().read_bytes(filename, max_bytes=MAX_FILE_READ_BYTES)
+                if route == "/api/file":
+                    guessed, _ = mimetypes.guess_type(filename)
+                    content_type = (guessed if guessed and guessed.startswith("image/")
+                                    else "text/plain; charset=utf-8")
+                    if not (guessed and guessed.startswith("image/")):
+                        payload.decode("utf-8")  # Preserve text-editor UTF-8 contract.
+                    headers = (("Cache-Control", "no-store"),)
+                else:
+                    safe_name = quote(os.path.basename(filename), safe="")
+                    content_type = "application/octet-stream"
+                    headers = (
+                        ("Cache-Control", "no-store"),
+                        ("Content-Disposition",
+                         "attachment; filename*=UTF-8''%s" % safe_name),
+                    )
+                response = Response(200, payload, content_type=content_type, headers=headers)
+            except FileReadLimitExceeded:
+                response = Response(413, b"File exceeds read limit",
+                                    headers=(("Cache-Control", "no-store"),))
+            except FileNotFoundError:
+                response = Response(404, b"File not found",
+                                    headers=(("Cache-Control", "no-store"),))
+            except PermissionError:
+                response = Response(403, b"Access denied",
+                                    headers=(("Cache-Control", "no-store"),))
+            except (UnicodeError, ValueError):
+                response = Response(400, b"Invalid file encoding or filename",
+                                    headers=(("Cache-Control", "no-store"),))
+            except OSError:
+                response = Response(400, b"Unable to read file",
+                                    headers=(("Cache-Control", "no-store"),))
+        # Router-owned file reply: legacy header injection would duplicate
+        # the no-store/nosniff pair already owned by this response writer.
+        self._legacy_route = False
+        write_http_response(self, response)
+
     # pylint: disable=invalid-name
     def do_GET(self):
         """Customized do_GET method."""
@@ -670,74 +716,15 @@ class RequestHandler(BaseHTTPRequestHandler):
         if not self._dispatch_route("GET"):
             return
         query = parse_qs(req.query)
+        if req.path in ("/api/file", "/api/download"):
+            self._serve_file(req.path, query)
+            return
         self.send_response(200)
         # pylint: disable=no-else-return
         if req.path == '/api/version':
             self.send_header('Content-type', 'application/json; charset=utf-8')
             self.end_headers()
             self.wfile.write(json.dumps({'version': VERSION}).encode('utf-8'))
-            return
-        elif req.path == '/api/file':
-            content = ""
-            is_raw = False
-            filename = query.get('filename', None)
-            try:
-                if filename:
-                    is_raw = False
-                    filename = unquote(filename[0]).encode('utf-8')
-                    if ENFORCE_BASEPATH and not is_safe_path(BASEPATH, filename):
-                        raise OSError('Access denied.')
-                    filepath = _fs().resolve_for_read(filename).encode('utf-8')
-                    if os.path.isfile(filepath):
-                        mimetype = mimetypes.guess_type(filepath.decode('utf-8'))
-                        if mimetype[0] is not None:
-                            if mimetype[0].split('/')[0] == 'image':
-                                is_raw = True
-                        if is_raw:
-                            content = _fs().read_bytes(filename)
-                            self.send_header('Content-type', mimetype[0])
-                        else:
-                            content = _fs().read_bytes(filename).decode("utf-8")
-                            self.send_header('Content-type', 'text/text')
-                    else:
-                        self.send_header('Content-type', 'text/text')
-                        content = "File not found"
-            except Exception as err:
-                LOG.warning(err)
-                self.send_header('Content-type', 'text/text')
-                content = str(err)
-            self.end_headers()
-            if is_raw:
-                self.wfile.write(content)
-            else:
-                self.wfile.write(bytes(content, "utf8"))
-            return
-        elif req.path == '/api/download':
-            content = ""
-            filename = query.get('filename', None)
-            try:
-                if filename:
-                    filename = unquote(filename[0]).encode('utf-8')
-                    if ENFORCE_BASEPATH and not is_safe_path(BASEPATH, filename):
-                        raise OSError('Access denied.')
-                    LOG.info(filename)
-                    filepath = _fs().resolve_for_read(filename).encode('utf-8')
-                    if os.path.isfile(filepath):
-                        filecontent = _fs().read_bytes(filename)
-                        safe_filename = quote(os.path.basename(os.fsdecode(filename)), safe="")
-                        self.send_header(
-                            'Content-Disposition',
-                            "attachment; filename*=UTF-8''%s" % safe_filename)
-                        self.end_headers()
-                        self.wfile.write(filecontent)
-                        return
-                    content = "File not found"
-            except Exception as err:
-                LOG.warning(err)
-                content = str(err)
-            self.send_header('Content-type', 'text/text')
-            self.end_headers()
-            self.wfile.write(bytes(content, "utf8"))
             return
         elif req.path == '/api/listdir':
             content = {'error': None}
