@@ -30,7 +30,7 @@ from string import Template
 from http.server import BaseHTTPRequestHandler
 from hass_configurator.http_routing import Router, error_response, send_response as write_http_response
 from hass_configurator._version import VERSION
-from hass_configurator.api_security import ConfinedFS
+from hass_configurator.api_security import ConfinedFS, run_bounded_command
 import urllib.request
 from urllib.parse import urlparse, parse_qs, unquote, quote
 
@@ -1108,24 +1108,15 @@ class RequestHandler(BaseHTTPRequestHandler):
                         if timeout < 1 or timeout > 30:
                             raise ValueError("Command timeout must be between 1 and 30 seconds")
                         try:
-                            proc = subprocess.Popen(
-                                command,
-                                cwd=str(_fs().root),
-                                env={"PATH": "/usr/bin:/bin", "HOME": str(_fs().root)},
-                                stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE)
-                            try:
-                                stdout, stderr = proc.communicate(timeout=timeout)
-                            except subprocess.TimeoutExpired:
-                                proc.kill()
-                                proc.communicate()
-                                raise
+                            returncode, stdout, stderr = run_bounded_command(
+                                command, timeout=timeout, cwd=str(_fs().root),
+                                env={"PATH": "/usr/bin:/bin", "HOME": str(_fs().root)})
                             self.send_response(200)
                             self.send_header('Content-type', 'text/json')
                             self.end_headers()
                             response['error'] = False
                             response['message'] = "Command executed: %s" % postvars['command'][0]
-                            response['returncode'] = proc.returncode
+                            response['returncode'] = returncode
                             try:
                                 response['stdout'] = stdout.decode(sys.getdefaultencoding())
                             except Exception as err:
