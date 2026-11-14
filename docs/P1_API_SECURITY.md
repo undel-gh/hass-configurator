@@ -44,14 +44,16 @@ service account.
 **Fork Docker runs as non-root UID/GID 10001:10001** by default. Existing
 root-owned host bind mounts at `/config` may become unwritable: grant UID/GID
 10001 access to a dedicated configuration directory, using appropriate ACLs
-or ownership on the host. Example for an isolated local test:
+or ownership on the host. Example for an isolated local test, from the checked-out reviewed
+commit of this fork (not a production HA OS Ingress deployment):
 
 ```sh
+docker build --tag hc-fork:local .
 sudo install -d -m 0750 -o 10001 -g 10001 /srv/hc-config
 docker run --rm -p 127.0.0.1:3218:3218 \
   -v /srv/hc-config:/config \
   -e HC_USERNAME=review-user -e HC_PASSWORD='replace-with-a-real-secret' \
-  <reviewed-fork-image>
+  hc-fork:local
 ```
 
 The example still requires an authenticated HTTPS entry point and is **not**
@@ -73,6 +75,31 @@ Previously supported GET requests to `/api/restart`, `/api/check_config`,
 `/api/reload_automations`, `/api/reload_scripts`, `/api/reload_groups`
 and `/api/reload_core` now return **405 Allow: POST**. Clients must issue
 an authenticated POST with the CSRF header. The UI has been migrated.
+
+### Bounded privileged execution and reads
+
+Opt-in commands run in their own Unix process group. The server terminates
+that entire group when the configured 1–30 s deadline expires, including child
+processes that inherited stdout/stderr. Captured stdout+stderr is bounded to
+256 KiB combined. This prevents a blocked worker from waiting indefinitely
+in a second `communicate()` call after killing only the parent. This is not an
+OS sandbox: an explicitly enabled executable may still spawn processes that
+detach into other sessions or write files outside the workspace using the
+service account's permissions.
+
+`GET /api/file` and `GET /api/download` impose a 100 MiB in-memory read
+limit and return HTTP 413 for oversized files; descriptor-based reads bound
+bytes even if a file grows concurrently. Large-file streaming is outside
+this change and would require additional API and browser compatibility tests.
+
+### Secret-safe request logging
+
+`SESAME`, passwords, TOTP secrets and credentials are redacted in debug
+settings output. `HASS_API` and `HASS_WS_API` URLs are entirely masked,
+including userinfo, query parameters and paths. HTTP request access logs
+do not include the raw URL path/query: SESAME/TOTP bearer URLs must never
+appear in server logs. Administrators should also avoid logging secrets in
+arbitrary shell arguments or other externally configured components.
 
 ### Concurrent request safety
 
@@ -109,6 +136,12 @@ and complete remaining XSS audit before public release.
   require a separate staged CSP migration and report-only then enforced tests.
   This PR reduces specific injection paths; it cannot certify that all XSS
   sinks were found.
+- **GitPython TOCTOU remains an explicit residual risk.** `validated_repo`
+  checks the worktree lies inside the workspace, but GitPython resolves
+  `.git`, indexes, and hooks via pathname-based filesystem operations after
+  that validation. An attacker with the same Unix UID and concurrent write
+  access may race symlink/path swaps. Enabling Git is therefore an
+  administrator-only capability with OS-level trust, not a confinement proof.
 - **Allowlisted shell tools and opt-in Git operations are privileged by
   design** and are not sandboxed by the application. Their public deployment
   requires a separate decision to disable them entirely or add host/container
