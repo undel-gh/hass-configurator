@@ -27,14 +27,19 @@ class MtimeNormalizerTests(unittest.TestCase):
         from scripts.check_docker_runtime_lock import REPO
 
         dockerfile = (REPO / "Dockerfile").read_text("utf8")
-        final_stage = dockerfile.split("FROM ${PYTHON_BASE}")[-1]
-        self.assertIn('touch -d "@$SOURCE_DATE_EPOCH"', final_stage)
-        self.assertIn("/usr/local/share/hass-configurator/runtime.lock", final_stage)
-        # The retained lock must be in the normalization command, not
-        # merely mentioned as the pip install -r input.
-        normalize = final_stage.split('&& touch -d "@$SOURCE_DATE_EPOCH"')[-1]
-        self.assertIn("/usr/local/share/hass-configurator/runtime.lock",
-                      normalize.split("EXPOSE 3218")[0])
+        # The final image now includes a SECOND touch for non-root account
+        # metadata. Only the first touch normalizes the installed lock.
+        final_stage = "\nFROM " + dockerfile.rsplit("\nFROM ", 1)[-1]
+        pre_account_stage, account_stage = final_stage.split("\nRUN groupadd", 1)
+        self.assertIn('touch -d "@$SOURCE_DATE_EPOCH"', pre_account_stage)
+        self.assertIn("/usr/local/share/hass-configurator/runtime.lock", pre_account_stage)
+        # Verify the lock is passed to touch, not merely pip install -r.
+        normalize = pre_account_stage.rsplit('&& touch -d "@$SOURCE_DATE_EPOCH"', 1)[-1]
+        self.assertIn("/usr/local/share/hass-configurator/runtime.lock", normalize)
+        # Reproducible non-root Docker user creation requires a separate touch.
+        self.assertIn('touch -d "@$SOURCE_DATE_EPOCH"', account_stage)
+        self.assertIn("/etc/passwd", account_stage)
+        self.assertIn("/config", account_stage)
 
     def test_missing_directory_fails_closed(self):
         with tempfile.TemporaryDirectory() as folder:
