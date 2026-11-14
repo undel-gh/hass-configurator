@@ -77,7 +77,9 @@ test('uplink click sends one request to current parent after repeated renders', 
       if (url.pathname.endsWith('/api/listdir'))
         requested.push(url.searchParams.get('path'));
     });
-    await page.locator('#uplink').click();
+    // Uplink lives in the closed side drawer; exercise its real DOM click
+    // handler without requiring drawer animations or viewport scrolling.
+    await page.evaluate(() => document.getElementById('uplink').click());
     await expect.poll(() => requested.length).toBe(1);
     await page.waitForTimeout(250);
     expect(requested).toEqual([paths[2]]);
