@@ -632,6 +632,16 @@ class SecurityLoopbackTests(unittest.TestCase):
         self.assertEqual(status, 200)
         self.assertNotIn(secret, repr(info.call_args_list))
 
+    def test_sesame_bearer_url_is_not_recorded_by_request_logging(self):
+        secret = "private-test-sesame-key-8f6a20"
+        with patch.object(cfg, "SESAME", secret), \
+             patch.object(cfg, "HASS_API", None), \
+             patch.object(cfg, "ALLOWED_NETWORKS", []), \
+             patch.object(cfg.LOG, "info") as info:
+            status, _, _ = http_request(self.server, "GET", "/" + secret)
+        self.assertEqual(status, 302)
+        self.assertNotIn(secret, repr(info.call_args_list))
+
     def test_network_allowlist_cannot_be_cleared_by_admin(self):
         original = list(cfg.ALLOWED_NETWORKS)
         cfg.ALLOWED_NETWORKS[:] = ["127.0.0.1/32"]
