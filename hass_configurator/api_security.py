@@ -5,6 +5,10 @@ or an Origin header. Actual Supervisor identity/trusted proxy semantics are
 separately gated by real HA OS testing (#8).
 """
 import hmac
+import selectors
+import signal
+import subprocess
+import time
 import ipaddress
 import os
 from pathlib import Path
@@ -27,6 +31,77 @@ GIT = frozenset({
     "/api/newbranch", "/api/init", "/api/push", "/api/stash",
 })
 NETWORK = frozenset({"/api/allowed_networks", "/api/banned_ips"})
+
+
+# Combined maximum captured stdout+stderr. Excess output terminates the whole
+# process group rather than filling worker memory without bounds.
+MAX_COMMAND_OUTPUT_BYTES = 256 * 1024
+
+
+def run_bounded_command(command, *, cwd, env, timeout,
+                        max_output_bytes=MAX_COMMAND_OUTPUT_BYTES):
+    """Run an opted-in command with bounded wall time, memory and pipe reads.
+
+    Linux/Unix only. The fresh session is needed because an allowed command
+    can spawn descendants that inherit its stdout/stderr and keep pipes open
+    after the direct child exits.
+    """
+    if os.name != "posix" or not hasattr(os, "killpg"):
+        raise RuntimeError("Confined command execution requires Unix process groups")
+    deadline = time.monotonic() + timeout
+    proc = subprocess.Popen(
+        command, cwd=cwd, env=env, stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE, start_new_session=True,
+    )
+    selector = selectors.DefaultSelector()
+    captured = {"stdout": bytearray(), "stderr": bytearray()}
+    try:
+        for name, stream in (("stdout", proc.stdout), ("stderr", proc.stderr)):
+            os.set_blocking(stream.fileno(), False)
+            selector.register(stream, selectors.EVENT_READ, name)
+
+        while selector.get_map():
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise subprocess.TimeoutExpired(command, timeout)
+            for key, _ in selector.select(min(remaining, 0.25)):
+                stream = key.fileobj
+                try:
+                    chunk = os.read(stream.fileno(), 65536)
+                except BlockingIOError:
+                    continue
+                if not chunk:
+                    selector.unregister(stream)
+                    stream.close()
+                    continue
+                if (len(captured["stdout"]) + len(captured["stderr"])
+                        + len(chunk) > max_output_bytes):
+                    raise ValueError("Command output exceeds %d bytes" % max_output_bytes)
+                captured[key.data].extend(chunk)
+
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            raise subprocess.TimeoutExpired(command, timeout)
+        proc.wait(timeout=remaining)
+        return proc.returncode, bytes(captured["stdout"]), bytes(captured["stderr"])
+    except BaseException:
+        # Always kill descendants, including if the original parent already
+        # exited and a grandchild is the only remaining pipe holder.
+        try:
+            os.killpg(proc.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        # Avoid a second unbounded communicate() on inherited pipe handles.
+        try:
+            proc.wait(timeout=0.5)
+        except subprocess.TimeoutExpired:
+            proc.kill()
+        raise
+    finally:
+        selector.close()
+        for stream in (proc.stdout, proc.stderr):
+            if stream and not stream.closed:
+                stream.close()
 
 
 class ApiPolicy:
