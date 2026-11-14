@@ -493,12 +493,51 @@ class SecurityLoopbackTests(unittest.TestCase):
             "HASS_API_PASSWORD": "not-for-logs",
             "SESAME_TOTP_SECRET": "not-for-logs",
             "PASSWORD": "not-for-logs",
-            "HASS_API": "http://localhost:8123/api/",
+            "HASS_API": "http://bob:pass@localhost:8123/api/?token=secret",
+            "HASS_WS_API": "ws://bob:pass@localhost:8123/api/websocket?token=secret",
+            "SESAME": "secret-access-url-token",
         })
-        self.assertEqual(cleaned["PASSWORD"], "<redacted>")
-        self.assertEqual(cleaned["HASS_API_PASSWORD"], "<redacted>")
-        self.assertEqual(cleaned["SESAME_TOTP_SECRET"], "<redacted>")
-        self.assertEqual(cleaned["HASS_API"], "http://localhost:8123/api/")
+        for field in ("PASSWORD", "HASS_API_PASSWORD", "SESAME_TOTP_SECRET",
+                      "SESAME"):
+            self.assertEqual(cleaned[field], "<redacted>")
+        self.assertEqual(cleaned["HASS_API"], "<redacted-url>")
+        self.assertEqual(cleaned["HASS_WS_API"], "<redacted-url>")
+
+    def test_loaded_secret_settings_do_not_reach_debug_logs(self):
+        from types import SimpleNamespace
+        with tempfile.TemporaryDirectory() as folder:
+            settings_file = Path(folder) / "settings.json"
+            secret = "sesame-bearer-keep-private"
+            url_secret = "query-credential-keep-private"
+            settings_file.write_text(json.dumps({
+                "SESAME": secret,
+                "HASS_API": "http://u:pass@localhost:8123/api/?access_token=" + url_secret,
+                "HASS_WS_API": "ws://u:pass@localhost:8123/api/websocket?token=" + url_secret,
+            }), encoding="utf-8")
+            opts = SimpleNamespace(
+                settings=str(settings_file), git=False, listen=None,
+                port=None, basepath=None, enforce=False, standalone=False,
+                dirsfirst=False, hidehidden=False, dev=False,
+                username=None, password=None)
+            with patch.object(cfg, "SESAME", None), \
+                 patch.object(cfg, "HASS_API", None), \
+                 patch.object(cfg, "HASS_WS_API", None), \
+                 patch.object(cfg.LOG, "debug") as debug:
+                cfg.load_settings(opts)
+                logged = repr(debug.call_args_list)
+            self.assertNotIn(secret, logged)
+            self.assertNotIn(url_secret, logged)
+            self.assertNotIn("u:pass", logged)
+            self.assertIn("<redacted>", logged)
+            self.assertIn("<redacted-url>", logged)
+
+    def test_request_log_never_contains_query_tokens_or_sesame_path(self):
+        secret = "not-for-request-logs"
+        with patch.object(cfg.LOG, "info") as info:
+            status, _, _ = http_request(
+                self.server, "GET", "/api/version?access_token=" + secret)
+        self.assertEqual(status, 200)
+        self.assertNotIn(secret, repr(info.call_args_list))
 
     def test_network_allowlist_cannot_be_cleared_by_admin(self):
         original = list(cfg.ALLOWED_NETWORKS)
