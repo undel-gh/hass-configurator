@@ -183,6 +183,18 @@ class BasicAuthConcurrencyTests(unittest.TestCase):
             cfg.FAIL2BAN_IPS.update(previous)
 
 
+class BoundedFileReadTests(unittest.TestCase):
+    def test_descriptor_bound_read_rejects_file_larger_than_limit(self):
+        from hass_configurator.api_security import FileReadLimitExceeded
+        with tempfile.TemporaryDirectory() as workspace:
+            target = Path(workspace) / "large.yaml"
+            target.write_bytes(b"Z" * 256)
+            fs = ConfinedFS(workspace)
+            with self.assertRaises(FileReadLimitExceeded):
+                fs.read_bytes(target, max_bytes=64)
+            self.assertEqual(fs.read_bytes(target, max_bytes=256), b"Z" * 256)
+
+
 class ConfinedFileTests(unittest.TestCase):
     def setUp(self):
         self.parent = tempfile.TemporaryDirectory()
@@ -465,6 +477,27 @@ class SecurityLoopbackTests(unittest.TestCase):
         finally:
             if link.is_symlink():
                 link.unlink()
+
+    def test_file_and_download_limit_return_413_without_file_contents(self):
+        target = Path(self.workspace.name) / "large-read-target.yaml"
+        target.write_bytes(b"SENSITIVE_CONTENT" * 10)
+        try:
+            with patch.object(cfg, "MAX_FILE_READ_BYTES", 64):
+                for route in ("/api/file", "/api/download"):
+                    with self.subTest(route=route):
+                        status, headers, payload = http_request(
+                            self.server, "GET",
+                            route + "?filename=" + quote(str(target), safe=""))
+                        self.assertEqual(status, 413)
+                        self.assertEqual(headers["Cache-Control"], "no-store")
+                        self.assertNotIn(b"SENSITIVE_CONTENT", payload)
+            status, _, payload = http_request(
+                self.server, "GET", "/api/download?filename=" +
+                quote(str(target), safe=""))
+            self.assertEqual(status, 200)
+            self.assertEqual(payload, target.read_bytes())
+        finally:
+            target.unlink(missing_ok=True)
 
     def test_query_filename_must_not_generate_executable_inline_js(self):
         payload = "'</script><script>window.attacked=1</script>"
