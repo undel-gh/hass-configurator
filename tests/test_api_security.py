@@ -329,6 +329,35 @@ class SecurityLoopbackTests(unittest.TestCase):
          cfg.ALLOW_HA_CONTROL, cfg.USERNAME, cfg.PASSWORD) = cls.old
         cls.workspace.cleanup()
 
+    def test_every_registered_legacy_api_has_auth_and_csrf_admission(self):
+        from hass_configurator.http_routing import GET_API, POST_API
+        from hass_configurator.api_security import GIT, SHELL, NETWORK, HA_CONTROL
+        self.assertEqual(
+            GIT | SHELL | NETWORK | HA_CONTROL,
+            GIT.union(SHELL, NETWORK, HA_CONTROL) & POST_API)
+        with patch.object(cfg.HTTP_ROUTER.security, "_loopback_bound",
+                          return_value=False):
+            for path in sorted(GET_API | {"/"}):
+                with self.subTest(method="GET", path=path):
+                    status, _, _ = http_request(self.server, "GET", path)
+                    self.assertEqual(status, 403)
+            for path in sorted(POST_API):
+                with self.subTest(method="POST", path=path):
+                    status, _, _ = http_request(self.server, "POST", path, b"")
+                    self.assertEqual(status, 403)
+        # Basic/local access never exempts ordinary mutations from CSRF.
+        for path in sorted(POST_API):
+            with self.subTest(no_csrf=path):
+                status, _, _ = http_request(self.server, "POST", path, b"")
+                self.assertEqual(status, 403)
+        token = cfg.HTTP_ROUTER.security.csrf_token
+        for path in sorted(GIT | SHELL | NETWORK | HA_CONTROL):
+            with self.subTest(disabled_privilege=path):
+                status, _, _ = http_request(
+                    self.server, "POST", path, b"",
+                    {"X-CSRF-Token": token})
+                self.assertEqual(status, 403)
+
     def test_router_owned_denials_emit_single_security_header_pair(self):
         token = cfg.HTTP_ROUTER.security.csrf_token
         for path, method, headers, unauthorized in (
