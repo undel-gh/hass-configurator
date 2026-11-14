@@ -363,15 +363,10 @@ class SecurityLoopbackTests(unittest.TestCase):
     def test_shell_executes_resolved_allowlisted_path_not_client_symlink(self):
         command_link = Path(self.workspace.name) / "shell-allowlisted-symlink"
         command_link.symlink_to("/usr/bin/true")
-        class FakeProcess:
-            returncode = 0
-
-            def communicate(self, timeout=None):
-                return b"", b""
-
         with patch.object(cfg, "ALLOW_SHELL_COMMANDS", True), \
              patch.object(cfg, "EXEC_ALLOWED_BINARIES", ["/usr/bin/true"]), \
-             patch("subprocess.Popen", return_value=FakeProcess()) as popen:
+             patch.object(cfg, "run_bounded_command",
+                          return_value=(0, b"", b"")) as runner:
             body = urlencode({"command": str(command_link)}).encode()
             status, _, raw = http_request(
                 self.server, "POST", "/api/exec_command", body,
@@ -379,9 +374,43 @@ class SecurityLoopbackTests(unittest.TestCase):
                  "X-CSRF-Token": cfg.HTTP_ROUTER.security.csrf_token})
             self.assertEqual(status, 200)
             self.assertFalse(json.loads(raw)["error"])
-            self.assertEqual(popen.call_args.args[0][0],
+            self.assertEqual(runner.call_args.args[0][0],
                              os.path.realpath("/usr/bin/true"))
-            self.assertNotEqual(popen.call_args.args[0][0], str(command_link))
+            self.assertNotEqual(runner.call_args.args[0][0], str(command_link))
+
+    def test_http_shell_timeout_kills_inherited_pipe_descendants(self):
+        # The subprocess deliberately starts a child that inherits stdout
+        # and stderr. A naive proc.kill(); proc.communicate() blocks until
+        # the child exits rather than respecting the HTTP timeout.
+        command = "/bin/sh -c 'sleep 8 & wait'"
+        headers = {"Content-Type": "application/x-www-form-urlencoded",
+                   "X-CSRF-Token": cfg.HTTP_ROUTER.security.csrf_token}
+        with patch.object(cfg, "ALLOW_SHELL_COMMANDS", True), \
+             patch.object(cfg, "EXEC_ALLOWED_BINARIES", ["/bin/sh"]):
+            import time
+            started = time.monotonic()
+            status, _, raw = http_request(
+                self.server, "POST", "/api/exec_command",
+                urlencode({"command": command, "timeout": 1}).encode(), headers)
+            elapsed = time.monotonic() - started
+        self.assertEqual(status, 200)
+        self.assertTrue(json.loads(raw)["error"])
+        self.assertIn("timed out", json.loads(raw)["message"])
+        self.assertLess(elapsed, 3.0, "Inherited pipes delayed timeout handling")
+
+    def test_http_shell_oversized_output_is_terminated(self):
+        # yes floods stdout; the server must not buffer it into worker RAM.
+        command = "/bin/sh -c 'yes x'"
+        with patch.object(cfg, "ALLOW_SHELL_COMMANDS", True), \
+             patch.object(cfg, "EXEC_ALLOWED_BINARIES", ["/bin/sh"]):
+            status, _, raw = http_request(
+                self.server, "POST", "/api/exec_command",
+                urlencode({"command": command, "timeout": 3}).encode(),
+                {"Content-Type": "application/x-www-form-urlencoded",
+                 "X-CSRF-Token": cfg.HTTP_ROUTER.security.csrf_token})
+        self.assertEqual(status, 200)
+        self.assertTrue(json.loads(raw)["error"])
+        self.assertIn("output exceeds", json.loads(raw)["message"])
 
     def test_shell_git_and_network_mutations_denied_before_body(self):
         headers = {"X-CSRF-Token": cfg.HTTP_ROUTER.security.csrf_token,
