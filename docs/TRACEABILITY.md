@@ -46,7 +46,7 @@ scope, AT-01–AT-10 tests, and external maintainer controls.
 | NFR-001 | #6, #14 | `e2e/offline-smoke.spec.cjs`, `tests/test_p0_failure_gates.py` | verified (P0 automated; attempted public requests) |
 | NFR-002 | #1, #3, #5, #9 | `docs/ace-builds-1.9.6-lock.json`, `hass_configurator/vendor/manifest.json`, `requirements/docker-runtime.lock` | partial (P0 origin/integrity verified; P1 license/SBOM #9 pending) |
 | NFR-003 | #2, #7 | `tests/test_routing.py`, `tests/test_api_security.py`, `hass_configurator/api_security.py` | partial (P0 verified; P1 dir-fd confined operations in PR #21, security review pending) |
-| NFR-004 | #2 | `tests/test_routing.py`, `tests/test_legacy_contract.py`, `tests/test_p0_closeout.py` | partial (P0 router-owned writer verified; legacy API direct response migration #7 pending) |
+| NFR-004 | #2 | `tests/test_routing.py`, `tests/test_legacy_contract.py`, `tests/test_p0_closeout.py`, `tests/test_api_security.py`, `docs/P1_API_SECURITY.md` | partial (single-header router-owned denial and explicit legacy-response inventory; complete legacy response-writer refactor remains separate) |
 | NFR-005 | #2, #6 | `.github/workflows/offline-foundation.yml`, `e2e/offline-smoke.spec.cjs` | verified (P0 automated; source and installed E2E) |
 | NFR-006 | #7 | `hass_configurator/api_security.py`, `tests/test_api_security.py`, `e2e/security.spec.cjs`, `docs/P1_API_SECURITY.md` | partial (P1 #7 implementation candidate; independent security review and final exact-HEAD CI pending) |
 | NFR-007 | #5, #10 | `scripts/check_offline_artifacts.py`, `e2e/version-identity.spec.cjs`, Docker CI | verified (P0 automated; installed artifact identity) |
@@ -91,6 +91,23 @@ test container is not evidence of real Supervisor Ingress.
 The PR body must supply its own exact reviewed HEAD and CI run. Closeout
 review must also confirm whether branch protection is enabled; do not infer
 that from the workflow.
+
+## P1 #7 security review follow-up (candidate, not release sign-off)
+
+The current candidate includes a complete review of the 8 GET and 24 POST
+API routes and every direct `send_response`/pre-router emitter, documented
+in [the #7 threat model and emitter inventory](P1_API_SECURITY.md).
+`tests/test_api_security.py` gates all registered routes for authorization
+and CSRF, checks single security-header emission on router-owned refusals,
+limits files to 100 MiB, covers subprocess group timeout/output exhaustion
+through real HTTP, and verifies configuration/access-log secret redaction.
+`e2e/security.spec.cjs` checks repeated uplink navigation in the browser.
+
+NFR-003/NFR-006, ADR-003/ADR-005 and AT-12 are **implementation candidates**
+only. **Exact final-HEAD CI and independent review are still required**, and
+the real Supervisor Ingress (#8) and enforced CSP (#13) remain separate
+unverified release gates. The PR body (not an earlier CI run) is the canonical
+source for the final HEAD and review evidence.
 
 ## P1 security implementation checkpoint — draft PR #21 (Issue #7)
 
