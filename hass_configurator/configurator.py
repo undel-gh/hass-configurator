@@ -580,6 +580,9 @@ class RequestHandler(BaseHTTPRequestHandler):
                 allow_ha_control=(ALLOW_HA_CONTROL is True),
             )
             if denied is not None:
+                # Central responses own their own headers. Legacy end_headers
+                # injects no-store/nosniff only for direct legacy emitters.
+                self._legacy_route = False
                 write_http_response(self, denied)
                 return False
             return True
