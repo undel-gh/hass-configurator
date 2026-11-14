@@ -152,6 +152,43 @@ and complete remaining XSS audit before public release.
 - **No public release sign-off.** Security/CSRF tests and P0 regressions
   are necessary, not sufficient. Security review must audit the exact PR SHA.
 
+## Complete route and HTTP response-emitter audit (Issue #7)
+
+This inventory was checked against every `send_response(...)`,
+`write_http_response(...)`, and pre-router `_send_block(...)` occurrence
+in `configurator.py`, plus the explicit `GET_API` and `POST_API`
+sets in `http_routing.py`. There are **8 GET API routes** and **24 POST
+API routes**, as well as the GET page `/`. All of those routes pass
+`RequestHandler._dispatch_route` (and its `Router.security.authorize`)
+**before any legacy response or request-body processing**.
+
+| Entry points / route set | Security admission and mutations | Response owner |
+| --- | --- | --- |
+| GET `/` (editor) | Basic-authenticated request or trusted local-only listener + strict local Host; no mutation | Legacy `send_response` + `end_headers` adds one no-store/nosniff pair |
+| GET `/api/file`, `/api/download` | Same admission; 100 MiB read limit and no-follow file descriptor access | `_serve_file` + shared response writer; 200/400/403/404/413 |
+| GET `/api/listdir`, `/api/abspath`, `/api/parent`, `/api/prefs`, `/api/version`, `/api/netstat` | Same admission; no client-requested write | Legacy `send_response` + `end_headers` |
+| POST `/api/save`, `/api/upload`, `/api/rename`, `/api/delete`, `/api/newfolder`, `/api/newfile`, `/api/prefs` | Auth + CSRF, confined file mutations; bounded request sizes | Legacy `send_response` + `end_headers`; early body-limit 413 uses shared writer |
+| POST `/api/exec_command` | Auth + CSRF + `ALLOW_SHELL_COMMANDS` + nonempty binary allowlist; process-group timeout and output cap | Legacy success/error emitter, after router gate |
+| POST `/api/gitadd`, `/api/gitdiff`, `/api/commit`, `/api/checkout`, `/api/newbranch`, `/api/init`, `/api/push`, `/api/stash` | Auth + CSRF + `GIT` + `ALLOW_GIT_OPERATIONS`; worktree path validation; GitPython residual below | Legacy success/error emitters, after router gate |
+| POST `/api/allowed_networks`, `/api/banned_ips` | Auth + CSRF + `ALLOW_NETWORK_ADMIN`; serialized state changes | Legacy success/error emitters, after router gate |
+| POST `/api/restart`, `/api/check_config`, `/api/reload_automations`, `/api/reload_scripts`, `/api/reload_groups`, `/api/reload_core` | Auth + CSRF + `ALLOW_HA_CONTROL`; no GET alias | Legacy success/error emitters, after router gate |
+| Non-API asset aliases and versioned static resources | Exact GET-only allowlist, immutable digest or revalidation; cannot access arbitrary files | Router/Assets shared response writer |
+| Invalid method, unknown or encoded route | Exact-match 400/404/405, before legacy handlers | Router shared response writer |
+| Router admission refusals (missing auth, CSRF, disabled capability) | 403 before handling request body | Shared response writer, exactly one no-store/nosniff pair |
+| Pre-router Host/network policy denial | 403/420, no API processing | Private `_send_block`; explicit no-store/nosniff |
+| Basic Auth challenge or ban | 401/420, no API processing | `AuthHandler._send_auth_challenge` / `_send_block`; explicit no-store/nosniff |
+| **Exceptional pre-router bearer URL** `SESAME` or `TOTP` | Exact GET token path intentionally changes the caller's IP allowlist. This is not a normal API session or a CSRF exemption available to other routes; the secret URL/TOTP is itself the authority. It must remain disabled or tightly network restricted on exposed installations; token guessing, browser history and reverse-proxy logs remain residual risks | Explicit 302 with no-store/nosniff, before router |
+
+**Evidence:** `tests/test_api_security.py` iterates every registered GET/POST
+route and verifies missing authentication, missing CSRF, and disabled
+capabilities; socket-level checks verify the exact refusal headers. Additional
+HTTP regressions cover the shell process tree, stdout ceiling, oversized
+reads, XSS and concurrent requests. Browser regressions cover malicious
+filenames, CSRF and repeated uplink navigation. None of the legacy direct
+emitters is reachable before router admission; the pre-router bearer-URL
+exceptions are explicitly identified above, not silently counted as ordinary
+CSRF-protected APIs.
+
 ## Automated evidence mapping
 
 | Security requirement | Source / test |
