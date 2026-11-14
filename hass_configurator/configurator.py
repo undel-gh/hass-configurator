@@ -189,8 +189,9 @@ def _redacted_settings(settings):
     return {
         key: ("<redacted>" if any(
             marker in key.lower() for marker in
-            ("password", "secret", "token", "credential", "private_key")
-        ) else value)
+            ("password", "secret", "token", "credential", "private_key", "sesame")
+        ) else "<redacted-url>" if key.upper() in ("HASS_API", "HASS_WS_API")
+               and value else value)
         for key, value in settings.items()
     }
 
@@ -561,6 +562,10 @@ class RequestHandler(BaseHTTPRequestHandler):
     # pylint: disable=redefined-builtin
     def log_message(self, format, *args):
         LOG.info("%s - %s", self.client_address[0], format % args)
+
+    def log_request(self, code="-", size="-"):
+        """Do not log raw request targets: SESAME/TOTP and query args are secrets."""
+        LOG.info("%s - %s %s", self.client_address[0], self.command, code)
 
     def _dispatch_route(self, method):
         """Shared exact-route boundary for static and transitional legacy API."""
