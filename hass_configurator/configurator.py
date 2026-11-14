@@ -931,6 +931,7 @@ class RequestHandler(BaseHTTPRequestHandler):
             if length < 0 or length > limit:
                 raise ValueError("Invalid request size")
         except (ValueError, TypeError):
+            self._legacy_route = False  # Router-owned 413 already supplies headers.
             write_http_response(self, error_response(413))
             return
         if req.path == '/api/save':
