@@ -56,3 +56,32 @@ test('browser POST carries CSRF header and cross-site POST cannot mutate', async
     fs.rmSync(target, { force: true });
   }
 });
+
+test('uplink click sends one request to current parent after repeated renders', async ({ page }) => {
+  test.skip(!workspace, 'Disposable E2E_WORKSPACE required');
+  const root = path.resolve(workspace);
+  const paths = ['one', 'two', 'three'].map(name => path.join(root, name));
+  for (const dir of paths) fs.mkdirSync(dir, { recursive: true });
+  try {
+    await page.goto(server + '/', { waitUntil: 'domcontentloaded' });
+    await expect.poll(() => page.evaluate(() => Boolean(window.renderpath))).toBe(true);
+    await page.evaluate(({ parents }) => {
+      for (const parent of parents) {
+        renderpath({ abspath: parent, parent, content: [],
+                     branches: [], activebranch: null, dirty: false });
+      }
+    }, { parents: paths });
+    const requested = [];
+    page.on('request', request => {
+      const url = new URL(request.url());
+      if (url.pathname.endsWith('/api/listdir'))
+        requested.push(url.searchParams.get('path'));
+    });
+    await page.locator('#uplink').click();
+    await expect.poll(() => requested.length).toBe(1);
+    await page.waitForTimeout(250);
+    expect(requested).toEqual([paths[2]]);
+  } finally {
+    for (const dir of paths) fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
