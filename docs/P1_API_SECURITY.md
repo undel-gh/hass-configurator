@@ -69,6 +69,14 @@ Previously supported GET requests to `/api/restart`, `/api/check_config`,
 and `/api/reload_core` now return **405 Allow: POST**. Clients must issue
 an authenticated POST with the CSRF header. The UI has been migrated.
 
+### Concurrent request safety
+
+Network allowlist/banlist changes are synchronized across worker threads, so
+concurrent removals cannot clear the final allowed range. `BANLIMIT`'s Basic
+Auth failure counters are also synchronized: multiple simultaneous bad login
+requests cannot lose updates and bypass the configured threshold. These
+controls are tested through real multi-threaded HTTP requests.
+
 ### CSRF security model and limitations
 
 The token is generated with `secrets.token_urlsafe(32)` once per process.
