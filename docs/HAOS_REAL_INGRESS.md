@@ -48,13 +48,16 @@ before forwarding to Python. It does not authenticate based on them.
 The fixture-only `__haos_probe` is reachable only through the
 Supervisor-restricted nginx proxy. It returns `/api/version` with
 `X-HC-Fixture-Id: hc-ingress-validation-v1`, an enumerated
-`X-HC-Ingress-Path-Status: valid|invalid` and an enumerated user-header
-presence flag. It never exposes the raw Ingress path, token or user ID.
-The real browser suite sends a deliberately *invalid* browser-supplied
-`X-Ingress-Path` and expects the Supervisor to overwrite it with a valid
-one. **A successful CI simulated peer is not proof of this behavior.**
-The user identity header is optional; absence is reported but does not
-automatically mean failure. Never trust headers on an unrestricted port.
+`X-HC-Ingress-Path-Status: valid|invalid` and
+`X-HC-User-Id-Status: present|absent|spoofed` (the latter detects only
+the fixed test marker `forged-browser-identity`; no actual user ID is
+returned). It never exposes the raw Ingress path or token. The real
+browser suite injects deliberately invalid `X-Ingress-Path` and a
+forged browser user-ID marker and checks that Core/Supervisor replaced,
+stripped or rejected those values. **A successful simulated CI peer is
+not proof of this behavior.** The real user identity header is optional:
+`absent` alone is not a failure; `spoofed` is. Never trust these
+headers on an unrestricted port.
 
 ## 2. Real logged-in browser session (private test machine only)
 
