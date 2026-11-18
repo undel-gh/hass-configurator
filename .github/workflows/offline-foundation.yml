@@ -137,7 +137,8 @@ jobs:
           # Never treat this as HAOS-09/AT-11 live evidence.
           docker network create --driver bridge --subnet 172.30.32.0/24 hc-supervisor-ci
           trap 'docker rm -f hc-ingress-e2e 2>/dev/null || true; docker network rm hc-supervisor-ci 2>/dev/null || true' EXIT
-          docker network connect hc-supervisor-ci hc-ingress-e2e
+          # Reserve .2 for the synthetic Supervisor client, not the app.
+          docker network connect --ip 172.30.32.3 hc-supervisor-ci hc-ingress-e2e
           docker run --rm -i --network hc-supervisor-ci --ip 172.30.32.2 \
             --entrypoint python hc-ingress-e2e:pr - <<'PY'
           import http.client
