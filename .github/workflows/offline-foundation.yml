@@ -117,16 +117,52 @@ jobs:
           # rejected. Only bridged Supervisor peer 172.30.32.2 is allowed.
           docker exec -i hc-ingress-e2e python - <<'PY'
           from urllib.error import HTTPError
-          from urllib.request import urlopen
+          from urllib.request import Request, urlopen
 
-          try:
-              urlopen("http://127.0.0.1:8099/", timeout=3)
-          except HTTPError as error:
-              assert error.code == 403, error.code
-          else:
-              raise AssertionError("non-Supervisor peer reached Ingress")
+          for path in ("/", "/api/prefs", "/__haos_probe", "/__haos_api_probe"):
+              forged = Request("http://127.0.0.1:8099" + path,
+                               headers={"X-Ingress-Path": "/api/hassio_ingress/forged",
+                                        "X-Remote-User-Id": "fake-admin",
+                                        "X-Forwarded-For": "172.30.32.2"})
+              try:
+                  urlopen(forged, timeout=3)
+              except HTTPError as error:
+                  assert error.code == 403, (path, error.code)
+              else:
+                  raise AssertionError("non-Supervisor peer reached Ingress: " + path)
           PY
           test -z "$(docker inspect --format '{{json .HostConfig.PortBindings}}' hc-ingress-e2e | tr -d 'null{}')"
+          # Simulate only the *network address* of the documented Supervisor
+          # bridge, without a real HA OS session, browser or forwarded headers.
+          # Never treat this as HAOS-09/AT-11 live evidence.
+          docker network create --driver bridge --subnet 172.30.32.0/24 hc-supervisor-ci
+          trap 'docker rm -f hc-ingress-e2e 2>/dev/null || true; docker network rm hc-supervisor-ci 2>/dev/null || true' EXIT
+          docker network connect hc-supervisor-ci hc-ingress-e2e
+          docker run --rm --network hc-supervisor-ci --ip 172.30.32.2 \
+            --entrypoint python hc-ingress-e2e:pr - <<'PY'
+          import http.client
+          conn = http.client.HTTPConnection("hc-ingress-e2e", 8099, timeout=5)
+          try:
+              # Deliberately malformed client-provided identity/Host headers
+              # must not be interpreted as editor authentication at backend.
+              spoof = {"Host": "attacker.example.invalid",
+                       "X-Ingress-Path": "/attacker-controlled",
+                       "X-Remote-User-Id": "forged-identity",
+                       "X-Forwarded-For": "203.0.113.9"}
+              conn.request("GET", "/api/prefs", headers=spoof)
+              reply = conn.getresponse()
+              assert reply.status == 200, reply.status
+              assert reply.getheader("Cache-Control") == "no-store"
+              reply.read()
+              conn.request("GET", "/__haos_probe", headers=spoof)
+              probe = conn.getresponse()
+              assert probe.status == 200, probe.status
+              assert probe.getheader("X-HC-Fixture-Id") == "hc-ingress-validation-v1"
+              assert probe.getheader("X-HC-Ingress-Path-Status") == "invalid"
+              probe.read()
+          finally:
+              conn.close()
+          PY
 
   early-browser-smoke:
     name: Network-attempt smoke (Chromium)
