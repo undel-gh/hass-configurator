@@ -127,6 +127,63 @@ test('real HA OS: actual Supervisor-provided header overrides client spoof', asy
   });
 });
 
+test('real HA OS: opt-in local Supervisor REST/observer WebSocket probe', async ({ page }) => {
+  test.skip(!enabled || process.env.HAOS_TEST_HA_API !== '1',
+    'Requires deliberate --with-ha-api-probe fixture and HAOS_TEST_HA_API=1');
+  test.setTimeout(90000);
+  const guard = await guardBrowser(page);
+  await navigatePrivate(page, ingress);
+  assertTemporaryFixture(await probeFixture(page));
+  // No token, HA configuration, entity data or WebSocket frames are served:
+  // only fixed enum statuses from a read-only probe inside the app container.
+  const result = await page.evaluate(async () => {
+    const response = await fetch('__haos_api_probe',
+      { credentials: 'same-origin', cache: 'no-store' });
+    if (!response.ok) return { status: response.status };
+    const body = await response.json();
+    return {
+      status: response.status, mode: body.mode,
+      rest: body.rest, wsAuth: body.ws_auth,
+      wsSubscribe: body.ws_subscribe,
+    };
+  });
+  expect(result).toEqual({
+    status: 200,
+    mode: 'supervisor-readonly',
+    rest: 'ok', wsAuth: 'ok', wsSubscribe: 'ok',
+  });
+  guard.assert();
+  await test.info().attach('haos-local-api-redacted.json', {
+    body: Buffer.from(JSON.stringify(result, null, 2)),
+    contentType: 'application/json',
+  });
+});
+
+test('real HA OS: observer WebSocket failure does not block local editing', async ({ page }) => {
+  test.skip(!enabled, 'Requires local HAOS_INGRESS_URL + HAOS_STORAGE_STATE');
+  test.setTimeout(90000);
+  await navigatePrivate(page, ingress);
+  assertTemporaryFixture(await probeFixture(page));
+  await expect.poll(() => page.evaluate(() => Boolean(window.editor))).toBe(true);
+  // Failure injection only. This is NOT a new app WS endpoint; it verifies
+  // that the existing optional client observer's exception path is isolated
+  // from editor operations when an HA observer cannot connect.
+  const result = await page.evaluate(() => {
+    const original = window.WebSocket;
+    try {
+      window.WebSocket = class {
+        constructor() { throw new Error('test observer disconnected'); }
+      };
+      ws_connect();
+      editor.setValue('local_edit_survives: true\n', -1);
+      return editor.getValue();
+    } finally {
+      window.WebSocket = original;
+    }
+  });
+  expect(result).toBe('local_edit_survives: true\n');
+});
+
 test('real HA OS Ingress: full HTML, font, API, route and cache behavior', async ({ page }) => {
   test.skip(!enabled, 'Requires local HAOS_INGRESS_URL + HAOS_STORAGE_STATE');
   test.setTimeout(90000);
