@@ -13,6 +13,8 @@ RUN python -m pip install --no-cache-dir /opt/hass-configurator/ \
     && rm -rf /opt/hass-configurator/
 
 COPY nginx.conf /etc/nginx/nginx.conf
+COPY ha-api-mode /opt/hc-ha-api-mode
+COPY haos_local_api_probe.py /opt/hc-haos-local-api-probe.py
 COPY run.sh /run.sh
 RUN chmod 0755 /run.sh
 
