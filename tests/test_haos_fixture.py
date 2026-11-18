@@ -38,6 +38,9 @@ class HAOSIngressFixtureTests(unittest.TestCase):
             self.assertIn('X-HC-Fixture-Id "hc-ingress-validation-v1"', nginx)
             self.assertIn("proxy_pass http://127.0.0.1:3218/api/version", nginx)
             self.assertIn('proxy_set_header X-Remote-User-Id "";', nginx)
+            for secret_header in ("Cookie", "Authorization", "X-Supervisor-Token",
+                                  "X-Remote-User-Groups", "Forwarded", "X-Real-IP"):
+                self.assertIn('proxy_set_header %s "";' % secret_header, nginx)
             self.assertEqual((target / "ha-api-mode").read_text(), "disabled\n")
             self.assertNotIn("homeassistant_api: true", config)
             self.assertTrue((target / "haos_local_api_probe.py").exists())
