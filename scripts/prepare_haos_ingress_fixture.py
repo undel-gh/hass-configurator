@@ -57,7 +57,7 @@ def build(destination, *, with_ha_api_probe=False):
         # A dedicated deliberate opt-in is required because this Supervisor
         # permission grants an app administrator-level Home Assistant access.
         (target / "ha-api-mode").write_text(
-            "enabled\\n" if with_ha_api_probe else "disabled\\n",
+            "enabled\n" if with_ha_api_probe else "disabled\n",
             encoding="ascii")
         shutil.copyfile(REPO / "scripts" / "haos_local_api_probe.py",
                         target / "haos_local_api_probe.py")
@@ -65,7 +65,7 @@ def build(destination, *, with_ha_api_probe=False):
             config_path = target / "config.yaml"
             config_path.write_text(
                 config_path.read_text(encoding="utf8")
-                + "\\nhomeassistant_api: true\\n", encoding="utf8")
+                + "\nhomeassistant_api: true\n", encoding="utf8")
         src = target / "app"
         src.mkdir()
         shutil.copy2(REPO / "setup.py", src / "setup.py")
