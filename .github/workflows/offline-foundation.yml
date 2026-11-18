@@ -142,6 +142,9 @@ jobs:
           docker run --rm -i --network hc-supervisor-ci --ip 172.30.32.2 \
             --entrypoint python hc-ingress-e2e:pr - <<'PY'
           import http.client
+          import json
+          import re
+          from urllib.parse import quote, urlencode
           conn = http.client.HTTPConnection("hc-ingress-e2e", 8099, timeout=5)
           try:
               # Deliberately malformed client-provided identity/Host headers
@@ -161,6 +164,30 @@ jobs:
               assert probe.getheader("X-HC-Fixture-Id") == "hc-ingress-validation-v1"
               assert probe.getheader("X-HC-Ingress-Path-Status") == "invalid"
               probe.read()
+              # Full API round-trip through nginx, including CSRF and a
+              # Content-Length-bound POST. Uses only a disposable /data root.
+              conn.request("GET", "/", headers=spoof)
+              html_reply = conn.getresponse()
+              assert html_reply.status == 200, html_reply.status
+              html = html_reply.read().decode("utf-8")
+              match = re.search(r'<meta name="hc-csrf-token" content="([^"]+)"', html)
+              assert match, "No CSRF bootstrap in backend HTML"
+              target = "/data/hc-ingress-validation/ci-proxy-roundtrip.yaml"
+              payload = urlencode({"filename": target,
+                                   "text": "ingress_probe: true\\n"}).encode()
+              conn.request("POST", "/api/save", body=payload, headers={
+                  **spoof,
+                  "X-CSRF-Token": match.group(1),
+                  "Content-Type": "application/x-www-form-urlencoded",
+              })
+              saved = conn.getresponse()
+              assert saved.status == 200, saved.status
+              assert json.loads(saved.read())["error"] is False
+              conn.request("GET", "/api/download?filename=" + quote(target, safe=""),
+                           headers=spoof)
+              downloaded = conn.getresponse()
+              assert downloaded.status == 200, downloaded.status
+              assert downloaded.read() == b"ingress_probe: true\\n"
           finally:
               conn.close()
           PY
