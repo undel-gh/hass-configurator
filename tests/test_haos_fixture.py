@@ -30,6 +30,20 @@ class HAOSIngressFixtureTests(unittest.TestCase):
             self.assertIn("allow 172.30.32.2;", nginx)
             self.assertIn("deny all;", nginx)
             self.assertIn("exec_command|gitadd", nginx)
+            self.assertIn("proxy_set_header Host 127.0.0.1:3218;", nginx)
+            self.assertNotIn("proxy_set_header Host $http_host", nginx)
+            self.assertNotIn("proxy_set_header X-Ingress-Path $http_", nginx)
+            self.assertIn("location = /__haos_probe", nginx)
+            self.assertIn("location = /__haos_api_probe", nginx)
+            self.assertIn('X-HC-Fixture-Id "hc-ingress-validation-v1"', nginx)
+            self.assertIn("proxy_pass http://127.0.0.1:3218/api/version", nginx)
+            self.assertIn('proxy_set_header X-Remote-User-Id "";', nginx)
+            for secret_header in ("Cookie", "Authorization", "X-Supervisor-Token",
+                                  "X-Remote-User-Groups", "Forwarded", "X-Real-IP"):
+                self.assertIn('proxy_set_header %s "";' % secret_header, nginx)
+            self.assertEqual((target / "ha-api-mode").read_text(), "disabled\n")
+            self.assertNotIn("homeassistant_api: true", config)
+            self.assertTrue((target / "haos_local_api_probe.py").exists())
             self.assertIn("setpriv --reuid=configurator-e2e", runner)
             self.assertIn('wait "$app_pid"', runner)
             self.assertIn("--standalone", runner)
@@ -42,6 +56,55 @@ class HAOSIngressFixtureTests(unittest.TestCase):
                               "manifest.json").read_bytes())
             self.assertFalse((target / "app" / "hass_configurator" /
                               "config.json").exists())
+
+    def test_ha_api_probe_requires_explicit_separate_fixture_opt_in(self):
+        with tempfile.TemporaryDirectory() as dirname:
+            target = Path(dirname) / "ha-api-test"
+            metadata = build(target, with_ha_api_probe=True)
+            self.assertTrue(metadata["home_assistant_api"])
+            self.assertTrue(metadata["read_only_supervisor_probe"])
+            self.assertTrue(metadata["fixture_only"])
+            self.assertFalse(metadata["external_host_ports"])
+            config = (target / "config.yaml").read_text(encoding="utf8")
+            self.assertIn("homeassistant_api: true", config)
+            self.assertIn("map: []", config)
+            self.assertEqual((target / "ha-api-mode").read_text(), "enabled\n")
+            runner = (target / "run.sh").read_text(encoding="utf8")
+            self.assertIn("python /opt/hc-haos-local-api-probe.py", runner)
+            self.assertIn("unset SUPERVISOR_TOKEN", runner)
+            self.assertLess(runner.index("unset SUPERVISOR_TOKEN"),
+                            runner.index("setpriv --reuid="))
+            dockerfile = (target / "Dockerfile").read_text(encoding="utf8")
+            self.assertIn("COPY haos_local_api_probe.py", dockerfile)
+
+    def test_two_disposable_revisions_change_immutable_asset_digest(self):
+        from hass_configurator.http_routing import Assets
+        with tempfile.TemporaryDirectory() as root:
+            source = (ROOT / "hass_configurator" / "style.css").read_bytes()
+            a = Path(root) / "version-a"
+            b = Path(root) / "version-b"
+            first = build(a, fixture_version="0.0.1", cache_revision="A")
+            second = build(b, fixture_version="0.0.2", cache_revision="B")
+            self.assertEqual(first["test_cache_revision"], "A")
+            self.assertEqual(second["test_cache_revision"], "B")
+            self.assertIn('version: "0.0.2"',
+                          (b / "config.yaml").read_text(encoding="utf8"))
+            self.assertNotEqual(
+                Assets(a / "app" / "hass_configurator").version,
+                Assets(b / "app" / "hass_configurator").version)
+            self.assertEqual(
+                (ROOT / "hass_configurator" / "style.css").read_bytes(), source)
+
+    def test_rejects_untrusted_test_revision_values_before_build(self):
+        with tempfile.TemporaryDirectory() as root:
+            target = Path(root) / "fixture"
+            for value in ("../escape", "evil\nbody", "A'B"):
+                with self.subTest(value=value), self.assertRaises(ValueError):
+                    build(target, cache_revision=value)
+                self.assertFalse(target.exists())
+            with self.assertRaises(ValueError):
+                build(target, fixture_version="1.2.3; echo unsafe")
+            self.assertFalse(target.exists())
 
     def test_refuses_overwriting_existing_app_directory(self):
         with tempfile.TemporaryDirectory() as dirname:
