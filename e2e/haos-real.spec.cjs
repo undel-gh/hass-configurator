@@ -88,7 +88,7 @@ async function probeFixture(page, { spoof = false } = {}) {
       status: response.status,
       fixture: response.headers.get('x-hc-fixture-id'),
       ingressPath: response.headers.get('x-hc-ingress-path-status'),
-      userPresent: response.headers.get('x-hc-user-id-present'),
+      userStatus: response.headers.get('x-hc-user-id-status'),
       cache: response.headers.get('cache-control'),
     };
   }, spoof);
@@ -98,7 +98,7 @@ function assertTemporaryFixture(status) {
   expect(status.status).toBe(200);
   expect(status.fixture).toBe('hc-ingress-validation-v1');
   expect(status.ingressPath).toBe('valid');
-  expect(['yes', 'no']).toContain(status.userPresent);
+  expect(['present', 'absent']).toContain(status.userStatus);
   expect(status.cache).toContain('no-store');
 }
 
@@ -120,7 +120,8 @@ test('real HA OS: actual Supervisor-provided header overrides client spoof', asy
       fixture: observed.fixture,
       ingressHeader: observed.ingressPath,
       clientInjectionRejected: tampered.ingressPath === 'valid',
-      remoteUserHeaderProvided: observed.userPresent,
+      remoteUserHeaderStatus: observed.userStatus,
+      clientUserIdInjectionRejected: tampered.userStatus !== 'spoofed',
       directNonSupervisorPeer: 'requires separate network-layer check',
     }, null, 2)),
     contentType: 'application/json',
