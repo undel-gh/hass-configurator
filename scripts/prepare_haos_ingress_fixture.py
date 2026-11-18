@@ -8,6 +8,7 @@ test HA OS system into its local apps directory.
 import argparse
 import hashlib
 import json
+import re
 from pathlib import Path
 import shutil
 import subprocess
@@ -41,7 +42,13 @@ def verify_checkout():
     return manifest
 
 
-def build(destination, *, with_ha_api_probe=False):
+def build(destination, *, with_ha_api_probe=False,
+          fixture_version="0.0.1", cache_revision=None):
+    if not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", fixture_version):
+        raise ValueError("Invalid test fixture version")
+    if cache_revision is not None and not re.fullmatch(
+            r"[A-Za-z0-9_-]{1,24}", cache_revision):
+        raise ValueError("Invalid test cache revision")
     manifest = verify_checkout()
     target = Path(destination).expanduser().resolve()
     if target.exists() and any(target.iterdir()):
@@ -54,6 +61,13 @@ def build(destination, *, with_ha_api_probe=False):
         ):
             shutil.copyfile(TEMPLATES / source, target / dest)
         (target / "run.sh").chmod(0o755)
+        config_path = target / "config.yaml"
+        config = config_path.read_text(encoding="utf8")
+        config = config.replace('version: "0.0.1"',
+                                'version: "%s"' % fixture_version, 1)
+        if with_ha_api_probe:
+            config += "\nhomeassistant_api: true\n"
+        config_path.write_text(config, encoding="utf8")
         # A dedicated deliberate opt-in is required because this Supervisor
         # permission grants an app administrator-level Home Assistant access.
         (target / "ha-api-mode").write_text(
@@ -61,11 +75,6 @@ def build(destination, *, with_ha_api_probe=False):
             encoding="ascii")
         shutil.copyfile(REPO / "scripts" / "haos_local_api_probe.py",
                         target / "haos_local_api_probe.py")
-        if with_ha_api_probe:
-            config_path = target / "config.yaml"
-            config_path.write_text(
-                config_path.read_text(encoding="utf8")
-                + "\nhomeassistant_api: true\n", encoding="utf8")
         src = target / "app"
         src.mkdir()
         shutil.copy2(REPO / "setup.py", src / "setup.py")
@@ -74,6 +83,14 @@ def build(destination, *, with_ha_api_probe=False):
             PACKAGE, src / "hass_configurator",
             ignore=shutil.ignore_patterns("__pycache__", "*.pyc", "*.pyo"),
         )
+        if cache_revision is not None:
+            # Test-only CSS comment intentionally changes the immutable
+            # content digest while leaving the vendored manifest untouched.
+            # Never modify the source checkout or real user's HA files.
+            stylesheet = src / "hass_configurator" / "style.css"
+            with stylesheet.open("a", encoding="utf8") as stream:
+                stream.write("\n/* HAOS_TEST_CACHE_REVISION:%s */\n"
+                             % cache_revision)
         (target / ".dockerignore").write_text(
             ".git\n__pycache__\n*.pyc\n*.pyo\n", encoding="utf8")
         commit = subprocess.run(
@@ -89,6 +106,8 @@ def build(destination, *, with_ha_api_probe=False):
             "external_host_ports": False,
             "home_assistant_api": with_ha_api_probe,
             "read_only_supervisor_probe": with_ha_api_probe,
+            "fixture_version": fixture_version,
+            "test_cache_revision": cache_revision,
             "fixture_only": True,
         }
         (target / "fixture-provenance.json").write_text(
@@ -105,13 +124,19 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True,
                         help="Empty destination e.g. /addons/hc_ingress_validation")
+    parser.add_argument("--fixture-version", default="0.0.1",
+                        help="Local app version for explicit HAOS-12 update test")
+    parser.add_argument("--cache-revision",
+                        help="Test-only CSS digest marker, e.g. A or B")
     parser.add_argument(
         "--with-ha-api-probe", action="store_true",
         help="DANGEROUS: enable admin-scope Home Assistant API permission for "
              "read-only REST/WS probe; isolated test device only")
     args = parser.parse_args()
-    print(json.dumps(build(args.output, with_ha_api_probe=args.with_ha_api_probe),
-                     indent=2))
+    print(json.dumps(build(
+        args.output, with_ha_api_probe=args.with_ha_api_probe,
+        fixture_version=args.fixture_version, cache_revision=args.cache_revision),
+        indent=2))
 
 
 if __name__ == "__main__":
