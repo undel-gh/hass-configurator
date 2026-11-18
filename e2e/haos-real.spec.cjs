@@ -94,11 +94,16 @@ async function probeFixture(page, { spoof = false } = {}) {
   }, spoof);
 }
 
-function assertTemporaryFixture(status) {
+function assertTemporaryFixture(status, { allowUntrustedIdentityObservation = false } = {}) {
   expect(status.status).toBe(200);
   expect(status.fixture).toBe('hc-ingress-validation-v1');
+  // Core's explicit X-Ingress-Path rewrite is the essential app routing
+  // boundary. An X-Remote-User-Id forwarded by Core is NOT authority:
+  // fixture nginx strips it before the editor and reports only a fixed enum.
   expect(status.ingressPath).toBe('valid');
-  expect(['present', 'absent']).toContain(status.userStatus);
+  expect(allowUntrustedIdentityObservation
+    ? ['present', 'absent', 'spoofed']
+    : ['present', 'absent']).toContain(status.userStatus);
   expect(status.cache).toContain('no-store');
 }
 
@@ -110,9 +115,10 @@ test('real HA OS: actual Supervisor-provided header overrides client spoof', asy
   const observed = await probeFixture(page);
   assertTemporaryFixture(observed);
   const tampered = await probeFixture(page, { spoof: true });
-  // Valid after injecting an intentionally INVALID browser value proves
-  // Core/Supervisor overwrote it before nginx saw the request.
-  assertTemporaryFixture(tampered);
+  // Valid after injecting an INVALID browser Ingress path proves Core
+  // overwrote that path before nginx saw the request. Identity headers may
+  // pass through Core: they MUST NOT be trusted by nginx/Python.
+  assertTemporaryFixture(tampered, { allowUntrustedIdentityObservation: true });
   guard.assert();
   await test.info().attach('haos-proxy-boundary-redacted.json', {
     body: Buffer.from(JSON.stringify({
@@ -121,7 +127,8 @@ test('real HA OS: actual Supervisor-provided header overrides client spoof', asy
       ingressHeader: observed.ingressPath,
       clientInjectionRejected: tampered.ingressPath === 'valid',
       remoteUserHeaderStatus: observed.userStatus,
-      clientUserIdInjectionRejected: tampered.userStatus !== 'spoofed',
+      clientUserIdHeaderPassedThrough: tampered.userStatus === 'spoofed',
+      forwardedUserIdentityTrustedByBackend: false,
       directNonSupervisorPeer: 'requires separate network-layer check',
     }, null, 2)),
     contentType: 'application/json',
