@@ -41,7 +41,7 @@ def verify_checkout():
     return manifest
 
 
-def build(destination):
+def build(destination, *, with_ha_api_probe=False):
     manifest = verify_checkout()
     target = Path(destination).expanduser().resolve()
     if target.exists() and any(target.iterdir()):
@@ -54,6 +54,18 @@ def build(destination):
         ):
             shutil.copyfile(TEMPLATES / source, target / dest)
         (target / "run.sh").chmod(0o755)
+        # A dedicated deliberate opt-in is required because this Supervisor
+        # permission grants an app administrator-level Home Assistant access.
+        (target / "ha-api-mode").write_text(
+            "enabled\\n" if with_ha_api_probe else "disabled\\n",
+            encoding="ascii")
+        shutil.copyfile(REPO / "scripts" / "haos_local_api_probe.py",
+                        target / "haos_local_api_probe.py")
+        if with_ha_api_probe:
+            config_path = target / "config.yaml"
+            config_path.write_text(
+                config_path.read_text(encoding="utf8")
+                + "\\nhomeassistant_api: true\\n", encoding="utf8")
         src = target / "app"
         src.mkdir()
         shutil.copy2(REPO / "setup.py", src / "setup.py")
@@ -75,7 +87,8 @@ def build(destination):
                 (PACKAGE / "vendor" / "manifest.json").read_bytes()).hexdigest(),
             "workspace_inside_container": "/data/hc-ingress-validation",
             "external_host_ports": False,
-            "home_assistant_api": False,
+            "home_assistant_api": with_ha_api_probe,
+            "read_only_supervisor_probe": with_ha_api_probe,
             "fixture_only": True,
         }
         (target / "fixture-provenance.json").write_text(
@@ -92,8 +105,13 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True,
                         help="Empty destination e.g. /addons/hc_ingress_validation")
+    parser.add_argument(
+        "--with-ha-api-probe", action="store_true",
+        help="DANGEROUS: enable admin-scope Home Assistant API permission for "
+             "read-only REST/WS probe; isolated test device only")
     args = parser.parse_args()
-    print(json.dumps(build(args.output), indent=2))
+    print(json.dumps(build(args.output, with_ha_api_probe=args.with_ha_api_probe),
+                     indent=2))
 
 
 if __name__ == "__main__":
