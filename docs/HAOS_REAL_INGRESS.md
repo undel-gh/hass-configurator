@@ -53,11 +53,15 @@ Supervisor-restricted nginx proxy. It returns `/api/version` with
 the fixed test marker `forged-browser-identity`; no actual user ID is
 returned). It never exposes the raw Ingress path or token. The real
 browser suite injects deliberately invalid `X-Ingress-Path` and a
-forged browser user-ID marker and checks that Core/Supervisor replaced,
-stripped or rejected those values. **A successful simulated CI peer is
-not proof of this behavior.** The real user identity header is optional:
-`absent` alone is not a failure; `spoofed` is. Never trust these
-headers on an unrestricted port.
+forged browser user-ID marker. It requires Core to overwrite the Ingress
+path, but **does not assume** Core strips other arbitrary user headers:
+`spoofed` is recorded as a possible upstream pass-through observation,
+not automatically an auth bypass. The nginx fixture strips this
+untrusted value before forwarding to the Python editor, regardless of
+whether Core removed it. **A successful simulated CI peer is not proof
+of real Core behavior.** The real user identity header is optional;
+`absent` alone is not a failure. Never trust these headers on an
+unrestricted port.
 
 ## 2. Real logged-in browser session (private test machine only)
 
@@ -185,7 +189,7 @@ the same real browser profile is mandatory for HAOS-12.
 | HAOS-06 | Open-in-new-tab remains under same ingress prefix | pending |
 | HAOS-07 | File upload/download only in fixture's isolated `/data` root | pending |
 | HAOS-08 | Browser public-origin attempts blocked/zero during cold and warm operation | pending |
-| HAOS-09 | Actual header sanitization probe, optional user-header flag, real peer restriction | pending |
+| HAOS-09 | Core-overwritten Ingress path, status-only user-header pass-through observation, nginx stripping and real peer restriction | pending |
 | HAOS-10 | Browser-accepted MIME after Core/Supervisor filtering (not exact header equality) | pending |
 | HAOS-11 | Optional REST and event WS proxy with credential-safe diagnostics; client WS observer & loss fallback separately observed | pending |
 | HAOS-12 | Real Supervisor A→B update in same warm browser profile; digest change and no stale assets | pending |
