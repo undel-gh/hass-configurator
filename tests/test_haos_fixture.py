@@ -74,6 +74,35 @@ class HAOSIngressFixtureTests(unittest.TestCase):
             dockerfile = (target / "Dockerfile").read_text(encoding="utf8")
             self.assertIn("COPY haos_local_api_probe.py", dockerfile)
 
+    def test_two_disposable_revisions_change_immutable_asset_digest(self):
+        from hass_configurator.http_routing import Assets
+        with tempfile.TemporaryDirectory() as root:
+            source = (ROOT / "hass_configurator" / "style.css").read_bytes()
+            a = Path(root) / "version-a"
+            b = Path(root) / "version-b"
+            first = build(a, fixture_version="0.0.1", cache_revision="A")
+            second = build(b, fixture_version="0.0.2", cache_revision="B")
+            self.assertEqual(first["test_cache_revision"], "A")
+            self.assertEqual(second["test_cache_revision"], "B")
+            self.assertIn('version: "0.0.2"',
+                          (b / "config.yaml").read_text(encoding="utf8"))
+            self.assertNotEqual(
+                Assets(a / "app" / "hass_configurator").version,
+                Assets(b / "app" / "hass_configurator").version)
+            self.assertEqual(
+                (ROOT / "hass_configurator" / "style.css").read_bytes(), source)
+
+    def test_rejects_untrusted_test_revision_values_before_build(self):
+        with tempfile.TemporaryDirectory() as root:
+            target = Path(root) / "fixture"
+            for value in ("../escape", "evil\nbody", "A'B"):
+                with self.subTest(value=value), self.assertRaises(ValueError):
+                    build(target, cache_revision=value)
+                self.assertFalse(target.exists())
+            with self.assertRaises(ValueError):
+                build(target, fixture_version="1.2.3; echo unsafe")
+            self.assertFalse(target.exists())
+
     def test_refuses_overwriting_existing_app_directory(self):
         with tempfile.TemporaryDirectory() as dirname:
             dest = Path(dirname) / "hc_ingress_validation"
