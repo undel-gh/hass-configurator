@@ -174,7 +174,7 @@ jobs:
               assert match, "No CSRF bootstrap in backend HTML"
               target = "/data/hc-ingress-validation/ci-proxy-roundtrip.yaml"
               payload = urlencode({"filename": target,
-                                   "text": "ingress_probe: true\\n"}).encode()
+                                   "text": "ingress_probe: true\n"}).encode()
               conn.request("POST", "/api/save", body=payload, headers={
                   **spoof,
                   "X-CSRF-Token": match.group(1),
@@ -187,7 +187,7 @@ jobs:
                            headers=spoof)
               downloaded = conn.getresponse()
               assert downloaded.status == 200, downloaded.status
-              assert downloaded.read() == b"ingress_probe: true\\n"
+              assert downloaded.read() == b"ingress_probe: true\n"
           finally:
               conn.close()
           PY
