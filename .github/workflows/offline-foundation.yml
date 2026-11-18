@@ -188,6 +188,25 @@ jobs:
               downloaded = conn.getresponse()
               assert downloaded.status == 200, downloaded.status
               assert downloaded.read() == b"ingress_probe: true\n"
+              # Exercise the actual streamed-body shape that Supervisor may
+              # use under ingress_stream: true. Nginx must buffer/dechunk it
+              # into a Content-Length request for the legacy Python handler.
+              target_chunked = "/data/hc-ingress-validation/ci-chunked.yaml"
+              upload = urlencode({"filename": target_chunked,
+                                  "text": "chunked: works"}).encode()
+              chunks = (upload[:9], upload[9:23], upload[23:])
+              conn.request("POST", "/api/save", body=chunks, headers={
+                  **spoof, "X-CSRF-Token": match.group(1),
+                  "Content-Type": "application/x-www-form-urlencoded",
+              }, encode_chunked=True)
+              chunked_reply = conn.getresponse()
+              assert chunked_reply.status == 200, chunked_reply.status
+              assert json.loads(chunked_reply.read())["error"] is False
+              conn.request("GET", "/api/download?filename=" + quote(target_chunked, safe=""),
+                           headers=spoof)
+              verify = conn.getresponse()
+              assert verify.status == 200, verify.status
+              assert verify.read() == b"chunked: works"
           finally:
               conn.close()
           PY
