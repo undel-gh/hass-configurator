@@ -72,6 +72,61 @@ function guardBrowser(page) {
   }));
 }
 
+async function probeFixture(page, { spoof = false } = {}) {
+  // Relative URL stays in the user's real opaque Ingress path. Never print it.
+  // Only nonsecret enumerated values are returned to the test runner.
+  return page.evaluate(async shouldSpoof => {
+    const headers = shouldSpoof ? {
+      'X-Ingress-Path': '/malicious-client-value',
+      'X-Remote-User-Id': 'forged-browser-identity',
+      'X-Forwarded-For': '203.0.113.42',
+    } : {};
+    const response = await fetch('__haos_probe', {
+      credentials: 'same-origin', cache: 'no-store', headers,
+    });
+    return {
+      status: response.status,
+      fixture: response.headers.get('x-hc-fixture-id'),
+      ingressPath: response.headers.get('x-hc-ingress-path-status'),
+      userPresent: response.headers.get('x-hc-user-id-present'),
+      cache: response.headers.get('cache-control'),
+    };
+  }, spoof);
+}
+
+function assertTemporaryFixture(status) {
+  expect(status.status).toBe(200);
+  expect(status.fixture).toBe('hc-ingress-validation-v1');
+  expect(status.ingressPath).toBe('valid');
+  expect(['yes', 'no']).toContain(status.userPresent);
+  expect(status.cache).toContain('no-store');
+}
+
+test('real HA OS: actual Supervisor-provided header overrides client spoof', async ({ page }) => {
+  test.skip(!enabled, 'Requires local HAOS_INGRESS_URL + HAOS_STORAGE_STATE');
+  test.setTimeout(90000);
+  const guard = await guardBrowser(page);
+  await navigatePrivate(page, ingress);
+  const observed = await probeFixture(page);
+  assertTemporaryFixture(observed);
+  const tampered = await probeFixture(page, { spoof: true });
+  // Valid after injecting an intentionally INVALID browser value proves
+  // Core/Supervisor overwrote it before nginx saw the request.
+  assertTemporaryFixture(tampered);
+  guard.assert();
+  await test.info().attach('haos-proxy-boundary-redacted.json', {
+    body: Buffer.from(JSON.stringify({
+      source: 'real-haos-supervisor',
+      fixture: observed.fixture,
+      ingressHeader: observed.ingressPath,
+      clientInjectionRejected: tampered.ingressPath === 'valid',
+      remoteUserHeaderProvided: observed.userPresent,
+      directNonSupervisorPeer: 'requires separate network-layer check',
+    }, null, 2)),
+    contentType: 'application/json',
+  });
+});
+
 test('real HA OS Ingress: full HTML, font, API, route and cache behavior', async ({ page }) => {
   test.skip(!enabled, 'Requires local HAOS_INGRESS_URL + HAOS_STORAGE_STATE');
   test.setTimeout(90000);
@@ -154,6 +209,9 @@ test('real HA OS Ingress: upload and download in isolated fixture ONLY', async (
   test.setTimeout(90000);
   const guard = await guardBrowser(page);
   await navigatePrivate(page, ingress);
+  // A mutation is never allowed against a regular File Editor or unknown
+  // application even if HAOS_TEST_MUTATIONS was set accidentally.
+  assertTemporaryFixture(await probeFixture(page));
   await expect.poll(() => page.evaluate(() => Boolean(window.editor))).toBe(true);
   const name = 'haos-ingress-upload-check-' + Date.now().toString(36) + '.txt';
   await page.evaluate(root => listdir(root), fixtureRoot);
