@@ -151,7 +151,7 @@ jobs:
               # must not be interpreted as editor authentication at backend.
               spoof = {"Host": "attacker.example.invalid",
                        "X-Ingress-Path": "/attacker-controlled",
-                       "X-Remote-User-Id": "forged-identity",
+                       "X-Remote-User-Id": "forged-browser-identity",
                        "X-Forwarded-For": "203.0.113.9"}
               conn.request("GET", "/api/prefs", headers=spoof)
               reply = conn.getresponse()
@@ -163,6 +163,7 @@ jobs:
               assert probe.status == 200, probe.status
               assert probe.getheader("X-HC-Fixture-Id") == "hc-ingress-validation-v1"
               assert probe.getheader("X-HC-Ingress-Path-Status") == "invalid"
+              assert probe.getheader("X-HC-User-Id-Status") == "spoofed"
               probe.read()
               # Full API round-trip through nginx, including CSRF and a
               # Content-Length-bound POST. Uses only a disposable /data root.
