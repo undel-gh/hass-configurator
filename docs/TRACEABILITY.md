@@ -32,12 +32,12 @@ scope, AT-01–AT-10 tests, and external maintainer controls.
 | FR-001 | #3, #4 | `e2e/offline-smoke.spec.cjs`, `e2e/offline-dynamic.spec.cjs`, `tests/test_vendored_assets.py` | verified (P0 automated; offline UI/assets) |
 | FR-002 | #3, #6 | `e2e/offline-dynamic.spec.cjs`, `e2e/release-matrix.spec.cjs` | verified (P0 automated; supported modes/workers) |
 | FR-003 | #2, #6 | `e2e/release-matrix.spec.cjs`, `e2e/ingress-operations.spec.cjs`, `tests/test_legacy_contract.py` | verified (P0 automated; safe file round trips) |
-| FR-004 | #7, #8 | `docs/P1_API_SECURITY.md`, `tests/test_api_security.py`, P1 real HA OS #8 | partial (P1 #7 candidate in PR #21; real HA OS #8 pending) |
-| FR-005 | #2, #8 | `e2e/ingress-operations.spec.cjs`, `e2e/offline-smoke.spec.cjs`, `tests/test_ingress_redirect.py` | partial (P0 simulated verified; P1 real Ingress #8 pending) |
-| FR-006 | #6, #8 | `e2e/ha-outage.spec.cjs` | partial (P0 outage verified; P1 real REST/WS #8 pending) |
+| FR-004 | #7, #8 | merged PR #21, `docs/P1_API_SECURITY.md`, `tests/test_api_security.py`; `docs/HAOS_REAL_INGRESS.md` | partial (#7 reviewed and merged; real HA OS #8 not yet validated) |
+| FR-005 | #2, #8 | `e2e/ingress-operations.spec.cjs`, `e2e/haos-real.spec.cjs`, `docs/HAOS_REAL_INGRESS.md`, `tests/test_haos_fixture.py` | partial (P0 simulated plus #8 test fixture; actual Supervisor session pending) |
+| FR-006 | #6, #8 | `e2e/ha-outage.spec.cjs`, `scripts/haos_local_api_probe.py`, `tests/test_haos_local_api_probe.py` | partial (read-only Supervisor REST/event WS probe; actual HA OS test and browser observer pending) |
 | FR-007 | #1, #6 | `e2e/offline-smoke.spec.cjs`, `docs/runtime-dependencies.json` | verified (P0 automated; no automatic public links) |
 | FR-008 | #2, #5, #6 | `e2e/cache-upgrade.spec.cjs`, `scripts/check_offline_artifacts.py` | partial (P0 warm A→B verified; P1 real upgrade #8 pending) |
-| FR-009 | #2, #8 | `e2e/ha-outage.spec.cjs`, `docs/ARCHITECTURE.md` | partial (P0 optional HA WS outage; P1 live auth/connectivity #8 pending) |
+| FR-009 | #2, #8 | `e2e/ha-outage.spec.cjs`, `scripts/haos_local_api_probe.py`, `e2e/haos-real.spec.cjs` | partial (P0 outage tested; HAOS-11 live observation pending) |
 
 ## Nonfunctional requirements
 
@@ -48,7 +48,7 @@ scope, AT-01–AT-10 tests, and external maintainer controls.
 | NFR-003 | #2, #7 | `tests/test_routing.py`, `tests/test_api_security.py`, `hass_configurator/api_security.py` | partial (P0 verified; P1 dir-fd confined operations in PR #21, security review pending) |
 | NFR-004 | #2 | `tests/test_routing.py`, `tests/test_legacy_contract.py`, `tests/test_p0_closeout.py`, `tests/test_api_security.py`, `docs/P1_API_SECURITY.md` | partial (single-header router-owned denial and explicit legacy-response inventory; complete legacy response-writer refactor remains separate) |
 | NFR-005 | #2, #6 | `.github/workflows/offline-foundation.yml`, `e2e/offline-smoke.spec.cjs` | verified (P0 automated; source and installed E2E) |
-| NFR-006 | #7 | `hass_configurator/api_security.py`, `tests/test_api_security.py`, `e2e/security.spec.cjs`, `docs/P1_API_SECURITY.md` | partial (P1 #7 implementation candidate; independent security review and final exact-HEAD CI pending) |
+| NFR-006 | #7 | merged PR #21, `hass_configurator/api_security.py`, `tests/test_api_security.py`, `e2e/security.spec.cjs` | partial (#7 reviewed, merged; real Supervisor trust #8 remains separate) |
 | NFR-007 | #5, #10 | `scripts/check_offline_artifacts.py`, `e2e/version-identity.spec.cjs`, Docker CI | verified (P0 automated; installed artifact identity) |
 | NFR-008 | #14 | `.github/workflows/offline-foundation.yml`, `tests/test_traceability.py`, PR template | partial (P0 CI governance verified; branch required-check settings NOT VERIFIED) |
 | NFR-009 | #2, #5, #6 | `tests/test_routing.py`, `e2e/cache-upgrade.spec.cjs` | partial (P0 immutable/warm verified; P1 real upgrade #8 pending) |
@@ -62,8 +62,8 @@ scope, AT-01–AT-10 tests, and external maintainer controls.
 | ADR-001 | #1 | `docs/FOUNDATION_IMPLEMENTATION.md`, `docs/ARCHITECTURE.md` | verified (P0 documented scope/compatibility decision) |
 | ADR-002 | #6, #14 | `e2e/offline-smoke.spec.cjs` request-attempt gate | verified (P0 automated; browser external requests) |
 | ADR-003 | #2, #7 | `hass_configurator/http_routing.py`, `tests/test_legacy_contract.py` | partial (P0 permanent exact router; P1 legacy controllers #7 pending) |
-| ADR-004 | #2, #8 | `tests/test_ingress_redirect.py`, `e2e/ingress-operations.spec.cjs` | partial (P0 simulated; P1 real ingress #8 pending) |
-| ADR-005 | #7 | `docs/P1_API_SECURITY.md`, `tests/test_api_security.py`, `hass_configurator/api_security.py` | partial (#7 candidate; review/CI pending) |
+| ADR-004 | #2, #8 | `tests/test_ingress_redirect.py`, `e2e/ingress-operations.spec.cjs`, `haos-fixture/nginx.conf`, `e2e/haos-real.spec.cjs` | partial (proxy test suite prepared; real Supervisor evidence pending #8) |
+| ADR-005 | #7 | merged PR #21, `docs/P1_API_SECURITY.md`, `tests/test_api_security.py`, `hass_configurator/api_security.py` | partial (#7 hardening merged; trusted-proxy admission #8 remains) |
 | ADR-006 | #1, #3 | `docs/ace-builds-1.9.6-lock.json`, `scripts/verify_ace_archive.py` | verified (P0 automated; Ace SRI/closure) |
 | ADR-007 | #14 | PR template, CI, `tests/test_traceability.py` | partial (P0 code/CI contract verified; maintainer branch rules pending / NOT VERIFIED) |
 | ADR-008 | #13 | CSP design in `docs/ARCHITECTURE.md` | pending (P1 CSP) |
@@ -91,6 +91,27 @@ test container is not evidence of real Supervisor Ingress.
 The PR body must supply its own exact reviewed HEAD and CI run. Closeout
 review must also confirm whether branch protection is enabled; do not infer
 that from the workflow.
+
+## P1 Issue #8 — real Supervisor Ingress validation (NOT ACCEPTED)
+
+New candidate: the isolated nginx fixture rewrites external Host to the
+trusted 127.0.0.1 backend authority required by Issue #7, drops forwarded
+identity headers and offers a status-only Ingress-header diagnostic.
+CI tests direct-client denial and a simulated Supervisor network peer. This
+is not evidence of a real Core/Supervisor session.
+
+| Acceptance | Candidate tests | Real evidence still missing |
+| --- | --- | --- |
+| FR-005 / ADR-004 / HAOS-01…10 | `haos-fixture/`, `e2e/haos-real.spec.cjs`, `tests/test_haos_fixture.py` | Real HA OS browser session, header injection result, MIME and assets |
+| FR-006 / FR-009 / HAOS-11 | Optional read-only `scripts/haos_local_api_probe.py`, `tests/test_haos_local_api_probe.py` | Real Core REST/WS results and browser observer authentication/failure evidence |
+| FR-008 / NFR-009 / HAOS-12 | `--cache-revision A/B` generator and unit tests | Actual app upgrade in the SAME warm browser profile |
+| AT-11 | `docs/HAOS_REAL_INGRESS.md` ledger and opt-in browser suite | Real HA OS versioned, sanitized evidence and review |
+
+The optional HA Core proxy probe requires explicit administrator-scope
+`homeassistant_api: true` in a disposable test installation, and never
+passes the Supervisor token to the editor, browser or nginx.
+**Do not mark AT-11 verified from passing public CI.** The official
+File Editor's downstream packaging is outside this issue.
 
 ## P1 #7 security review follow-up (candidate, not release sign-off)
 
