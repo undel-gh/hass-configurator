@@ -1,11 +1,86 @@
 """Guardrail checks for the generated disposable HA OS Ingress test app."""
 from pathlib import Path
+import re
 import tempfile
 import unittest
 
 from scripts.prepare_haos_ingress_fixture import build
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+# Every nginx location that forwards to the loopback editor must independently
+# drop secrets. A global assertIn() would still pass if just one location
+# forwarded Authorization or X-Remote-User-Id (review #1, PR #22).
+STRIPPED_BACKEND_HEADERS = (
+    "X-Ingress-Path", "X-Forwarded-For", "X-Forwarded-Host",
+    "X-Forwarded-Proto", "X-Remote-User-Id", "X-Remote-User-Name",
+    "X-Remote-User-Display-Name", "X-Remote-User-Groups",
+    "Forwarded", "X-Real-IP", "Cookie", "Authorization",
+    "X-Supervisor-Token",
+)
+BACKEND_PROXY_LOCATIONS = ("/__haos_probe", "/")
+
+
+def nginx_locations(source):
+    """Return exact location blocks without confusing adjacent locations.
+
+    This fixture uses simple location blocks and no nested location directives.
+    Only parse as much nginx syntax as the fixture uses; a malformed or nested
+    block fails closed instead of silently relying on another location.
+    """
+    found = {}
+    location_start = re.compile(
+        r"(?m)^[ \t]*location[ \t]+(?:=[ \t]+)?(?P<route>[^ \t{]+)[ \t]*\{")
+    for match in location_start.finditer(source):
+        route = match.group("route")
+        if route in found:
+            raise AssertionError("Duplicate nginx location: " + route)
+        start = match.end()
+        depth, end = 1, start
+        while depth and end < len(source):
+            if source[end] == "{":
+                depth += 1
+            elif source[end] == "}":
+                depth -= 1
+            end += 1
+        if depth:
+            raise AssertionError("Unclosed nginx location: " + route)
+        block = source[start:end - 1]
+        if re.search(r"(?m)^[ \t]*location[ \t]+", block):
+            raise AssertionError("Nested nginx location not supported: " + route)
+        found[route] = block
+    return found
+
+
+def assert_backend_secrets_stripped(source):
+    """Enforce *every* proxying location, not one global header occurrence."""
+    blocks = nginx_locations(source)
+    proxy_blocks = {
+        route: block for route, block in blocks.items()
+        if re.search(r"(?m)^[ \t]*proxy_pass[ \t]+", block)
+    }
+    assert set(proxy_blocks) == set(BACKEND_PROXY_LOCATIONS), (
+        "Unexpected set of editor proxy locations: " + repr(sorted(proxy_blocks))
+    )
+    for route, block in proxy_blocks.items():
+        headers = {}
+        for name, value in re.findall(
+                r"(?mi)^[ \t]*proxy_set_header[ \t]+"
+                r"([A-Z0-9-]+)[ \t]+([^;]+);", block):
+            headers.setdefault(name.lower(), []).append(value.strip())
+        assert headers.get("host") == ["127.0.0.1:3218"], (
+            route + ": must set only trusted loopback Host"
+        )
+        for name in STRIPPED_BACKEND_HEADERS:
+            assert headers.get(name.lower()) == ['""'], (
+                route + ": must strip " + name + " exactly once; found "
+                + repr(headers.get(name.lower()))
+            )
+        assert re.findall(r"(?m)^[ \t]*proxy_pass[ \t]+([^;]+);", block) == [
+            "http://127.0.0.1:3218" +
+            ("/api/version" if route == "/__haos_probe" else "")
+        ], route + ": unexpected backend destination"
 
 
 class HAOSIngressFixtureTests(unittest.TestCase):
@@ -37,10 +112,7 @@ class HAOSIngressFixtureTests(unittest.TestCase):
             self.assertIn("location = /__haos_api_probe", nginx)
             self.assertIn('X-HC-Fixture-Id "hc-ingress-validation-v1"', nginx)
             self.assertIn("proxy_pass http://127.0.0.1:3218/api/version", nginx)
-            self.assertIn('proxy_set_header X-Remote-User-Id "";', nginx)
-            for secret_header in ("Cookie", "Authorization", "X-Supervisor-Token",
-                                  "X-Remote-User-Groups", "Forwarded", "X-Real-IP"):
-                self.assertIn('proxy_set_header %s "";' % secret_header, nginx)
+            assert_backend_secrets_stripped(nginx)
             self.assertEqual((target / "ha-api-mode").read_text(), "disabled\n")
             self.assertNotIn("homeassistant_api: true", config)
             self.assertTrue((target / "haos_local_api_probe.py").exists())
@@ -56,6 +128,40 @@ class HAOSIngressFixtureTests(unittest.TestCase):
                               "manifest.json").read_bytes())
             self.assertFalse((target / "app" / "hass_configurator" /
                               "config.json").exists())
+
+    def test_every_proxy_location_rejects_unstripped_header_regressions(self):
+        """Replacing one scrub directive must fail, even if other location is safe."""
+        source = (ROOT / "haos-fixture" / "nginx.conf").read_text(encoding="utf8")
+        blocks = nginx_locations(source)
+        assert_backend_secrets_stripped(source)
+        for location in BACKEND_PROXY_LOCATIONS:
+            block = blocks[location]
+            for name in STRIPPED_BACKEND_HEADERS:
+                with self.subTest(location=location, forwarded_header=name):
+                    scrub = 'proxy_set_header %s "";' % name
+                    self.assertIn(scrub, block)
+                    # Reproduce an accidental passthrough in precisely one
+                    # location; the other location stays correctly scrubbed.
+                    changed = block.replace(
+                        scrub, 'proxy_set_header %s $http_untrusted;' % name, 1)
+                    poisoned = source.replace(block, changed, 1)
+                    with self.assertRaisesRegex(
+                            AssertionError, r"must strip"):
+                        assert_backend_secrets_stripped(poisoned)
+            with self.subTest(location=location, change="duplicate secret"):
+                poisoned = source.replace(
+                    block, block + '\nproxy_set_header Authorization $http_authorization;',
+                    1)
+                with self.assertRaisesRegex(AssertionError, "must strip Authorization"):
+                    assert_backend_secrets_stripped(poisoned)
+
+    def test_new_proxy_location_cannot_omit_secret_stripping(self):
+        source = (ROOT / "haos-fixture" / "nginx.conf").read_text(encoding="utf8")
+        # If a future extra proxy route appears, the allowlisted security
+        # boundary must be extended explicitly rather than silently skipped.
+        added = '\nlocation = /__future { proxy_pass http://127.0.0.1:3218; }\n'
+        with self.assertRaisesRegex(AssertionError, "Unexpected set"):
+            assert_backend_secrets_stripped(source + added)
 
     def test_ha_api_probe_requires_explicit_separate_fixture_opt_in(self):
         with tempfile.TemporaryDirectory() as dirname:
