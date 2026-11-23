@@ -159,7 +159,8 @@ class HAOSIngressFixtureTests(unittest.TestCase):
         source = (ROOT / "haos-fixture" / "nginx.conf").read_text(encoding="utf8")
         # If a future extra proxy route appears, the allowlisted security
         # boundary must be extended explicitly rather than silently skipped.
-        added = '\nlocation = /__future { proxy_pass http://127.0.0.1:3218; }\n'
+        added = ('\nlocation = /__future {\n'
+                 '  proxy_pass http://127.0.0.1:3218;\n}\n')
         with self.assertRaisesRegex(AssertionError, "Unexpected set"):
             assert_backend_secrets_stripped(source + added)
 
