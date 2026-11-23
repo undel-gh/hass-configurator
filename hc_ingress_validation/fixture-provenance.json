@@ -1,0 +1,12 @@
+{
+  "source_commit": "8ce8ffb1cd579431261329597f7b7ce10baba4b6",
+  "vendor_resource_count": 460,
+  "vendor_manifest_sha256": "f2f35d2c38dc9edec6846bfedded278d7b18cf714b1efbe34a49ca5b102065c1",
+  "workspace_inside_container": "/data/hc-ingress-validation",
+  "external_host_ports": false,
+  "home_assistant_api": false,
+  "read_only_supervisor_probe": false,
+  "fixture_version": "0.0.1",
+  "test_cache_revision": null,
+  "fixture_only": true
+}

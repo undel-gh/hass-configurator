@@ -1,77 +1,21 @@
-# HASS Configurator
-[![Offline foundation CI](https://github.com/undel-gh/hass-configurator/actions/workflows/offline-foundation.yml/badge.svg?branch=master)](https://github.com/undel-gh/hass-configurator/actions/workflows/offline-foundation.yml)
-### Configuration UI for Home Assistant
+# Temporary HA OS Ingress validation app (Issue #8)
 
-The HASS Configurator is a small webapp (you access it via web browser) that provides a filesystem-browser and text-editor to modify files on the machine the configurator is running on. It has been created to allow easy configuration of [Home Assistant](https://home-assistant.io/). It is powered by [Ace editor](https://ace.c9.io/), which supports syntax highlighting for various code/markup languages. [YAML](https://en.wikipedia.org/wiki/YAML) files (the default language for Home Assistant configuration files) will be automatically checked for syntax errors while editing.  
-__FORK STATUS:__ This fork now bundles its editor JavaScript, CSS, icons and fonts locally. Its P0 browser/packaging checks cover offline operation, including simulated Ingress. This is **not yet an approved public/HA OS release**: real Supervisor Ingress, final security review/CSP and license/SBOM reviews remain separate P1 gates. Issue #7 authentication/CSRF and filesystem confinement are under review in [draft PR #21](https://github.com/undel-gh/hass-configurator/pull/21); do not deploy that branch to production. See [P0 packaging](docs/P0_PACKAGING.md) and [the release matrix](docs/TRACEABILITY.md).
+**TEST-ONLY, not the official File Editor. Do not install as a production replacement.**
 
-### Feature list:
+Pinned from [PR #22](https://github.com/undel-gh/hass-configurator/pull/22), source commit `8ce8ffb1cd579431261329597f7b7ce10baba4b6` (exact-HEAD [CI run](https://github.com/undel-gh/hass-configurator/actions/runs/45135844692) green). The app uses only `/data/hc-ingress-validation`; no real HA configuration, shared directories, supervisor admin API access, or published host port. It starts manually and is accessible exclusively through Supervisor Ingress.
 
-- Web-Based editor to modify your files with syntax highlighting and automatic yaml-linting
-- Upload and download files
-- Lists of available triggers, events, entities, conditions and services. Selected element gets inserted into the editor at the last cursor position.
-- Home Assistant event observer (connect to Home Assistant via WebSocket and see all the events that happen)
-- Restart Home Assistant directly with the click of a button
-- SSL support
-- Mandatory authenticated API/HTML access for network listeners, or local-only testing on a loopback-bound listener; IP filtering remains additional defense
-- Direct links to Home Assistant documentation and icons
-- Execute shell commands
-- Stage and commit changes in Git repositories, create and switch between branches, push to SSH remotes
-- Customizable editor settings (saved using [localStorage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage))
-- Standalone mode that hides the Home Assistant related panel on the left side (triggers, entities etc.). Set `HASS_API` to `None` or use the commandline flag `-s` / `--standalone` to enable this mode.
+## Install on Home Assistant OS
 
-#### Screenshot HASS Configurator:
-![Screenshot](https://github.com/danielperna84/hass-configurator/blob/master/screenshots/main.png)
+1. Make a Home Assistant backup and confirm the OS architecture is **amd64** or **aarch64**.
+2. Settings → Apps → Install app → menu **⋮** → **Repositories** → **Add**:
+   `https://github.com/undel-gh/hass-configurator#haos-ingress-validation`
+3. Open **HASS Configurator Ingress Validation (temporary)** from the new repository section and choose **Install**. Supervisor builds this disposable Docker image on the HA OS device; **no prebuilt GHCR image is published**.
+4. Start manually; open **Open Web UI**. Inspect the app logs if the build/start fails. Do **not** enable homeassistant_api or change mounts/privileges.
+5. Follow the acceptance [runbook](https://github.com/undel-gh/hass-configurator/blob/8ce8ffb1cd579431261329597f7b7ce10baba4b6/docs/HAOS_REAL_INGRESS.md). Never share opaque ingress URLs, cookie or token, Playwright storageState, HAR, or unredacted traces.
+6. When testing is complete, stop/uninstall the app and remove this custom repository if no longer needed. This repository is **not** a replacement for the official File Editor.
 
-If there is anything you want to have differently, feel free to fork and enhance. And if something is not working, create an issue here and I will have a look at it.  
-_WARNING_: This tool allows you to browse your filesystem and modify files. So be careful which files you edit, or you might break critical parts of your system.
+## Evidence
 
-### P1 security changes — draft PR #21 (not released)
+See `hc_ingress_validation/fixture-provenance.json` for source SHA and vendor manifest SHA-256. Issue #8 remains **open** until real HAOS-01…12 evidence; PR #22 stays **Draft**.
 
-The current security branch changes defaults and routes intentionally. An
-editor bound to `0.0.0.0` without credentials can no longer serve dynamic UI
-or API responses. Configure `USERNAME` and `PASSWORD` for remote access,
-and HTTPS or a trusted authenticated transport. For standalone development
-use `--listen 127.0.0.1` with no untrusted local proxy in front of it.
-
-All browser mutations now send `X-CSRF-Token`. Home Assistant restart,
-check-config and reload actions require POST instead of GET. File access is
-restricted to the configured `BASEPATH` even when legacy settings request
-`ENFORCE_BASEPATH=false`. Git, shell, network administration and HA control
-are disabled by default until explicitly enabled in settings. Shell execution
-also needs an absolute-path `EXEC_ALLOWED_BINARIES` allowlist.
-
-The fork-built Docker image runs as non-root **UID/GID 10001:10001**.
-Host bind mounts at `/config` must be writable by this account. Existing
-root-owned directories may need an ownership or ACL migration; consult the
-[security threat model and Docker permissions guide](docs/P1_API_SECURITY.md).
-
-See [P1 API security threat model](docs/P1_API_SECURITY.md) before testing.
-**Do not use these draft changes as proof of actual Home Assistant OS Ingress
-authentication or a secure deployment.**
-
-### Installation
-Possible methods to install the configurator are documented in the Wiki: [Installation](https://github.com/danielperna84/hass-configurator/wiki/Installation)
-
-### Configuration
-Available options to customize the behaviour of the configurator are documented in the Wiki: [Configuration](https://github.com/danielperna84/hass-configurator/wiki/Configuration)
-
-### Keeping the configurator running
-Since the configurator script on its own is no service, you'll have to take some extra steps to keep it running. More information on this topic can be found in the Wiki: [Daemonizing](https://github.com/danielperna84/hass-configurator/wiki/Daemonizing)
-
-### API
-
-There is an API available to programmatically add and remove IP addresses / networks to and from `ALLOWED_NETWORKS` and `BANNED_IPS`. Usage is documented in the Wiki: [API](https://github.com/danielperna84/hass-configurator/wiki/API)
-
-### Embedding into Home Assistant
-Once you have properly set up the configurator, you can use the [panel_iframe](https://home-assistant.io/components/panel_iframe/) component of Home Assistant to embed the configurator directly into the Home Assistant UI.  
-An example configuration would look like this:
-
-```yaml
-panel_iframe:
-  configurator:
-    title: Configurator
-    icon: mdi:wrench
-    url: http://1.2.3.4:3218
-```
-__IMPORTANT__: Be careful when setting up port forwarding to the configurator while embedding into Home Assistant. If you don't restrict access by requiring authentication and / or blocking based on client IP addresses, your configuration will be exposed to the web!
+Installation is initiated and controlled by the Home Assistant administrator. Nothing in this branch installs software automatically.
