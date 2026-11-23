@@ -154,6 +154,26 @@ class HAOSIngressFixtureTests(unittest.TestCase):
                     1)
                 with self.assertRaisesRegex(AssertionError, "must strip Authorization"):
                     assert_backend_secrets_stripped(poisoned)
+            with self.subTest(location=location, change="untrusted Host"):
+                original = "proxy_set_header Host 127.0.0.1:3218;"
+                self.assertIn(original, block)
+                poisoned_block = block.replace(
+                    original, "proxy_set_header Host $http_host;", 1)
+                poisoned = source.replace(block, poisoned_block, 1)
+                with self.assertRaisesRegex(
+                        AssertionError, "must set only trusted loopback Host"):
+                    assert_backend_secrets_stripped(poisoned)
+            with self.subTest(location=location, change="redirected proxy_pass"):
+                original = ("proxy_pass http://127.0.0.1:3218" +
+                            ("/api/version" if location == "/__haos_probe"
+                             else "") + ";")
+                self.assertIn(original, block)
+                poisoned_block = block.replace(
+                    original, "proxy_pass http://attacker.invalid:8080;", 1)
+                poisoned = source.replace(block, poisoned_block, 1)
+                with self.assertRaisesRegex(
+                        AssertionError, "unexpected backend destination"):
+                    assert_backend_secrets_stripped(poisoned)
 
     def test_new_proxy_location_cannot_omit_secret_stripping(self):
         source = (ROOT / "haos-fixture" / "nginx.conf").read_text(encoding="utf8")
