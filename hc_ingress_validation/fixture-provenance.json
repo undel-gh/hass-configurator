@@ -6,7 +6,7 @@
   "external_host_ports": false,
   "home_assistant_api": false,
   "read_only_supervisor_probe": false,
-  "fixture_version": "0.0.1",
-  "test_cache_revision": null,
+  "fixture_version": "0.0.2",
+  "test_cache_revision": "B",
   "fixture_only": true
 }
