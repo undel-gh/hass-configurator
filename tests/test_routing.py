@@ -146,6 +146,46 @@ class ServerTests(unittest.TestCase):
         self.assertEqual(js.getheader("Content-Type"), "text/javascript; charset=utf-8")
         self.assertGreater(len(source), 10)
 
+
+    def test_page_csp_is_nonce_bound_and_never_cached(self):
+        import re
+        first, html = self.request("GET", "/")
+        second, other = self.request("GET", "/")
+        self.assertEqual(first.status, 200)
+        self.assertEqual(first.getheader("Cache-Control"), NO_STORE)
+        policies = first.headers.get_all("Content-Security-Policy")
+        reports = first.headers.get_all("Content-Security-Policy-Report-Only")
+        self.assertEqual(len(policies or []), 1)
+        self.assertEqual(len(reports or []), 1)
+        policy = policies[0]
+        nonce = re.search(r"'nonce-([A-Za-z0-9_-]+)'", policy).group(1)
+        self.assertNotEqual(policy, second.getheader("Content-Security-Policy"))
+        self.assertIn("'nonce-" + nonce + "'", reports[0])
+        directives = dict(part.strip().split(None, 1) for part in policy.split(";") if part.strip())
+        self.assertEqual(directives["default-src"], "'none'")
+        self.assertEqual(directives["script-src"], "'self' 'nonce-" + nonce + "'")
+        self.assertEqual(directives["script-src-attr"], "'none'")
+        self.assertEqual(directives["connect-src"], "'self'")
+        self.assertEqual(directives["worker-src"], "'self' blob:")
+        self.assertEqual(directives["object-src"], "'none'")
+        self.assertEqual(directives["base-uri"], "'none'")
+        self.assertEqual(directives["frame-ancestors"], "'self'")
+        self.assertNotIn("unsafe-eval", policy)
+        self.assertNotIn("report-uri", reports[0])
+        self.assertNotIn("report-to", reports[0])
+        self.assertIn("style-src 'self';", reports[0])
+        scripts = re.findall(rb"<script\\b([^>]*)>", html, re.I)
+        inline = [attrs for attrs in scripts if b"src=" not in attrs]
+        self.assertTrue(inline)
+        for attrs in inline:
+            self.assertIn(('nonce="%s"' % nonce).encode(), attrs)
+        self.assertNotRegex(html, rb'\\s(?:onclick|onchange)\\s*=')
+        self.assertNotIn(('nonce="%s"' % nonce).encode(), other)
+        self.assertNotIn(b"$csp_nonce", html)
+        for path in ("/api/version", "/style.css", "/not-found"):
+            response, _ = self.request("GET", path)
+            self.assertIsNone(response.getheader("Content-Security-Policy-Report-Only"))
+
     def test_legacy_api_is_exact_and_not_cached(self):
         ok, content = self.request("GET", "/api/prefs")
         self.assertEqual(ok.status, 200)
