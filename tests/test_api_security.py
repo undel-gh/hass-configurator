@@ -316,6 +316,24 @@ class GitMetadataConfinementTests(unittest.TestCase):
             self.assertEqual(Path(found.working_dir), self.repo_dir)
             self.assertEqual(Path(found.git_dir), self.repo_dir / ".git")
 
+    def test_repository_at_workspace_root_is_accepted(self):
+        # Protect the cursor == fs.root order: inspect .git before rejecting
+        # a search past the workspace boundary.
+        from git import Repo
+        with patch.object(cfg, "BASEPATH", str(self.workspace)), \
+             patch.object(cfg, "REPO", Repo):
+            initialized = cfg.safe_init_repo(str(self.workspace))
+            self.assertEqual(Path(initialized.working_dir), self.workspace)
+            root_repo = cfg.validated_repo(str(self.workspace),
+                                           search_parent_directories=True)
+            self.assertEqual(Path(root_repo.working_dir), self.workspace)
+            target = self.workspace / "at-root.yaml"
+            target.write_text("inside: true\n", encoding="utf-8")
+            found = cfg.validated_repo(str(target),
+                                       search_parent_directories=True)
+            self.assertEqual(Path(found.working_dir), self.workspace)
+            self.assertEqual(Path(found.common_dir), self.workspace / ".git")
+
     def test_gitdir_pointer_and_symlink_are_rejected_before_gitpython(self):
         for mode in ("pointer", "symlink"):
             with self.subTest(mode=mode):
@@ -571,11 +589,15 @@ class SecurityLoopbackTests(unittest.TestCase):
     @unittest.skipUnless(os.name == "posix", "Process groups require POSIX")
     def test_shell_timeout_prevents_descendant_post_deadline_write(self):
         # Unlike the inherited-pipes latency test, this fails if killpg is
-        # deliberately disabled: the child writes a marker AFTER the reply.
+        # deliberately disabled OR weakened to SIGTERM: the child ignores
+        # TERM/INT and writes a marker AFTER the reply unless SIGKILL works.
         # Keep the marker inside the disposable, isolated HTTP test workspace.
         with tempfile.TemporaryDirectory(dir=self.workspace.name) as scratch:
             marker = Path(scratch) / "orphan-wrote-after-timeout"
-            descendant = "sleep 2; printf survived > " + shlex.quote(str(marker))
+            # An ignored SIGTERM/INT makes the test fail if process-group
+            # termination is weakened from SIGKILL to a catchable signal.
+            descendant = ("trap '' TERM INT; sleep 2; printf survived > "
+                          + shlex.quote(str(marker)))
             command = "/bin/sh -c " + shlex.quote("(" + descendant + ") & wait")
             headers = {"Content-Type": "application/x-www-form-urlencoded",
                        "X-CSRF-Token": cfg.HTTP_ROUTER.security.csrf_token}
