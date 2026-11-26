@@ -665,6 +665,54 @@ class SecurityLoopbackTests(unittest.TestCase):
             with self.assertRaises(PermissionError):
                 cfg.validated_repo(str(inside), search_parent_directories=True)
 
+    def test_opted_in_git_init_and_add_via_real_http(self):
+        # Exercise the actual route/policy/CSRF path, not only the helper.
+        from git import Repo
+        with tempfile.TemporaryDirectory(dir=self.workspace.name) as scratch:
+            worktree = Path(scratch) / "repo"
+            worktree.mkdir()
+            headers = {"Content-Type": "application/x-www-form-urlencoded",
+                       "X-CSRF-Token": cfg.HTTP_ROUTER.security.csrf_token}
+            with patch.object(cfg, "GIT", True), \
+                 patch.object(cfg, "REPO", Repo), \
+                 patch.object(cfg, "ALLOW_GIT_OPERATIONS", True):
+                status, _, raw = http_request(
+                    self.server, "POST", "/api/init",
+                    urlencode({"path": str(worktree)}).encode(), headers)
+                self.assertEqual(status, 200)
+                self.assertFalse(json.loads(raw)["error"], raw)
+                self.assertTrue((worktree / ".git").is_dir())
+                example = worktree / "example.yaml"
+                example.write_text("hello: world\n", encoding="utf-8")
+                status, _, raw = http_request(
+                    self.server, "POST", "/api/gitadd",
+                    urlencode({"path": str(example)}).encode(), headers)
+                self.assertEqual(status, 200)
+                self.assertFalse(json.loads(raw)["error"], raw)
+                self.assertIn("example.yaml",
+                              Repo(worktree).git.diff("--cached", "--name-only"))
+
+    def test_opted_in_git_init_denies_control_symlink_via_real_http(self):
+        from git import Repo
+        with tempfile.TemporaryDirectory(dir=self.workspace.name) as scratch, \
+             tempfile.TemporaryDirectory() as outside:
+            worktree = Path(scratch) / "repo"
+            worktree.mkdir()
+            (worktree / ".git").symlink_to(outside, target_is_directory=True)
+            headers = {"Content-Type": "application/x-www-form-urlencoded",
+                       "X-CSRF-Token": cfg.HTTP_ROUTER.security.csrf_token}
+            with patch.object(cfg, "GIT", True), \
+                 patch.object(cfg, "REPO", Repo), \
+                 patch.object(cfg, "ALLOW_GIT_OPERATIONS", True):
+                status, _, raw = http_request(
+                    self.server, "POST", "/api/init",
+                    urlencode({"path": str(worktree)}).encode(), headers)
+            self.assertEqual(status, 200)
+            self.assertTrue(json.loads(raw)["error"])
+            self.assertTrue((worktree / ".git").is_symlink())
+            self.assertEqual(list(Path(outside).iterdir()), [])
+
+
     def test_preferences_symlink_cannot_overwrite_file_outside_workspace(self):
         prefs = Path(self.workspace.name) / cfg.PREFS_FILENAME
         with tempfile.TemporaryDirectory() as external:
