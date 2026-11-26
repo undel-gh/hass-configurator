@@ -1,9 +1,11 @@
 # P1 API security audit and threat model — Issue #7
 
-**Status (2026-11-14): security migration under review in PR #21.**
-This is **not** a sign-off for public exposure or a real Home Assistant OS
-Supervisor deployment. CI must pass on the final PR SHA, and the independent
-security review must resolve all high-severity findings before closing #7.
+**Status (2026-11-26): baseline security PR #21 merged; incremental
+filesystem/Git/shell hardening is a Draft in [#27](https://github.com/undel-gh/hass-configurator/issues/27).
+Real HA OS Ingress was field-tested and closed in a scoped manner in #8
+(HAOS-01…10 and HAOS-12), while HAOS-11 Core REST/WS remains **unverified**
+in #26. This document is **not a public release or full P1 security
+sign-off**; exact-HEAD CI and independent review still govern #27.
 
 ## Trust boundaries and adversaries
 
@@ -129,9 +131,13 @@ and complete remaining XSS audit before public release.
 
 ### Explicit limitations and release blockers
 
-- **Real Supervisor Ingress is NOT VERIFIED** (#8). Loopback binding alone
-  does not authenticate an exposed reverse proxy. Don't grant privileges
-  solely from peer IP or user-provided forwarded headers.
+- **Real Supervisor Ingress: tested scope PASS** (#8, PR #22). The real
+  Core→Supervisor→fixture path, client-spoofed Ingress header overwrite
+  and a direct request from an independent app receiving HTTP 403 were
+  verified by the operator. This is **not** proof that an arbitrary
+  reverse proxy is authenticated by loopback IP: never grant privileges
+  from client-controlled forwarded headers. Privileged Core REST/WS
+  acceptance remains **DEFERRED / NOT VERIFIED** in #26.
 - **Strict CSP is NOT VERIFIED** (#13). Existing inline handlers/scripts
   require a separate staged CSP migration and report-only then enforced tests.
   This PR reduces specific injection paths; it cannot certify that all XSS
