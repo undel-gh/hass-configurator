@@ -13,7 +13,7 @@ async function main() {
   const init = "ace.require('ace/ext/language_tools'); window.editor=ace.edit('editor'); editor.setOptions({enableBasicAutocompletion:true,enableLiveAutocompletion:false,useWorker:true});";
   const bootstrap = fs.readFileSync(path.join(__dirname, '../hass_configurator/ace-bootstrap.js'));
   const editorHTML = '<!doctype html><html><head><meta charset="utf-8"><title>Candidate</title></head><body><div id="editor" style="height:400px;width:700px"></div><script src="' + base + 'vendor/ace/ace.js"></script><script src="' + base + 'ace-bootstrap.js"></script><script src="' + base + 'candidate-init.js"></script></body></html>';
-  const requests = [], external = [], errors = [], violations = [], checks = {};
+  const requests = [], served = [], external = [], errors = [], violations = [], checks = {};
   const server = http.createServer((req, res) => {
     const url = new URL(req.url, 'http://127.0.0.1');
     res.setHeader('Content-Security-Policy', policy);
@@ -31,6 +31,7 @@ async function main() {
       }
       const file = path.join(root, rel);
       if (fs.existsSync(file) && fs.statSync(file).isFile()) {
+        served.push(rel);
         res.setHeader('Content-Type', rel.endsWith('.css') ? 'text/css' : 'application/javascript');
         return res.end(fs.readFileSync(file));
       }
@@ -61,7 +62,7 @@ async function main() {
     checks.bootstrap = await page.evaluate(() => ['basePath','modePath','themePath','workerPath'].every(k => ace.config.get(k).endsWith('/vendor/ace/')));
     assert.ok(checks.bootstrap);
     async function diagnostics(mode, invalid, valid) {
-      await page.evaluate(({mode,invalid}) => {editor.session.setMode('ace/mode/'+mode);editor.session.setValue(invalid);}, {mode,invalid});
+      await page.evaluate(({mode,invalid}) => {editor.session.clearAnnotations();editor.session.setMode('ace/mode/'+mode);editor.session.setValue(invalid);}, {mode,invalid});
       await page.waitForFunction(() => editor.session.getAnnotations().some(a=>a.type==='error'), null, {timeout:12000});
       const bad = await page.evaluate(()=>editor.session.getAnnotations());
       await page.evaluate(valid => editor.session.setValue(valid),valid);
@@ -79,15 +80,19 @@ async function main() {
     }
     for (const binding of ['vim','emacs']) {
       await page.evaluate(binding=>editor.setKeyboardHandler('ace/keyboard/'+binding),binding);
-      await page.waitForFunction(()=>!!editor.getKeyboardHandler());
+      await page.waitForFunction(binding=>editor.getKeyboardHandler()?.$id==='ace/keyboard/'+binding,binding,{timeout:8000});
     }
     await page.evaluate(()=>{editor.setKeyboardHandler(null);editor.session.setUseWorker(false);});
     checks.worker_disabled = await page.evaluate(()=>editor.session.getUseWorker()===false);
-    checks.requested_workers = requests.filter(u=>/\/worker-(javascript|yaml)\.js$/.test(u)).map(u=>new URL(u).pathname);
+    checks.requested_workers = served.filter(u=>/^worker-(javascript|yaml)\.js$/.test(u));
+    checks.loaded_themes = served.filter(u=>/^theme-(monokai|github)\.js$/.test(u));
+    checks.loaded_keybindings = served.filter(u=>/^keybinding-(vim|emacs)\.js$/.test(u));
     violations.push(...await page.evaluate(()=>window.__violations));
     assert.ok(checks.worker_disabled);
-    assert.ok(checks.requested_workers.some(u=>u.endsWith('/worker-javascript.js')));
-    assert.ok(checks.requested_workers.some(u=>u.endsWith('/worker-yaml.js')));
+    assert.ok(checks.requested_workers.some(u=>u==='worker-javascript.js'));
+    assert.ok(checks.requested_workers.some(u=>u==='worker-yaml.js'));
+    assert.ok(checks.loaded_themes.includes('theme-monokai.js') && checks.loaded_themes.includes('theme-github.js'));
+    assert.ok(checks.loaded_keybindings.includes('keybinding-vim.js') && checks.loaded_keybindings.includes('keybinding-emacs.js'));
     assert.deepEqual(external,[]);
     assert.deepEqual(errors,[]);
     assert.deepEqual(violations.filter(v=>v.disposition==='enforce'),[]);
@@ -98,7 +103,7 @@ async function main() {
   } finally {
     if (browser) await browser.close();
     await new Promise(resolve=>server.close(resolve));
-    fs.writeFileSync(output,JSON.stringify({candidate_only:true,checks,requests,external,errors,violations},null,2)+'\n');
+    fs.writeFileSync(output,JSON.stringify({candidate_only:true,checks,requests,served,external,errors,violations},null,2)+'\n');
     console.log('Candidate diagnostic status:', checks.status);
     // Candidate incompatibility is evidence, not a waiver or a shipped-runtime CI failure.
   }

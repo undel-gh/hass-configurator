@@ -681,9 +681,11 @@
       "name": "HTML5 SAX parser",
       "version": null,
       "ecosystem": null,
-      "license": null,
+      "license": "MIT",
       "status": "partial",
-      "notices": [],
+      "notices": [
+        "third_party/licenses/embedded/html5-reference.txt"
+      ],
       "evidence": [
         {
           "url": "https://github.com/ajaxorg/ace/blob/238b88ed1773005fd2b81eccacf6cf4ef5e7334d/tool/update_deps.js",
@@ -694,6 +696,11 @@
           "url": "https://github.com/ajaxorg/ace/blob/238b88ed1773005fd2b81eccacf6cf4ef5e7334d/lib/ace/mode/html/saxparser.js",
           "git_blob": "fb4d1123da4a5ab4f612cb4efeb41fc238ecfd90",
           "marker": "SAXParser"
+        },
+        {
+          "url": "https://github.com/aredridel/html5/blob/8e64c248da4028452f0a69c58130cbadbc4e3fc6/package.json",
+          "git_blob": "15d31b233863131a889482f15f96f40ee496362f",
+          "marker": "\"version\": \"v1.0.5\""
         }
       ],
       "locations": [
@@ -702,7 +709,7 @@
           "marker": "ace/mode/html/saxparser"
         }
       ],
-      "note": "Upstream project identified via build recipe; exact revision, bundled dependencies and historical license text open.",
+      "note": "Historical upstream 1.0.5 source is MIT (COPYING and package.json), candidate notice preserved; exact Ace fork/revision, Henri Sivonen-derived code, embedded Node shims and license completeness remain unresolved. Do not assert 1.0.5 is exact installed version.",
       "kind": "library"
     },
     {
@@ -713,12 +720,19 @@
       "ecosystem": null,
       "license": null,
       "status": "partial",
-      "notices": [],
+      "notices": [
+        "third_party/licenses/embedded/xmldom-reference.txt"
+      ],
       "evidence": [
         {
           "url": "https://github.com/ajaxorg/ace/blob/238b88ed1773005fd2b81eccacf6cf4ef5e7334d/tool/update_deps.js",
           "git_blob": "d7f44847b6aefe0d9626a4238dee909595f2382b",
           "marker": "iDeBugger/xmldom/master"
+        },
+        {
+          "url": "https://github.com/xmldom/xmldom/blob/f053be7ceb9b1ddcff93c4b36c92dadb4d589986/package.json",
+          "git_blob": "fb14bcebd36ecf1e33e13ed551151fba40e0250e",
+          "marker": "\"version\": \"0.1.19\""
         }
       ],
       "locations": [
@@ -727,7 +741,7 @@
           "marker": "ace/mode/xml/dom-parser"
         }
       ],
-      "note": "Historical fork source mapping; exact version/license (including nested code) open; do not use current @xmldom/xmldom identity.",
+      "note": "Exact iDeBugger fork endpoint no longer resolves (404). Historical parent xmldom 0.1.19 has an MIT/LGPL choice notice (links only), preserved as reference, not a sufficient full license for the fork. Exact fork code/revision, license choice/version and nested notices remain open; no asserted SPDX or exact package version.",
       "kind": "library"
     },
     {
@@ -736,9 +750,11 @@
       "name": "XQLint and generated XQuery/JSONiq lexers",
       "version": null,
       "ecosystem": null,
-      "license": null,
+      "license": "Apache-2.0",
       "status": "partial",
-      "notices": [],
+      "notices": [
+        "third_party/licenses/embedded/xqlint-reference.txt"
+      ],
       "evidence": [
         {
           "url": "https://github.com/ajaxorg/ace/blob/238b88ed1773005fd2b81eccacf6cf4ef5e7334d/lib/ace/mode/xquery_worker.js",
@@ -754,6 +770,11 @@
           "url": "https://github.com/ajaxorg/ace/blob/238b88ed1773005fd2b81eccacf6cf4ef5e7334d/lib/ace/mode/xquery/jsoniq_lexer.js",
           "git_blob": "f123f46fa7bbe78459e8be0861256cab076e0c43",
           "marker": "REx v5.30"
+        },
+        {
+          "url": "https://github.com/wcandillon/xqlint/blob/1778846ed8e707780d791fd3ffb41feccdf9de04/package.json",
+          "git_blob": "e2bd33d8503d86f65a568ecc3b41de7c04e1f668",
+          "marker": "\"version\": \"0.1.5\""
         }
       ],
       "locations": [
@@ -770,7 +791,7 @@
           "marker": "xqlint"
         }
       ],
-      "note": "Generated lexer copyright Gunther Rademacher (1979–2014), source generation date 2014-07-24. XQLint exact release, generator output permissions and nested modules open; large worker marker to be verified by CI.",
+      "note": "Both generated XQueryTokenizer.js and JSONiqTokenizer.js at historical XQLint commit 1778846e (package 0.1.5) are literal full-source substrings of corresponding tagged Ace lexer modules. Apache-2.0 reference license retained; exact full worker version, generated output terms and other nested modules remain open; do not invent a version for the aggregate.",
       "kind": "library"
     },
     {
@@ -898,6 +919,12 @@
       "source_blob": "e067655d694c1341ea3fb268301facb61c645d88",
       "kind": "whole-file"
     },
+    "third_party/licenses/embedded/html5-reference.txt": {
+      "sha256": "a8c81a5ee4e687ab52b210eeefc9ccc157073ea7b02ba3cf9270c955bf920a02",
+      "source": "https://github.com/aredridel/html5/blob/8e64c248da4028452f0a69c58130cbadbc4e3fc6/COPYING",
+      "source_blob": "16e65189257877f5ab15bfb4456a95851e508b2f",
+      "kind": "whole-file"
+    },
     "third_party/licenses/embedded/jquery-easing.txt": {
       "sha256": "e8675bf8fd39f4b1ad13e0c267e2453e1a223c68d6e217634bc59dcb89a97412",
       "source": "https://github.com/gdsmith/jquery.easing/blob/3d2d602f423bb211a5dcd4f17c149ebe5ecadb84/LICENSE",
@@ -1000,6 +1027,18 @@
       "source_blob": "e05282848f44ff346cfd8ba6ebb7aaff0ce9dd68",
       "kind": "whole-file"
     },
+    "third_party/licenses/embedded/xmldom-reference.txt": {
+      "sha256": "16205905d57a91f1cf7e32298f96a511ef8da80446dacb111e1adf6654799e4c",
+      "source": "https://github.com/xmldom/xmldom/blob/f053be7ceb9b1ddcff93c4b36c92dadb4d589986/LICENSE",
+      "source_blob": "68a9b5e1bfce20948e889f58100cdd6b6651f85e",
+      "kind": "whole-file"
+    },
+    "third_party/licenses/embedded/xqlint-reference.txt": {
+      "sha256": "cb5e8e7e5f4a3988e1063c142c60dc2df75605f4c46515e776e3aca6df976e14",
+      "source": "https://github.com/wcandillon/xqlint/blob/1778846ed8e707780d791fd3ffb41feccdf9de04/LICENSE",
+      "source_blob": "e06d2081865a766a8668acc12878f98b27fc9ea0",
+      "kind": "whole-file"
+    },
     "third_party/licenses/embedded/yaml-lint-reference.txt": {
       "sha256": "d03753fc0657312d42bda508aacd675e7552a9668e58db025b141b0087e2edd9",
       "source": "https://github.com/rasshofer/yaml-lint/blob/5d6c0a8a5ce540075c94e6fd09546f7415925469/LICENSE",
@@ -1070,5 +1109,33 @@
   "limitations": [
     "Identified = version/attribution supported by upstream source and shipped marker, not proof of unmodified subcomponent bytes. Partial and restricted entries remain open; no unconditional license clearance.",
     "Source evidence is pinned to Git commits and blob IDs; exact packaged bytes are separately checked by inventory and official archive verification."
+  ],
+  "source_relationships": [
+    {
+      "upstream": {
+        "url": "https://github.com/wcandillon/xqlint/blob/1778846ed8e707780d791fd3ffb41feccdf9de04/lib/lexers/XQueryTokenizer.js",
+        "git_blob": "9ebe64fcd788ffa1af3f82f1cc36596d5968b350",
+        "marker": "REx v5.30"
+      },
+      "container": {
+        "url": "https://github.com/ajaxorg/ace/blob/238b88ed1773005fd2b81eccacf6cf4ef5e7334d/lib/ace/mode/xquery/xquery_lexer.js",
+        "git_blob": "14413843c3ca84366c8c25c30b4d43eee4703572",
+        "marker": "XQueryTokenizer"
+      },
+      "relation": "literal-full-source-substring"
+    },
+    {
+      "upstream": {
+        "url": "https://github.com/wcandillon/xqlint/blob/1778846ed8e707780d791fd3ffb41feccdf9de04/lib/lexers/JSONiqTokenizer.js",
+        "git_blob": "8fcd737b2ec86ccaccdecb4ba2306d18d3027016",
+        "marker": "REx v5.30"
+      },
+      "container": {
+        "url": "https://github.com/ajaxorg/ace/blob/238b88ed1773005fd2b81eccacf6cf4ef5e7334d/lib/ace/mode/xquery/jsoniq_lexer.js",
+        "git_blob": "f123f46fa7bbe78459e8be0861256cab076e0c43",
+        "marker": "JSONiqTokenizer"
+      },
+      "relation": "literal-full-source-substring"
+    }
   ]
 }

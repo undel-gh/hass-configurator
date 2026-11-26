@@ -123,6 +123,9 @@ class SupplyChainTests(unittest.TestCase):
         def missing_worker(doc):
             del doc["worker_review"]["vendor/ace/worker-yaml.js"]
         self.mutate_embedded(missing_worker, "Incomplete Ace worker review")
+        def wrong_relationship(doc):
+            doc["source_relationships"][0]["relation"] = "loosely-normalized"
+        self.mutate_embedded(wrong_relationship, "Unknown embedded source relationship")
 
     def test_embedded_notice_bytes_are_pinned(self):
         self.mutate(lambda root: (root / "third_party/licenses/embedded/jshint-json.txt")

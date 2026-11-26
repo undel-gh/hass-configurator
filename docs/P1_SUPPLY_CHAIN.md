@@ -53,6 +53,7 @@ triage and remediation or a justified dated decision under project policy.
 | js-yaml 4.1.0 | [GHSA-mh29-5h37-fv8m](https://github.com/advisories/GHSA-mh29-5h37-fv8m), [GHSA-h67p-54hq-rp68](https://github.com/advisories/GHSA-h67p-54hq-rp68), [GHSA-52cp-r559-cp3m](https://github.com/advisories/GHSA-52cp-r559-cp3m), [GHSA-5p4m-2wfm-xmqj](https://github.com/advisories/GHSA-5p4m-2wfm-xmqj), [GHSA-2883-xcg3-v3hh](https://github.com/advisories/GHSA-2883-xcg3-v3hh) (CVE-2026-84375): five distinct advisory matches on 4.1.0. The last advisory has a fixed boundary of 4.3.2; select a reviewed compatible release covering all five and re-scan at selection time. See #33. The editor's check_lint invokes jsyaml.load on editable YAML in the main browser thread; file content can be untrusted. Prototype effects and CPU exhaustion need assessment, update to a reviewed fixed compatible build or remove/replace path. Separate remediation, **OPEN / release gate**, no waiver. |
 | Ace 1.9.6 | 2022 build, embedded workers/parsers/third-party snippets may have additional licensing/vulnerabilities not covered by package-level scan. Inspect upstream source and worker contents; specifically identify YAML parser version and advisories. **OPEN**. |
 | Materialize 0.100.2 | [CVE-2022-25349](https://www.cve.org/CVERecord?id=CVE-2022-25349), [GHSA-7jvx-f994-rfw2](https://github.com/advisories/GHSA-7jvx-f994-rfw2), [GHSA-7752-f4gf-94gc](https://github.com/advisories/GHSA-7752-f4gf-94gc), [GHSA-98f7-p5rc-jx67](https://github.com/advisories/GHSA-98f7-p5rc-jx67), [GHSA-rg3q-jxmp-pvjj](https://github.com/advisories/GHSA-rg3q-jxmp-pvjj): four distinct matches, including autocomplete/tooltip XSS paths. See #34 for reachability and remediation. Editor initializes autocomplete using HA data. Strict script CSP and safe sinks reduce exposure, not proof of non-applicability. Review data paths and replace/patch vulnerable component; coordinate #31. **OPEN / release gate**. |
+| Underscore 1.10.2 (Ace JavaScript worker) | [GHSA-cf4h-3jhx-xvhq](https://github.com/advisories/GHSA-cf4h-3jhx-xvhq) and [GHSA-qpx9-hpmf-5gmw](https://github.com/advisories/GHSA-qpx9-hpmf-5gmw), confirmed OSV matches in run #341. Template code execution and recursive DoS require actual reachability analysis; do not claim host RCE. Replacing the old worker may remove this copy. Materialize copied Underscore fragments are separate unknown-version evidence. OPEN, coordinate #33/#34. |
 | jQuery 3.6.0 | Legacy release; check current package advisories and compatibility before upgrade. **OPEN** until scan/review. |
 | GitPython 3.2.1 / gitdb / smmap | Hash locked; [CVE-2026-114145](https://github.com/advisories/GHSA-83vg-56qc-22m7) fixed in 3.2.1 per upstream, other advisories require actual scan. Git privileged routes default off (#7/#27); no broad exemption for enabled Git or older resolver-installed versions. **OPEN** until scan/review. |
 | PyOTP / legacy-cgi | Lock and actual install evidence required. cgi removed in Python 3.13; legacy-cgi is compatibility debt, review lifecycle and replace parser in separate scope rather than silently change HTTP handling. **OPEN** until scan/review. |
@@ -301,3 +302,45 @@ no font-license signoff beyond existing notices/name-table evidence.
   whether original font provenance requires replacement. No blanket risk waiver.
 - Exact-HEAD CI, actual artifact review, independent review and merge decision
   remain pending. PR #32 / #9 not complete; overall P1 still unverified.
+
+## Run #341 completion and Ace upgrade research — 2026-11-26
+
+Exact HEAD `dbf5164a11713da5cdc17bb385be89da144019d7`,
+[run #341](https://github.com/undel-gh/hass-configurator/actions/runs/45878435152): 4/4 SUCCESS,
+149 Python tests; source Chromium 27 passed/1 skipped; wheel/sdist/image each
+6 passed. Source artifact 15145927274 and installed artifact 15146361627
+both downloaded, ZIP CRCs and report contents inspected. 495 inventoried
+files verified per installed variant; Docker lock matches, standalone PyOTP
+resolver difference persists. Both no-cache builds identical:
+`sha256:63765820923bbe8516071c13eab762b9762ab030e991c9e5712e40517a2d7c36`.
+Runtime-attempts report empty. Exact-HEAD OSV completed at
+2026-11-26T18:48:14.991747+00:00: 223 distinct queries / 79 matched,
+npm 3/15, PyPI 2/10, Debian 74/198. Two additional advisory IDs from
+Underscore 1.10.2 (GHSA-cf4h-3jhx-xvhq, GHSA-qpx9-hpmf-5gmw);
+previous js-yaml and Materialize IDs retained. Findings not accepted.
+
+Further attribution: historical XQLint 0.1.5 source commit
+1778846ed8e707780d791fd3ffb41feccdf9de04 includes both generated tokenizer
+files as exact literal full-source substrings in tagged Ace lexer modules;
+new network evidence check verifies the relationship, not just the header.
+Historical Apache-2.0 license included; generator terms and aggregate worker
+version unresolved. HTML5 source 8e64c248 (package v1.0.5) supplies MIT
+COPYING; exact shipped revision and nested source terms remain unresolved.
+The exact iDeBugger XMLDOM fork is unavailable via GitHub (404); historical
+parent xmldom 0.1.19 provides an MIT/LGPL choice notice containing links only.
+Preserve reference, not assert a complete license for the fork. All remain
+partial records. Original font CDN archive still unresolved.
+
+### Candidate Ace 1.45.2 (research only; see ACE_UPGRADE_RESEARCH.md)
+
+Ace 1.10.0 first includes JSHint 2.13.5 (commit 2401fbd), after the upstream
+2.12.0 relicensing boundary. Current candidate Ace 1.45.2 changes worker
+architecture to ace-legacy-linters: source uses Babel parser/scope analysis
+and yaml.parseAllDocuments. Full 495-file Git tree pinned separately from
+current 440-file runtime; all 174 UI-required files present in Git tree.
+CI compares exact npm archive with that tree and records SRI/SHA-256,
+then runs disposable loopback CSP/browser experiment without modifying the
+current package. Candidate exploratory OSV queries are separate from the
+current runtime scan and explicitly mark source-minimum-version hypotheses.
+No auto-promotion; require actual report, independent review, exact bundled
+licenses/versions, #33/#24 regression and real HAOS before migration.

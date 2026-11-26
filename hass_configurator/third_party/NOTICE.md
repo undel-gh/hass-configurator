@@ -68,3 +68,9 @@ HASS Configurator introduction commit 6e3611006c84cf103318a9c4bb5a661e5da73411;
 the previous HTML used Google's online stylesheet. The original CDN archive
 was not recorded. A historical official repository WOFF2 differs. Do not
 claim the original binary origin is fully resolved.
+
+Further historical reference notices: HTML5 parser upstream (MIT, Aria Stewart),
+XQLint (Apache-2.0; both generated lexer source files at the 2014-07-24
+commit are literal subsets of tagged Ace source bundles), and xmldom 0.1.19
+(MIT/LGPL choice links, historical parent only). These references do not
+establish the entire historical fork license/version; retain partial status.

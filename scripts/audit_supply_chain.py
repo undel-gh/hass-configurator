@@ -132,6 +132,14 @@ def validate_embedded(root, inv, vendor, embedded, notice_paths):
         check_git_pin(info["source"], info["source_blob"])
         if info["kind"] not in {"whole-file", "source-excerpt"}:
             raise ValueError("Invalid embedded notice source kind: " + name)
+    for relationship in embedded["source_relationships"]:
+        if relationship["relation"] != "literal-full-source-substring":
+            raise ValueError("Unknown embedded source relationship")
+        for role in ("upstream", "container"):
+            record = relationship[role]
+            check_git_pin(record["url"], record["git_blob"])
+            if not record["marker"]:
+                raise ValueError("Missing source relationship marker")
     font = embedded["font_provenance"]
     check_git_pin(font["source"], font["source_blob"])
     if (font["file"] not in inv["legacy_assets"] or font["status"] != "partial"
@@ -174,6 +182,14 @@ def embedded_upstream_evidence(inv, fetch=None):
         if ((notice["kind"] == "whole-file" and local != raw)
                 or (notice["kind"] == "source-excerpt" and local not in raw)):
             raise ValueError("Embedded upstream license text mismatch: " + path)
+    for relationship in embedded["source_relationships"]:
+        left, right = (relationship[key] for key in ("upstream", "container"))
+        upstream = verified(left["url"], left["git_blob"])
+        container = verified(right["url"], right["git_blob"])
+        if (not upstream or upstream not in container
+                or left["marker"].encode("utf-8") not in upstream
+                or right["marker"].encode("utf-8") not in container):
+            raise ValueError("Embedded source relationship mismatch: " + left["url"])
     font = embedded["font_provenance"]
     original = verified(font["source"], font["source_blob"])
     candidate = font["google_repository_candidate"]
@@ -185,6 +201,7 @@ def embedded_upstream_evidence(inv, fetch=None):
                              for url, raw in sorted(cache.items())],
             "component_records": len(embedded["components"]),
             "notices_verified": len(embedded["notices"]),
+            "literal_source_relationships_verified": len(embedded["source_relationships"]),
             "font_lineage": "repository-byte-match; original CDN archive unresolved",
             "limitations": embedded["limitations"]}
 
