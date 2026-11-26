@@ -14,7 +14,9 @@ Do not merge this checkpoint or close #33/#9 before the migration and gates.
   at or before this version; fresh OSV query gates the candidate. Official npm
   browser member is used unmodified; LICENSE matched to immutable source
   79ca68d90f333fbe6d9e42827527e62636200191. Archive/member SHA-256 and SRI
-  recorded for independent pin review. No claim of release acceptance.
+  recorded in first rehearsal and now pinned (run 45887697858, artifact
+  15149503830). Independent promotion review remains pending. No release
+  acceptance.
 - Prepare only a new disposable overlay outside checkout. Replace both
   editor candidates, regenerate vendor manifest and run actual Configurator
   under existing CSP and routing; retain normal current-runtime CI unchanged.
@@ -29,10 +31,27 @@ Do not merge this checkpoint or close #33/#9 before the migration and gates.
   retain a fixed bounded parser or unify validation without losing diagnostics
   when the Ace worker is disabled.
 
+## Round 1 correction
+
+- Rehearsal runs on every pull_request (no paths filter). The original
+  filter missed transitive inputs; baseline green cannot replace candidate CI.
+- Pin exact js-yaml archive/SRI, member and license hashes from reviewed
+  rehearsal report. Verify overlay vendor closure, manifest and js-yaml bytes
+  before browser tests. Add fail-closed tests for family/missing UI files,
+  OSV match, pinned archive/member/license and overlay tampering.
+- Historical exact HEAD df98b765b3ca4ffea955c171ef92be17d5e25d0c:
+  baseline #344 (45887697769) 4/4 SUCCESS; rehearsal #1 (45887697858)
+  SUCCESS, actual Playwright report 11 passed, no flaky/skipped/failures.
+  All three evidence archives inspected; candidate OSV zero matches for
+  ace-builds 1.45.2 and js-yaml 4.3.2. New HEAD needs fresh CI and evidence.
+- Additional maintainer checkpoint: pre-release 0.7.1 tag points to master
+  196907aa1e37d75adf0bfde7df45c43bcd3d01c0. Distinct from audit checkpoint
+  0.0.4; neither is a public-release security signoff.
+
 ## Remaining acceptance
 
-1. Review exact rehearsal artifacts and CI for both workflows; pin measured
-   js-yaml archive and license before committed promotion.
+1. Confirm correction HEAD CI and artifacts for both workflows; independent
+   review of pin and test changes before committed promotion.
 2. Commit exact Ace family and js-yaml member, update lock/verifier, manifest,
    runtime inventory, embedded component attribution and notices, packaging
    checks, source/installed SBOM and risk register. Do not relabel old

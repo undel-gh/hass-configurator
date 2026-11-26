@@ -1,12 +1,8 @@
 name: Ace migration rehearsal
 on:
+  # Rehearsal depends on transitive scripts, specs and lockfiles; never skip
+  # a pull request because a hand-maintained path list became stale.
   pull_request:
-    paths:
-      - 'scripts/prepare_ace_migration.py'
-      - 'e2e/yaml-migration-probe.cjs'
-      - '.github/workflows/ace-migration-rehearsal.yml'
-      - 'docs/ace-candidate-1.45.2.json'
-      - 'hass_configurator/**'
 permissions:
   contents: read
 jobs:
