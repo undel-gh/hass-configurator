@@ -5,7 +5,7 @@ from pathlib import Path
 import unittest
 
 from hass_configurator.http_routing import PACKAGE_ASSETS
-from scripts.check_offline_artifacts import MANIFEST, ROOT, verify
+from scripts.check_offline_artifacts import MANIFEST, NOTICE_FILES, ROOT, verify
 
 
 class MainHtmlPackageTests(unittest.TestCase):
@@ -14,7 +14,7 @@ class MainHtmlPackageTests(unittest.TestCase):
         package = ROOT / "hass_configurator"
         included = (
             set(MANIFEST["resources"])
-            | set(PACKAGE_ASSETS)
+            | set(PACKAGE_ASSETS) | NOTICE_FILES
             | {"dev.html", "_version.py", "vendor/manifest.json"}
         )
         cls.files = {
@@ -33,6 +33,18 @@ class MainHtmlPackageTests(unittest.TestCase):
         copied = dict(self.files)
         copied.pop("hass_configurator/dev.html")
         with self.assertRaisesRegex(RuntimeError, "missing=.*dev.html"):
+            self.check_files(copied)
+
+    def test_missing_notice_rejected(self):
+        copied = dict(self.files)
+        copied.pop("hass_configurator/third_party/licenses/roboto.txt")
+        with self.assertRaisesRegex(RuntimeError, "missing=.*roboto.txt"):
+            self.check_files(copied)
+
+    def test_modified_notice_rejected(self):
+        copied = dict(self.files)
+        copied["hass_configurator/third_party/licenses/jquery.txt"] += b"tampered"
+        with self.assertRaisesRegex(RuntimeError, "changed=.*jquery.txt"):
             self.check_files(copied)
 
     def test_modified_html_rejected(self):

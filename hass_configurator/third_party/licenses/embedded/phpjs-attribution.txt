@@ -1,0 +1,16 @@
+/*
+  php.js 0.1.0 <http://phpjs.hertzen.com/>
+  Copyright (c) 2013 Niklas von Hertzen
+
+  Released under MIT License
+
+  This file contains:
+  - [var PHP = {Constants:{}};]
+  - src/modules/tokenizer/constants.js
+  - src/parser/lexer.js
+  - src/parser/parser.js
+  - src/parser/yyn.js
+  - src/parser/yyn_stmt.js
+  - src/parser/yyn_expr.js
+  - src/parser/yyn_scalar.js
+*/

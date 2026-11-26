@@ -80,6 +80,7 @@ def build(destination, *, with_ha_api_probe=False,
         src.mkdir()
         shutil.copy2(REPO / "setup.py", src / "setup.py")
         shutil.copy2(REPO / "MANIFEST.in", src / "MANIFEST.in")
+        shutil.copy2(REPO / "LICENSE.txt", src / "LICENSE.txt")
         shutil.copytree(
             PACKAGE, src / "hass_configurator",
             ignore=shutil.ignore_patterns("__pycache__", "*.pyc", "*.pyo"),
