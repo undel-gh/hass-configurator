@@ -1,9 +1,11 @@
 # Requirements and evidence traceability
 
-**Current status (2026-11-14): P0 automated evidence is verified for the
-scoped scenarios below; P1 is NOT VERIFIED.** Historical rows in the lower
-half of this document describe the development state at the time of each
-PR and are not a live release-readiness verdict. See
+**Current status (2026-11-26): P0 automation remains scope-verified and
+real HA OS Ingress HAOS-01…10 plus HAOS-12 are PASS in tested scenarios
+(operator-attested). HAOS-11 is PARTIAL / DEFERRED to #26; complete AT-11
+and the overall P1 release gate are NOT VERIFIED.** Historical checkpoints
+below preserve the *contemporaneous state of their PRs* rather than
+overriding this current acceptance ledger. See
 [the P0 closeout acceptance matrix](P0_CLOSEOUT.md) for the issue-by-issue
 scope, AT-01–AT-10 tests, and external maintainer controls.
 
@@ -32,12 +34,12 @@ scope, AT-01–AT-10 tests, and external maintainer controls.
 | FR-001 | #3, #4 | `e2e/offline-smoke.spec.cjs`, `e2e/offline-dynamic.spec.cjs`, `tests/test_vendored_assets.py` | verified (P0 automated; offline UI/assets) |
 | FR-002 | #3, #6 | `e2e/offline-dynamic.spec.cjs`, `e2e/release-matrix.spec.cjs` | verified (P0 automated; supported modes/workers) |
 | FR-003 | #2, #6 | `e2e/release-matrix.spec.cjs`, `e2e/ingress-operations.spec.cjs`, `tests/test_legacy_contract.py` | verified (P0 automated; safe file round trips) |
-| FR-004 | #7, #8 | `docs/P1_API_SECURITY.md`, `tests/test_api_security.py`, P1 real HA OS #8 | partial (P1 #7 candidate in PR #21; real HA OS #8 pending) |
-| FR-005 | #2, #8 | `e2e/ingress-operations.spec.cjs`, `e2e/offline-smoke.spec.cjs`, `tests/test_ingress_redirect.py` | partial (P0 simulated verified; P1 real Ingress #8 pending) |
-| FR-006 | #6, #8 | `e2e/ha-outage.spec.cjs` | partial (P0 outage verified; P1 real REST/WS #8 pending) |
+| FR-004 | #7, #8 | merged PR #21, `docs/P1_API_SECURITY.md`, `tests/test_api_security.py`; real ingress peer/header evidence in #8 | partial (#7 merged; tested real Ingress trust boundary PASS; further P1 security/release review separate) |
+| FR-005 | #2, #8 | `e2e/ingress-operations.spec.cjs`, `e2e/haos-real.spec.cjs`, `docs/HAOS_REAL_INGRESS.md`, `tests/test_haos_fixture.py`; #8 on-device results | verified (supported real HA OS Ingress routes, headers, cache, sandbox I/O and tested peer ACL; not an all-topology security proof) |
+| FR-006 | #6, #8, #26 | `e2e/ha-outage.spec.cjs`, `scripts/haos_local_api_probe.py`, `tests/test_haos_local_api_probe.py` | partial (WS disconnect fallback verified on real HA OS; live privileged REST/WS and browser observer remain unverified #26) |
 | FR-007 | #1, #6 | `e2e/offline-smoke.spec.cjs`, `docs/runtime-dependencies.json` | verified (P0 automated; no automatic public links) |
-| FR-008 | #2, #5, #6 | `e2e/cache-upgrade.spec.cjs`, `scripts/check_offline_artifacts.py` | partial (P0 warm A→B verified; P1 real upgrade #8 pending) |
-| FR-009 | #2, #8 | `e2e/ha-outage.spec.cjs`, `docs/ARCHITECTURE.md` | partial (P0 optional HA WS outage; P1 live auth/connectivity #8 pending) |
+| FR-008 | #2, #5, #6, #8 | `e2e/cache-upgrade.spec.cjs`, `scripts/check_offline_artifacts.py`, #8 A→B field evidence | verified (supported P0 immutable assets and real HA OS same-profile A→B update; not full image reproducibility) |
+| FR-009 | #2, #8, #26 | `e2e/ha-outage.spec.cjs`, `scripts/haos_local_api_probe.py`, `e2e/haos-real.spec.cjs` | partial (real HA OS simulated WS failure fallback PASS; live Core REST/WS and browser observer #26 NOT VERIFIED) |
 
 ## Nonfunctional requirements
 
@@ -48,10 +50,10 @@ scope, AT-01–AT-10 tests, and external maintainer controls.
 | NFR-003 | #2, #7 | `tests/test_routing.py`, `tests/test_api_security.py`, `hass_configurator/api_security.py` | partial (P0 verified; P1 dir-fd confined operations in PR #21, security review pending) |
 | NFR-004 | #2 | `tests/test_routing.py`, `tests/test_legacy_contract.py`, `tests/test_p0_closeout.py`, `tests/test_api_security.py`, `docs/P1_API_SECURITY.md` | partial (single-header router-owned denial and explicit legacy-response inventory; complete legacy response-writer refactor remains separate) |
 | NFR-005 | #2, #6 | `.github/workflows/offline-foundation.yml`, `e2e/offline-smoke.spec.cjs` | verified (P0 automated; source and installed E2E) |
-| NFR-006 | #7 | `hass_configurator/api_security.py`, `tests/test_api_security.py`, `e2e/security.spec.cjs`, `docs/P1_API_SECURITY.md` | partial (P1 #7 implementation candidate; independent security review and final exact-HEAD CI pending) |
+| NFR-006 | #7, #8 | merged PR #21, `hass_configurator/api_security.py`, `tests/test_api_security.py`, `e2e/security.spec.cjs`, real peer/header checks #8 | partial (#7 merged and real Ingress peer/header scope PASS; other P1 security/release criteria separate) |
 | NFR-007 | #5, #10 | `scripts/check_offline_artifacts.py`, `e2e/version-identity.spec.cjs`, Docker CI | verified (P0 automated; installed artifact identity) |
 | NFR-008 | #14 | `.github/workflows/offline-foundation.yml`, `tests/test_traceability.py`, PR template | partial (P0 CI governance verified; branch required-check settings NOT VERIFIED) |
-| NFR-009 | #2, #5, #6 | `tests/test_routing.py`, `e2e/cache-upgrade.spec.cjs` | partial (P0 immutable/warm verified; P1 real upgrade #8 pending) |
+| NFR-009 | #2, #5, #6, #8 | `tests/test_routing.py`, `e2e/cache-upgrade.spec.cjs`, #8 real warm update | verified (tested immutable asset namespace and same-profile HA OS A→B upgrade; no full OCI image claim) |
 | NFR-010 | #13, #7 | `docs/P1_API_SECURITY.md`, `e2e/security.spec.cjs`, CSP design in `docs/ARCHITECTURE.md` | partial (#7 injection-sink mitigations in review; CSP enforcement #13 pending) |
 | NFR-011 | #1, #3 | `scripts/verify_ace_archive.py`, `tests/test_vendored_assets.py`, `tests/test_p0_closeout.py` | verified (P0 automated; single pinned Ace family) |
 
@@ -62,19 +64,19 @@ scope, AT-01–AT-10 tests, and external maintainer controls.
 | ADR-001 | #1 | `docs/FOUNDATION_IMPLEMENTATION.md`, `docs/ARCHITECTURE.md` | verified (P0 documented scope/compatibility decision) |
 | ADR-002 | #6, #14 | `e2e/offline-smoke.spec.cjs` request-attempt gate | verified (P0 automated; browser external requests) |
 | ADR-003 | #2, #7 | `hass_configurator/http_routing.py`, `tests/test_legacy_contract.py` | partial (P0 permanent exact router; P1 legacy controllers #7 pending) |
-| ADR-004 | #2, #8 | `tests/test_ingress_redirect.py`, `e2e/ingress-operations.spec.cjs` | partial (P0 simulated; P1 real ingress #8 pending) |
-| ADR-005 | #7 | `docs/P1_API_SECURITY.md`, `tests/test_api_security.py`, `hass_configurator/api_security.py` | partial (#7 candidate; review/CI pending) |
+| ADR-004 | #2, #8 | `tests/test_ingress_redirect.py`, `e2e/ingress-operations.spec.cjs`, `haos-fixture/nginx.conf`, `e2e/haos-real.spec.cjs`; #8 live check | verified (tested real Supervisor path/header boundary, 200 canonical slash / 404 without slash, direct app peer 403) |
+| ADR-005 | #7, #8 | merged PR #21, `docs/P1_API_SECURITY.md`, `tests/test_api_security.py`, `hass_configurator/api_security.py` | partial (#7 hardening merged and tested real Ingress trusted-proxy admission PASS; full security release acceptance separate) |
 | ADR-006 | #1, #3 | `docs/ace-builds-1.9.6-lock.json`, `scripts/verify_ace_archive.py` | verified (P0 automated; Ace SRI/closure) |
 | ADR-007 | #14 | PR template, CI, `tests/test_traceability.py` | partial (P0 code/CI contract verified; maintainer branch rules pending / NOT VERIFIED) |
 | ADR-008 | #13 | CSP design in `docs/ARCHITECTURE.md` | pending (P1 CSP) |
-| ADR-009 | #2, #5, #6 | `tests/test_routing.py`, `e2e/cache-upgrade.spec.cjs` | partial (P0 cache/warm verified; P1 real upgrade #8 pending) |
+| ADR-009 | #2, #5, #6, #8 | `tests/test_routing.py`, `e2e/cache-upgrade.spec.cjs`, #8 A→B field evidence | verified (scope: P0 and real HA OS immutable warm upgrade; product image reproducibility not inferred) |
 
 ## Release gates
 
 | Gate | Required scenarios | Verification state |
 | --- | --- | --- |
 | P0 | AT-01–AT-10 (supported low-risk scenarios), simulated Ingress and blocked public Internet | partial: historical CI evidence [#206](https://github.com/undel-gh/hass-configurator/actions/runs/43502177693); consult [closeout PR #20](https://github.com/undel-gh/hass-configurator/pull/20) for exact-HEAD revalidation; maintainer required-check settings NOT VERIFIED |
-| P1 | Real Supervisor Ingress (#8), authenticated privileged API hardening (#7), SBOM/licenses (#9), CSP (#13) | pending; NOT VERIFIED |
+| P1 | Real Supervisor Ingress (#8), Core REST/WS acceptance (#26), authenticated privileged API hardening (#7), SBOM/licenses (#9), CSP (#13) | partial (real Ingress HAOS-01…10/12 operator PASS; HAOS-11 #26 deferred, #9/#13 open; overall P1 NOT VERIFIED) |
 
 For **per-scenario** AT-01–AT-10 status and limitations, see
 [docs/P0_CLOSEOUT.md](P0_CLOSEOUT.md). AT-04 privileged confirmations are
@@ -86,11 +88,38 @@ test container is not evidence of real Supervisor Ingress.
 
 | Requirement | Issue | Implementing PR/commit | Test path | CI run or manual evidence | Status |
 | --- | --- | --- | --- | --- | --- |
-| FR-005 | #2, #8 | PR #17 (P0 simulated) | `e2e/ingress-operations.spec.cjs` | [PR #17](https://github.com/undel-gh/hass-configurator/pull/17) | partial; real #8 pending |
+| FR-005 | #2, #8 | PR #22 source `8ce8ffb1` | `e2e/haos-real.spec.cjs`, `docs/HAOS_REAL_INGRESS.md` | [Issue #8 field evidence](https://github.com/undel-gh/hass-configurator/issues/8), [CI exact source](https://github.com/undel-gh/hass-configurator/actions/runs/45135844692) | verified (tested real Ingress), not full AT-11 |
 
 The PR body must supply its own exact reviewed HEAD and CI run. Closeout
 review must also confirm whether branch protection is enabled; do not infer
 that from the workflow.
+
+## P1 Issue #8 — real Supervisor Ingress field acceptance (scoped PASS)
+
+**Real HA OS evidence (operator-confirmed, 2026-11-23–26):** HA OS 18.3,
+Core 2026.10.1, Supervisor 2026.11.0, Frontend 20260930.3. Reviewed
+**product source** at PR #22 `8ce8ffb1cd579431261329597f7b7ce10baba4b6`;
+[CI 45135844692](https://github.com/undel-gh/hass-configurator/actions/runs/45135844692)
+passed 4/4 jobs on that exact source, but CI used a simulated peer.
+The actual Supervisor app's **deployment-only** A `0.0.1` SHA was
+`c0a7a240`; B `0.0.2` SHA was `66876e42` (same product source;
+B CSS comment drives a new asset digest). See the [versioned per-case
+field ledger](HAOS_REAL_INGRESS.md#5-real-ha-os-acceptanceevidence-ledger--operator-reported-results)
+and [#8 observation chronology](https://github.com/undel-gh/hass-configurator/issues/8).
+No raw Ingress URLs, browser auth state, or HA tokens were published.
+
+| Acceptance | Real-device result / evidence | Scope / remaining limitation |
+| --- | --- | --- |
+| FR-005 / ADR-004 / HAOS-01…10 | **PASS (tested scenarios)**: real authenticated Core → Supervisor Ingress editor, local resources/worker/MIME, `api/prefs` 200/no-store, sandbox upload/download, new-tab prefix and no unwanted public browser fetches; canonical path with trailing `/` = 200 HTML, without `/` = 404 (Core-owned, no redirect). Spoofed `X-Ingress-Path` overwritten and independent `core-ssh` app's direct nginx:8099 request received 403. | Operator-reported live observations and private Playwright suite; not proof of every peer, file size or unused Ace mode. |
+| FR-008 / NFR-009 / ADR-009 / HAOS-12 | **PASS (operator-attested)**: actual in-place Supervisor A→B, same warm Chrome profile, fingerprint changed and updated JS/CSS/fonts/worker/new tab functional; real-HAOS Playwright rerun PASS. | Fresh Playwright context is not warm-cache evidence; same regular browser was used for manual checks. |
+| FR-006 / FR-009 / HAOS-11 | **PARTIAL / DEFERRED [#26](https://github.com/undel-gh/hass-configurator/issues/26)**: simulated browser WS failure fallback verified on real HA OS. | Real server-side Core REST/WS auth/subscribe and independent authenticated browser event observer **not tested**. Admin-scoped probe is reserved for an explicitly authorized disposable HA OS test installation; default fixture stays `homeassistant_api: false`. |
+| AT-11 / Issue #8 | **PARTIAL** — 11 of 12 HAOS cases PASS in tested scopes; linked field audit and review are available. | #26 is an owned *deferral*, not an HAOS-11 PASS or full AT-11 waiver. Full AT-11 and P1 release signoff remain NOT VERIFIED until requirements are explicitly reconciled and accepted. |
+
+**Decision boundary:** complete the documentation-only scoped acceptance review of
+PR #22 without misrepresenting #26 as verified. The Core REST/WS acceptance
+may be finished independently later; meanwhile unrelated offline editor
+P1/P2 development is not blocked. Existing official File Editor
+packaging remains a separate concern.
 
 ## P1 #7 security review follow-up (candidate, not release sign-off)
 
