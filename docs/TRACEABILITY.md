@@ -47,10 +47,10 @@ scope, AT-01–AT-10 tests, and external maintainer controls.
 | --- | --- | --- | --- |
 | NFR-001 | #6, #14 | `e2e/offline-smoke.spec.cjs`, `tests/test_p0_failure_gates.py` | verified (P0 automated; attempted public requests) |
 | NFR-002 | #1, #3, #5, #9 | `docs/ace-builds-1.9.6-lock.json`, `hass_configurator/vendor/manifest.json`, `requirements/docker-runtime.lock` | partial (P0 origin/integrity verified; P1 license/SBOM #9 pending) |
-| NFR-003 | #2, #7 | `tests/test_routing.py`, `tests/test_api_security.py`, `hass_configurator/api_security.py` | partial (P0 verified; P1 dir-fd confined operations in PR #21, security review pending) |
+| NFR-003 | #2, #7, #27 | `tests/test_routing.py`, `tests/test_api_security.py`, `hass_configurator/api_security.py`, `hass_configurator/configurator.py` | partial (dir-fd file controls merged in #7; #27 adds special-file listing denial and scoped Git metadata validation, independent security review pending) |
 | NFR-004 | #2 | `tests/test_routing.py`, `tests/test_legacy_contract.py`, `tests/test_p0_closeout.py`, `tests/test_api_security.py`, `docs/P1_API_SECURITY.md` | partial (single-header router-owned denial and explicit legacy-response inventory; complete legacy response-writer refactor remains separate) |
 | NFR-005 | #2, #6 | `.github/workflows/offline-foundation.yml`, `e2e/offline-smoke.spec.cjs` | verified (P0 automated; source and installed E2E) |
-| NFR-006 | #7, #8 | merged PR #21, `hass_configurator/api_security.py`, `tests/test_api_security.py`, `e2e/security.spec.cjs`, real peer/header checks #8 | partial (#7 merged and real Ingress peer/header scope PASS; other P1 security/release criteria separate) |
+| NFR-006 | #7, #8, #27 | merged PR #21, `hass_configurator/api_security.py`, `tests/test_api_security.py`, `e2e/security.spec.cjs`, real peer/header checks #8 | partial (#7 and tested real Ingress peer/header scope PASS; #27 Git metadata/shell descendant cases pending independent review; remaining P1 release criteria separate) |
 | NFR-007 | #5, #10 | `scripts/check_offline_artifacts.py`, `e2e/version-identity.spec.cjs`, Docker CI | verified (P0 automated; installed artifact identity) |
 | NFR-008 | #14 | `.github/workflows/offline-foundation.yml`, `tests/test_traceability.py`, PR template | partial (P0 CI governance verified; branch required-check settings NOT VERIFIED) |
 | NFR-009 | #2, #5, #6, #8 | `tests/test_routing.py`, `e2e/cache-upgrade.spec.cjs`, #8 real warm update | verified (tested immutable asset namespace and same-profile HA OS A→B upgrade; no full OCI image claim) |
@@ -63,9 +63,9 @@ scope, AT-01–AT-10 tests, and external maintainer controls.
 | --- | --- | --- | --- |
 | ADR-001 | #1 | `docs/FOUNDATION_IMPLEMENTATION.md`, `docs/ARCHITECTURE.md` | verified (P0 documented scope/compatibility decision) |
 | ADR-002 | #6, #14 | `e2e/offline-smoke.spec.cjs` request-attempt gate | verified (P0 automated; browser external requests) |
-| ADR-003 | #2, #7 | `hass_configurator/http_routing.py`, `tests/test_legacy_contract.py` | partial (P0 permanent exact router; P1 legacy controllers #7 pending) |
+| ADR-003 | #2, #7, #27 | `hass_configurator/http_routing.py`, `tests/test_legacy_contract.py`, `tests/test_api_security.py` | partial (permanent router and scoped #7/#27 security guards; legacy response/controller refactor remains separate) |
 | ADR-004 | #2, #8 | `tests/test_ingress_redirect.py`, `e2e/ingress-operations.spec.cjs`, `haos-fixture/nginx.conf`, `e2e/haos-real.spec.cjs`; #8 live check | verified (tested real Supervisor path/header boundary, 200 canonical slash / 404 without slash, direct app peer 403) |
-| ADR-005 | #7, #8 | merged PR #21, `docs/P1_API_SECURITY.md`, `tests/test_api_security.py`, `hass_configurator/api_security.py` | partial (#7 hardening merged and tested real Ingress trusted-proxy admission PASS; full security release acceptance separate) |
+| ADR-005 | #7, #8, #27 | merged PR #21, `docs/P1_API_SECURITY.md`, `tests/test_api_security.py`, `hass_configurator/api_security.py`, `hass_configurator/configurator.py` | partial (#27 Git metadata/FS/shell test-strength candidate; real Ingress trusted-proxy scope PASS, remaining security release acceptance separate) |
 | ADR-006 | #1, #3 | `docs/ace-builds-1.9.6-lock.json`, `scripts/verify_ace_archive.py` | verified (P0 automated; Ace SRI/closure) |
 | ADR-007 | #14 | PR template, CI, `tests/test_traceability.py` | partial (P0 code/CI contract verified; maintainer branch rules pending / NOT VERIFIED) |
 | ADR-008 | #13 | CSP design in `docs/ARCHITECTURE.md` | pending (P1 CSP) |
@@ -120,6 +120,22 @@ PR #22 without misrepresenting #26 as verified. The Core REST/WS acceptance
 may be finished independently later; meanwhile unrelated offline editor
 P1/P2 development is not blocked. Existing official File Editor
 packaging remains a separate concern.
+
+## P1/P2 Issue #27 — incremental FS, Git and shell hardening (PR #28)
+
+**Candidate only — not a release or review signoff.** On top of merged
+#7 and the scoped real-Ingress acceptance #8, this PR narrows opt-in
+GitPython metadata discovery, excludes special files from descriptor-based
+file listings, and adds a *post-timeout descendant-marker* HTTP regression.
+It does **not** grant new privileged capabilities or change default-off
+Git/shell settings.
+
+| Requirement / gate | Candidate implementation | Evidence and limitation |
+| --- | --- | --- |
+| NFR-003 / ADR-003 | `ConfinedFS.scan_dir` omits FIFO/socket/device/symlink entries; `read_bytes` and `write_bytes` retain descriptor-bound type checks | `tests/test_api_security.py` special-file regression; fd-based controls remain scoped to local Linux/Unix semantics |
+| NFR-003 / NFR-006 / ADR-005 | Git root is discovered from ordinary `.git` directories inside BASEPATH; GitPython parent search disabled; `working_dir`, `git_dir`, `common_dir` validated; `safe_init_repo` rejects redirected metadata | Real GitPython normal init/add and symlink rejection over HTTP plus helper tests. **Not a complete Git sandbox**: same-UID TOCTOU, hooks/remotes/config remain privileged |
+| NFR-006 / AT-12 | HTTP shell timeout test rejects a descendant scheduled to write after the 1-second deadline | `test_shell_timeout_prevents_descendant_post_deadline_write`; preserves output-cap/latency tests and current killpg runtime behavior |
+| AT-12 / P1 | Exact PR HEAD CI, security review and documented residual risks | **PENDING** independent review; unrelated CSP #13, HA Core REST/WS #26, supply chain #9 and remaining Issue #23 chores separate |
 
 ## P1 #7 security review follow-up (candidate, not release sign-off)
 
