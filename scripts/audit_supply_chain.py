@@ -37,7 +37,7 @@ def sha(data):
 def read_file(root, name):
     path = PurePosixPath(name)
     if (path.is_absolute() or ".." in path.parts or "\\" in name
-            or path.as_posix() != name or not path.parts):
+            or ":" in name or path.as_posix() != name or not path.parts):
         raise ValueError("Invalid inventory path: " + name)
     target = root / name
     if not target.is_file() or any(p.is_symlink() for p in

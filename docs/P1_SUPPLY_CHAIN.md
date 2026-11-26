@@ -50,9 +50,9 @@ triage and remediation or a justified dated decision under project policy.
 
 | Component / exposure | Evidence and decision |
 | --- | --- |
-| js-yaml 4.1.0 | [GHSA-mh29-5h37-fv8m](https://github.com/advisories/GHSA-mh29-5h37-fv8m), [GHSA-h67p-54hq-rp68](https://github.com/advisories/GHSA-h67p-54hq-rp68), [GHSA-52cp-r559-cp3m](https://github.com/advisories/GHSA-52cp-r559-cp3m), [GHSA-5p4m-2wfm-xmqj](https://github.com/advisories/GHSA-5p4m-2wfm-xmqj): affected upstream versions. The editor's check_lint invokes jsyaml.load on editable YAML in the main browser thread; file content can be untrusted. Prototype effects and CPU exhaustion need assessment, update to a reviewed fixed compatible build or remove/replace path. Separate remediation, **OPEN / release gate**, no waiver. |
+| js-yaml 4.1.0 | [GHSA-mh29-5h37-fv8m](https://github.com/advisories/GHSA-mh29-5h37-fv8m), [GHSA-h67p-54hq-rp68](https://github.com/advisories/GHSA-h67p-54hq-rp68), [GHSA-52cp-r559-cp3m](https://github.com/advisories/GHSA-52cp-r559-cp3m), [GHSA-5p4m-2wfm-xmqj](https://github.com/advisories/GHSA-5p4m-2wfm-xmqj), [GHSA-2883-xcg3-v3hh](https://github.com/advisories/GHSA-2883-xcg3-v3hh) (CVE-2026-84375): five distinct advisory matches on 4.1.0. The last advisory has a fixed boundary of 4.3.2; select a reviewed compatible release covering all five and re-scan at selection time. See #33. The editor's check_lint invokes jsyaml.load on editable YAML in the main browser thread; file content can be untrusted. Prototype effects and CPU exhaustion need assessment, update to a reviewed fixed compatible build or remove/replace path. Separate remediation, **OPEN / release gate**, no waiver. |
 | Ace 1.9.6 | 2022 build, embedded workers/parsers/third-party snippets may have additional licensing/vulnerabilities not covered by package-level scan. Inspect upstream source and worker contents; specifically identify YAML parser version and advisories. **OPEN**. |
-| Materialize 0.100.2 | [CVE-2022-25349](https://www.cve.org/CVERecord?id=CVE-2022-25349), [GHSA-7jvx-f994-rfw2](https://github.com/advisories/GHSA-7jvx-f994-rfw2): autocomplete XSS. Editor initializes autocomplete using HA data. Strict script CSP and safe sinks reduce exposure, not proof of non-applicability. Review data paths and replace/patch vulnerable component; coordinate #31. **OPEN / release gate**. |
+| Materialize 0.100.2 | [CVE-2022-25349](https://www.cve.org/CVERecord?id=CVE-2022-25349), [GHSA-7jvx-f994-rfw2](https://github.com/advisories/GHSA-7jvx-f994-rfw2), [GHSA-7752-f4gf-94gc](https://github.com/advisories/GHSA-7752-f4gf-94gc), [GHSA-98f7-p5rc-jx67](https://github.com/advisories/GHSA-98f7-p5rc-jx67), [GHSA-rg3q-jxmp-pvjj](https://github.com/advisories/GHSA-rg3q-jxmp-pvjj): four distinct matches, including autocomplete/tooltip XSS paths. See #34 for reachability and remediation. Editor initializes autocomplete using HA data. Strict script CSP and safe sinks reduce exposure, not proof of non-applicability. Review data paths and replace/patch vulnerable component; coordinate #31. **OPEN / release gate**. |
 | jQuery 3.6.0 | Legacy release; check current package advisories and compatibility before upgrade. **OPEN** until scan/review. |
 | GitPython 3.2.1 / gitdb / smmap | Hash locked; [CVE-2026-114145](https://github.com/advisories/GHSA-83vg-56qc-22m7) fixed in 3.2.1 per upstream, other advisories require actual scan. Git privileged routes default off (#7/#27); no broad exemption for enabled Git or older resolver-installed versions. **OPEN** until scan/review. |
 | PyOTP / legacy-cgi | Lock and actual install evidence required. cgi removed in Python 3.13; legacy-cgi is compatibility debt, review lifecycle and replace parser in separate scope rather than silently change HTTP handling. **OPEN** until scan/review. |
@@ -81,6 +81,12 @@ python /path/to/checkout/scripts/audit_supply_chain.py installed --label wheel -
 # From checkout (network allowed in CI/audit host only):
 python scripts/audit_supply_chain.py scan --installed /tmp/wheel-installed.json /tmp/sdist-installed.json /tmp/docker-installed.json --output /tmp/osv.json
 ```
+
+Use a fresh checkout for wheel/sdist packaging checks (as CI does). If reusing
+an explicitly disposable local build checkout, remove stale generated
+`*.egg-info/` (especially `SOURCES.txt`) and build outputs before rebuilding.
+A cached setuptools source list can mask a missing `MANIFEST.in` inclusion;
+never infer package completeness from a dirty build.
 
 CI uploads source BOM, legacy archive comparison, font metadata, actual
 wheel/sdist/image install inventories and OSV package/version results.
@@ -137,10 +143,16 @@ These are historical results, not a claim about later HEADs or release acceptanc
 ### Installed and vulnerability evidence
 
 Wheel, sdist and Docker installation verified all 471 inventoried resource/notice
-files. Python dependency license metadata/texts agree with declared licenses;
+files. Python dependency license metadata/texts support the declared licenses;
 project MIT license also present. Docker matched all five lock versions;
 standalone wheel and sdist resolved PyOTP 2.12.1 rather than locked 2.10.0.
-This is explicit resolver drift, not a Docker-lock failure.
+This is explicit resolver drift, not a Docker-lock failure. GitDB 4.0.12
+METADATA uses the generic legacy label `BSD License`; the actual installed
+`.dist-info/LICENSE` contains the three BSD conditions, supporting
+BSD-3-Clause. Its additional notice identifies two GPL-licensed test pack
+fixtures and states they are not included in the distribution. This is a
+statement in the shipped license, not a separately verified wheel-member
+exclusion in this audit.
 
 OSV scan on 2026-11-26: 213 distinct package/version queries; 78 had advisory
 matches. npm: 5 queried, 2 matched (js-yaml 5 IDs, Materialize 4 IDs).
@@ -167,3 +179,30 @@ versions/notice obligations must be resolved. Materialize release build
 includes Hammer, Velocity and Waves code. Top-level licenses and package
 version scans do not establish exhaustive nested attribution or coverage.
 No risk acceptance has been granted by the maintainer. #9 remains open.
+
+## Follow-up CI and independent review — 2026-11-26
+
+Exact source `f17c9bb094a62a5fce8184536154deba16dffcaa`,
+[run #339 / 45870516568](https://github.com/undel-gh/hass-configurator/actions/runs/45870516568):
+4/4 jobs SUCCESS; 141 Python tests, source Chromium 27 passed/1 skipped,
+wheel/sdist/Docker each 6 passed. Two no-cache amd64 builds produced the same
+image ID `sha256:6356cca68f1f7da3033298fd8ff6f5dd8f2c9f571973fbb57c00a77bf6ff21ca`.
+Downloaded source artifact 15141443731 and E2E/installed artifact 15141853575;
+reviewed actual JSON and build provenance. All three exact legacy JS
+relationships passed, font name tables matched, source BOM has 12 unique
+component refs, and 471 inventoried files matched in each installed variant.
+Docker lock matched, wheel/sdist PyOTP 2.12.1 differed from locked 2.10.0.
+OSV report explicitly binds source commit f17c9bb094a62a5fce8184536154deba16dffcaa; scan
+2026-11-26T17:48:56.233139+00:00, 213 queries / 78 matched, same npm/PyPI/Debian
+counts and advisory IDs for npm as initial run. No finding suppression.
+
+Round 1 reviews: reviewer-reported 11/11 tamper scenarios caught, no runtime
+finding. Risk register synchronized with all five js-yaml and four Materialize
+matches; direct path-guard regressions added, including drive-qualified paths
+for portability. Audit tool rejects colon-bearing paths (including Windows
+drive qualifiers and alternate data stream syntax); this does not change
+HTTP/runtime path handling. New exact-HEAD CI required for the follow-up.
+Historical image ID is not expected to equal a new source-epoch build's ID.
+Review approval of the audit implementation is not remediation, complete
+nested license attribution, or release acceptance. #33–#35 remain open;
+no risk acceptance or merge authorization inferred from reviews.

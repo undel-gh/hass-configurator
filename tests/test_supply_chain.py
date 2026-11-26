@@ -7,10 +7,69 @@ import unittest
 
 from scripts.audit_supply_chain import (
     PACKAGE, NOTICE, source_inventory, sbom, query_osv, scan_queries, verify_legacy_relation,
+    read_file,
 )
 
 
 class SupplyChainTests(unittest.TestCase):
+    def test_read_file_accepts_canonical_relative_regular_file(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            (root / "nested").mkdir()
+            (root / "nested" / "data.txt").write_bytes(b"expected")
+            self.assertEqual(read_file(root, "nested/data.txt"), b"expected")
+
+    def test_read_file_rejects_noncanonical_or_escaping_paths(self):
+        with tempfile.TemporaryDirectory() as folder:
+            parent = Path(folder)
+            root = parent / "package"
+            root.mkdir()
+            (root / "nested").mkdir()
+            (root / "nested" / "data.txt").write_bytes(b"inside")
+            outside = parent / "outside.txt"
+            outside.write_bytes(b"outside")
+            for name in (
+                "../outside.txt", "nested/../../outside.txt",
+                outside.as_posix(), "/absolute.txt",
+                "nested/../nested/data.txt", "nested/./data.txt",
+                "./nested/data.txt", "nested//data.txt", "nested/data.txt/",
+                r"nested\data.txt", r"..\outside.txt", "", ".",
+                "C:/outside.txt", "C:outside.txt", "nested/data.txt:stream",
+            ):
+                with self.subTest(name=name):
+                    with self.assertRaisesRegex(ValueError, "Invalid inventory path"):
+                        read_file(root, name)
+
+    def test_read_file_rejects_missing_files_and_directories(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            (root / "directory").mkdir()
+            for name in ("missing.txt", "directory"):
+                with self.subTest(name=name):
+                    with self.assertRaisesRegex(ValueError, "Missing or unsafe inventory file"):
+                        read_file(root, name)
+
+    def test_read_file_rejects_file_and_parent_symlinks(self):
+        with tempfile.TemporaryDirectory() as folder:
+            parent = Path(folder)
+            root = parent / "package"
+            root.mkdir()
+            inside = root / "inside"
+            outside = parent / "outside"
+            for directory in (inside, outside):
+                directory.mkdir()
+                (directory / "data.txt").write_bytes(b"existing")
+            try:
+                (root / "file-link").symlink_to(outside / "data.txt")
+                (root / "dir-link").symlink_to(outside, target_is_directory=True)
+                (root / "inner-link").symlink_to(inside, target_is_directory=True)
+            except (OSError, NotImplementedError) as exc:
+                self.skipTest("Symlink creation not supported: " + str(exc))
+            for name in ("file-link", "dir-link/data.txt", "inner-link/data.txt"):
+                with self.subTest(name=name):
+                    with self.assertRaisesRegex(ValueError, "Missing or unsafe inventory file"):
+                        read_file(root, name)
+
     def test_source_inventory_and_bom(self):
         inv, vendor = source_inventory()
         self.assertEqual(len(inv["components"]), 7)
