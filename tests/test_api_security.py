@@ -322,7 +322,7 @@ class GitMetadataConfinementTests(unittest.TestCase):
                 control = self.repo_dir / ".git"
                 if mode == "pointer":
                     control.write_text("gitdir: " +
-                                       str(self.outside / ".git") + "\\n",
+                                       str(self.outside / ".git") + "\n",
                                        encoding="utf-8")
                 else:
                     control.symlink_to(self.outside, target_is_directory=True)
