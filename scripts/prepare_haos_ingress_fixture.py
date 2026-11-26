@@ -17,7 +17,8 @@ REPO = Path(__file__).resolve().parents[1]
 PACKAGE = REPO / "hass_configurator"
 TEMPLATES = REPO / "haos-fixture"
 REQUIRED_FIRST_PARTY = (
-    "dev.html", "jquery-3.6.0.min.js", "js-yaml.min.js",
+    "dev.html", "ace-bootstrap.js", "ui-handlers.js",
+    "jquery-3.6.0.min.js", "js-yaml.min.js",
     "materialize.min.js", "style.css", "material-icons.fallback.css",
     "flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2",
 )

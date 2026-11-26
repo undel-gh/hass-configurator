@@ -28,6 +28,8 @@ POST_API = frozenset((
 # Transitional aliases remain revalidated for existing clients. New HTML uses
 # versioned paths and no permanent redirect is necessary.
 PACKAGE_ASSETS = {
+    "ace-bootstrap.js": "text/javascript; charset=utf-8",
+    "ui-handlers.js": "text/javascript; charset=utf-8",
     "jquery-3.6.0.min.js": "text/javascript; charset=utf-8",
     "js-yaml.min.js": "text/javascript; charset=utf-8",
     "materialize.min.js": "text/javascript; charset=utf-8",
