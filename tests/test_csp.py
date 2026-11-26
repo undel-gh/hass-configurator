@@ -1,5 +1,8 @@
 """Security policy source construction is strict and independent of HTTP input."""
 import unittest
+from html.parser import HTMLParser
+from pathlib import Path
+import re
 from hass_configurator.csp import configured_websocket, new_nonce, page_headers
 
 
@@ -55,6 +58,47 @@ class CSPTests(unittest.TestCase):
             self.assertNotIn("report-uri", policy)
             self.assertNotIn("report-to", policy)
 
+
+    def test_template_has_no_executable_attributes_and_bindings_are_static(self):
+        class Inventory(HTMLParser):
+            def __init__(self):
+                super().__init__(convert_charrefs=True)
+                self.events = []
+                self.script_attributes = []
+                self.bindings = set()
+                self.javascript_urls = []
+
+            def handle_starttag(self, tag, attrs):
+                data = dict(attrs)
+                if tag == "script":
+                    self.script_attributes.append(data)
+                for name, value in attrs:
+                    if name.startswith("on"):
+                        self.events.append(name)
+                    if name in ("href", "src", "action", "formaction") and value:
+                        if value.strip().lower().startswith("javascript:"):
+                            self.javascript_urls.append(name)
+                    if name in ("data-hc-click", "data-hc-change"):
+                        self.bindings.add((name[8:], value))
+
+        root = Path(__file__).resolve().parents[1] / "hass_configurator"
+        inventory = Inventory()
+        inventory.feed((root / "dev.html").read_text(encoding="utf-8"))
+        self.assertEqual(inventory.events, [])
+        self.assertEqual(inventory.javascript_urls, [])
+        inline = [item for item in inventory.script_attributes if "src" not in item]
+        self.assertTrue(inline)
+        self.assertTrue(all(item.get("nonce") == "$csp_nonce" for item in inline))
+        handlers = (root / "ui-handlers.js").read_text(encoding="utf-8")
+        static = set(re.findall(r"bind\('(click|change)', '(hc-\d+)', function", handlers))
+        self.assertTrue(static)
+        self.assertEqual(inventory.bindings, static)
+        for name in ("ui-handlers.js", "ace-bootstrap.js"):
+            self.assertTrue(any(item.get("src") == "assets/v$asset_version/" + name
+                                for item in inventory.script_attributes))
+        for source in ("dev.html", "ui-handlers.js", "ace-bootstrap.js"):
+            code = (root / source).read_text(encoding="utf-8")
+            self.assertNotRegex(code, r"\b(?:eval\s*\(|new\s+Function\s*\()")
 
 if __name__ == "__main__":
     unittest.main()

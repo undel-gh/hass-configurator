@@ -5,6 +5,8 @@ const path = require('node:path');
 const os = require('node:os');
 const net = require('node:net');
 const { spawn } = require('node:child_process');
+const { createServer } = require('node:http');
+const { createHash } = require('node:crypto');
 
 function port() {
   return new Promise((resolve, reject) => {
@@ -110,6 +112,81 @@ test('HA REST and observer WS unavailable: editor still opens, edits and saves',
     expect(external).toEqual([]);
     expect(scriptErrors).toEqual([]);
   } finally {
+    await stop(proc);
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('configured observer WS performs native loopback handshake; another path is blocked by CSP', async ({ page }) => {
+  test.setTimeout(70000);
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hc-csp-observer-'));
+  const settings = path.join(dir, 'settings.json');
+  const upgraded = [];
+  const sockets = new Set();
+  // Local mock endpoint: this is NOT an HA authentication/protocol acceptance test.
+  const mock = createServer((req, res) => {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end('[]');
+  });
+  mock.on('connection', sock => {
+    sockets.add(sock);
+    sock.on('close', () => sockets.delete(sock));
+    sock.on('error', () => {});
+  });
+  mock.on('upgrade', (req, sock) => {
+    upgraded.push(req.url);
+    const accept = createHash('sha1').update(req.headers['sec-websocket-key'] +
+      '258EAFA5-E914-47DA-95CA-C5AB0DC85B11').digest('base64');
+    sock.write('HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\n' +
+      'Sec-WebSocket-Accept: ' + accept + '\r\n\r\n');
+    sock.on('data', () => {});  // No real auth, tokens or HA data.
+  });
+  let proc;
+  try {
+    await new Promise((resolve, reject) => {
+      mock.once('error', reject);
+      mock.listen(0, '127.0.0.1', resolve);
+    });
+    const mockPort = mock.address().port;
+    const listen = await port();
+    const target = 'http://127.0.0.1:' + listen;
+    const approved = 'ws://127.0.0.1:' + mockPort + '/api/websocket';
+    const denied = 'ws://127.0.0.1:' + mockPort + '/not-approved';
+    fs.writeFileSync(settings, JSON.stringify({
+      HASS_API: 'http://127.0.0.1:' + mockPort + '/api/',
+      HASS_WS_API: approved,
+    }));
+    proc = spawn(process.env.E2E_PYTHON || 'python', [
+      '-m', 'hass_configurator.configurator', settings, '--basepath', dir,
+      '--enforce', '--listen', '127.0.0.1', '--port', String(listen),
+    ], { stdio: 'ignore' });
+    await ready(target, proc);
+    await page.addInitScript(() => {
+      window.__hcConnectEvents = [];
+      document.addEventListener('securitypolicyviolation', e => {
+        if (e.effectiveDirective === 'connect-src') window.__hcConnectEvents.push(e.disposition);
+      });
+    });
+    const doc = await page.goto(target + '/', { waitUntil: 'domcontentloaded' });
+    expect(doc.headers()['content-security-policy']).toContain("connect-src 'self' " + approved + ';');
+    await expect.poll(() => page.evaluate(() => Boolean(window.editor))).toBe(true);
+    await page.evaluate(() => ws_connect());
+    await expect.poll(() => upgraded.slice()).toEqual(['/api/websocket']);
+    await expect.poll(() => page.locator('#ws_events').inputValue()).toContain('Socket connected');
+    expect(await page.evaluate(() => window.__hcConnectEvents)).toEqual([]);
+    // Direct native construction bypasses the readonly UI guard; CSP must
+    // independently prevent a connection to another path on the same host.
+    await page.evaluate(uri => {
+      try {
+        const probe = new WebSocket(uri);
+        probe.addEventListener('error', () => {});
+      } catch { /* Some engines may reject synchronously. */ }
+    }, denied);
+    await expect.poll(() => page.evaluate(() => window.__hcConnectEvents.includes('enforce'))).toBe(true);
+    expect(upgraded).toEqual(['/api/websocket']);
+  } finally {
+    for (const sock of sockets) sock.destroy();
+    if (mock.listening) await new Promise(resolve => mock.close(resolve));
     await stop(proc);
     fs.rmSync(dir, { recursive: true, force: true });
   }

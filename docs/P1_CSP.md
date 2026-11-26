@@ -20,8 +20,16 @@ security co-review. No new HA OS or external service permissions are requested.
   same-origin versioned asset directory. Ace uses a blob-backed worker launcher;
   style injection by Ace and Materialize plus legacy style attributes requires
   a staged CSS migration. Third-party assets are not patched in this change.
-  Vendor code may contain eval-like code paths; supported exercised paths must
-  work with unsafe-eval absent. Unexercised modes/plugins are not certified.
+  The entrypoint lexical inventory (base and extracted first-party scripts,
+  jQuery, js-yaml, Materialize, Ace core, ext-language_tools and worker-yaml)
+  found no direct eval/new Function in the first-party files or jQuery/js-yaml.
+  Materialize contains one new Function in a string callback branch;
+  worker-yaml has two new Function occurrences in bundled JS-function parsing
+  and one Function fallback for global-object detection. Ace core contains the
+  expected blob launcher with importScripts/createObjectURL. This is a lexical
+  scan, not proof that every runtime path is safe. No string callback or eval
+  waiver is added; exercised normal paths must work without unsafe-eval.
+  Unexercised modes/plugins are not certified.
 - Browser HA observer uses the configured `HASS_WS_API` or WS derived from
   `HASS_API`. Server-side REST and the isolated Supervisor probe are not
   browser CSP connections. No app-origin WebSocket endpoint is introduced.
@@ -84,9 +92,9 @@ origin and browser CSP scheme/redirect semantics apply.
 | --- | --- |
 | Headers and nonce | tests/test_routing.py: exact headers, per-response nonce, static cache/API separation, no inline attributes |
 | Source allowlist and injection | tests/test_csp.py: derivation, invalid input, no policy injection; tests/test_api_security.py: bootstrap JSON and untrusted file sandbox |
-| Browser enforcement | e2e/csp.spec.cjs: real editor/handler, script + event denial, report-only style event; no CSP bypass |
+| Browser enforcement | e2e/csp.spec.cjs: real editor/handler, script + event denial, report-only style event, same-origin frame, direct SVG sandbox |
 | Existing UX and worker behavior | e2e/offline-dynamic.spec.cjs, offline-smoke, ingress-operations, release-matrix, Docker/wheel/sdist |
-| Observer | e2e/ha-outage.spec.cjs: configured URI and failed connection do not prevent editing; invalid browser override refused |
+| Observer | e2e/ha-outage.spec.cjs: configured URI and failed connection do not prevent editing; invalid browser override refused; native local mock handshake on approved endpoint and denial on another path (not HA authentication) |
 | Real Supervisor | e2e/haos-real.spec.cjs plus sidebar iframe/new tab, isolated file roundtrip, warm-profile upgrade; pending manual evidence |
 | Acceptance | two independent reviews and exact-HEAD CI; #26 actual Core REST/WS still separate |
 
