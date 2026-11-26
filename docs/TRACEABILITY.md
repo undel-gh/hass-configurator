@@ -54,7 +54,7 @@ scope, AT-01–AT-10 tests, and external maintainer controls.
 | NFR-007 | #5, #10 | `scripts/check_offline_artifacts.py`, `e2e/version-identity.spec.cjs`, Docker CI | verified (P0 automated; installed artifact identity) |
 | NFR-008 | #14 | `.github/workflows/offline-foundation.yml`, `tests/test_traceability.py`, PR template | partial (P0 CI governance verified; branch required-check settings NOT VERIFIED) |
 | NFR-009 | #2, #5, #6, #8 | `tests/test_routing.py`, `e2e/cache-upgrade.spec.cjs`, #8 real warm update | verified (tested immutable asset namespace and same-profile HA OS A→B upgrade; no full OCI image claim) |
-| NFR-010 | #13, #7 | `docs/P1_API_SECURITY.md`, `docs/P1_CSP.md`, `tests/test_csp.py`, `tests/test_routing.py`, `e2e/csp.spec.cjs` | scoped #13 implementation and review/real HAOS PASS; temporary CSS exception accepted with expiry and #31 follow-up; overall release acceptance remains partial |
+| NFR-010 | #13, #7 | `docs/P1_API_SECURITY.md`, `docs/P1_CSP.md`, `tests/test_csp.py`, `tests/test_routing.py`, `e2e/csp.spec.cjs` | partial (scoped #13 implementation and review/real HAOS PASS; temporary CSS exception accepted with expiry and #31 follow-up; overall release acceptance remains partial) |
 | NFR-011 | #1, #3 | `scripts/verify_ace_archive.py`, `tests/test_vendored_assets.py`, `tests/test_p0_closeout.py` | verified (P0 automated; single pinned Ace family) |
 
 ## Architectural decisions
@@ -68,7 +68,7 @@ scope, AT-01–AT-10 tests, and external maintainer controls.
 | ADR-005 | #7, #8, #23, #27 | merged PR #21, PR #28, `docs/P1_API_SECURITY.md`, `tests/test_api_security.py`, `hass_configurator/api_security.py`, `hass_configurator/configurator.py` | partial (#23 strict env and POST framing candidate; #7/#27 security merged, real Ingress trust PASS; broader security acceptance separate) |
 | ADR-006 | #1, #3 | `docs/ace-builds-1.9.6-lock.json`, `scripts/verify_ace_archive.py` | verified (P0 automated; Ace SRI/closure) |
 | ADR-007 | #14 | PR template, CI, `tests/test_traceability.py` | partial (P0 code/CI contract verified; maintainer branch rules pending / NOT VERIFIED) |
-| ADR-008 | #13 | `docs/ARCHITECTURE.md`, `docs/P1_CSP.md`, `hass_configurator/csp.py` | staged decision implemented and exercised in real HAOS; CSS-only exception accepted temporarily, #31 review/expiry 2026-12-31 or first public release if earlier; no unconditional release acceptance |
+| ADR-008 | #13 | `docs/ARCHITECTURE.md`, `docs/P1_CSP.md`, `hass_configurator/csp.py` | partial (staged decision implemented and exercised in real HAOS; CSS-only exception accepted temporarily, #31 review/expiry 2026-12-31 or first public release if earlier; no unconditional release acceptance) |
 | ADR-009 | #2, #5, #6, #8 | `tests/test_routing.py`, `e2e/cache-upgrade.spec.cjs`, #8 A→B field evidence | verified (scope: P0 and real HA OS immutable warm upgrade; product image reproducibility not inferred) |
 
 ## Release gates
@@ -76,7 +76,7 @@ scope, AT-01–AT-10 tests, and external maintainer controls.
 | Gate | Required scenarios | Verification state |
 | --- | --- | --- |
 | P0 | AT-01–AT-10 (supported low-risk scenarios), simulated Ingress and blocked public Internet | partial: historical CI evidence [#206](https://github.com/undel-gh/hass-configurator/actions/runs/43502177693); consult [closeout PR #20](https://github.com/undel-gh/hass-configurator/pull/20) for exact-HEAD revalidation; maintainer required-check settings NOT VERIFIED |
-| P1 | Real Supervisor Ingress (#8), Core REST/WS acceptance (#26), authenticated privileged API hardening (#7), SBOM/licenses (#9), CSP (#13) | partial (real Ingress HAOS-01…10/12 operator PASS; HAOS-11 #26 deferred,  #9/#13 open at checkpoint, #13 scoped field/review acceptance recorded, #31 CSS follow-up open; overall P1 NOT VERIFIED) |
+| P1 | Real Supervisor Ingress (#8), Core REST/WS acceptance (#26), authenticated privileged API hardening (#7), SBOM/licenses (#9), CSP (#13) | partial (real Ingress HAOS-01…10/12 operator PASS; HAOS-11 #26 deferred, #9/#13 open at checkpoint, #13 scoped field/review acceptance recorded, #31 CSS follow-up open; overall P1 NOT VERIFIED) |
 
 For **per-scenario** AT-01–AT-10 status and limitations, see
 [docs/P0_CLOSEOUT.md](P0_CLOSEOUT.md). AT-04 privileged confirmations are
