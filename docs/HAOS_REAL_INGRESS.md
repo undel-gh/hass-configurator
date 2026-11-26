@@ -1,9 +1,28 @@
 # Actual Home Assistant OS Ingress acceptance protocol — Issue #8
 
-**State: NOT YET VERIFIED on an actual HA OS device.** This repository can
-build and smoke-test a disposable app container, but CI does not connect
-browser → Home Assistant Core → Supervisor → local app. No test run from
-a regular Docker container can substitute for the HAOS-01…HAOS-12 evidence.
+**Field acceptance status (2026-11-26): HAOS-01…10 and HAOS-12 PASS in their
+recorded real-device scenarios; HAOS-11 PARTIAL / DEFERRED to [#26](https://github.com/undel-gh/hass-configurator/issues/26).**
+This is **11/12 scoped checks**, not complete AT-11 or full P1 release
+acceptance. Live browser and network tests were performed by the operator on
+an actual HA OS installation; GitHub Actions still exercises a *simulated*
+Supervisor peer. The privileged Core REST/WS success path and authenticated
+browser WS observer have **not** been tested. Do not interpret deferral as
+an HAOS-11 PASS or an unconditional waiver.
+
+**Real-device environment:** HA OS 18.3; Core 2026.10.1; Supervisor
+2026.11.0; Frontend 20260930.3; Chrome (exact build not recorded).
+**Reviewed product source:** PR #22 `8ce8ffb1cd579431261329597f7b7ce10baba4b6`.
+**Source CI:** [run 45135844692](https://github.com/undel-gh/hass-configurator/actions/runs/45135844692),
+4/4 jobs passed on that exact **product-code** SHA (not the real-device
+test result). **Test app A:** `0.0.1` at deployment-only
+`c0a7a2405bdc5a3c3a88a1d8960eeb3abcb3a729`; **B:** `0.0.2` at
+`66876e42108ed7e341f3987d23983071e017e432`, using the *same*
+product source; B modifies app version, fixture provenance and a harmless
+CSS test comment. Vendored manifest SHA-256:
+`f2f35d2c38dc9edec6846bfedded278d7b18cf714b1efbe34a49ca5b102065c1`
+(460 local resources). Evidence is operator-reported and recorded in [#8](https://github.com/undel-gh/hass-configurator/issues/8);
+raw browser session URLs, authenticated storage state, HAR and token-bearing
+screenshots were not retained or published.
 
 **Scope and isolation:** This is a *temporary local test app*, not the official
 Home Assistant File Editor or a production replacement. It mounts no
@@ -36,6 +55,16 @@ Transfer the generated `hc_ingress_validation` directory to your HA OS
 current UI may call it `local_apps`). Reload the local app store, install
 the temporary test app, start it and select **Open Web UI**. Do not replace
 the installed official File Editor.
+
+**Alternative field-tested installation:** before merging draft PR #22, an
+isolated GitHub app repository was published as
+`https://github.com/undel-gh/hass-configurator#haos-ingress-validation`.
+On the test HA OS it was added via **Settings → Apps → Install app → ⋮ →
+Repositories**. Supervisor built and installed A locally from the deployment
+branch; the operator then used Supervisor's *in-place Update* to B. The
+branch is **test deployment packaging, not the reviewed PR source branch
+or a release**. No user file mounts, published host ports or
+`homeassistant_api: true` were enabled.
 
 This fixture uses `ingress: true`, `ingress_stream: true`, internal
 port 8099 and nginx's documented Supervisor-only bridge allowlist
@@ -104,7 +133,15 @@ HAOS_TEST_MUTATIONS=1 npm run test:haos
 The mutation test also requires the fixture-only diagnostic signature before
 uploading. It must never run against the normal File Editor or real HA data.
 
-## 3. Optional HAOS-11: Supervisor-local REST and event observer WS
+## 3. Deferred HAOS-11: Supervisor-local REST and event observer WS
+
+**Status: PARTIAL / DEFERRED to [Issue #26](https://github.com/undel-gh/hass-configurator/issues/26).**
+The real HA OS browser test demonstrated that a *simulated* WebSocket
+connection failure does not prevent local editing; it did **not** establish
+successful real Core REST/WS connectivity or browser observer authentication.
+Do not run the privileged variant on the operator's working HA OS just to
+close the acceptance matrix. The following commands describe a **future**
+test on an explicitly authorized, disposable HA OS environment only.
 
 The default fixture has `homeassistant_api: false`, no Supervisor token in
 the editor and no attempt to contact Core REST/WS. To check actual local HA
@@ -177,34 +214,51 @@ app mechanism, reopen its new Ingress URL, and confirm:
 A fresh Playwright context is **not evidence** of a warm browser cache;
 the same real browser profile is mandatory for HAOS-12.
 
-## 5. Acceptance/evidence ledger — all require actual HA OS observations
+**Real A→B field result: PASS (2026-11-25/26).** The operator updated
+`0.0.1` to `0.0.2` via Supervisor (with an app backup), retaining the
+same normal Chrome profile without clearing its cache and with DevTools
+`Disable cache` off. The 16-hex asset fingerprint changed, and YAML/theme,
+CSS/JS/fonts, Ace worker diagnostics, new-tab and `GET api/prefs`
+(`200`, `Cache-Control: no-store`) continued working. No unwanted
+public-origin CDN fetches were observed; the real-HAOS Playwright suite
+passed again on B after renewing its *private* authenticated browser
+session. An initial Playwright HTTP 401 did not recur, but its exact cause
+was not independently isolated. The test did not demonstrate binary-identical
+container images or prove whether the opaque Ingress token rotated.
 
-| ID | Evidence to record (never record raw session secrets) | Status |
+## 5. Real HA OS acceptance/evidence ledger — operator-reported results
+
+| ID | Real-device result and boundary | Status |
 | --- | --- | --- |
-| HAOS-01 | Fixture provenance SHA, vendor manifest SHA and installed app version | pending |
-| HAOS-02 | Core → Supervisor → fixture page load at opaque prefix, trailing slash behavior | pending |
-| HAOS-03 | JS, CSS, icons, fonts, lazy Ace modes/themes/workers resolve inside prefix | pending |
-| HAOS-04 | YAML worker error appears and clears after correcting YAML | pending |
-| HAOS-05 | Authenticated `/api/prefs` response no-store, no unwanted off-origin requests | pending |
-| HAOS-06 | Open-in-new-tab remains under same ingress prefix | pending |
-| HAOS-07 | File upload/download only in fixture's isolated `/data` root | pending |
-| HAOS-08 | Browser public-origin attempts blocked/zero during cold and warm operation | pending |
-| HAOS-09 | Core-overwritten Ingress path, status-only user-header pass-through observation, nginx stripping and real peer restriction | pending |
-| HAOS-10 | Browser-accepted MIME after Core/Supervisor filtering (not exact header equality) | pending |
-| HAOS-11 | Optional REST and event WS proxy with credential-safe diagnostics; client WS observer & loss fallback separately observed | pending |
-| HAOS-12 | Real Supervisor A→B update in same warm browser profile; digest change and no stale assets | pending |
+| HAOS-01 | A 0.0.1 and B 0.0.2 installed via Supervisor; source and deployment SHAs, manifest and HA OS versions recorded. Exact Chrome build not recorded. | **PASS (scope)** |
+| HAOS-02 | Authenticated Core → Supervisor → editor under canonical opaque `/api/hassio_ingress/<token>/` path: HTTP 200 HTML. Without trailing slash: HTTP **404**, `redirected=false`, plain text; Core 2026.10.1 does not redirect the noncanonical path. Expected Core routing, not an editor error. | **PASS (scope)** |
+| HAOS-03 | Versioned local JS/CSS/fonts/icons, Ace YAML mode, theme and lazy worker load through actual Ingress; does not establish every unused Ace mode. | **PASS (scope)** |
+| HAOS-04 | On a disposable clean YAML document with `Use Worker` enabled, malformed syntax emits an Ace worker error, and correction clears it. Custom HA/ESPHome `!secret` false positives are tracked separately in [#24](https://github.com/undel-gh/hass-configurator/issues/24). | **PASS** |
+| HAOS-05 | Correct iframe context; same-origin `GET api/prefs` returned HTTP 200, `text/json`, `Cache-Control: no-store`. Browser network guard rejects unwanted off-origin attempts on tested paths. | **PASS** |
+| HAOS-06 | Settings → New tab opens under the same opaque Ingress prefix; real-device Playwright and manual checks. | **PASS** |
+| HAOS-07 | Explicit opt-in fixture-signature-guarded upload/download of disposable text file under isolated `/data/hc-ingress-validation` matched byte-for-byte; not a large/binary stress test. | **PASS (scope)** |
+| HAOS-08 | Cold/browser Playwright request guard and same-profile warm B observation revealed no unwanted public CDN-origin attempts on tested paths (browser extensions are outside app scope). | **PASS (scope)** |
+| HAOS-09 | Real-HAOS client-spoofed `X-Ingress-Path` was overwritten by Core; nginx strips identity/forwarded headers before Python. Direct `curl` from an **existing Terminal & SSH (`core-ssh`)** app to fixture internal DNS `:8099/__haos_probe` returned **HTTP 403**, while Supervisor Ingress succeeded. The source peer address was not separately captured; not an exhaustive network-topology proof. Operator's Autossh config has no extra `remote_forwarding`. | **PASS (tested peer)** |
+| HAOS-10 | Browser-accepted MIME families: CSS assertion and functioning scripts, fonts and worker through Supervisor response filtering; exact raw header parity across all families was not independently catalogued. | **PASS (scope)** |
+| HAOS-11 | Real-browser **simulated observer WS failure fallback PASS**. Default app has `homeassistant_api: false`. Actual server-side Supervisor Core REST/event WS auth/subscribe and real browser observer authentication were **not tested**; privileged isolated HA OS work tracked in [#26](https://github.com/undel-gh/hass-configurator/issues/26). | **PARTIAL — DEFERRED #26** |
+| HAOS-12 | Supervisor in-place A→B upgrade, same warm browser profile, changed 16-hex asset digest, healthy updated assets/worker/API/new tab, B Playwright regression PASS. | **PASS (operator-attested)** |
 
-Record HA Core, Supervisor and OS versions, browser version, UTC timestamp,
-fixture SHA/manifest, each HAOS result, any unexpected status/MIME and
-a nonsecret asset-suffix/digest list. Do not upload Playwright
-`storageState`, raw HAR, screenshots with session URLs, internal
-headers, HA entity names or admin credentials.
+**Evidence references:** [Issue #8 field chronology](https://github.com/undel-gh/hass-configurator/issues/8)
+(Playwright 4/4, opt-in upload/download, A→B warm upgrade,
+canonical-slash 200/404 and Terminal & SSH direct-peer 403).
+**Evidence quality:** real-device observations were reported by the operator;
+the public CI does not independently replay their authenticated session.
+No session tokens, full Ingress URLs, Supervisor credentials, raw HAR, or
+unredacted local Playwright reports should be checked in or posted.
 
-Only after real evidence has been reviewed should
-`docs/TRACEABILITY.md` upgrade FR-005/FR-006/FR-009,
-ADR-004 and AT-11. A passing public CI proves the test fixture and
-simulated peer, not an actual Supervisor. Downstream inclusion in the
-official File Editor remains a separate packaging decision.
+Retain date/versions/source and both fixture SHAs with each acceptance
+record. Distinguish **the already verified Core-to-Supervisor Ingress
+boundary** from the **unverified privileged Core REST/WS API integration**
+in FR-005/006/009, ADR-004 and AT-11. AT-11 overall remains **PARTIAL**,
+and P1 release acceptance is **not** implied. An explicitly owned
+deferral to #26 is not a proof of successful HAOS-11. Do not install the
+privileged probe in the working HA OS; downstream inclusion in the official
+File Editor is a separate packaging decision.
 
 ## 6. Cleanup
 
