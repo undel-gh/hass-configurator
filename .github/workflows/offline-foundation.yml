@@ -81,7 +81,7 @@ jobs:
           # Audit-only tooling, not added to the package/image dependencies.
           python -m pip install --disable-pip-version-check fonttools==4.60.1 brotli==1.1.0
           python scripts/audit_supply_chain.py source \
-            --output e2e/artifacts/supply-chain/source.cdx.json --archives /tmp --fonts
+            --output e2e/artifacts/supply-chain/source.cdx.json --archives /tmp --fonts --embedded-upstream
       - name: Routing and loopback HTTP tests
         run: python -m unittest discover -s tests -p 'test_*.py' -v
       - name: Build distribution artifacts and validate vendored payloads

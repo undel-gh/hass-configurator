@@ -22,6 +22,7 @@ except ImportError:  # direct script execution
 ROOT = Path(__file__).resolve().parents[1]
 PACKAGE = ROOT / "hass_configurator"
 NOTICE = "third_party/inventory.json"
+EMBEDDED = "third_party/embedded.json"
 MANIFEST = "vendor/manifest.json"
 OSV = "https://api.osv.dev/v1/querybatch"
 
@@ -51,6 +52,143 @@ def verify_file(root, name, expected):
         raise ValueError("Inventory SHA256 mismatch: " + name)
 
 
+def immutable_raw_url(url):
+    """Only exact public GitHub commit/blob evidence, never mutable tags."""
+    match = re.fullmatch(
+        r"https://github\.com/([A-Za-z0-9_.-]+)/([A-Za-z0-9_.-]+)/blob/"
+        r"([0-9a-f]{40})/([A-Za-z0-9_.\-/]+)", url)
+    if not match:
+        raise ValueError("Non-immutable embedded evidence URL: " + url)
+    owner, repo, commit, filename = match.groups()
+    path = PurePosixPath(filename)
+    if (owner in {".", ".."} or repo in {".", ".."} or path.is_absolute()
+            or ".." in path.parts or path.as_posix() != filename):
+        raise ValueError("Unsafe embedded evidence URL: " + url)
+    return f"https://raw.githubusercontent.com/{owner}/{repo}/{commit}/{filename}"
+
+
+def check_git_pin(url, blob):
+    immutable_raw_url(url)
+    if not re.fullmatch("[0-9a-f]{40}", blob):
+        raise ValueError("Invalid Git blob identity: " + url)
+
+
+def git_blob_sha1(raw):
+    # Git object identity, NOT a SHA-1 digest of bare bytes.
+    return hashlib.sha1(b"blob " + str(len(raw)).encode("ascii") + b"\0" + raw).hexdigest()
+
+
+def validate_embedded(root, inv, vendor, embedded, notice_paths):
+    """Parent ownership remains exclusive; embedded code can share containers."""
+    if embedded["schema"] != 1 or not embedded["components"]:
+        raise ValueError("Missing embedded component inventory")
+    parents = {c["id"]: set(component_files(c, vendor)) for c in inv["components"]}
+    seen, used, mapped = set(), set(), set()
+    for c in embedded["components"]:
+        cid = c["id"]
+        if not re.fullmatch("[a-z0-9-]+", cid) or cid in seen:
+            raise ValueError("Duplicate or invalid embedded component ID: " + cid)
+        seen.add(cid)
+        if c["parent"] not in parents or c["kind"] not in {"library", "review"}:
+            raise ValueError("Invalid embedded parent/kind: " + cid)
+        if c["status"] not in {"identified", "partial", "restricted"} or not c["note"]:
+            raise ValueError("Missing embedded disposition: " + cid)
+        if c["kind"] == "review" and (c["status"] != "partial" or c["ecosystem"] is not None):
+            raise ValueError("Unresolved review must not masquerade as a package: " + cid)
+        if c["status"] in {"identified", "restricted"} and (not c["license"] or not c["notices"]):
+            raise ValueError("Missing embedded license notice: " + cid)
+        if c["ecosystem"] not in {None, "npm"} or (
+                c["ecosystem"] is not None and (not c["version"] or c["kind"] != "library")):
+            raise ValueError("Unsubstantiated embedded package identity: " + cid)
+        if not c["name"] or not c["locations"] or not c["evidence"]:
+            raise ValueError("Missing embedded evidence: " + cid)
+        if len(c["notices"]) != len(set(c["notices"])) or not set(c["notices"]) <= notice_paths:
+            raise ValueError("Unknown/duplicate embedded license notice: " + cid)
+        used.update(c["notices"])
+        for location in c["locations"]:
+            name = location["file"]
+            marker = location["marker"]
+            if name not in parents[c["parent"]] or not marker:
+                raise ValueError("Embedded container does not belong to parent: " + cid)
+            if marker.encode("utf-8") not in read_file(root, name):
+                raise ValueError("Embedded marker missing: " + cid + " / " + name)
+            mapped.add(name)
+        for evidence in c["evidence"]:
+            check_git_pin(evidence["url"], evidence["git_blob"])
+            if not evidence["marker"]:
+                raise ValueError("Missing upstream marker: " + cid)
+    workers = {name for name in vendor["resources"]
+               if re.fullmatch(r"vendor/ace/worker-[^/]+\.js", name)}
+    if set(embedded["worker_review"]) != workers:
+        raise ValueError("Incomplete Ace worker review inventory")
+    for name, row in embedded["worker_review"].items():
+        if row["status"] not in {"component-mapping", "open-review"} or not row["note"]:
+            raise ValueError("Invalid worker review disposition: " + name)
+        if row["status"] == "component-mapping" and name not in mapped:
+            raise ValueError("Worker missing embedded component mapping: " + name)
+    for name, info in embedded["notices"].items():
+        if not name.startswith("third_party/licenses/embedded/"):
+            raise ValueError("Invalid embedded notice path: " + name)
+        check_git_pin(info["source"], info["source_blob"])
+        if info["kind"] not in {"whole-file", "source-excerpt"}:
+            raise ValueError("Invalid embedded notice source kind: " + name)
+    font = embedded["font_provenance"]
+    check_git_pin(font["source"], font["source_blob"])
+    if (font["file"] not in inv["legacy_assets"] or font["status"] != "partial"
+            or git_blob_sha1(read_file(root, font["file"])) != font["source_blob"]):
+        raise ValueError("Legacy font lineage mismatch")
+    candidate = font["google_repository_candidate"]
+    check_git_pin(candidate["url"], candidate["git_blob"])
+    if candidate["relation"] != "different-blob" or candidate["git_blob"] == font["source_blob"]:
+        raise ValueError("Invalid historical font comparison")
+    return used
+
+
+def embedded_upstream_evidence(inv, fetch=None):
+    """Build-time only: pin-check source files, full texts and exact excerpts."""
+    if fetch is None:
+        def fetch(url):
+            with urlopen(url, timeout=25) as response:
+                raw = response.read(8 * 1024 * 1024 + 1)
+            if len(raw) > 8 * 1024 * 1024:
+                raise ValueError("Embedded evidence exceeds size limit")
+            return raw
+    cache = {}
+    def verified(url, blob):
+        check_git_pin(url, blob)
+        if url not in cache:
+            cache[url] = fetch(immutable_raw_url(url))
+        raw = cache[url]
+        if git_blob_sha1(raw) != blob:
+            raise ValueError("Embedded upstream Git blob mismatch: " + url)
+        return raw
+    embedded = inv["embedded"]
+    for item in embedded["components"]:
+        for evidence in item["evidence"]:
+            raw = verified(evidence["url"], evidence["git_blob"])
+            if evidence["marker"].encode("utf-8") not in raw:
+                raise ValueError("Embedded upstream source marker missing: " + item["id"])
+    for path, notice in embedded["notices"].items():
+        raw = verified(notice["source"], notice["source_blob"])
+        local = read_file(PACKAGE, path)
+        if ((notice["kind"] == "whole-file" and local != raw)
+                or (notice["kind"] == "source-excerpt" and local not in raw)):
+            raise ValueError("Embedded upstream license text mismatch: " + path)
+    font = embedded["font_provenance"]
+    original = verified(font["source"], font["source_blob"])
+    candidate = font["google_repository_candidate"]
+    historical = verified(candidate["url"], candidate["git_blob"])
+    if original != read_file(PACKAGE, font["file"]) or original == historical:
+        raise ValueError("Historical font comparison mismatch")
+    return {"source_files": [{"url": url, "git_blob": git_blob_sha1(raw),
+                              "sha256": sha(raw)}
+                             for url, raw in sorted(cache.items())],
+            "component_records": len(embedded["components"]),
+            "notices_verified": len(embedded["notices"]),
+            "font_lineage": "repository-byte-match; original CDN archive unresolved",
+            "limitations": embedded["limitations"]}
+
+
 def source_inventory(root=PACKAGE):
     """Verify exact ownership, notice coverage and bytes; no network."""
     inv = load(root / NOTICE)
@@ -62,7 +200,10 @@ def source_inventory(root=PACKAGE):
         raise ValueError("Unknown vendor manifest schema")
     resources = vendor["resources"]
     legacy = inv["legacy_assets"]
-    notices = inv["license_notices"]
+    embedded = json.loads(read_file(root, EMBEDDED))
+    if set(inv["license_notices"]) & set(embedded["notices"]):
+        raise ValueError("Overlapping embedded notices")
+    notices = {**inv["license_notices"], **embedded["notices"]}
     if set(resources) & set(legacy) or set(resources) & set(notices) or set(legacy) & set(notices):
         raise ValueError("Overlapping resource inventories")
     for path, digest in {**resources, **legacy, **{
@@ -74,7 +215,7 @@ def source_inventory(root=PACKAGE):
         raise ValueError("Untracked or absent vendor resource")
     actual_notices = {p.relative_to(root).as_posix()
                       for p in (root / "third_party").rglob("*") if p.is_file()}
-    if actual_notices != set(notices) | {NOTICE, "third_party/NOTICE.md"}:
+    if actual_notices != set(notices) | {NOTICE, EMBEDDED, "third_party/NOTICE.md"}:
         raise ValueError("Untracked or absent notice")
     expected = set(resources) | set(legacy)
     notice_paths = {name for name in resources if name.startswith("vendor/licenses/")} | set(notices)
@@ -99,8 +240,13 @@ def source_inventory(root=PACKAGE):
         used_notices.update(component["notices"])
         if not set(component["notices"]) <= notice_paths:
             raise ValueError("Unknown license notice")
-    if owned != expected - notice_paths or used_notices != notice_paths:
+    if owned != expected - notice_paths:
         raise ValueError("Incomplete third-party ownership/notice coverage")
+    used_notices.update(validate_embedded(root, inv, vendor, embedded, notice_paths))
+    if used_notices != notice_paths:
+        raise ValueError("Incomplete third-party ownership/notice coverage")
+    inv["embedded"] = embedded
+    inv["license_notices"] = notices
     # Router's explicit first-party boundary must remain synchronized.
     # Import only here; installed evidence never starts the editor.
     from hass_configurator.http_routing import PACKAGE_ASSETS
@@ -168,6 +314,35 @@ def sbom(inv, vendor):
                 c.setdefault("externalReferences", []).append({"type": "distribution", "url": pin["git_url"],
                     "hashes": [{"alg": "SHA-256", "content": pin["git_sha256"]}]})
         components.append(c)
+    embedded_dependencies = {}
+    for item in inv["embedded"]["components"]:
+        if item["kind"] != "library":
+            continue  # Open review records are not fictitious software packages.
+        ref = "embedded:" + item["id"]
+        component = {"type": "library", "bom-ref": ref, "name": item["name"],
+                     "properties": [
+                         property_("hc:embedded:parent", "asset:" + item["parent"]),
+                         property_("hc:attribution-status", item["status"]),
+                         property_("hc:attribution-note", item["note"])]}
+        if item["version"]:
+            component["version"] = item["version"]
+        if item["license"]:
+            component["licenses"] = [{"expression": item["license"]}]
+        if item["ecosystem"] == "npm":
+            component["purl"] = "pkg:npm/" + quote(item["name"], safe="/") + "@" + item["version"]
+        for location in item["locations"]:
+            name = location["file"]
+            digest = vendor["resources"].get(name, inv["legacy_assets"].get(name))
+            component["properties"].append(property_("hc:container:sha256:" + name, digest))
+        for notice in item["notices"]:
+            component["properties"].append(property_("hc:notice", notice))
+        for evidence in item["evidence"]:
+            component["properties"].append(property_("hc:source:git-blob:" + evidence["url"],
+                                                       evidence["git_blob"]))
+        component["externalReferences"] = [{"type": "vcs", "url": url} for url in sorted({
+            evidence["url"] for evidence in item["evidence"]})]
+        components.append(component)
+        embedded_dependencies.setdefault("asset:" + item["parent"], []).append(ref)
     for name, (version, digest) in sorted(read_lock().items()):
         components.append({"type": "library", "bom-ref": "python:" + name,
             "name": name, "version": version, "purl": "pkg:pypi/" + name + "@" + version,
@@ -178,13 +353,16 @@ def sbom(inv, vendor):
             "metadata": {"component": {"type": "application", "bom-ref": "app",
                 "name": "hass-configurator", "version": VERSION,
                 "properties": [property_("hc:scope", "vendored browser assets and locked Python runtime; not full image SBOM"),
-                               property_("hc:completeness", "partial: embedded subcomponents/font release/OS and build tools separate")]}},
+                               property_("hc:completeness", "partial: known embedded libraries included; unresolved version/license review, font origin, OS and build tools separate"),
+                               property_("hc:embedded:review-records", json.dumps([c["id"] for c in inv["embedded"]["components"] if c["kind"] == "review"], sort_keys=True))]}},
             "components": components,
             "dependencies": [{"ref": "app", "dependsOn": [
                 c["bom-ref"] for c in components if c["bom-ref"].startswith("asset:") or
                 c["bom-ref"] in {"python:gitpython", "python:pyotp", "python:legacy-cgi"}]},
                 {"ref": "python:gitpython", "dependsOn": ["python:gitdb"]},
-                {"ref": "python:gitdb", "dependsOn": ["python:smmap"]}]}
+                {"ref": "python:gitdb", "dependsOn": ["python:smmap"]},
+                *[{"ref": ref, "dependsOn": sorted(children)}
+                  for ref, children in sorted(embedded_dependencies.items())]]}
 
 
 def verify_legacy_relation(raw, local, relation, git_raw=None):
@@ -270,7 +448,7 @@ def installed_evidence(label, locked=False, os_packages=False):
         raise ValueError("Audit must inspect a real installed wheel/sdist/image outside checkout")
     inv, vendor = source_inventory()
     paths = set(vendor["resources"]) | set(inv["legacy_assets"]) | set(inv["license_notices"])
-    paths |= {MANIFEST, NOTICE, "third_party/NOTICE.md"}
+    paths |= {MANIFEST, NOTICE, EMBEDDED, "third_party/NOTICE.md"}
     for name in sorted(paths):
         verify_file(installed, name, sha(read_file(PACKAGE, name)))
     distributions = []
@@ -321,6 +499,9 @@ def installed_evidence(label, locked=False, os_packages=False):
 def scan_queries(inv, installed_reports):
     queries = {(c["ecosystem"], c["name"], c["version"])
                for c in inv["components"] if c["ecosystem"] and c["version"]}
+    queries.update((c["ecosystem"], c["name"], c["version"])
+                   for c in inv["embedded"]["components"]
+                   if c["kind"] == "library" and c["ecosystem"] and c["version"])
     queries.update(("PyPI", name, version) for name, (version, _) in read_lock().items())
     for report in installed_reports:
         queries.update(("PyPI", d["name"], d["version"])
@@ -386,6 +567,8 @@ def main():
     source.add_argument("--output", type=Path, required=True)
     source.add_argument("--archives", type=Path)
     source.add_argument("--fonts", action="store_true")
+    source.add_argument("--embedded-upstream", action="store_true",
+                        help="Build-time network check of pinned source evidence and notices")
     installed = sub.add_parser("installed")
     installed.add_argument("--output", type=Path, required=True)
     installed.add_argument("--label", required=True)
@@ -402,6 +585,8 @@ def main():
             write(args.output.with_name("legacy-archive-evidence.json"), legacy_archives(args.archives))
         if args.fonts:
             write(args.output.with_name("font-metadata.json"), font_evidence())
+        if args.embedded_upstream:
+            write(args.output.with_name("embedded-upstream-evidence.json"), embedded_upstream_evidence(inv))
         print("Verified third-party resource/notice coverage and generated source SBOM")
     elif args.command == "installed":
         write(args.output, installed_evidence(args.label, args.locked, args.debian12))
@@ -420,7 +605,8 @@ def main():
             "source_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
             "results": results,
             "limitations": ["Matches by package/version, not exploitability or absence of vulnerabilities.",
-                "Unknown font releases, embedded workers/subcomponents, CPython/CPE and non-package files not covered.",
+                "Known versioned embedded components included; unresolved versions/identity, unknown font releases, CPython/CPE and non-package files not covered.",
+                "A package/version advisory match does not establish impact in modified embedded code.",
                 "Debian source versions queried; OSV ecosystem coverage is not exhaustive.",
                 "Findings require human adjudication; report is not release acceptance."]})
         print("OSV queries:", len(results), "packages with advisories:",

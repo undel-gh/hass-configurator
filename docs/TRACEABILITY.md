@@ -338,3 +338,9 @@ Existing P0 pinned Ace family and runtime origin checks remain unchanged.
 Packaged notice/asset verification, deterministic source BOM, installed
 inventories and OSV results require exact-HEAD evidence and explicit risk
 adjudication. No whole-image or public release acceptance is implied.
+
+The embedded component audit candidate extends NFR-002/011 / ADR-006 evidence
+with `hass_configurator/third_party/embedded.json`, pinned source/notice checks
+and parent-child SBOM links. Historical JSHint JSON license restriction,
+partial nested attribution, font origin and #33–#35 remain open; no overall
+release acceptance. See `docs/P1_SUPPLY_CHAIN.md`.

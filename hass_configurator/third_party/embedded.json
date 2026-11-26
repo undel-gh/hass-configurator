@@ -25,7 +25,8 @@
           "marker": "VERSION=\"2.0.4\""
         }
       ],
-      "note": "Embedded version, not package.json ^2.0.8. Original release license retained."
+      "note": "Embedded version, not package.json ^2.0.8. Original release license retained.",
+      "kind": "library"
     },
     {
       "id": "mat-velocity",
@@ -56,7 +57,8 @@
           "marker": "version: { major: 1, minor: 2, patch: 2 }"
         }
       ],
-      "note": "Header 1.2.3, runtime version 1.2.2; explicitly modified by Materialize. MIT text from 1.2.3; exact version unresolved, no purl. Both candidate versions require review in #34."
+      "note": "Header 1.2.3, runtime version 1.2.2; explicitly modified by Materialize. MIT text from 1.2.3; exact version unresolved, no purl. Both candidate versions require review in #34.",
+      "kind": "library"
     },
     {
       "id": "mat-velocity-shim",
@@ -82,7 +84,8 @@
           "marker": "VelocityJS.org jQuery Shim (1.0.1)"
         }
       ],
-      "note": "Header attribution retained; exact shim distribution and full historical license text unresolved. Do not substitute a modern jQuery notice as proof."
+      "note": "Header attribution retained; exact shim distribution and full historical license text unresolved. Do not substitute a modern jQuery notice as proof.",
+      "kind": "library"
     },
     {
       "id": "mat-easing",
@@ -108,7 +111,8 @@
           "marker": "jQuery Easing v1.4.0"
         }
       ],
-      "note": "Upstream tag license contains both George McGinley Smith and Robert Penner BSD terms, even though its header still says 1.3.1."
+      "note": "Upstream tag license contains both George McGinley Smith and Robert Penner BSD terms, even though its header still says 1.3.1.",
+      "kind": "library"
     },
     {
       "id": "mat-waves",
@@ -134,7 +138,8 @@
           "marker": "Waves v0.6.4"
         }
       ],
-      "note": "Historical package metadata says Waves; npm ecosystem identity not established; no invented purl."
+      "note": "Historical package metadata says Waves; npm ecosystem identity not established; no invented purl.",
+      "kind": "library"
     },
     {
       "id": "mat-pickadate",
@@ -165,7 +170,8 @@
           "marker": "Date picker for pickadate.js v3.5.0"
         }
       ],
-      "note": "Materialize-adapted core/date picker; not an independently installed npm package."
+      "note": "Materialize-adapted core/date picker; not an independently installed npm package.",
+      "kind": "library"
     },
     {
       "id": "mat-clockpicker",
@@ -191,7 +197,8 @@
           "marker": "ClockPicker v0.0.7"
         }
       ],
-      "note": "Modified by Ching Yaw Hao (2015), preserve modification attribution in NOTICE."
+      "note": "Modified by Ching Yaw Hao (2015), preserve modification attribution in NOTICE.",
+      "kind": "library"
     },
     {
       "id": "mat-scrollspy",
@@ -217,7 +224,8 @@
           "marker": "@version 0.1.2"
         }
       ],
-      "note": "Version and copyright in tagged Materialize source; pinned upstream LICENSE agrees with author, original release identity not proven."
+      "note": "Version and copyright in tagged Materialize source; pinned upstream LICENSE agrees with author, original release identity not proven.",
+      "kind": "library"
     },
     {
       "id": "mat-jquery-hammer",
@@ -243,7 +251,8 @@
           "marker": "Hammer.Manager.prototype"
         }
       ],
-      "note": "Source identified; upstream LICENSE is a candidate from immutable commit; exact source revision unresolved."
+      "note": "Source identified; upstream LICENSE is a candidate from immutable commit; exact source revision unresolved.",
+      "kind": "library"
     },
     {
       "id": "mat-raf",
@@ -269,7 +278,8 @@
           "marker": "Copyright (c) 2013 ngryman"
         }
       ],
-      "note": "Tagged source credits Nicolas Gryman and Erik Möller; candidate upstream MIT text retained; exact revision unresolved."
+      "note": "Tagged source credits Nicolas Gryman and Erik Möller; candidate upstream MIT text retained; exact revision unresolved.",
+      "kind": "library"
     },
     {
       "id": "mat-underscore",
@@ -300,7 +310,8 @@
           "marker": "throttle() and getTime() taken from Underscore.js"
         }
       ],
-      "note": "Copied throttle/time fragments, not full library. Exact historic license/copyright revision needs review; include Underscore notice provisionally in next step. Underscore 1.10.2 reference notice is packaged; not a version assertion for the older fragments."
+      "note": "Copied throttle/time fragments, not full library. Exact historic license/copyright revision needs review; include Underscore notice provisionally in next step. Underscore 1.10.2 reference notice is packaged; not a version assertion for the older fragments.",
+      "kind": "library"
     },
     {
       "id": "ace-jshint",
@@ -332,7 +343,8 @@
           "marker": "ace/mode/javascript/jshint"
         }
       ],
-      "note": "Version from Ace history abf1a195211d8b5eded5e5f0449a566b80594b6e; subsequent build changes do not establish relicensing. JSHint source contains historical JSON condition. RELEASE HOLD: verify later relicensing applies to these bytes or replace with reviewed relicensed build; no automatic MIT clearance."
+      "note": "Version from Ace history abf1a195211d8b5eded5e5f0449a566b80594b6e; subsequent build changes do not establish relicensing. JSHint source contains historical JSON condition. RELEASE HOLD: verify later relicensing applies to these bytes or replace with reviewed relicensed build; no automatic MIT clearance.",
+      "kind": "library"
     },
     {
       "id": "ace-underscore",
@@ -358,7 +370,8 @@
           "marker": "VERSION=\"1.10.2\""
         }
       ],
-      "note": "Version explicit in shipped worker; notice from exact upstream tag."
+      "note": "Version explicit in shipped worker; notice from exact upstream tag.",
+      "kind": "library"
     },
     {
       "id": "ace-csslint",
@@ -384,7 +397,8 @@
           "marker": "version=\"1.0.5\""
         }
       ],
-      "note": "Version explicit; full MIT header from exact Ace source. npm distribution identity for this build not assumed."
+      "note": "Version explicit; full MIT header from exact Ace source. npm distribution identity for this build not assumed.",
+      "kind": "library"
     },
     {
       "id": "ace-parserlib",
@@ -410,7 +424,8 @@
           "marker": "parserlib"
         }
       ],
-      "note": "Nested CSSLint parser, version from source build header; full MIT header preserved."
+      "note": "Nested CSSLint parser, version from source build header; full MIT header preserved.",
+      "kind": "library"
     },
     {
       "id": "ace-coffee",
@@ -436,7 +451,8 @@
           "marker": "version:\"2.2.1\""
         }
       ],
-      "note": "Compiler header and shipped version match, original upstream release LICENSE included."
+      "note": "Compiler header and shipped version match, original upstream release LICENSE included.",
+      "kind": "library"
     },
     {
       "id": "ace-luaparse",
@@ -462,7 +478,8 @@
           "marker": "version=\"0.3.1\""
         }
       ],
-      "note": "Version explicit in source and shipped worker; exact release license."
+      "note": "Version explicit in source and shipped worker; exact release license.",
+      "kind": "library"
     },
     {
       "id": "ace-phpjs",
@@ -488,7 +505,8 @@
           "marker": "ace/mode/php/php"
         }
       ],
-      "note": "Header identifies Niklas von Hertzen and version; historical full JS license not yet located. Do not infer PHP tests are shipped."
+      "note": "Header identifies Niklas von Hertzen and version; historical full JS license not yet located. Do not infer PHP tests are shipped.",
+      "kind": "library"
     },
     {
       "id": "ace-json-parser",
@@ -514,7 +532,8 @@
           "marker": "ace/mode/json/json_parse"
         }
       ],
-      "note": "Source date 2008-09-18; explicit public-domain statement and warranty disclaimer, no version or package identity invented."
+      "note": "Source date 2008-09-18; explicit public-domain statement and warranty disclaimer, no version or package identity invented.",
+      "kind": "library"
     },
     {
       "id": "ace-yaml-lint",
@@ -545,7 +564,8 @@
           "marker": "ace/mode/yaml/yaml-lint"
         }
       ],
-      "note": "Adapted callback code resembles upstream 1.2.4 (Promise API). Candidate historical MIT text retained, exact upstream version unresolved."
+      "note": "Adapted callback code resembles upstream 1.2.4 (Promise API). Candidate historical MIT text retained, exact upstream version unresolved.",
+      "kind": "library"
     },
     {
       "id": "ace-yaml-parser",
@@ -571,7 +591,8 @@
           "marker": "safeLoad"
         }
       ],
-      "note": "3.x-style API and loader. Comparisons to 3.11.0, 3.12.0/3.12.2, 3.13.0/3.13.1 not byte-identical. Candidate 3.12.2 LICENSE equals already shipped 4.1.0 LICENSE (same Git blob); no exact version/purl or OSV zero claim. #33 must resolve actual parser risks."
+      "note": "3.x-style API and loader. Comparisons to 3.11.0, 3.12.0/3.12.2, 3.13.0/3.13.1 not byte-identical. Candidate 3.12.2 LICENSE equals already shipped 4.1.0 LICENSE (same Git blob); no exact version/purl or OSV zero claim. #33 must resolve actual parser risks.",
+      "kind": "library"
     },
     {
       "id": "ace-lodash-merge",
@@ -597,7 +618,8 @@
           "marker": "lodash.merge"
         }
       ],
-      "note": "Identified modular Lodash code; reference MIT license from historical 4.17.11, exact module version/copyright mapping still open."
+      "note": "Identified modular Lodash code; reference MIT license from historical 4.17.11, exact module version/copyright mapping still open.",
+      "kind": "library"
     },
     {
       "id": "ace-lodash-clone",
@@ -623,7 +645,8 @@
           "marker": "lodash.clone"
         }
       ],
-      "note": "Identified modular Lodash code; reference MIT license from historical 4.17.11, exact module version/copyright mapping still open."
+      "note": "Identified modular Lodash code; reference MIT license from historical 4.17.11, exact module version/copyright mapping still open.",
+      "kind": "library"
     },
     {
       "id": "ace-lodash-slice",
@@ -649,7 +672,8 @@
           "marker": "lodash.slice"
         }
       ],
-      "note": "Identified modular Lodash code; reference MIT license from historical 4.17.11, exact module version/copyright mapping still open."
+      "note": "Identified modular Lodash code; reference MIT license from historical 4.17.11, exact module version/copyright mapping still open.",
+      "kind": "library"
     },
     {
       "id": "ace-html5",
@@ -678,7 +702,8 @@
           "marker": "ace/mode/html/saxparser"
         }
       ],
-      "note": "Upstream project identified via build recipe; exact revision, bundled dependencies and historical license text open."
+      "note": "Upstream project identified via build recipe; exact revision, bundled dependencies and historical license text open.",
+      "kind": "library"
     },
     {
       "id": "ace-xmldom",
@@ -702,7 +727,8 @@
           "marker": "ace/mode/xml/dom-parser"
         }
       ],
-      "note": "Historical fork source mapping; exact version/license (including nested code) open; do not use current @xmldom/xmldom identity."
+      "note": "Historical fork source mapping; exact version/license (including nested code) open; do not use current @xmldom/xmldom identity.",
+      "kind": "library"
     },
     {
       "id": "ace-xqlint",
@@ -744,7 +770,8 @@
           "marker": "xqlint"
         }
       ],
-      "note": "Generated lexer copyright Gunther Rademacher (1979–2014), source generation date 2014-07-24. XQLint exact release, generator output permissions and nested modules open; large worker marker to be verified by CI."
+      "note": "Generated lexer copyright Gunther Rademacher (1979–2014), source generation date 2014-07-24. XQLint exact release, generator output permissions and nested modules open; large worker marker to be verified by CI.",
+      "kind": "library"
     },
     {
       "id": "ace-browserify-shims",
@@ -782,7 +809,8 @@
           "marker": "process/browser.js"
         }
       ],
-      "note": "Aggregate open discovery record, not a single package. JSHint embeds console-browserify, date-now, assert, inherits, events, object-assign, process, util; HTML parser embeds browserify/Node shims. Exact per-package versions/license texts open; additional nested code may exist."
+      "note": "Aggregate open discovery record, not a single package. JSHint embeds console-browserify, date-now, assert, inherits, events, object-assign, process, util; HTML parser embeds browserify/Node shims. Exact per-package versions/license texts open; additional nested code may exist.",
+      "kind": "review"
     },
     {
       "id": "ace-theme-snippet-attribution",
@@ -808,7 +836,8 @@
           "marker": "ace/theme/monokai"
         }
       ],
-      "note": "Review record, not a claim all themes/snippets derive from this license. Historical tool license expressly allows per-file exceptions. Review theme/snippet upstream copyright and any extension dependencies."
+      "note": "Review record, not a claim all themes/snippets derive from this license. Historical tool license expressly allows per-file exceptions. Review theme/snippet upstream copyright and any extension dependencies.",
+      "kind": "review"
     },
     {
       "id": "jquery-sizzle",
@@ -834,7 +863,8 @@
           "marker": "sizzle"
         }
       ],
-      "note": "Selector engine in exact upstream jQuery build; full Sizzle license included."
+      "note": "Selector engine in exact upstream jQuery build; full Sizzle license included.",
+      "kind": "library"
     }
   ],
   "notices": {

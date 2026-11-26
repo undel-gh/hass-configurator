@@ -206,3 +206,98 @@ Historical image ID is not expected to equal a new source-epoch build's ID.
 Review approval of the audit implementation is not remediation, complete
 nested license attribution, or release acceptance. #33–#35 remain open;
 no risk acceptance or merge authorization inferred from reviews.
+
+## Embedded component and historical font audit (Round 3 candidate)
+
+The audit now maps 30 embedded records: 28 actual library entries and two
+open review records (Browserify shims and themes/snippets). Of the records,
+12 are identified, 17 partial and one restricted. This is a bounded inventory
+of identified code, not exhaustive attribution or a final legal signoff.
+The separate `hass_configurator/third_party/embedded.json` carries pinned
+source commit/blob references, exact container-file markers, notice hashes,
+version evidence and explicit unresolved dispositions. 23 additional full
+license files or marked source excerpts are shipped and hash-checked. The
+source CycloneDX BOM expands from 12 to 40 library components, with parent
+edges for embedded code. Review records are not fictitious libraries. Unknown
+or contradictory versions are not assigned purls; only known ecosystem and
+version identities are added to OSV queries. File hashes on child components
+are explicitly containing-file hashes, not independent package hashes.
+
+The build-time `source --embedded-upstream` check fetches only immutable GitHub
+source references, verifies Git blob identity and literal source markers,
+compares whole notices or exact excerpts, and verifies original font lineage.
+It uploads `embedded-upstream-evidence.json` with SHA-256 and Git blob
+identities; no source archive is executed. Local checks still require no
+network. Existing npm archive closure and installed artifact byte checks
+remain in force. New exact-HEAD CI required; no claimed execution before it.
+
+### Materialize 0.100.2 — nested licenses
+
+Exact tagged JS/source and Grunt concat recipe at
+[9bc43a1](https://github.com/Dogfalo/materialize/tree/9bc43a1199ad5dfb78d58ba47726ab039218a939).
+Hammer runtime 2.0.4 differs from declared ^2.0.8; Velocity header 1.2.3
+conflicts with embedded runtime 1.2.2. The latter and shim 1.0.1 are partial
+records, not version-normalized. Easing 1.4.0 includes both George McGinley
+Smith and Robert Penner BSD notices. Waves 0.6.4, Pickadate 3.5.0, ClockPicker
+0.0.7 (modified 2015), ScrollSpy 0.1.2, jquery.hammer, raf.js and Underscore
+fragments are separately attributed. Historical candidate MIT texts are
+retained for unresolved copies; original exact revision and missing full
+shim text remain open. #34 owns security/path remediation and further
+attribution; top-level MIT alone is not license closure.
+
+### Ace — worker and snippet review
+
+Source [238b88e](https://github.com/ajaxorg/ace/tree/238b88ed1773005fd2b81eccacf6cf4ef5e7334d).
+All 11 shipped worker files have explicit review records; shared base worker
+review is still open. Identified libraries include CSSLint 1.0.5 / Parser-Lib
+1.1.2 (full inline MIT headers), CoffeeScript 2.2.1, luaparse 0.3.1,
+Underscore 1.10.2, php.js 0.1.0 (header only) and JSON.org json_parse
+(public-domain statement, no invented package version). The JSHint version
+2.11.0 comes from [Ace update abf1a195](https://github.com/ajaxorg/ace/commit/abf1a195211d8b5eded5e5f0449a566b80594b6e).
+The exact Ace source still contains the historical JSON condition; upstream
+[JSHint about](https://jshint.com/about/) and its 2020 relicensing process
+state versions before 2.12.0 were partly under that non-free license. Record
+MIT AND JSON, preserve the source header and top-level MIT license. **OPEN /
+public-release HOLD**: establish applicability of subsequent relicensing to
+exact shipped code or replace the worker/Ace with a reviewed relicensed
+build; no implied policy waiver. Merely disabling a worker does not remove
+its distributed bytes. Maintainer decision required. No runtime upgrade in
+this audit PR.
+
+The YAML worker is not the standalone 4.1.0 file. Adapted yaml-lint resembles
+upstream 1.2.4 (callback rather than Promise); loader comparisons with
+js-yaml 3.11.0, 3.12.0, 3.12.2, 3.13.0 and 3.13.1 did not establish an exact
+version. API family 3.x, exact release unresolved, #33. Historical js-yaml
+3.12.2 license blob equals the existing 4.1.0 MIT notice, not proof of
+version. Lodash.merge/clone/slice, HTML5 SAX parser, XMLDOM, XQLint, generated
+REx lexer attribution, Browserify dependencies and theme/snippet licenses
+remain open at finer granularity; do not assign current npm versions to
+historical modified code. jQuery's separately bundled Sizzle 2.3.6 is also
+recorded with its upstream MIT license. No claims about unused upstream
+build/test dependencies being shipped.
+
+### Font provenance
+
+[HASS Configurator commit 6e361100](https://github.com/undel-gh/hass-configurator/commit/6e3611006c84cf103318a9c4bb5a661e5da73411)
+(2019-12-29) introduced the same Material Icons WOFF2 Git blob
+`d9c6038f7c3cb67eda285b7034b0144bf1460519`. Its parent used Google's online
+`fonts.googleapis.com/icon?family=Material+Icons` stylesheet. The historical
+[official Google repository WOFF2](https://github.com/google/material-design-icons/blob/f880f4bd322f55d1fe64aa238e233f719339637b/iconfont/MaterialIcons-Regular.woff2)
+(blob `9fa211252080046a23b2449dbdced6abc2b0bb34`) does not match; earlier
+repository WOFF2 blobs also differ. Repository lineage and font name-table
+metadata are established, but original CDN URL/archive was not recorded.
+No source replacement or guessed CDN version. Roboto exact delivery remains
+verified through the pinned Materialize archive, original standalone font
+release archive still unresolved. Source provenance gap remains explicit;
+no font-license signoff beyond existing notices/name-table evidence.
+
+### Remaining decisions
+
+- Resolve the JSHint historical JSON restriction before public release;
+  retain the actual condition in the meantime. No legal acceptance inferred.
+- Finish exact attribution of partial nested components, including original
+  source notices and version identities for #33/#34, and theme/snippet review.
+- Review new version-bound OSV results, coordinate #33–#35, and decide
+  whether original font provenance requires replacement. No blanket risk waiver.
+- Exact-HEAD CI, actual artifact review, independent review and merge decision
+  remain pending. PR #32 / #9 not complete; overall P1 still unverified.
