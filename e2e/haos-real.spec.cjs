@@ -167,29 +167,83 @@ test('real HA OS: opt-in local Supervisor REST/observer WebSocket probe', async 
   });
 });
 
-test('real HA OS: observer WebSocket failure does not block local editing', async ({ page }) => {
+test('real HA OS: unconfigured observer fails closed without breaking editing', async ({ page }) => {
   test.skip(!enabled, 'Requires local HAOS_INGRESS_URL + HAOS_STORAGE_STATE');
   test.setTimeout(90000);
   await navigatePrivate(page, ingress);
   assertTemporaryFixture(await probeFixture(page));
   await expect.poll(() => page.evaluate(() => Boolean(window.editor))).toBe(true);
-  // Failure injection only. This is NOT a new app WS endpoint; it verifies
-  // that the existing optional client observer's exception path is isolated
-  // from editor operations when an HA observer cannot connect.
+  // The disposable standalone fixture deliberately has no approved WS URL.
+  // The opt-in server-side probe in #26 is a different trust boundary.
   const result = await page.evaluate(() => {
     const original = window.WebSocket;
+    let attempts = 0;
     try {
       window.WebSocket = class {
-        constructor() { throw new Error('test observer disconnected'); }
+        constructor() { attempts++; throw new Error('unexpected observer construction'); }
       };
+      const uri = document.getElementById('ws_uri');
+      uri.value = 'ws://127.0.0.1:1/api/websocket';
       ws_connect();
       editor.setValue('local_edit_survives: true\n', -1);
-      return editor.getValue();
+      return { value: editor.getValue(), attempts, readOnly: uri.readOnly,
+        approved: Boolean(uri.defaultValue), refused: document.getElementById('ws_events').value.includes('No approved') };
     } finally {
       window.WebSocket = original;
     }
   });
-  expect(result).toBe('local_edit_survives: true\n');
+  expect(result).toEqual({ value: 'local_edit_survives: true\n', attempts: 0,
+    readOnly: true, approved: false, refused: true });
+});
+
+test('real HA OS Ingress: CSP survives actual Supervisor and blocks inline execution', async ({ page }) => {
+  test.skip(!enabled, 'Requires local HAOS_INGRESS_URL + HAOS_STORAGE_STATE');
+  test.setTimeout(90000);
+  const guard = await guardBrowser(page);
+  await page.addInitScript(() => {
+    window.__hcCspEvents = [];
+    document.addEventListener('securitypolicyviolation', e => {
+      window.__hcCspEvents.push({ directive: e.effectiveDirective, disposition: e.disposition });
+    });
+  });
+  const response = await navigatePrivate(page, ingress);
+  assertTemporaryFixture(await probeFixture(page));
+  const headers = response.headers();
+  // Never print a policy or nonce in diagnostics.
+  const enforce = headers['content-security-policy'] || '';
+  const report = headers['content-security-policy-report-only'] || '';
+  expect(enforce.includes("script-src 'self' 'nonce-") &&
+    enforce.includes("frame-ancestors 'self';") &&
+    !enforce.includes('unsafe-eval')).toBe(true);
+  expect(report.includes("style-src 'self';")).toBe(true);
+  await expect.poll(() => page.evaluate(() => Boolean(window.editor))).toBe(true);
+  await page.evaluate(() => {
+    const script = document.createElement('script');
+    script.textContent = 'window.__hcInlineRan = true';
+    document.body.appendChild(script);
+    const button = document.createElement('button');
+    button.setAttribute('onclick', 'window.__hcHandlerRan = true');
+    document.body.appendChild(button);
+    button.click();
+    const style = document.createElement('style');
+    style.textContent = '#hc-csp-test { color: red; }';
+    document.head.appendChild(style);
+  });
+  for (const [directive, disposition] of [['script-src-elem', 'enforce'],
+    ['script-src-attr', 'enforce'], ['style-src-elem', 'report']]) {
+    await expect.poll(() => page.evaluate(([d, mode]) =>
+      window.__hcCspEvents.some(e => e.directive === d && e.disposition === mode),
+      [directive, disposition])).toBe(true);
+  }
+  expect(await page.evaluate(() => Boolean(window.__hcInlineRan || window.__hcHandlerRan))).toBe(false);
+  guard.assert();
+  await test.info().attach('haos-csp-redacted.json', {
+    body: Buffer.from(JSON.stringify({
+      source: 'real-haos-supervisor', enforceHeader: true, reportOnlyHeader: true,
+      scriptBlocked: true, handlerBlocked: true, styleReportObserved: true
+    })),
+    contentType: 'application/json',
+  });
 });
 
 test('real HA OS Ingress: full HTML, font, API, route and cache behavior', async ({ page }) => {

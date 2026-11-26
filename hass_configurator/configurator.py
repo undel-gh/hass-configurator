@@ -31,6 +31,9 @@ from string import Template
 from http.server import BaseHTTPRequestHandler
 from hass_configurator.http_routing import Router, Response, error_response, send_response as write_http_response
 from hass_configurator._version import VERSION
+from hass_configurator.csp import (
+    configured_websocket, new_nonce, page_headers, UNTRUSTED_FILE_POLICY,
+)
 from hass_configurator.api_security import ConfinedFS, FileReadLimitExceeded, run_bounded_command
 import urllib.request
 from urllib.parse import urlparse, parse_qs, unquote, quote
@@ -387,6 +390,17 @@ def _js_safe(value):
             .replace("&", r"\u0026")
             .replace("\u2028", r"\u2028").replace("\u2029", r"\u2029"))
 
+def _safe_json_list(value):
+    """HA bootstrap responses are data, not trusted executable JS."""
+    try:
+        decoded = json.loads(value)
+        if not isinstance(decoded, list):
+            return "[]"
+        return _js_safe(json.dumps(decoded, ensure_ascii=True, allow_nan=False))
+    except (ValueError, TypeError, RecursionError):
+        return "[]"
+
+
 def _secure_flag(settings, name, default):
     """Privileged capabilities require an actual JSON/env boolean, not a truthy string."""
     value = settings.get(name, default)
@@ -712,7 +726,8 @@ class RequestHandler(BaseHTTPRequestHandler):
                                     else "text/plain; charset=utf-8")
                     if not (guessed and guessed.startswith("image/")):
                         payload.decode("utf-8")  # Preserve text-editor UTF-8 contract.
-                    headers = (("Cache-Control", "no-store"),)
+                    headers = (("Cache-Control", "no-store"),
+                               ("Content-Security-Policy", UNTRUSTED_FILE_POLICY))
                 else:
                     safe_name = quote(os.path.basename(filename), safe="")
                     content_type = "application/octet-stream"
@@ -720,6 +735,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         ("Cache-Control", "no-store"),
                         ("Content-Disposition",
                          "attachment; filename*=UTF-8''%s" % safe_name),
+                        ("Content-Security-Policy", UNTRUSTED_FILE_POLICY),
                     )
                 response = Response(200, payload, content_type=content_type, headers=headers)
             except FileReadLimitExceeded:
@@ -897,7 +913,11 @@ class RequestHandler(BaseHTTPRequestHandler):
             self.wfile.write(bytes(json.dumps(res), "utf8"))
             return
         elif req.path.endswith('/'):
+            nonce = new_nonce()
+            ws_api = configured_websocket(HASS_API, HASS_WS_API)
             self.send_header('Content-type', 'text/html')
+            for name, value in page_headers(nonce, ws_api):
+                self.send_header(name, value)
             self.end_headers()
 
             loadfile = query.get('loadfile', [None])[0]
@@ -947,23 +967,15 @@ class RequestHandler(BaseHTTPRequestHandler):
                 LOG.warning(err)
 
             color = ""
-            ws_api = ""
-            if HASS_API:
-                protocol, uri = HASS_API.split("//")
-                ws_api = "%s://%swebsocket" % (
-                    "wss" if protocol == 'https' else 'ws', uri
-                )
-            if HASS_WS_API:
-                ws_api = HASS_WS_API
             standalone = ""
             if not HASS_API:
                 standalone = "toggle_hass_panels();"
             try:
                 html = Template(load_file("dev.html", static=True).decode('utf-8'))
                 html = html.safe_substitute(
-                    services=_js_safe(services),
-                    events=_js_safe(events),
-                    states=_js_safe(states),
+                    services=_safe_json_list(services),
+                    events=_safe_json_list(events),
+                    states=_safe_json_list(states),
                     loadfile=loadfile,
                     current=VERSION,
                     versionclass=color,
@@ -978,6 +990,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                     # Never embed server-held HA credentials into HTML/DOM.
                     api_password="",
                     csrf_token=HTTP_ROUTER.security.csrf_token,
+                    csp_nonce=nonce,
                     standalone=standalone,
                     ui_theme=(load_prefs().get('ui_theme', 'auto')
                               if load_prefs().get('ui_theme', 'auto')

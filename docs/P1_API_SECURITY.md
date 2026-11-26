@@ -18,7 +18,7 @@ sign-off**; exact-HEAD CI and independent review still govern #27.
 | Git endpoints | Hooks, remote pushes, branch changes, GitPython invoking external commands | Git disabled by default. HTTP operations require `GIT` plus `ALLOW_GIT_OPERATIONS`. Worktree paths are checked against the configured workspace, including when GitPython searches parent directories. An explicitly enabled repository with malicious hooks is a residual high-risk capability; run with least-privilege OS permissions and review it as an admin operation |
 | Network admin endpoints | Client changes allowed networks, grants global access, locks out operator | `/api/allowed_networks` and `/api/banned_ips` disabled by default; explicit `ALLOW_NETWORK_ADMIN` plus auth/CSRF required. Allowlist/banlist changes are serialized across concurrent HTTP handlers. Removing the final allowlist entry is refused atomically (empty list means allow-all in legacy logic); bans accept individual IPs, not silently ineffective CIDR ranges |
 | Home Assistant control endpoints | Cross-site or browser prefetch calls restart/reload/check-config service actions | Six mutating actions now **POST only**, require `ALLOW_HA_CONTROL`, API authorization and CSRF. Read-only HA REST is still optional; no new application WebSocket endpoint |
-| HTML template, file history, git branches, server errors | Reflected/stored XSS via file name, URL query, HA data or inline JS event attributes; HA token disclosure | Query-sourced JavaScript is JSON-encoded with HTML-script terminator escaping; HA-provided JSON is script-escaped, dynamic filename/error labels use text nodes and event listeners, server-held `HASS_API_PASSWORD` is never rendered into the page. Full CSP and remaining frontend refactor are tracked by #13 |
+| HTML template, file history, git branches, server errors | Reflected/stored XSS via file name, URL query, HA data or inline JS event attributes; HA token disclosure | Query-sourced JavaScript is JSON-encoded with HTML-script terminator escaping; HA-provided JSON is script-escaped, dynamic filename/error labels use text nodes and event listeners, server-held `HASS_API_PASSWORD` is never rendered into the page. Staged CSP tracked by #13; remaining CSS hardening #31 and broader frontend refactor #11 |
 | Reverse proxies / true HA OS Ingress | Forged `X-Ingress-Path`/identity header or unauthenticated backend port | No proxy header grants authorization. Loopback trust is **only** valid when the process is bound directly to loopback and not exposed by an untrusted local forwarder. Validate Supervisor peer, port isolation and Ingress login/session behavior on a real installation under #8 before enabling HA OS access |
 
 ### Default behavior and compatibility
@@ -169,8 +169,10 @@ and complete remaining XSS audit before public release.
   reverse proxy is authenticated by loopback IP: never grant privileges
   from client-controlled forwarded headers. Privileged Core REST/WS
   acceptance remains **DEFERRED / NOT VERIFIED** in #26.
-- **Strict CSP is NOT VERIFIED** (#13). Existing inline handlers/scripts
-  require a separate staged CSP migration and report-only then enforced tests.
+- **Historical #7 checkpoint:** strict CSP was not verified before #13.
+  Current #13 nonce-based script enforcement and real HAOS evidence are
+  recorded in [P1 CSP](P1_CSP.md); strict CSS remains Report-Only with a
+  temporary, explicitly accepted exception tracked by #31.
   This PR reduces specific injection paths; it cannot certify that all XSS
   sinks were found.
 - **GitPython TOCTOU remains an explicit residual risk.** Follow-up #27
@@ -243,7 +245,7 @@ CSRF-protected APIs.
 | --- | --- |
 | NFR-003 filesystem confinement | `hass_configurator/api_security.py`, `tests/test_api_security.py` (prefix/sibling traversal, symlink and descriptor-bound operations) |
 | NFR-006 route auth, CSRF, privileged API | `Router.security` and `RequestHandler._dispatch_route`, `tests/test_api_security.py`, `tests/test_legacy_contract.py` |
-| NFR-010 XSS/CSP | Script-context JSON escaping and frontend safe text sinks in `configurator.py`/`dev.html`; **CSP remains pending #13** |
+| NFR-010 XSS/CSP | Script-context JSON escaping and frontend safe text sinks in `configurator.py`/`dev.html`; **Historical #7 scope**; current #13/#31 status in [P1 CSP](P1_CSP.md) |
 | ADR-003 and ADR-005 | Policy enforced by permanent exact-method Router; `tests/test_routing.py` and socket-level abuse fixtures |
 | ADR-008 | This threat model and #13 staged CSP responsibility |
 | AT-12 | API security abuse suite plus P0 browser/wheel/sdist/Docker regression. **Not fully verified until final PR CI, independent review and real #8/#13 evidence as applicable** |
@@ -251,3 +253,13 @@ CSRF-protected APIs.
 Keep [`docs/TRACEABILITY.md`](TRACEABILITY.md) and the PR body tied to
 the exact reviewed commit and current CI run. Previous #20 P0 evidence is
 a historical baseline, not proof of this security change.
+
+
+### CSP follow-up (#13)
+
+See [P1 CSP policy and evidence](P1_CSP.md). CSP is defense in depth, not a substitute for #7 authorization, CSRF, confinement or safe rendering. Remaining inline scripts require per-response nonces; upstream bootstrap data must be valid JSON, not executable source. Standalone file responses are sandboxed to prevent an editable SVG from becoming an executable same-origin document. No new privilege or trust in forwarded headers is introduced.
+
+The #13 scoped real HAOS checks and independent reviews passed on the reviewed
+runtime/test source; inline CSS only is temporarily accepted by the maintainer
+(2026-11-26) and tracked by #31 with expiry/review 2026-12-31 or first public
+release if earlier. #26 remains separate; no unconditional AT-12/P1 signoff.

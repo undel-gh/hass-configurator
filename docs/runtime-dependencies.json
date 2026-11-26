@@ -34,6 +34,8 @@
     "https://materialdesignicons.com/"
   ],
   "local_assets": [
+    "ace-bootstrap.js",
+    "ui-handlers.js",
     "jquery-3.6.0.min.js",
     "js-yaml.min.js",
     "materialize.min.js",

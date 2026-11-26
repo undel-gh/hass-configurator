@@ -907,6 +907,66 @@ class SecurityLoopbackTests(unittest.TestCase):
         finally:
             target.unlink(missing_ok=True)
 
+    def test_nonce_page_treats_ha_bootstrap_as_json_only(self):
+        # An upstream response embedded in a nonce-bearing script must not
+        # become arbitrary JavaScript merely because it lacks HTML tags.
+        responses = [BytesIO(b"[]; window.hc_attacked = true;"),
+                     BytesIO(b'[{"event":"</script><script>window.hc_attacked=2</script>"}]'),
+                     BytesIO(b"[]")]
+        with patch.object(cfg, "HASS_API", "http://127.0.0.1:8123/api/"), \
+             patch.object(cfg, "HASS_WS_API", "ws://127.0.0.1:8123/api/websocket"), \
+             patch.object(cfg, "HASS_API_PASSWORD", None), \
+             patch("urllib.request.urlopen", side_effect=responses):
+            status, headers, html = http_request(
+                self.server, "GET", "/", headers={"X-Forwarded-Host": "evil.invalid"})
+        self.assertEqual(status, 200)
+        self.assertIn("connect-src 'self' ws://127.0.0.1:8123/api/websocket;",
+                      headers["Content-Security-Policy"])
+        self.assertNotIn("evil.invalid", headers["Content-Security-Policy"])
+        self.assertIn(b'var services_list = [];', html)
+        self.assertIn(b'\\u003c/script\\u003e', html)
+        self.assertNotIn(b'[]; window.hc_attacked = true;', html)
+        self.assertNotIn(b'</script><script>window.hc_attacked', html)
+
+    def test_nonce_page_rejects_non_list_ha_bootstrap_json(self):
+        # Valid JSON is not necessarily a list. Pin the type check separately
+        # from the rejection of malformed JSON/JavaScript.
+        for value in ({"services": []}, "not a list", 1, True, None):
+            with self.subTest(value=value):
+                self.assertEqual(cfg._safe_json_list(json.dumps(value)), "[]")
+        self.assertEqual(json.loads(cfg._safe_json_list('[{"domain":"light"}]')),
+                         [{"domain": "light"}])
+
+        responses = [BytesIO(b'{"services":[]}'),
+                     BytesIO(b'{"events":[]}'),
+                     BytesIO(b"[]")]
+        with patch.object(cfg, "HASS_API", "http://127.0.0.1:8123/api/"), \
+             patch.object(cfg, "HASS_WS_API", None), \
+             patch.object(cfg, "HASS_API_PASSWORD", None), \
+             patch("urllib.request.urlopen", side_effect=responses):
+            status, _, html = http_request(self.server, "GET", "/")
+        self.assertEqual(status, 200)
+        self.assertIn(b"var services_list = [];", html)
+        self.assertIn(b"var events_list = [];", html)
+        self.assertNotIn(b'var services_list = {', html)
+        self.assertNotIn(b'var events_list = {', html)
+
+    def test_editable_svg_cannot_be_an_executable_same_origin_document(self):
+        target = Path(self.workspace.name) / "active.svg"
+        target.write_text('<svg xmlns="http://www.w3.org/2000/svg"><script>window.hc_attacked=1</script></svg>')
+        try:
+            for route in ("/api/file", "/api/download"):
+                with self.subTest(route=route):
+                    status, headers, payload = http_request(
+                        self.server, "GET", route + "?filename=" + quote(str(target), safe=""))
+                    self.assertEqual(status, 200)
+                    self.assertIn("sandbox;", headers["Content-Security-Policy"])
+                    self.assertIn("default-src 'none'", headers["Content-Security-Policy"])
+                    self.assertEqual(headers["X-Content-Type-Options"], "nosniff")
+                    self.assertEqual(payload, target.read_bytes())
+        finally:
+            target.unlink(missing_ok=True)
+
     def test_query_filename_must_not_generate_executable_inline_js(self):
         payload = "'</script><script>window.attacked=1</script>"
         status, headers, html = http_request(
@@ -915,6 +975,27 @@ class SecurityLoopbackTests(unittest.TestCase):
         self.assertIn(b"hc-csrf-token", html)
         self.assertNotIn(b"</script><script>window.attacked", html)
         self.assertIn(b"\\u003c/script\\u003e", html)
+
+    def test_loadfile_json_string_boundary_inside_nonce_script(self):
+        # No HTML delimiters: _js_safe alone cannot turn these into JS data.
+        # The first two inputs are executable statements if json.dumps is
+        # removed; the others cover quote/backslash preservation.
+        for payload in ("'';window.attacked=1;//",
+                        '"";window.attacked=1;//',
+                        '";window.attacked=1;//',
+                        "';window.attacked=1;//",
+                        'quote"\\path\nnext'):
+            with self.subTest(payload=payload):
+                status, headers, html = http_request(
+                    self.server, "GET", "/?loadfile=" + quote(payload, safe=""))
+                self.assertEqual(status, 200)
+                self.assertIn("'nonce-", headers["Content-Security-Policy"])
+                match = re.search(rb"(?m)^\s*var init_loadfile = (.*);$", html)
+                self.assertIsNotNone(match)
+                # Decode the complete literal, not a substring that might
+                # also occur in a raw executable expression.
+                self.assertEqual(json.loads(match.group(1).decode("utf-8")),
+                                 payload)
 
     def test_shell_allowlist_denies_unlisted_executable_before_subprocess(self):
         payload = urlencode({"command": "/bin/sh -c whoami", "timeout": "1"}).encode()
