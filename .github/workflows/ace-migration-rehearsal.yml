@@ -1,0 +1,79 @@
+name: Ace migration rehearsal
+on:
+  pull_request:
+    paths:
+      - 'scripts/prepare_ace_migration.py'
+      - 'e2e/yaml-migration-probe.cjs'
+      - '.github/workflows/ace-migration-rehearsal.yml'
+      - 'docs/ace-candidate-1.45.2.json'
+      - 'hass_configurator/**'
+permissions:
+  contents: read
+jobs:
+  integrated-candidate:
+    name: Ace 1.45.2 / js-yaml 4.3.2 integrated rehearsal (NOT release)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install current application and browser dependencies
+        run: |
+          python -m pip install --disable-pip-version-check -e .
+          cd e2e
+          npm ci --no-audit --no-fund
+          npx playwright install --with-deps chromium
+      - name: Verify candidate archives and create disposable integrated overlay
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/ace-migration-evidence
+          npm view ace-builds@1.45.2 dist.integrity dist.tarball --json > /tmp/ace-registry.json
+          npm view js-yaml@4.3.2 dist.integrity dist.tarball --json > /tmp/yaml-registry.json
+          npm pack ace-builds@1.45.2 js-yaml@4.3.2 --ignore-scripts --silent --pack-destination /tmp
+          python scripts/prepare_ace_migration.py --ace /tmp/ace-builds-1.45.2.tgz \
+            --ace-registry /tmp/ace-registry.json --yaml /tmp/js-yaml-4.3.2.tgz \
+            --yaml-registry /tmp/yaml-registry.json --dest /tmp/hc-ace-migration \
+            --report /tmp/ace-migration-evidence/verified-input.json
+          node e2e/yaml-migration-probe.cjs /tmp/hc-ace-migration/hass_configurator/js-yaml.min.js
+      - name: Run actual Configurator with candidate assets
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/hc-ace-migration-workspace
+          cd /tmp/hc-ace-migration
+          python -c 'from pathlib import Path; import hass_configurator; assert Path(hass_configurator.__file__).resolve().is_relative_to(Path.cwd())'
+          python -m hass_configurator.configurator --standalone --listen 127.0.0.1 --port 3218 \
+            --basepath /tmp/hc-ace-migration-workspace --enforce > /tmp/ace-migration-evidence/configurator.log 2>&1 &
+          echo $! > /tmp/ace-migration.pid
+          for i in $(seq 1 40); do
+            if curl -fsS http://127.0.0.1:3218/api/prefs >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/ace-migration-evidence/configurator.log
+          exit 1
+      - name: Real editor browser compatibility (candidate, simulated Ingress)
+        working-directory: e2e
+        env:
+          EDITOR_URL: http://127.0.0.1:3218
+          E2E_WORKSPACE: /tmp/hc-ace-migration-workspace
+        run: npx playwright test offline-dynamic.spec.cjs release-matrix.spec.cjs csp.spec.cjs --workers=1
+      - name: Stop rehearsal editor
+        if: always()
+        run: |
+          if test -f /tmp/ace-migration.pid; then kill "$(cat /tmp/ace-migration.pid)" || true; fi
+      - name: Retain rehearsal evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ace-migration-rehearsal
+          path: |
+            /tmp/ace-migration-evidence/
+            e2e/playwright-report/
+          if-no-files-found: error
