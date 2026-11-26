@@ -341,15 +341,22 @@ class GitMetadataConfinementTests(unittest.TestCase):
 
     def test_gitpython_metadata_redirect_is_rejected_after_discovery(self):
         from types import SimpleNamespace
-        (self.repo_dir / ".git").mkdir()
-        false_repo = SimpleNamespace(working_dir=str(self.repo_dir),
-                                     git_dir=str(self.outside),
-                                     common_dir=str(self.outside))
-        with patch.object(cfg, "BASEPATH", str(self.workspace)), \
-             patch.object(cfg, "REPO", return_value=false_repo) as factory:
-            with self.assertRaises(PermissionError):
-                cfg.validated_repo(str(self.repo_dir))
-            factory.assert_called_once()
+        control = self.repo_dir / ".git"
+        control.mkdir()
+        # Test each metadata location independently; rejecting git_dir alone
+        # must not hide a missing common_dir safety check.
+        for field in ("git_dir", "common_dir"):
+            false_repo = SimpleNamespace(working_dir=str(self.repo_dir),
+                                         git_dir=str(control),
+                                         common_dir=str(control))
+            setattr(false_repo, field, str(self.outside))
+            with self.subTest(field=field), \
+                 patch.object(cfg, "BASEPATH", str(self.workspace)), \
+                 patch.object(cfg, "REPO", return_value=false_repo) as factory:
+                with self.assertRaises(PermissionError):
+                    cfg.validated_repo(str(self.repo_dir))
+                factory.assert_called_once()
+
 
 
 def http_request(server, method, path, data=None, headers=None):

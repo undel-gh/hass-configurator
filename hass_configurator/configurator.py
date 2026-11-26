@@ -456,6 +456,7 @@ def safe_init_repo(path):
     repo = REPO.init(checked)
     return _verify_git_metadata(repo, fs, checked)
 
+
 def get_dircontent(path, repo=None):
     """Get content of directory."""
     dircontent = []
