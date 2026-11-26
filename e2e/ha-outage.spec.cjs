@@ -71,6 +71,18 @@ test('HA REST and observer WS unavailable: editor still opens, edits and saves',
     expect(documentResponse.status()).toBe(200);
     await expect.poll(() => page.evaluate(() => Boolean(window.editor))).toBe(true);
     await expect(page.locator('#ws_uri')).toHaveValue(socket);
+    expect(documentResponse.headers()['content-security-policy']).toContain("connect-src 'self' " + socket + ';');
+    await expect(page.locator('#ws_uri')).not.toBeEditable();
+    const refused = await page.evaluate(() => {
+      const uri = document.getElementById('ws_uri');
+      const approved = uri.defaultValue;
+      uri.value = 'ws://127.0.0.1:1/unapproved';
+      ws_connect();
+      const rejected = document.getElementById('ws_events').value.includes('No approved');
+      uri.value = approved;
+      return rejected;
+    });
+    expect(refused).toBe(true);
     // A refused WS handshake may never produce a Playwright "websocket"
     // event, so assert attempted construction directly while preserving the
     // browser's real native WebSocket connection/close behavior.

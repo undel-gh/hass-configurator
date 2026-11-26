@@ -174,12 +174,12 @@ class ServerTests(unittest.TestCase):
         self.assertNotIn("report-uri", reports[0])
         self.assertNotIn("report-to", reports[0])
         self.assertIn("style-src 'self';", reports[0])
-        scripts = re.findall(rb"<script\\b([^>]*)>", html, re.I)
+        scripts = re.findall(rb"<script\b([^>]*)>", html, re.I)
         inline = [attrs for attrs in scripts if b"src=" not in attrs]
         self.assertTrue(inline)
         for attrs in inline:
             self.assertIn(('nonce="%s"' % nonce).encode(), attrs)
-        self.assertNotRegex(html, rb'\\s(?:onclick|onchange)\\s*=')
+        self.assertNotRegex(html, rb'\s(?:onclick|onchange)\s*=')
         self.assertNotIn(('nonce="%s"' % nonce).encode(), other)
         self.assertNotIn(b"$csp_nonce", html)
         for path in ("/api/version", "/style.css", "/not-found"):

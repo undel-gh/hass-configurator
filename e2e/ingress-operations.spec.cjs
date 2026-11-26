@@ -44,7 +44,9 @@ test('Ingress prefix survives real file GET, save POST, upload POST and download
     await route.fulfill({ response: upstream });
   });
   try {
-    await page.goto(server + PREFIX, { waitUntil: 'domcontentloaded' });
+    const doc = await page.goto(server + PREFIX, { waitUntil: 'domcontentloaded' });
+    expect(doc.headers()['content-security-policy']).toContain("script-src 'self' 'nonce-");
+    expect(doc.headers()['content-security-policy-report-only']).toContain("style-src 'self';");
     await expect.poll(() => page.evaluate(() => Boolean(window.editor))).toBe(true);
     await page.evaluate(f => loadfile(f, f.split('/').pop()), filename);
     await expect(page.locator('#currentfile')).toHaveValue(filename);

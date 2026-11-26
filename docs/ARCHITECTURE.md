@@ -79,6 +79,8 @@ Official HA guidance: [Contributors ingress guide](https://contributors.home-ass
 - review `default-src`, `script-src`, `style-src`, `font-src`, `img-src`, `worker-src`, `connect-src`, `base-uri`, `object-src` and ingress framing policy;
 - test under actual HA Ingress and standalone; no silent acceptance of `unsafe-inline`/`unsafe-eval` as “hardened.” Residual exceptions or unenforced directives require explicit release-risk disposition, owner and follow-up, not a hidden waiver.
 
+Implementation candidate #13 (PR #30): per-response nonce for remaining trusted legacy script blocks, static versioned Ace bootstrap and explicit UI handler bindings, enforced source policy, and strict-style Report-Only comparison. Approved browser WS is server-configured; no request header or browser field can add a policy source. See [P1 CSP policy and release gates](P1_CSP.md). This does not imply acceptance of the inline-style exception or real HA OS compatibility.
+
 ### External network policy
 **ADR-002:** all browser-initiated runtime requests during supported scenarios MUST be to the application's own origin or explicitly approved local/LAN HA REST/WS. Any attempted public-origin fetch MUST fail CI even if unsuccessful/fallback, including worker/CDN/font/image requests. Opening external documentation by a deliberate user action is an explicit exception; no automatic prefetch.
 

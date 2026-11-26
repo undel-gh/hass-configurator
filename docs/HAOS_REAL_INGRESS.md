@@ -260,6 +260,10 @@ deferral to #26 is not a proof of successful HAOS-11. Do not install the
 privileged probe in the working HA OS; downstream inclusion in the official
 File Editor is a separate packaging decision.
 
+## CSP regression after #13 (not part of the historical #8 PASS)
+
+Use a disposable fixture built from the reviewed #13 source SHA, with the default `homeassistant_api: false`. Re-run the `test:haos` suite including the new CSP test; also open the app from the actual HA sidebar iframe and in a new tab (direct navigation alone cannot prove `frame-ancestors` compatibility). Repeat local asset/worker, file roundtrip and warm-profile A→B checks. Record only PASS/FAIL, versions and SHAs; no raw policy, nonce, opaque URL or unredacted browser reports. A configured live observer remains #26; the standalone fixture must reject browser-supplied WS URLs without disrupting editing. See [P1 CSP](P1_CSP.md). Until performed, CSP real-HAOS acceptance is NOT VERIFIED.
+
 ## 6. Cleanup
 
 Stop and uninstall the temporary local app; delete both test app source

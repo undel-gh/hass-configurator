@@ -251,3 +251,8 @@ CSRF-protected APIs.
 Keep [`docs/TRACEABILITY.md`](TRACEABILITY.md) and the PR body tied to
 the exact reviewed commit and current CI run. Previous #20 P0 evidence is
 a historical baseline, not proof of this security change.
+
+
+### CSP follow-up (#13)
+
+See [P1 CSP policy and evidence](P1_CSP.md). CSP is defense in depth, not a substitute for #7 authorization, CSRF, confinement or safe rendering. Remaining inline scripts require per-response nonces; upstream bootstrap data must be valid JSON, not executable source. Standalone file responses are sandboxed to prevent an editable SVG from becoming an executable same-origin document. No new privilege or trust in forwarded headers is introduced.

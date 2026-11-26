@@ -54,7 +54,7 @@ scope, AT-01–AT-10 tests, and external maintainer controls.
 | NFR-007 | #5, #10 | `scripts/check_offline_artifacts.py`, `e2e/version-identity.spec.cjs`, Docker CI | verified (P0 automated; installed artifact identity) |
 | NFR-008 | #14 | `.github/workflows/offline-foundation.yml`, `tests/test_traceability.py`, PR template | partial (P0 CI governance verified; branch required-check settings NOT VERIFIED) |
 | NFR-009 | #2, #5, #6, #8 | `tests/test_routing.py`, `e2e/cache-upgrade.spec.cjs`, #8 real warm update | verified (tested immutable asset namespace and same-profile HA OS A→B upgrade; no full OCI image claim) |
-| NFR-010 | #13, #7 | `docs/P1_API_SECURITY.md`, `e2e/security.spec.cjs`, CSP design in `docs/ARCHITECTURE.md` | partial (#7 injection-sink mitigations in review; CSP enforcement #13 pending) |
+| NFR-010 | #13, #7 | `docs/P1_API_SECURITY.md`, `docs/P1_CSP.md`, `tests/test_csp.py`, `tests/test_routing.py`, `e2e/csp.spec.cjs` | partial (#7 merged; nonce script CSP and strict network policy implementation candidate #13; inline style exception, independent review and real HAOS pending) |
 | NFR-011 | #1, #3 | `scripts/verify_ace_archive.py`, `tests/test_vendored_assets.py`, `tests/test_p0_closeout.py` | verified (P0 automated; single pinned Ace family) |
 
 ## Architectural decisions
@@ -68,7 +68,7 @@ scope, AT-01–AT-10 tests, and external maintainer controls.
 | ADR-005 | #7, #8, #23, #27 | merged PR #21, PR #28, `docs/P1_API_SECURITY.md`, `tests/test_api_security.py`, `hass_configurator/api_security.py`, `hass_configurator/configurator.py` | partial (#23 strict env and POST framing candidate; #7/#27 security merged, real Ingress trust PASS; broader security acceptance separate) |
 | ADR-006 | #1, #3 | `docs/ace-builds-1.9.6-lock.json`, `scripts/verify_ace_archive.py` | verified (P0 automated; Ace SRI/closure) |
 | ADR-007 | #14 | PR template, CI, `tests/test_traceability.py` | partial (P0 code/CI contract verified; maintainer branch rules pending / NOT VERIFIED) |
-| ADR-008 | #13 | CSP design in `docs/ARCHITECTURE.md` | pending (P1 CSP) |
+| ADR-008 | #13 | `docs/ARCHITECTURE.md`, `docs/P1_CSP.md`, `hass_configurator/csp.py` | partial (enforcement candidate; report-only strict style target, risk decision and real Supervisor gate pending) |
 | ADR-009 | #2, #5, #6, #8 | `tests/test_routing.py`, `e2e/cache-upgrade.spec.cjs`, #8 A→B field evidence | verified (scope: P0 and real HA OS immutable warm upgrade; product image reproducibility not inferred) |
 
 ## Release gates
@@ -315,3 +315,11 @@ separate P1 acceptance (#8/#7/#13).
 - Installed-file RECORD verification remains optional defense-in-depth
   beyond the existing exact-wheel SHA-256 / `--require-hashes` checks.
   Do not present wheel-RECORD hashing as independent source authenticity.
+
+## #13 CSP implementation checkpoint (PR #30)
+
+| Requirement | Evidence candidate | Status |
+| --- | --- | --- |
+| NFR-010 / ADR-008 | `hass_configurator/csp.py`, `tests/test_csp.py`, `tests/test_routing.py`, `tests/test_api_security.py`, `e2e/csp.spec.cjs` | Strict script nonce and event-attribute denial implemented; standalone and simulated ingress evidence to be recorded at exact reviewed HEAD. |
+| FR-006 / FR-009 | `e2e/ha-outage.spec.cjs` | Operator-configured browser observer URI only; real Core REST/WS authentication is still #26. |
+| AT-12 | `docs/P1_CSP.md`, `e2e/haos-real.spec.cjs` | PENDING: independent review, current real Supervisor checks and explicit disposition of inline CSS; no release sign-off. |
