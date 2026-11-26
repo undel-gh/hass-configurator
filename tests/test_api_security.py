@@ -1,5 +1,6 @@
 """P1 #7 API authorization, anti-CSRF, filesystem and XSS abuse tests."""
 import http.client
+from io import BytesIO
 from types import SimpleNamespace
 import base64
 import ipaddress
@@ -598,6 +599,67 @@ class SecurityLoopbackTests(unittest.TestCase):
             self.server, "/api/upload",
             [csrf, ("Content-Length", str(100 * 1024 * 1024 + 1))])
         self.assertEqual(status, 413)
+
+    def test_post_oversized_decimal_and_leading_zero_normalization(self):
+        # Large syntactically valid decimal headers must not be misclassified
+        # when Python int() has a decimal digit conversion limit.
+        csrf = ("X-CSRF-Token", cfg.HTTP_ROUTER.security.csrf_token)
+        for desc, value, expected in (
+            ("five-thousand-nines", "9" * 5000, 413),
+            ("over-limit-with-leading-zeros", "0" * 5000 + "1048577", 413),
+            ("limit-with-leading-zeros", "0" * 5000 + "1048576", 200),
+            ("five-thousand-zeros", "0" * 5000, 200),
+        ):
+            with self.subTest(desc=desc):
+                if expected == 200 and value.lstrip("0"):
+                    # Consume the exact declared body on the valid-limit case.
+                    # A 1 MiB request is inexpensive and exercises real HTTP.
+                    payload = b" " * 1048576
+                    status, _, response = http_request(
+                        self.server, "POST", "/api/save", payload,
+                        {"X-CSRF-Token": csrf[1],
+                         "Content-Length": value})
+                else:
+                    status, _, response = raw_post_with_headers(
+                        self.server, "/api/save", [csrf, ("Content-Length", value)])
+                self.assertEqual(status, expected)
+                if status == 200:
+                    self.assertTrue(json.loads(response)["error"])
+
+    def test_exact_post_size_limit_is_accepted_on_both_routes(self):
+        # The 1 MiB maximum is a real HTTP body; a 100 MiB synthetic multipart
+        # body uses mocked FieldStorage to exercise admission without actually
+        # buffering a 100 MiB fixture on shared CI runners.
+        csrf = cfg.HTTP_ROUTER.security.csrf_token
+        with tempfile.TemporaryDirectory(dir=self.workspace.name) as folder:
+            target = Path(folder) / "max-size.yaml"
+            prefix = urlencode({"filename": str(target), "text": ""}).encode()
+            payload = prefix + b"a" * (1048576 - len(prefix))
+            self.assertEqual(len(payload), 1048576)
+            status, _, response = http_request(
+                self.server, "POST", "/api/save", payload,
+                {"X-CSRF-Token": csrf,
+                 "Content-Type": "application/x-www-form-urlencoded"})
+            self.assertEqual(status, 200)
+            self.assertFalse(json.loads(response)["error"])
+            self.assertEqual(target.stat().st_size, 1048576 - len(prefix))
+
+            from types import SimpleNamespace
+            form = {
+                "file": SimpleNamespace(filename="boundary.yaml",
+                                        file=BytesIO(b"safe: true")),
+                "path": SimpleNamespace(file=BytesIO(folder.encode("utf-8"))),
+            }
+            with patch.object(cfg.cgi, "FieldStorage", return_value=form):
+                status, _, response = raw_post_with_headers(
+                    self.server, "/api/upload",
+                    [("X-CSRF-Token", csrf),
+                     ("Content-Length", str(100 * 1024 * 1024)),
+                     ("Content-Type", "multipart/form-data; boundary=test")])
+            self.assertEqual(status, 200)
+            self.assertFalse(json.loads(response)["error"])
+            self.assertEqual((Path(folder) / "boundary.yaml").read_bytes(),
+                             b"safe: true")
 
     def test_post_zero_length_valid_and_security_gate_precedes_size(self):
         csrf = ("X-CSRF-Token", cfg.HTTP_ROUTER.security.csrf_token)
