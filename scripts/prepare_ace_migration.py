@@ -14,8 +14,12 @@ from pathlib import Path
 import shutil
 import tarfile
 
-from inspect_ace_candidate import inspect_candidate, ROOT
-from audit_supply_chain import git_blob_sha1, query_osv
+try:
+    from .inspect_ace_candidate import inspect_candidate, ROOT
+    from .audit_supply_chain import git_blob_sha1, query_osv
+except ImportError:
+    from inspect_ace_candidate import inspect_candidate, ROOT
+    from audit_supply_chain import git_blob_sha1, query_osv
 
 ACE_SHA256 = "5260354a14533fa8e94572597b1ff53025b1bb0a9b2e25d50ecf2a01e57aa9e0"
 ACE_SRI = "sha512-a0IADaETGBnBW5CIkniUJn7F+NyTuHWKqlv1A8FXaMmFflJsMGnU3TzkiyslInqIZ3odfcVKOdXBGIKBefzFDA=="
@@ -75,6 +79,9 @@ def main():
         parser.add_argument("--" + name, type=Path, required=True)
     args = parser.parse_args()
     dest = outside_new_checkout(args.dest)
+    report_path = outside_new_checkout(args.report)
+    if report_path == dest or dest in report_path.parents or report_path in dest.parents:
+        raise ValueError("Evidence report and overlay must be separate paths")
     if sha(args.ace.read_bytes()) != ACE_SHA256 or sri(args.ace.read_bytes()) != ACE_SRI:
         raise ValueError("Ace differs from independently reviewed #343 archive")
     lock = json.loads((ROOT / "docs/ace-candidate-1.45.2.json").read_text("utf-8"))
@@ -92,13 +99,13 @@ def main():
     queries = [{"package": {"ecosystem": "npm", "name": name}, "version": version}
                for name, version in (("ace-builds", "1.45.2"), ("js-yaml", YAML_VERSION))]
     osv = query_osv(queries)
-    args.report.parent.mkdir(parents=True, exist_ok=True)
+    report_path.parent.mkdir(parents=True, exist_ok=True)
     report = {"status": "verified-rehearsal-input", "source_checkout": ace["source_checkout"],
               "candidate_only": True, "ace": ace, "js_yaml": yaml, "osv": osv,
               "limitations": ["No committed runtime migration or nested license clearance.",
                               "js-yaml archive hashes require independent review and pin.",
                               "Not installed artifact or real Supervisor acceptance."]}
-    args.report.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    report_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     if any(row["advisories"] for row in osv):
         raise ValueError("Candidate package/version has OSV matches; review before promotion")
     dest.mkdir()
