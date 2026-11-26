@@ -24,9 +24,7 @@ Roboto/Material Icons Apache-2.0 texts obtained from immutable upstream
 GitHub commits. The original MDI OFL notice includes Google attribution.
 Roboto is a separate font component, not assumed to be MIT because
 Materialize is MIT. Font name-table evidence is collected from every
-shipped Roboto WOFF/WOFF2 and the inherited Material Icons WOFF2. An
-original release/version is not invented for fonts with unresolved
-provenance. A license text alone is not proof of the binary's origin;
+shipped Roboto WOFF/WOFF2 and the inherited Material Icons WOFF2. Font name-table versions are recorded, not invented upstream archive identities. A license text alone is not proof of the binary's origin;
 review the metadata, exact font licenses/copyrights and any NOTICE
 obligations before release.
 
@@ -67,8 +65,11 @@ From reviewed checkout, use existing offline vendor runbook for npm archives.
 For the inherited JS comparison download exact jquery@3.6.0,
 js-yaml@4.1.0 and materialize-css@0.100.2 npm archives using npm pack
 --ignore-scripts (build-time only). Capture registry metadata/SRI and
-archive comparison; a mismatch is a provenance gap, not a silent
-normalization. The audit never overwrites runtime files.
+archive comparison. Fetch the immutable Materialize Git JS file to
+`/tmp/materialize-tag.js` using the `git_url` in the inventory. The audit
+checks the pinned SHA-256/SRI, member digest and exact observed deviations;
+this is evidence, not a waiver or a silent normalization. The audit never
+overwrites runtime files.
 
 ```sh
 python scripts/audit_supply_chain.py source --output /tmp/source.cdx.json
@@ -104,3 +105,65 @@ not all installed distribution RECORD entries.
 
 Trace NFR-002/011, ADR-006. #9 remains open until exact-HEAD CI, evidence
 and independent review, plus explicit disposition of findings.
+
+## Initial CI evidence and disposition — 2026-11-26
+
+Reviewed exact source `58c02705a1852fcf913c42e1b57c2f62b6704828`,
+[run 45869578006](https://github.com/undel-gh/hass-configurator/actions/runs/45869578006):
+4/4 required jobs passed, 140 Python tests; browser source 27 passed/1 skipped,
+wheel/sdist/image each 6 passed. Two clean amd64 image builds identical:
+`sha256:2f642e74d07185623ab18918f465ebaaa89d3fcdf3ab6e3ee86886217124a95a`.
+Artifacts: source 15142646117; installed/OSV 15142646436.
+These are historical results, not a claim about later HEADs or release acceptance.
+
+### Exact legacy source findings
+
+- jQuery: official npm member and immutable upstream Git release file match;
+  inherited JS differs by the absent final LF only. Preserve and pin this
+  byte relationship; no semantic change observed. Review upgrade separately.
+- js-yaml: official npm member and immutable upstream Git release file match;
+  inherited file replaces one UTF-8 NBSP within a string by ASCII space and
+  lacks final LF. This is semantic drift, not harmless whitespace. #33 owns
+  remediation alongside five matched advisories.
+- Materialize: inherited JS exactly matches the immutable Git release file
+  at Dogfalo/materialize commit 9bc43a1199ad5dfb78d58ba47726ab039218a939;
+  npm dist JS member differs. CSS/fonts retain their npm provenance. #34 owns
+  security and nested attribution review. No claim that npm JS is identical.
+- Ten Roboto files: name-table version 2.136 (2017), Google copyright 2011,
+  Apache-2.0 license field. Exact delivery via verified Materialize npm archive.
+  Material Icons: version 1.017, Google copyright 2018, upstream Apache-2.0;
+  original standalone binary archive unresolved. Both have packaged notices.
+
+### Installed and vulnerability evidence
+
+Wheel, sdist and Docker installation verified all 471 inventoried resource/notice
+files. Python dependency license metadata/texts agree with declared licenses;
+project MIT license also present. Docker matched all five lock versions;
+standalone wheel and sdist resolved PyOTP 2.12.1 rather than locked 2.10.0.
+This is explicit resolver drift, not a Docker-lock failure.
+
+OSV scan on 2026-11-26: 213 distinct package/version queries; 78 had advisory
+matches. npm: 5 queried, 2 matched (js-yaml 5 IDs, Materialize 4 IDs).
+PyPI: 10 queried, 2 matched (pip 24.0, 12 IDs; setuptools 79.0.1, 3 IDs).
+None of the five locked app dependency versions matched in this scan;
+this is not a guarantee of no vulnerabilities. Debian:12: 198 source/version
+queries from 429 installed binaries, 74 matched, 2949 distinct advisory IDs.
+Linux source contributed 2319 IDs through linux-libc-dev headers; this is
+not an inventory of a running kernel or confirmed exploitable CVEs. Aliases,
+source-to-binary applicability, severity, backports and actual reachability
+need triage; CPython outside dpkg and embedded libraries need separate review.
+
+| Follow-up | Owner | Decision |
+| --- | --- | --- |
+| #33 YAML parser and byte drift | maintainer | OPEN, remediate before public release; includes embedded Ace YAML parser |
+| #34 Materialize autocomplete / nested components | maintainer | OPEN, remediate or assess specific paths before public release |
+| #35 Python/Debian runtime | maintainer | OPEN, triage findings and reduce unnecessary surface before public release |
+| #9 nested attribution and font original archive | maintainer | OPEN; review embedded source notices and remaining provenance, no blanket legal signoff |
+
+Ace v1.9.6 source includes worker libraries such as CSSLint 1.0.5, parserlib
+1.1.2, CoffeeScript 2.2.1, luaparse 0.3.1, php.js 0.1.0 and JSON parser;
+JSHint/YAML/XML/XQuery workers contain further dependencies whose exact
+versions/notice obligations must be resolved. Materialize release build
+includes Hammer, Velocity and Waves code. Top-level licenses and package
+version scans do not establish exhaustive nested attribution or coverage.
+No risk acceptance has been granted by the maintainer. #9 remains open.

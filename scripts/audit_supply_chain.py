@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Build-time supply-chain inventory. Never imported or called by the editor."""
 import argparse
+import base64
 import datetime
 import hashlib
 import importlib.metadata as metadata
@@ -109,6 +110,14 @@ def source_inventory(root=PACKAGE):
         raise ValueError("First-party/third-party overlap")
     if set(read_lock()) != set(inv["python_licenses"]):
         raise ValueError("Python license inventory drift")
+    if set(inv["legacy_archive_locks"]) != {p for p in legacy if p.endswith(".js")}:
+        raise ValueError("Incomplete legacy JS archive locks")
+    for local, pin in inv["legacy_archive_locks"].items():
+        for key in ("sha256", "member_sha256"):
+            if not re.fullmatch("[0-9a-f]{64}", pin[key]):
+                raise ValueError("Invalid upstream digest: " + local)
+        if not pin["tarball"].startswith("https://registry.npmjs.org/"):
+            raise ValueError("Non-registry archive source: " + local)
     return inv, vendor
 
 
@@ -125,7 +134,7 @@ def property_(name, value):
 def sbom(inv, vendor):
     """Deterministic CycloneDX 1.5 source/locked-application BOM.
 
-    Unknown font release versions are deliberately omitted. Archive hashes
+    Font versions are from embedded name tables, not archive identities. Archive hashes
     are labelled as such; they are not hashes of installed distributions.
     """
     from hass_configurator._version import VERSION
@@ -144,10 +153,20 @@ def sbom(inv, vendor):
         for notice in item["notices"]:
             c["properties"].append(property_("hc:notice", notice))
         provenance = vendor["provenance"].get(item["id"])
+        legacy_pins = [inv["legacy_archive_locks"][name] for name in item["files"]
+                       if name in inv["legacy_archive_locks"]]
+        if not provenance and legacy_pins:
+            provenance = legacy_pins[0]
         if provenance:
             c["externalReferences"] = [{"type": "distribution", "url": provenance["tarball"],
                 "hashes": [{"alg": "SHA-256", "content": provenance["sha256"]}]}]
             c["properties"].append(property_("hc:npm:integrity", provenance["npm_integrity"]))
+        for pin in legacy_pins:
+            c["properties"].append(property_("hc:legacy:npm-member:sha256", pin["member_sha256"]))
+            c["properties"].append(property_("hc:legacy:relation", pin["relation"]))
+            if "git_url" in pin:
+                c.setdefault("externalReferences", []).append({"type": "distribution", "url": pin["git_url"],
+                    "hashes": [{"alg": "SHA-256", "content": pin["git_sha256"]}]})
         components.append(c)
     for name, (version, digest) in sorted(read_lock().items()):
         components.append({"type": "library", "bom-ref": "python:" + name,
@@ -168,25 +187,54 @@ def sbom(inv, vendor):
                 {"ref": "python:gitdb", "dependsOn": ["python:smmap"]}]}
 
 
+def verify_legacy_relation(raw, local, relation, git_raw=None):
+    """Check only the observed exact deviations; never normalize arbitrary JS."""
+    if relation == "missing-final-lf":
+        valid = raw.endswith(b"\n") and raw[:-1] == local
+    elif relation == "one-nbsp-to-space-and-missing-final-lf":
+        valid = (raw.endswith(b"\n") and raw.count(b"\xc2\xa0") == 1
+                 and raw[:-1].replace(b"\xc2\xa0", b" ") == local)
+    elif relation == "exact-git-release-file-not-npm-member":
+        valid = git_raw is not None and git_raw == local and raw != local
+    elif relation == "exact":
+        valid = raw == local
+    else:
+        valid = False
+    if not valid:
+        raise ValueError("Unexpected legacy JS relationship: " + relation)
+
+
 def legacy_archives(directory):
-    """Compare legacy JS to official npm members; mismatch is evidence, not origin proof."""
-    choices = {
-        "jquery-3.6.0.min.js": ("jquery-3.6.0.tgz", "package/dist/jquery.min.js"),
-        "js-yaml.min.js": ("js-yaml-4.1.0.tgz", "package/dist/js-yaml.min.js"),
-        "materialize.min.js": ("materialize-css-0.100.2.tgz", "package/dist/js/materialize.min.js"),
-    }
+    """Verify pinned archives and the reviewed, explicitly non-identical JS bytes."""
+    inv, _ = source_inventory()
     result = {}
-    for local, (archive_name, member) in choices.items():
-        path = directory / archive_name
+    for local, pin in inv["legacy_archive_locks"].items():
+        path = directory / pin["archive"]
+        archive_bytes = path.read_bytes()
+        sri = "sha512-" + base64.b64encode(hashlib.sha512(archive_bytes).digest()).decode("ascii")
+        if sha(archive_bytes) != pin["sha256"] or sri != pin["npm_integrity"]:
+            raise ValueError("Upstream archive integrity mismatch: " + local)
+        member = pin["member"]
         with tarfile.open(path, "r:gz") as archive:
             matches = [m for m in archive.getmembers() if m.name == member and m.isfile()]
             if len(matches) != 1:
                 raise ValueError("Missing or duplicate upstream JS member: " + member)
             raw = archive.extractfile(matches[0]).read()
-        result[local] = {"archive": archive_name, "archive_sha256": sha(path.read_bytes()),
-            "member": member, "upstream_sha256": sha(raw),
-            "local_sha256": sha(read_file(PACKAGE, local)),
-            "byte_equal": raw == read_file(PACKAGE, local)}
+        if sha(raw) != pin["member_sha256"]:
+            raise ValueError("Upstream member integrity mismatch: " + local)
+        git_raw = None
+        if "git_file" in pin:
+            git_raw = (directory / pin["git_file"]).read_bytes()
+            if sha(git_raw) != pin["git_sha256"]:
+                raise ValueError("Upstream Git file integrity mismatch: " + local)
+        local_bytes = read_file(PACKAGE, local)
+        verify_legacy_relation(raw, local_bytes, pin["relation"], git_raw)
+        result[local] = {"archive": pin["archive"], "archive_sha256": sha(archive_bytes),
+            "npm_integrity": sri, "member": member, "upstream_sha256": sha(raw),
+            "local_sha256": sha(local_bytes), "byte_equal": raw == local_bytes,
+            "relation": pin["relation"]}
+        if git_raw is not None:
+            result[local].update({"git_url": pin["git_url"], "git_sha256": sha(git_raw)})
     return result
 
 
@@ -204,6 +252,12 @@ def font_evidence():
                     values.setdefault(str(record.nameID), set()).add(record.toUnicode())
             result[path.relative_to(PACKAGE).as_posix()] = {
                 key: sorted(items) for key, items in sorted(values.items())}
+    inv, _ = source_inventory()
+    for path, values in result.items():
+        family = "roboto" if path.startswith("vendor/materialize/") else "material-icons"
+        for key, expected in inv["font_name_table_expectations"][family].items():
+            if values.get(key) != expected:
+                raise ValueError("Font name-table evidence drift: " + path + " / " + key)
     return result
 
 

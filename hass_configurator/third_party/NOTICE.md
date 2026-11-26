@@ -14,12 +14,13 @@ assets and notices without making notice files web routes.
   (Apache-2.0). No modified font or standalone font sale.
 - jQuery 3.6.0: OpenJS Foundation and other contributors, MIT.
 - js-yaml 4.1.0: Vitaly Puzrin, MIT.
-- Legacy Roboto fonts distributed by Materialize: Google/Roboto authors,
-  historical Apache-2.0 license included separately. Exact original font
-  release and name-table attribution still subject to evidence review.
-- Legacy Google Material Icons webfont: Google, Apache-2.0. Exact original
-  font release/download identity is not established by the inherited filename.
-  Full historical upstream license included; verify embedded metadata.
+- Legacy Roboto fonts distributed by Materialize: Copyright 2011 Google Inc.
+  All Rights Reserved. Name-table version 2.136 (2017); Apache-2.0 explicitly
+  embedded in all ten font files; historical license included separately.
+  Original separate font archive unresolved.
+- Legacy Google Material Icons webfont: Copyright 2018 Google, Inc.
+  All Rights Reserved. Name-table version 1.017; upstream Apache-2.0 license
+  included. Exact original binary archive unresolved; no embedded license field.
 
 The Python package depends on PyOTP, GitPython, legacy-cgi and their
 transitive dependencies; their distributions carry their own license

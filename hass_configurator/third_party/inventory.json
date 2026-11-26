@@ -56,7 +56,7 @@
       "notices": [
         "vendor/licenses/materialize.txt"
       ],
-      "provenance": "CSS pinned npm archive; legacy JS compared to npm in CI"
+      "provenance": "CSS pinned npm; legacy JS exact immutable v0.100.2 Git release file, different from npm dist member"
     },
     {
       "id": "mdi",
@@ -78,7 +78,7 @@
       "id": "roboto",
       "ecosystem": null,
       "name": "Roboto (legacy Materialize font bundle)",
-      "version": null,
+      "version": "2.136",
       "license": "Apache-2.0",
       "vendor_prefixes": [
         "vendor/materialize/fonts/roboto/"
@@ -87,7 +87,7 @@
       "notices": [
         "third_party/licenses/roboto.txt"
       ],
-      "provenance": "exact binary delivery via materialize npm; original font release unresolved; historical license and font metadata must be reviewed"
+      "provenance": "version from font name table (2017); Apache-2.0 embedded; exact binary delivery via Materialize npm; original separate font archive unresolved"
     },
     {
       "id": "jquery",
@@ -102,7 +102,7 @@
       "notices": [
         "third_party/licenses/jquery.txt"
       ],
-      "provenance": "legacy file pinned; compared to official npm in CI"
+      "provenance": "official npm member minus one final LF; exact deviation pinned"
     },
     {
       "id": "js-yaml",
@@ -117,13 +117,13 @@
       "notices": [
         "third_party/licenses/js-yaml.txt"
       ],
-      "provenance": "legacy file pinned; compared to official npm in CI"
+      "provenance": "official npm member with one UTF-8 NBSP replaced by ASCII space and final LF removed; semantic drift OPEN #33"
     },
     {
       "id": "material-icons",
       "ecosystem": null,
       "name": "Google Material Icons (legacy local font)",
-      "version": null,
+      "version": "1.017",
       "license": "Apache-2.0",
       "vendor_prefixes": [],
       "files": [
@@ -132,7 +132,7 @@
       "notices": [
         "third_party/licenses/material-icons.txt"
       ],
-      "provenance": "legacy file pinned; original archive/release unresolved; font metadata and historical license must be reviewed"
+      "provenance": "version from font name table (2018); no embedded license field; upstream Apache-2.0 notice; original binary archive unresolved"
     }
   ],
   "python_licenses": {
@@ -149,8 +149,61 @@
     "material-icons.fallback.css"
   ],
   "limitations": [
-    "Declared upstream license identifiers are audit candidates, not a legal opinion; font and embedded subcomponent attribution pending.",
+    "Declared licenses are not a legal opinion; original standalone font artifact and embedded subcomponent attribution remain open.",
     "Python versions and wheel hashes are from requirements/docker-runtime.lock; actual non-Docker install resolution may differ.",
     "OS packages, interpreter and build/test dependencies are not represented by this source application inventory."
-  ]
+  ],
+  "legacy_archive_locks": {
+    "jquery-3.6.0.min.js": {
+      "archive": "jquery-3.6.0.tgz",
+      "tarball": "https://registry.npmjs.org/jquery/-/jquery-3.6.0.tgz",
+      "sha256": "81aba42cff61ab4f21ddf493eb1873dd9702a685eca9a8a182c9d4002846f0f8",
+      "npm_integrity": "sha512-JVzAR/AjBvVt2BmYhxRCSYysDsPcssdmTFnzyLEts9qNwmjmu4JTAMYubEfwVOSwpQ1I1sKKFcxhZCI2buerfw==",
+      "member": "package/dist/jquery.min.js",
+      "member_sha256": "ff1523fb7389539c84c65aba19260648793bb4f5e29329d2ee8804bc37a3fe6e",
+      "relation": "missing-final-lf"
+    },
+    "js-yaml.min.js": {
+      "archive": "js-yaml-4.1.0.tgz",
+      "tarball": "https://registry.npmjs.org/js-yaml/-/js-yaml-4.1.0.tgz",
+      "sha256": "0dae332559cf22b21c26ea70e732afd8303ff99412f9c3d9d209faa8882cf2ca",
+      "npm_integrity": "sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==",
+      "member": "package/dist/js-yaml.min.js",
+      "member_sha256": "45dc3dd03dc07a06705a2c2989b8c7f709013f04bd5386e3279d4e447f07ebd7",
+      "relation": "one-nbsp-to-space-and-missing-final-lf"
+    },
+    "materialize.min.js": {
+      "archive": "materialize-css-0.100.2.tgz",
+      "tarball": "https://registry.npmjs.org/materialize-css/-/materialize-css-0.100.2.tgz",
+      "sha256": "469dfd4cce8e2aa7023c5fb8df50d47337f4f232ad603ec2d19e3034f270ce06",
+      "npm_integrity": "sha512-Bf4YeoJCIdk4dlpnmVX+DIOJBbqOKwfBPD+tT5bxwXNFMLk649CGbldqtnctkkfMp+fGgSAsdYu9lo1ZolZqgA==",
+      "member": "package/dist/js/materialize.min.js",
+      "member_sha256": "dddb6508b5e7fbd8dc927f5c0a71e89026e0f279879ae22d0001b2718222a37c",
+      "relation": "exact-git-release-file-not-npm-member",
+      "git_file": "materialize-tag.js",
+      "git_url": "https://raw.githubusercontent.com/Dogfalo/materialize/9bc43a1199ad5dfb78d58ba47726ab039218a939/dist/js/materialize.min.js",
+      "git_sha256": "b96b525d112bc07f647494c8af5b307c71499ff77f590eacef68042ce1d74063"
+    }
+  },
+  "font_name_table_expectations": {
+    "roboto": {
+      "0": [
+        "Copyright 2011 Google Inc. All Rights Reserved."
+      ],
+      "5": [
+        "Version 2.136; 2017"
+      ],
+      "13": [
+        "Licensed under the Apache License, Version 2.0"
+      ]
+    },
+    "material-icons": {
+      "0": [
+        "Copyright 2018 Google, Inc. All Rights Reserved."
+      ],
+      "5": [
+        "Version 1.017"
+      ]
+    }
+  }
 }

@@ -6,7 +6,7 @@ import tempfile
 import unittest
 
 from scripts.audit_supply_chain import (
-    PACKAGE, NOTICE, source_inventory, sbom, query_osv, scan_queries,
+    PACKAGE, NOTICE, source_inventory, sbom, query_osv, scan_queries, verify_legacy_relation,
 )
 
 
@@ -20,8 +20,8 @@ class SupplyChainTests(unittest.TestCase):
         self.assertEqual(len(bom["components"]), 12)
         refs = [c["bom-ref"] for c in bom["components"]]
         self.assertEqual(len(refs), len(set(refs)))
-        self.assertNotIn("version", next(c for c in bom["components"]
-                                        if c["bom-ref"] == "asset:roboto"))
+        self.assertEqual("2.136", next(c for c in bom["components"]
+                                        if c["bom-ref"] == "asset:roboto")["version"])
         self.assertEqual(bom, sbom(inv, vendor))
 
     def mutate(self, action, message):
@@ -49,6 +49,19 @@ class SupplyChainTests(unittest.TestCase):
             data["components"] = [c for c in data["components"] if c["id"] != "roboto"]
             path.write_text(json.dumps(data))
         self.mutate(action, "Incomplete third-party ownership")
+
+    def test_legacy_relationship_is_exact(self):
+        verify_legacy_relation(b"a\n", b"a", "missing-final-lf")
+        verify_legacy_relation(b"a\xc2\xa0b\n", b"a b", "one-nbsp-to-space-and-missing-final-lf")
+        verify_legacy_relation(b"npm", b"git", "exact-git-release-file-not-npm-member", b"git")
+        for upstream, local, relation, git_raw in (
+            (b"a\n", b"b", "missing-final-lf", None),
+            (b"a\xc2\xa0b\xc2\xa0c\n", b"a b c", "one-nbsp-to-space-and-missing-final-lf", None),
+            (b"npm", b"local", "exact-git-release-file-not-npm-member", b"other"),
+        ):
+            with self.subTest(relation=relation):
+                with self.assertRaisesRegex(ValueError, "Unexpected legacy JS relationship"):
+                    verify_legacy_relation(upstream, local, relation, git_raw)
 
     def test_scan_is_version_bound_and_deduplicated(self):
         inv, _ = source_inventory()

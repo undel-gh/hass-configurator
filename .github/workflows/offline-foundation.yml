@@ -77,6 +77,7 @@ jobs:
           npm view js-yaml@4.1.0 dist.integrity dist.tarball --json > e2e/artifacts/supply-chain/js-yaml-registry.json
           npm pack jquery@3.6.0 --ignore-scripts --silent --pack-destination /tmp
           npm pack js-yaml@4.1.0 --ignore-scripts --silent --pack-destination /tmp
+          curl --fail --silent --show-error --location 'https://raw.githubusercontent.com/Dogfalo/materialize/9bc43a1199ad5dfb78d58ba47726ab039218a939/dist/js/materialize.min.js' -o /tmp/materialize-tag.js
           # Audit-only tooling, not added to the package/image dependencies.
           python -m pip install --disable-pip-version-check fonttools==4.60.1 brotli==1.1.0
           python scripts/audit_supply_chain.py source \
