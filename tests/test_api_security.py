@@ -303,14 +303,14 @@ class GitMetadataConfinementTests(unittest.TestCase):
 
     def test_normal_git_repository_and_nested_file_are_accepted(self):
         from git import Repo
-        with patch.object(cfg, "BASEPATH", str(self.workspace)), \\
+        with patch.object(cfg, "BASEPATH", str(self.workspace)), \
              patch.object(cfg, "REPO", Repo):
             initialized = cfg.safe_init_repo(str(self.repo_dir))
             self.assertEqual(Path(initialized.working_dir), self.repo_dir)
             nested = self.repo_dir / "configs"
             nested.mkdir()
             target = nested / "test.yaml"
-            target.write_text("key: true\\n", encoding="utf-8")
+            target.write_text("key: true\n", encoding="utf-8")
             found = cfg.validated_repo(str(target),
                                        search_parent_directories=True)
             self.assertEqual(Path(found.working_dir), self.repo_dir)
@@ -327,7 +327,7 @@ class GitMetadataConfinementTests(unittest.TestCase):
                 else:
                     control.symlink_to(self.outside, target_is_directory=True)
                 try:
-                    with patch.object(cfg, "BASEPATH", str(self.workspace)), \\
+                    with patch.object(cfg, "BASEPATH", str(self.workspace)), \
                          patch.object(cfg, "REPO") as repo_class:
                         with self.assertRaises(PermissionError):
                             cfg.validated_repo(str(self.repo_dir),
@@ -345,7 +345,7 @@ class GitMetadataConfinementTests(unittest.TestCase):
         false_repo = SimpleNamespace(working_dir=str(self.repo_dir),
                                      git_dir=str(self.outside),
                                      common_dir=str(self.outside))
-        with patch.object(cfg, "BASEPATH", str(self.workspace)), \\
+        with patch.object(cfg, "BASEPATH", str(self.workspace)), \
              patch.object(cfg, "REPO", return_value=false_repo) as factory:
             with self.assertRaises(PermissionError):
                 cfg.validated_repo(str(self.repo_dir))
@@ -558,7 +558,7 @@ class SecurityLoopbackTests(unittest.TestCase):
             command = "/bin/sh -c " + shlex.quote("(" + descendant + ") & wait")
             headers = {"Content-Type": "application/x-www-form-urlencoded",
                        "X-CSRF-Token": cfg.HTTP_ROUTER.security.csrf_token}
-            with patch.object(cfg, "ALLOW_SHELL_COMMANDS", True), \\
+            with patch.object(cfg, "ALLOW_SHELL_COMMANDS", True), \
                  patch.object(cfg, "EXEC_ALLOWED_BINARIES", ["/bin/sh"]):
                 started = time.monotonic()
                 status, _, raw = http_request(
