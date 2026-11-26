@@ -136,16 +136,27 @@ and complete remaining XSS audit before public release.
   require a separate staged CSP migration and report-only then enforced tests.
   This PR reduces specific injection paths; it cannot certify that all XSS
   sinks were found.
-- **GitPython TOCTOU remains an explicit residual risk.** `validated_repo`
-  checks the worktree lies inside the workspace, but GitPython resolves
-  `.git`, indexes, and hooks via pathname-based filesystem operations after
-  that validation. An attacker with the same Unix UID and concurrent write
-  access may race symlink/path swaps. Enabling Git is therefore an
-  administrator-only capability with OS-level trust, not a confinement proof.
+- **GitPython TOCTOU remains an explicit residual risk.** Follow-up #27
+  discovers the nearest ordinary in-root `.git` directory itself before
+  opening GitPython (no parent-directory search by GitPython), and validates
+  `working_dir`, `git_dir` and `common_dir` against the configured
+  workspace. Symlinked control directories and `gitdir:` pointer files
+  (including linked worktrees) are deliberately unsupported. Nevertheless,
+  GitPython resolves indexes, hooks and configuration via pathname-based
+  operations after these checks. An attacker with the same Unix UID and
+  concurrent write access may race pathname swaps or configure hooks and
+  arbitrary remotes. Git remains an administrator-only, explicitly enabled
+  capability with OS-level trust, **not an isolated sandbox**.
 - **Allowlisted shell tools and opt-in Git operations are privileged by
   design** and are not sandboxed by the application. Their public deployment
   requires a separate decision to disable them entirely or add host/container
   isolation and audited command policies. The safe default is **off**.
+- **Security regression additions (#27):** filesystem listing now skips
+  non-regular entries (including named pipes and sockets); file read/write
+  still reject them. The shell deadline test verifies that descendants
+  cannot write a marker after an HTTP timeout. This test complements the
+  existing inherited-pipe latency and bounded-output checks, and is designed
+  to fail if process-group termination is removed (see #23).
 - **TOCTOU-resistant `openat`/dir-fd operations require Unix/Linux semantics**
   (`O_NOFOLLOW`, `dir_fd`). Actual HA OS runtime support is part of #8;
   non-Unix platforms cannot claim equivalent hardening until tested.

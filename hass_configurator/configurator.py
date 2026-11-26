@@ -6,6 +6,7 @@ Configurator for Home Assistant.
 https://github.com/danielperna84/hass-configurator
 """
 import os
+from pathlib import Path
 import sys
 import argparse
 import json
@@ -390,19 +391,70 @@ def is_safe_path(basedir, path, follow_symlinks=True):
         return False
 
 
+def _git_control_directory(fs, candidate):
+    """Accept only an ordinary in-workspace .git directory, never a link/file."""
+    try:
+        fs.resolve_for_read(candidate, directory=True)
+    except FileNotFoundError:
+        return False
+    except (OSError, ValueError) as err:
+        raise PermissionError("Unsafe Git control directory") from err
+    return True
+
+
+def _verify_git_metadata(repo, fs, worktree):
+    """Reject worktrees with redirected Git metadata before any Git action.
+
+    GitPython is pathname-based, so this narrows the administrative Git
+    capability; it does NOT eliminate races by a same-UID local adversary.
+    Linked worktrees and gitdir: pointer files are intentionally unsupported.
+    """
+    try:
+        if Path(repo.working_dir) != Path(worktree):
+            raise PermissionError("Unexpected Git worktree")
+        for name in ("git_dir", "common_dir"):
+            metadata = getattr(repo, name, None)
+            if not metadata:
+                raise PermissionError("Missing Git metadata directory")
+            fs.resolve_for_read(metadata, directory=True)
+    except (OSError, ValueError, TypeError, AttributeError) as err:
+        raise PermissionError("Git metadata outside configured workspace") from err
+    return repo
+
+
 def validated_repo(path, **kwargs):
-    """Never let search_parent_directories escape the workspace root."""
+    """Find a Git root inside BASEPATH without GitPython parent traversal.
+
+    The nearest .git must be a directory, not a symlink or a gitdir: file.
+    Inspect metadata before accepting the GitPython instance; privilege
+    opt-in and OS-level trust are still necessary for hooks/other Git I/O.
+    """
     if REPO is None:
         raise PermissionError("Git integration is disabled")
-    checked = _fs().resolve_for_read(
-        path, directory=os.path.isdir(path))
-    repo = REPO(checked, **kwargs)
-    root = _fs()
-    try:
-        root.resolve_for_read(repo.working_dir, directory=True)
-    except OSError as err:
-        raise PermissionError("Git worktree outside configured root") from err
-    return repo
+    fs = _fs()
+    checked = fs.resolve_for_read(path, directory=os.path.isdir(path))
+    cursor = Path(checked) if os.path.isdir(checked) else Path(checked).parent
+    while True:
+        if _git_control_directory(fs, cursor / ".git"):
+            break
+        if cursor == fs.root:
+            raise PermissionError("Git repository not found inside workspace")
+        cursor = cursor.parent
+    # Never let GitPython itself search upwards outside the validated root.
+    kwargs["search_parent_directories"] = False
+    repo = REPO(str(cursor), **kwargs)
+    return _verify_git_metadata(repo, fs, cursor)
+
+
+def safe_init_repo(path):
+    """Initialize Git only where existing .git metadata is not redirected."""
+    if REPO is None:
+        raise PermissionError("Git integration is disabled")
+    fs = _fs()
+    checked = fs.resolve_for_read(path, directory=True)
+    _git_control_directory(fs, Path(checked) / ".git")
+    repo = REPO.init(checked)
+    return _verify_git_metadata(repo, fs, checked)
 
 def get_dircontent(path, repo=None):
     """Get content of directory."""
@@ -1335,7 +1387,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         repopath = unquote(postvars['path'][0])
                         response['path'] = repopath
                         try:
-                            repo = REPO.init(_fs().resolve_for_read(repopath, directory=True))
+                            repo = safe_init_repo(repopath)
                             response['error'] = False
                             response['message'] = "Initialized repository in %s" % repopath
                             self.send_response(200)

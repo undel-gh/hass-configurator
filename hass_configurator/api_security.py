@@ -283,8 +283,10 @@ class ConfinedFS:
                     meta = os.stat(name, dir_fd=fd, follow_symlinks=False)
                 except (OSError, ValueError):
                     continue
-                if stat.S_ISLNK(meta.st_mode):
-                    # UI must not advertise symlinks it cannot safely open.
+                if not (stat.S_ISDIR(meta.st_mode) or
+                        stat.S_ISREG(meta.st_mode)):
+                    # Never advertise symlinks, FIFOs, devices or sockets as
+                    # editable files. read_bytes/write_bytes reject them too.
                     continue
                 items.append({
                     "name": name,
