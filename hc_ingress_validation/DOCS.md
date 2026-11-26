@@ -1,4 +1,4 @@
-# Temporary CSP test app 0.0.3 (CSP-A)
+# Temporary CSP test app 0.0.4 (CSP-B)
 
 Test only; not the official File Editor. Source: `bbab9cc7051c1a90db256ffbb30a06360f3226fc` (PR #30). No Core API privilege, host ports or shared mounts. Only `/data/hc-ingress-validation` is editable.
 
