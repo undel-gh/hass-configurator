@@ -65,10 +65,11 @@ copy the CI fixture permissions into production.
 
 Privileged actions now require explicit booleans, all **false** by default:
 `ALLOW_SHELL_COMMANDS`, `ALLOW_GIT_OPERATIONS`, `ALLOW_NETWORK_ADMIN`,
-`ALLOW_HA_CONTROL`. Settings loaded from JSON/environment must contain actual
-boolean values: `true` or `false`. String values such as `"false"`, numeric `0`/`1`
-and `null` are rejected at startup, and the HTTP admission boundary never
-treats a truthy value as an opt-in. Shell execution additionally requires a nonempty list
+`ALLOW_HA_CONTROL`. JSON settings require actual native booleans `true` or `false`, never
+quoted strings, numeric `0`/`1` or `null`. Environment values must be
+the exact text `true`/`false` (legacy `True`/`False` also accepted), and
+are converted to native booleans before the strict capability policy.
+Malformed environment values fail at startup; a truthy string cannot opt in. Shell execution additionally requires a nonempty list
 `EXEC_ALLOWED_BINARIES`, whose entries must be absolute executable paths.
 Do not grant access to interpreters such as `python` or `bash` unless arbitrary
 command execution as the service user is explicitly acceptable.
@@ -93,6 +94,36 @@ service account's permissions.
 limit and return HTTP 413 for oversized files; descriptor-based reads bound
 bytes even if a file grows concurrently. Large-file streaming is outside
 this change and would require additional API and browser compatibility tests.
+
+### Issue #23 — legacy booleans and POST body framing
+
+**Boolean settings.** The documented legacy flags `GIT`, `DEV`,
+`DIRSFIRST`, `HIDEHIDDEN`, `IGNORE_SSL` and `ENFORCE_BASEPATH` use
+native JSON `true`/`false`, or the exact environment strings `true`,
+`false`, `True`, `False`. Other values (including `1`, `yes`, empty
+strings and JSON quoted booleans) fail at startup. Precedence remains
+defaults < JSON < environment < explicitly supported CLI flags.
+`HC_GIT=false` disables Git module/UI even if JSON enables it;
+`--git` may explicitly enable the module, but **does not enable**
+Git HTTP operations unless the separate `ALLOW_GIT_OPERATIONS` flag is
+also a native boolean `true`. When Git is disabled the imported GitPython
+reference is cleared. Nonboolean values like `HC_PASSWORD=false` remain
+literal strings rather than being coerced to booleans.
+
+`ENFORCE_BASEPATH=false` from JSON or environment emits a warning,
+and **cannot** switch off mandatory confinement.
+
+**HTTP POST request framing.** All admitted POST routes require exactly
+one unsigned decimal ASCII `Content-Length` header. Missing length is
+**411 Length Required**, malformed/negative/signed/duplicate length or
+any `Transfer-Encoding` is **400 Bad Request**, and lengths larger than
+the existing 1 MiB API or 100 MiB upload limit are **413 Payload Too Large**.
+An explicit zero-length body is valid framing, though applications may
+reject absent fields. Router authorization/CSRF checks run before header
+validation. Errors are emitted by the single router response writer,
+with `Cache-Control: no-store` and `X-Content-Type-Options: nosniff`,
+and close the connection so unread bytes cannot be interpreted as the
+next HTTP request. This does not implement chunked request support.
 
 ### Secret-safe request logging
 

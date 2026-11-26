@@ -153,7 +153,8 @@ class Assets:
 
 
 def error_response(status, allow=""):
-    labels = {400: "Bad request", 404: "Not found", 405: "Method not allowed"}
+    labels = {400: "Bad request", 404: "Not found", 405: "Method not allowed",
+              411: "Length required", 413: "Payload too large"}
     hdrs = [("Cache-Control", NO_STORE)]
     if allow:
         hdrs.append(("Allow", allow))

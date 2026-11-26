@@ -1,5 +1,7 @@
 """P1 #7 API authorization, anti-CSRF, filesystem and XSS abuse tests."""
 import http.client
+from io import BytesIO
+from types import SimpleNamespace
 import base64
 import ipaddress
 import json
@@ -118,6 +120,106 @@ class PolicyTests(unittest.TestCase):
             policy.authorize(h, "POST", "/api/restart", allow_ha_control=True).status,
             403,
         )
+
+
+
+class SettingsBooleanSemanticsTests(unittest.TestCase):
+    """Issue #23: legacy bools, settings precedence and opt-in semantics."""
+
+    _MUTATED = (
+        "LISTENIP", "LISTENPORT", "BASEPATH", "SSL_CERTIFICATE", "SSL_KEY",
+        "HASS_API", "HASS_API_PASSWORD", "CREDENTIALS", "ALLOWED_NETWORKS",
+        "BANNED_IPS", "BANLIMIT", "DEV", "IGNORE_PATTERN", "DIRSFIRST",
+        "SESAME", "VERIFY_HOSTNAME", "ENFORCE_BASEPATH", "ENV_PREFIX",
+        "NOTIFY_SERVICE", "USERNAME", "PASSWORD", "SESAME_TOTP_SECRET",
+        "TOTP", "GIT", "REPO", "PORT", "IGNORE_SSL", "HASS_WS_API",
+        "ALLOWED_DOMAINS", "HIDEHIDDEN", "ALLOW_SHELL_COMMANDS",
+        "EXEC_ALLOWED_BINARIES", "ALLOW_GIT_OPERATIONS",
+        "ALLOW_NETWORK_ADMIN", "ALLOW_HA_CONTROL",
+    )
+
+    def setUp(self):
+        original = {name: getattr(cfg, name) for name in self._MUTATED}
+        self.state = patch.multiple(cfg, **original)
+        self.state.start()
+        self.addCleanup(self.state.stop)
+
+    def _load(self, settings, env=None, *, cli_git=False):
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "settings.json"
+            path.write_text(json.dumps(settings), encoding="utf-8")
+            args = SimpleNamespace(
+                settings=str(path), git=cli_git, listen=None, port=None,
+                basepath=None, enforce=False, standalone=True, dev=False,
+                dirsfirst=False, hidehidden=False, username=None,
+                password=None,
+            )
+            with patch.dict(os.environ, env or {}, clear=True):
+                cfg.load_settings(args)
+
+    def test_json_env_cli_precedence_and_git_ui_flags(self):
+        with patch.object(cfg, "GIT", False), patch.object(cfg, "REPO", None), \
+             patch.object(cfg, "ALLOW_GIT_OPERATIONS", False):
+            self._load({"GIT": True, "DIRSFIRST": True, "HIDEHIDDEN": True},
+                       {"HC_GIT": "false", "HC_DIRSFIRST": "false",
+                        "HC_HIDEHIDDEN": "false"})
+            self.assertIs(cfg.GIT, False)
+            self.assertIs(cfg.DIRSFIRST, False)
+            self.assertIs(cfg.HIDEHIDDEN, False)
+            self.assertIs(cfg.ALLOW_GIT_OPERATIONS, False)
+            self.assertIsNone(cfg.REPO)
+
+            self._load({"GIT": False}, {"HC_GIT": "true"})
+            self.assertIs(cfg.GIT, True)
+            self.assertIs(cfg.ALLOW_GIT_OPERATIONS, False)
+            self.assertIsNotNone(cfg.REPO)
+
+            self._load({"GIT": True}, {"HC_GIT": "false"}, cli_git=True)
+            self.assertIs(cfg.GIT, True)
+            self.assertIs(cfg.ALLOW_GIT_OPERATIONS, False)
+
+            self._load({"GIT": False}, {"HC_GIT": "false"})
+            self.assertIs(cfg.GIT, False)
+            self.assertIsNone(cfg.REPO)
+
+    def test_malformed_legacy_boolean_inputs_rejected(self):
+        for settings, env in (
+            ({"GIT": "false"}, {}),
+            ({"DIRSFIRST": 1}, {}),
+            ({"HIDEHIDDEN": None}, {}),
+            ({}, {"HC_GIT": "1"}),
+            ({}, {"HC_GIT": "yes"}),
+            ({}, {"HC_DIRSFIRST": "off"}),
+            ({}, {"HC_HIDEHIDDEN": ""}),
+            ({}, {"HC_IGNORE_SSL": "no"}),
+            ({}, {"HC_ENFORCE_BASEPATH": "0"}),
+        ):
+            with self.subTest(settings=settings, env=env):
+                with self.assertRaises(ValueError):
+                    self._load(settings, env)
+
+    def test_enforce_basepath_false_warns_for_json_and_environment(self):
+        for settings, env in (
+            ({"ENFORCE_BASEPATH": False}, {}),
+            ({}, {"HC_ENFORCE_BASEPATH": "false"}),
+        ):
+            with self.subTest(settings=settings, env=env):
+                with patch.object(cfg.LOG, "warning") as warning:
+                    self._load(settings, env)
+                self.assertIs(cfg.ENFORCE_BASEPATH, True)
+                self.assertTrue(any(
+                    "ENFORCE_BASEPATH=false ignored" in str(call)
+                    for call in warning.call_args_list
+                ))
+
+    def test_boolean_looking_password_remains_string_and_git_gate_is_strict(self):
+        with patch.object(cfg, "ALLOW_GIT_OPERATIONS", False):
+            self._load({"GIT": False}, {"HC_PASSWORD": "false",
+                                       "HC_ALLOW_GIT_OPERATIONS": "false"})
+            self.assertEqual(cfg.PASSWORD, "false")
+            self.assertIs(cfg.ALLOW_GIT_OPERATIONS, False)
+            with self.assertRaises(ValueError):
+                self._load({}, {"HC_ALLOW_GIT_OPERATIONS": "1"})
 
 
 class HostHeaderTests(unittest.TestCase):
@@ -415,6 +517,22 @@ def http_raw_headers(server, method, path, data=None, headers=None):
         conn.close()
 
 
+
+def raw_post_with_headers(server, path, header_pairs):
+    """Send raw HTTP/1.1 request headers without http.client adding length."""
+    conn = http.client.HTTPConnection("127.0.0.1",
+                                      server.server_address[1], timeout=5)
+    try:
+        conn.putrequest("POST", path)
+        for name, value in header_pairs:
+            conn.putheader(name, value)
+        conn.endheaders()
+        reply = conn.getresponse()
+        return reply.status, list(reply.getheaders()), reply.read()
+    finally:
+        conn.close()
+
+
 class SecurityLoopbackTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -444,6 +562,119 @@ class SecurityLoopbackTests(unittest.TestCase):
          cfg.ALLOW_GIT_OPERATIONS, cfg.ALLOW_NETWORK_ADMIN,
          cfg.ALLOW_HA_CONTROL, cfg.USERNAME, cfg.PASSWORD) = cls.old
         cls.workspace.cleanup()
+
+    def test_post_length_errors_are_distinct_and_close_connection(self):
+        csrf = ("X-CSRF-Token", cfg.HTTP_ROUTER.security.csrf_token)
+        cases = (
+            ("missing", [], 411),
+            ("invalid-text", [("Content-Length", "bogus")], 400),
+            ("negative", [("Content-Length", "-1")], 400),
+            ("signed", [("Content-Length", "+1")], 400),
+            ("fraction", [("Content-Length", "1.5")], 400),
+            ("duplicate", [("Content-Length", "0"),
+                           ("Content-Length", "0")], 400),
+            ("chunked", [("Transfer-Encoding", "chunked")], 400),
+            ("length-and-chunked", [("Content-Length", "0"),
+                                   ("Transfer-Encoding", "chunked")], 400),
+            ("oversize", [("Content-Length", str(1048576 + 1))], 413),
+        )
+        for case, headers, expected in cases:
+            with self.subTest(case=case):
+                status, pairs, payload = raw_post_with_headers(
+                    self.server, "/api/save", [csrf] + headers)
+                self.assertEqual(status, expected)
+                self.assertEqual(payload, {411: b"Length required",
+                                           400: b"Bad request",
+                                           413: b"Payload too large"}[expected])
+                self.assertEqual(
+                    [v for k, v in pairs if k.lower() == "cache-control"],
+                    ["no-store"])
+                self.assertEqual(
+                    [v for k, v in pairs if k.lower() == "x-content-type-options"],
+                    ["nosniff"])
+                self.assertEqual(
+                    [v for k, v in pairs if k.lower() == "connection"],
+                    ["close"])
+        status, _, _ = raw_post_with_headers(
+            self.server, "/api/upload",
+            [csrf, ("Content-Length", str(100 * 1024 * 1024 + 1))])
+        self.assertEqual(status, 413)
+
+    def test_post_oversized_decimal_and_leading_zero_normalization(self):
+        # Large syntactically valid decimal headers must not be misclassified
+        # when Python int() has a decimal digit conversion limit.
+        csrf = ("X-CSRF-Token", cfg.HTTP_ROUTER.security.csrf_token)
+        for desc, value, expected in (
+            ("five-thousand-nines", "9" * 5000, 413),
+            ("over-limit-with-leading-zeros", "0" * 5000 + "1048577", 413),
+            ("limit-with-leading-zeros", "0" * 5000 + "1048576", 200),
+            ("five-thousand-zeros", "0" * 5000, 200),
+        ):
+            with self.subTest(desc=desc):
+                if expected == 200 and value.lstrip("0"):
+                    # Consume the exact declared body on the valid-limit case.
+                    # A 1 MiB request is inexpensive and exercises real HTTP.
+                    payload = b" " * 1048576
+                    status, _, response = http_request(
+                        self.server, "POST", "/api/save", payload,
+                        {"X-CSRF-Token": csrf[1],
+                         "Content-Length": value})
+                else:
+                    status, _, response = raw_post_with_headers(
+                        self.server, "/api/save", [csrf, ("Content-Length", value)])
+                self.assertEqual(status, expected)
+                if status == 200:
+                    self.assertTrue(json.loads(response)["error"])
+
+    def test_exact_post_size_limit_is_accepted_on_both_routes(self):
+        # The 1 MiB maximum is a real HTTP body; a 100 MiB synthetic multipart
+        # body uses mocked FieldStorage to exercise admission without actually
+        # buffering a 100 MiB fixture on shared CI runners.
+        csrf = cfg.HTTP_ROUTER.security.csrf_token
+        with tempfile.TemporaryDirectory(dir=self.workspace.name) as folder:
+            target = Path(folder) / "max-size.yaml"
+            prefix = urlencode({"filename": str(target), "text": ""}).encode()
+            payload = prefix + b"a" * (1048576 - len(prefix))
+            self.assertEqual(len(payload), 1048576)
+            status, _, response = http_request(
+                self.server, "POST", "/api/save", payload,
+                {"X-CSRF-Token": csrf,
+                 "Content-Type": "application/x-www-form-urlencoded"})
+            self.assertEqual(status, 200)
+            self.assertFalse(json.loads(response)["error"])
+            self.assertEqual(target.stat().st_size, 1048576 - len(prefix))
+
+            from types import SimpleNamespace
+            form = {
+                "file": SimpleNamespace(filename="boundary.yaml",
+                                        file=BytesIO(b"safe: true")),
+                "path": SimpleNamespace(file=BytesIO(folder.encode("utf-8"))),
+            }
+            with patch.object(cfg.cgi, "FieldStorage", return_value=form):
+                status, _, response = raw_post_with_headers(
+                    self.server, "/api/upload",
+                    [("X-CSRF-Token", csrf),
+                     ("Content-Length", str(100 * 1024 * 1024)),
+                     ("Content-Type", "multipart/form-data; boundary=test")])
+            self.assertEqual(status, 200)
+            self.assertFalse(json.loads(response)["error"])
+            self.assertEqual((Path(folder) / "boundary.yaml").read_bytes(),
+                             b"safe: true")
+
+    def test_post_zero_length_valid_and_security_gate_precedes_size(self):
+        csrf = ("X-CSRF-Token", cfg.HTTP_ROUTER.security.csrf_token)
+        status, _, payload = raw_post_with_headers(
+            self.server, "/api/save", [csrf, ("Content-Length", "0")])
+        self.assertEqual(status, 200)
+        self.assertTrue(json.loads(payload)["error"])
+        # Even malformed body framing never bypasses authorization or CSRF.
+        status, _, _ = raw_post_with_headers(self.server, "/api/save", [])
+        self.assertEqual(status, 403)
+        with patch.object(cfg.HTTP_ROUTER.security, "_loopback_bound",
+                          return_value=False):
+            status, _, _ = raw_post_with_headers(
+                self.server, "/api/save", [csrf, ("Content-Length", "bogus")])
+            self.assertEqual(status, 403)
 
     def test_every_registered_legacy_api_has_auth_and_csrf_admission(self):
         from hass_configurator.http_routing import GET_API, POST_API
