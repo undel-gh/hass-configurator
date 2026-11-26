@@ -259,6 +259,16 @@ jobs:
       - name: Install Chromium
         working-directory: e2e
         run: npx playwright install --with-deps chromium
+      - name: Inspect exact Ace 1.45.2 candidate (research only)
+        run: |
+          set -euo pipefail
+          mkdir -p e2e/artifacts/supply-chain
+          npm view ace-builds@1.45.2 dist.integrity dist.tarball --json > /tmp/ace-candidate-registry.json
+          npm pack ace-builds@1.45.2 --ignore-scripts --silent --pack-destination /tmp
+          python scripts/inspect_ace_candidate.py --archive /tmp/ace-builds-1.45.2.tgz \
+            --registry /tmp/ace-candidate-registry.json --output e2e/artifacts/supply-chain/ace-candidate.json \
+            --extract /tmp/hc-ace-candidate-1.45.2
+          node e2e/ace-candidate-smoke.cjs /tmp/hc-ace-candidate-1.45.2 e2e/artifacts/supply-chain/ace-candidate-browser.json
       - name: Start standalone editor
         run: |
           mkdir -p "$E2E_WORKSPACE"
