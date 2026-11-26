@@ -17,6 +17,23 @@ test('hostile loadfile URL stays data, not executable script', async ({ page }) 
   expect(html).toContain('name="hc-csrf-token"');
 });
 
+test('loadfile quotes stay JSON data inside a trusted nonce script', async ({ page }) => {
+  // Unlike the HTML-terminator test, these statements contain no tags.
+  // Removing json.dumps lets the first payload execute with a valid nonce.
+  for (const attack of ["'';window.__hc_xss=1;//", '"";window.__hc_xss=1;//',
+                         '";window.__hc_xss=1;//']) {
+    const response = await page.goto(server + '/?loadfile=' + encodeURIComponent(attack),
+      { waitUntil: 'domcontentloaded' });
+    expect(response.status()).toBe(200);
+    expect(response.headers()['content-security-policy']).toContain("'nonce-");
+    await expect.poll(() => page.evaluate(() => Boolean(window.editor))).toBe(true);
+    const result = await page.evaluate(() => ({
+      data: window.init_loadfile, executed: Object.hasOwn(window, '__hc_xss'),
+    }));
+    expect(result).toEqual({ data: attack, executed: false });
+  }
+});
+
 test('malicious filesystem names render only as text in the browser', async ({ page }) => {
   test.skip(!workspace, 'Disposable E2E_WORKSPACE required');
   const name = "xss-'><img src=x onerror=window.__hc_xss=1>.yaml";
