@@ -8,3 +8,5 @@ include hass_configurator/material-icons.fallback.css
 include hass_configurator/materialize.min.js
 include hass_configurator/style.css
 recursive-include hass_configurator/vendor *
+recursive-include hass_configurator/third_party *
+include LICENSE.txt

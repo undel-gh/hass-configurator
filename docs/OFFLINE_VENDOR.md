@@ -57,3 +57,10 @@ Review new npm SRI with the lock manifest before updating a published bundle. Ar
 - #7/#13: API security hardening and CSP.
 - #8: physical HA OS add-on Ingress testing, since simulated prefix is insufficient proof.
 - #9: complete SBOM and third-party license audit, **including Roboto font licensing** and eventual vulnerability review.
+
+## #9 supply-chain evidence
+
+See [P1 supply-chain audit](P1_SUPPLY_CHAIN.md) for separate legacy JS/font
+checksums, notices, source SBOM, actual installed inventories and dated
+vulnerability decisions. Re-run it when changing any dependency. The
+original 460-resource manifest and HTTP asset routes are unchanged.

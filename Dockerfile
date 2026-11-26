@@ -24,7 +24,7 @@ FROM docker.io/library/python:3.11.18-bookworm@sha256:726d304906fa5eb468e5531e36
 ARG SOURCE_DATE_EPOCH
 ENV SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH} PYTHONDONTWRITEBYTECODE=1
 WORKDIR /src
-COPY setup.py MANIFEST.in ./
+COPY setup.py MANIFEST.in LICENSE.txt ./
 COPY hass_configurator/ hass_configurator/
 COPY requirements/normalize_mtimes.py /tmp/normalize_mtimes.py
 # The official digest-pinned base already contains the wheel build toolchain.

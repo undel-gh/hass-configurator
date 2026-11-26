@@ -13,6 +13,9 @@ from hass_configurator._version import VERSION
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = json.loads((ROOT / "hass_configurator/vendor/manifest.json").read_text("utf8"))
+PACKAGE = ROOT / "hass_configurator"
+NOTICE_FILES = {p.relative_to(PACKAGE).as_posix() for p in
+                (PACKAGE / "third_party").rglob("*") if p.is_file()}
 
 
 def verify(files, label):
@@ -22,7 +25,7 @@ def verify(files, label):
     # dev.html is the primary first-party UI entrypoint. It is not a
     # fingerprinted /assets/ route, but MUST be byte-exact in both archives.
     first_party = set(PACKAGE_ASSETS) | {"dev.html"}
-    for name in first_party:
+    for name in first_party | NOTICE_FILES:
         required[name] = hashlib.sha256(
             (ROOT / "hass_configurator" / name).read_bytes()).hexdigest()
     missing = []
@@ -42,8 +45,11 @@ def verify(files, label):
     extra_manifest = files.get("hass_configurator/vendor/manifest.json")
     if extra_manifest is None:
         raise RuntimeError("%s missing the vendor integrity manifest" % label)
-    if json.loads(extra_manifest)["resources"] != MANIFEST["resources"]:
+    if extra_manifest != (PACKAGE / "vendor/manifest.json").read_bytes():
         raise RuntimeError("%s embedded manifest differs from source" % label)
+    if {name for name in files if name.startswith("hass_configurator/third_party/")} != {
+            "hass_configurator/" + name for name in NOTICE_FILES}:
+        raise RuntimeError("%s unexpected third-party notice inventory" % label)
     print("%s: %d vendor resources, %d first-party resources (including dev.html) and manifest validated" %
           (label, len(MANIFEST["resources"]), len(first_party)))
 
@@ -73,7 +79,7 @@ def main(wheel_dir, sdist_dir):
             raise RuntimeError("wheel missing unique distribution METADATA")
         assert_metadata(archive.read(dist_info[0]), "wheel")
         verify({n: archive.read(n) for n in archive.namelist() if
-                n.startswith("hass_configurator/vendor/") or
+                n.startswith(("hass_configurator/vendor/", "hass_configurator/third_party/")) or
                 n == "hass_configurator/_version.py" or
                 n in {"hass_configurator/" + filename for filename in (set(PACKAGE_ASSETS) | {"dev.html"})}},
                "wheel")
@@ -91,7 +97,7 @@ def main(wheel_dir, sdist_dir):
             if not member.isfile() or "hass_configurator/" not in member.name:
                 continue
             path = member.name[member.name.index("hass_configurator/"):]
-            if path.startswith("hass_configurator/vendor/") or path == "hass_configurator/_version.py" or path in {
+            if path.startswith(("hass_configurator/vendor/", "hass_configurator/third_party/")) or path == "hass_configurator/_version.py" or path in {
                     "hass_configurator/" + name for name in (set(PACKAGE_ASSETS) | {"dev.html"})}:
                 files[path] = archive.extractfile(member).read()
         verify(files, "sdist")

@@ -69,6 +69,18 @@ jobs:
             --ace /tmp/ace-builds-1.9.6.tgz \
             --materialize /tmp/materialize-css-0.100.2.tgz \
             --mdi /tmp/mdi-font-3.4.93.tgz
+      - name: Verify notices and generate source SBOM / legacy provenance evidence
+        run: |
+          set -euo pipefail
+          mkdir -p e2e/artifacts/supply-chain
+          npm view jquery@3.6.0 dist.integrity dist.tarball --json > e2e/artifacts/supply-chain/jquery-registry.json
+          npm view js-yaml@4.1.0 dist.integrity dist.tarball --json > e2e/artifacts/supply-chain/js-yaml-registry.json
+          npm pack jquery@3.6.0 --ignore-scripts --silent --pack-destination /tmp
+          npm pack js-yaml@4.1.0 --ignore-scripts --silent --pack-destination /tmp
+          # Audit-only tooling, not added to the package/image dependencies.
+          python -m pip install --disable-pip-version-check fonttools==4.60.1 brotli==1.1.0
+          python scripts/audit_supply_chain.py source \
+            --output e2e/artifacts/supply-chain/source.cdx.json --archives /tmp --fonts
       - name: Routing and loopback HTTP tests
         run: python -m unittest discover -s tests -p 'test_*.py' -v
       - name: Build distribution artifacts and validate vendored payloads
@@ -77,6 +89,14 @@ jobs:
           python -m pip wheel --no-deps --wheel-dir /tmp/vendor-wheel .
           python setup.py sdist --dist-dir /tmp/vendor-sdist
           python scripts/check_offline_artifacts.py /tmp/vendor-wheel /tmp/vendor-sdist
+
+      - name: Upload source supply-chain evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: supply-chain-source
+          path: e2e/artifacts/supply-chain/
+          if-no-files-found: error
 
   disposable-haos-fixture:
     name: Disposable HA OS app container smoke (NOT real Supervisor)
@@ -271,6 +291,10 @@ jobs:
               port=3220
             fi
             "$venv/bin/pip" install --disable-pip-version-check "$artifact"
+            mkdir -p "$PWD/e2e/artifacts/supply-chain"
+            checkout="$PWD"
+            (cd /tmp; "$venv/bin/python" "$checkout/scripts/audit_supply_chain.py" installed \
+              --label "$variant" --output "$checkout/e2e/artifacts/supply-chain/$variant-installed.json")
             work="/tmp/hc-installed-workspace-$variant"
             mkdir -p "$work"
             # Import and start the installed package from OUTSIDE checkout.
@@ -405,6 +429,15 @@ jobs:
             /repo/scripts/check_docker_runtime_lock.py \
             --lock /repo/requirements/docker-runtime.lock --installed
 
+          # The image remains networkless; JSON goes to stdout via a temporary
+          # container file, not to a writable checkout bind mount.
+          docker run --rm --network none -v "$PWD:/repo:ro" \
+            --workdir /tmp --entrypoint sh hc-fork-p0:ci -ec '
+              python /repo/scripts/audit_supply_chain.py installed --locked --debian12 \
+                --label docker --output /tmp/docker-installed.json
+              cat /tmp/docker-installed.json
+            ' > e2e/artifacts/supply-chain/docker-installed.json
+
           # These are isolated, disposable test-only credentials, never
           # deployment secrets or credentials for a user's installation.
           basic_user=ci-local-review
@@ -454,6 +487,14 @@ jobs:
           )
           docker rm -f hc-fork-p0-browser
           trap - EXIT
+
+      - name: Scan actual install inventories and locked dependencies with OSV
+        run: |
+          python scripts/audit_supply_chain.py scan \
+            --installed e2e/artifacts/supply-chain/wheel-installed.json \
+              e2e/artifacts/supply-chain/sdist-installed.json \
+              e2e/artifacts/supply-chain/docker-installed.json \
+            --output e2e/artifacts/supply-chain/osv.json
 
       - name: Store browser audit and traces
         if: always()

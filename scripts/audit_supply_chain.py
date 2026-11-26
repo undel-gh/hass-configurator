@@ -13,7 +13,10 @@ import tarfile
 from urllib.parse import quote
 from urllib.request import Request, urlopen
 
-from check_docker_runtime_lock import read_lock, normalize
+try:
+    from .check_docker_runtime_lock import read_lock, normalize
+except ImportError:  # direct script execution
+    from check_docker_runtime_lock import read_lock, normalize
 
 ROOT = Path(__file__).resolve().parents[1]
 PACKAGE = ROOT / "hass_configurator"
