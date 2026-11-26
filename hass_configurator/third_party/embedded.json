@@ -1,0 +1,372 @@
+{
+  "schema": 1,
+  "components": [
+    {
+      "id": "mat-hammer",
+      "parent": "materialize",
+      "name": "hammerjs",
+      "version": "2.0.4",
+      "ecosystem": "npm",
+      "license": "MIT",
+      "status": "identified",
+      "notices": [
+        "third_party/licenses/embedded/hammer.txt"
+      ],
+      "locations": [
+        {
+          "file": "materialize.min.js",
+          "marker": "VERSION=\"2.0.4\""
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/Dogfalo/materialize/blob/9bc43a1199ad5dfb78d58ba47726ab039218a939/js/hammer.min.js",
+          "git_blob": "6c232c8cfcbf343f9d438b0563687fe10d666b41",
+          "marker": "VERSION=\"2.0.4\""
+        }
+      ],
+      "note": "Embedded version, not package.json ^2.0.8. Original release license retained."
+    },
+    {
+      "id": "mat-velocity",
+      "parent": "materialize",
+      "name": "Velocity.js",
+      "version": null,
+      "ecosystem": null,
+      "license": "MIT",
+      "status": "partial",
+      "notices": [
+        "third_party/licenses/embedded/velocity.txt"
+      ],
+      "locations": [
+        {
+          "file": "materialize.min.js",
+          "marker": "major:1,minor:2,patch:2"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/Dogfalo/materialize/blob/9bc43a1199ad5dfb78d58ba47726ab039218a939/js/velocity.min.js",
+          "git_blob": "ea21aad889fae591acd6a8d0ef012f53ff5e0efb",
+          "marker": "VelocityJS.org (1.2.3)"
+        },
+        {
+          "url": "https://github.com/Dogfalo/materialize/blob/9bc43a1199ad5dfb78d58ba47726ab039218a939/dist/js/materialize.js",
+          "git_blob": "3d06957ef054aa2670f6489b750b6c8c1a32cf4a",
+          "marker": "version: { major: 1, minor: 2, patch: 2 }"
+        }
+      ],
+      "note": "Header 1.2.3, runtime version 1.2.2; explicitly modified by Materialize. MIT text from 1.2.3; exact version unresolved, no purl. Both candidate versions require review in #34."
+    },
+    {
+      "id": "mat-velocity-shim",
+      "parent": "materialize",
+      "name": "Velocity jQuery Shim",
+      "version": "1.0.1",
+      "ecosystem": null,
+      "license": "MIT",
+      "status": "partial",
+      "notices": [
+        "third_party/licenses/embedded/velocity-shim-attribution.txt"
+      ],
+      "locations": [
+        {
+          "file": "materialize.min.js",
+          "marker": "Velocity"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/Dogfalo/materialize/blob/9bc43a1199ad5dfb78d58ba47726ab039218a939/js/velocity.min.js",
+          "git_blob": "ea21aad889fae591acd6a8d0ef012f53ff5e0efb",
+          "marker": "VelocityJS.org jQuery Shim (1.0.1)"
+        }
+      ],
+      "note": "Header attribution retained; exact shim distribution and full historical license text unresolved. Do not substitute a modern jQuery notice as proof."
+    },
+    {
+      "id": "mat-easing",
+      "parent": "materialize",
+      "name": "jquery.easing",
+      "version": "1.4.0",
+      "ecosystem": "npm",
+      "license": "BSD-3-Clause",
+      "status": "identified",
+      "notices": [
+        "third_party/licenses/embedded/jquery-easing.txt"
+      ],
+      "locations": [
+        {
+          "file": "materialize.min.js",
+          "marker": "jswing"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/Dogfalo/materialize/blob/9bc43a1199ad5dfb78d58ba47726ab039218a939/js/jquery.easing.1.4.js",
+          "git_blob": "8e982f0905158be723da7ed0b3c4e3b42e82f1c5",
+          "marker": "jQuery Easing v1.4.0"
+        }
+      ],
+      "note": "Upstream tag license contains both George McGinley Smith and Robert Penner BSD terms, even though its header still says 1.3.1."
+    },
+    {
+      "id": "mat-waves",
+      "parent": "materialize",
+      "name": "Waves",
+      "version": "0.6.4",
+      "ecosystem": null,
+      "license": "MIT",
+      "status": "identified",
+      "notices": [
+        "third_party/licenses/embedded/waves.txt"
+      ],
+      "locations": [
+        {
+          "file": "materialize.min.js",
+          "marker": "Waves"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/Dogfalo/materialize/blob/9bc43a1199ad5dfb78d58ba47726ab039218a939/js/waves.js",
+          "git_blob": "ae2cdcb6b3ec5053a703cc11707995b85e77c7fe",
+          "marker": "Waves v0.6.4"
+        }
+      ],
+      "note": "Historical package metadata says Waves; npm ecosystem identity not established; no invented purl."
+    },
+    {
+      "id": "mat-pickadate",
+      "parent": "materialize",
+      "name": "pickadate",
+      "version": "3.5.0",
+      "ecosystem": "npm",
+      "license": "MIT",
+      "status": "identified",
+      "notices": [
+        "third_party/licenses/embedded/pickadate.txt"
+      ],
+      "locations": [
+        {
+          "file": "materialize.min.js",
+          "marker": "pickadate"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/Dogfalo/materialize/blob/9bc43a1199ad5dfb78d58ba47726ab039218a939/js/date_picker/picker.js",
+          "git_blob": "745ef7177748f34867ee9ffae4945e9ea4adbdd9",
+          "marker": "pickadate.js v3.5.0"
+        },
+        {
+          "url": "https://github.com/Dogfalo/materialize/blob/9bc43a1199ad5dfb78d58ba47726ab039218a939/js/date_picker/picker.date.js",
+          "git_blob": "f282f4cf5e9e0f1b71abea0c9b88381ba2604534",
+          "marker": "Date picker for pickadate.js v3.5.0"
+        }
+      ],
+      "note": "Materialize-adapted core/date picker; not an independently installed npm package."
+    },
+    {
+      "id": "mat-clockpicker",
+      "parent": "materialize",
+      "name": "clockpicker",
+      "version": "0.0.7",
+      "ecosystem": "npm",
+      "license": "MIT",
+      "status": "identified",
+      "notices": [
+        "third_party/licenses/embedded/clockpicker.txt"
+      ],
+      "locations": [
+        {
+          "file": "materialize.min.js",
+          "marker": "clockpicker"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/Dogfalo/materialize/blob/9bc43a1199ad5dfb78d58ba47726ab039218a939/js/date_picker/picker.time.js",
+          "git_blob": "eac5213ba30f09bff0d051d83c42df62779bf985",
+          "marker": "ClockPicker v0.0.7"
+        }
+      ],
+      "note": "Modified by Ching Yaw Hao (2015), preserve modification attribution in NOTICE."
+    },
+    {
+      "id": "mat-scrollspy",
+      "parent": "materialize",
+      "name": "jQuery ScrollSpy",
+      "version": "0.1.2",
+      "ecosystem": null,
+      "license": "MIT",
+      "status": "partial",
+      "notices": [
+        "third_party/licenses/embedded/scrollspy.txt"
+      ],
+      "locations": [
+        {
+          "file": "materialize.min.js",
+          "marker": "scrollSpy"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/Dogfalo/materialize/blob/9bc43a1199ad5dfb78d58ba47726ab039218a939/js/scrollspy.js",
+          "git_blob": "fa8150b7d94c32a1ab253eb35891be155e0c9be5",
+          "marker": "@version 0.1.2"
+        }
+      ],
+      "note": "Version and copyright in tagged Materialize source; pinned upstream LICENSE agrees with author, original release identity not proven."
+    },
+    {
+      "id": "mat-jquery-hammer",
+      "parent": "materialize",
+      "name": "jQuery Hammer adapter",
+      "version": null,
+      "ecosystem": null,
+      "license": "MIT",
+      "status": "partial",
+      "notices": [
+        "third_party/licenses/embedded/jquery-hammer.txt"
+      ],
+      "locations": [
+        {
+          "file": "materialize.min.js",
+          "marker": "hammer"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/Dogfalo/materialize/blob/9bc43a1199ad5dfb78d58ba47726ab039218a939/js/jquery.hammer.js",
+          "git_blob": "e444b5c79aa9fa46433337822efc1717547b25a9",
+          "marker": "Hammer.Manager.prototype"
+        }
+      ],
+      "note": "Source identified; upstream LICENSE is a candidate from immutable commit; exact source revision unresolved."
+    },
+    {
+      "id": "mat-raf",
+      "parent": "materialize",
+      "name": "raf.js",
+      "version": null,
+      "ecosystem": null,
+      "license": "MIT",
+      "status": "partial",
+      "notices": [
+        "third_party/licenses/embedded/raf.txt"
+      ],
+      "locations": [
+        {
+          "file": "materialize.min.js",
+          "marker": "requestAnimationFrame"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/Dogfalo/materialize/blob/9bc43a1199ad5dfb78d58ba47726ab039218a939/js/global.js",
+          "git_blob": "106e10d12253311bb35f83d03171d32209ea2877",
+          "marker": "Copyright (c) 2013 ngryman"
+        }
+      ],
+      "note": "Tagged source credits Nicolas Gryman and Erik Möller; candidate upstream MIT text retained; exact revision unresolved."
+    },
+    {
+      "id": "mat-underscore",
+      "parent": "materialize",
+      "name": "Underscore.js fragments",
+      "version": null,
+      "ecosystem": null,
+      "license": "MIT",
+      "status": "partial",
+      "notices": [],
+      "locations": [
+        {
+          "file": "materialize.min.js",
+          "marker": "throttle"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/Dogfalo/materialize/blob/9bc43a1199ad5dfb78d58ba47726ab039218a939/js/global.js",
+          "git_blob": "106e10d12253311bb35f83d03171d32209ea2877",
+          "marker": "jashkenas/underscore/master/LICENSE"
+        },
+        {
+          "url": "https://github.com/Dogfalo/materialize/blob/9bc43a1199ad5dfb78d58ba47726ab039218a939/js/scrollspy.js",
+          "git_blob": "fa8150b7d94c32a1ab253eb35891be155e0c9be5",
+          "marker": "throttle() and getTime() taken from Underscore.js"
+        }
+      ],
+      "note": "Copied throttle/time fragments, not full library. Exact historic license/copyright revision needs review; include Underscore notice provisionally in next step."
+    }
+  ],
+  "notices": {
+    "third_party/licenses/embedded/clockpicker.txt": {
+      "sha256": "6c3bfb01afb9198f783778ca94966a72bc32d1723e8fc4e464aa04eed50ba8cb",
+      "source": "https://github.com/weareoutman/clockpicker/blob/d1bf8afdc29976c016215a3159c5dfee254e930b/LICENSE",
+      "source_blob": "69040dfcbdfe84707250c6d0fb1587331e721469",
+      "kind": "whole-file"
+    },
+    "third_party/licenses/embedded/hammer.txt": {
+      "sha256": "4d93df6544df47a49b25add3aff67ff9ff47e4756d85dd0c3e1beba8520ab9f2",
+      "source": "https://github.com/hammerjs/hammer.js/blob/702e675f1bab25d5f6997989d43aaa5eae384f54/LICENSE.md",
+      "source_blob": "e067655d694c1341ea3fb268301facb61c645d88",
+      "kind": "whole-file"
+    },
+    "third_party/licenses/embedded/jquery-easing.txt": {
+      "sha256": "e8675bf8fd39f4b1ad13e0c267e2453e1a223c68d6e217634bc59dcb89a97412",
+      "source": "https://github.com/gdsmith/jquery.easing/blob/3d2d602f423bb211a5dcd4f17c149ebe5ecadb84/LICENSE",
+      "source_blob": "3e654e1492f3195d66d490fb12b0fefd1f0c7698",
+      "kind": "whole-file"
+    },
+    "third_party/licenses/embedded/jquery-hammer.txt": {
+      "sha256": "45041de253b840bd7dce1fd06a07b430aca47b9a3e8c7d6610afeff5ec813da5",
+      "source": "https://github.com/hammerjs/jquery.hammer.js/blob/90c2f3bb41c75692d3f15548d59a7b7c22adb8a4/LICENSE",
+      "source_blob": "c8ad350175c1eb01655b80bb2c8acabb94d35190",
+      "kind": "whole-file"
+    },
+    "third_party/licenses/embedded/pickadate.txt": {
+      "sha256": "8e82037b93f02ede7bfebbdfbd16391764c2c5f0824e0adfc84f20696f80281d",
+      "source": "https://github.com/amsul/pickadate.js/blob/a685590fcffdb32569cb6ad159061b93d75fa399/LICENSE.md",
+      "source_blob": "392609196eac3b21cb080aa6552c6eef56486bf7",
+      "kind": "whole-file"
+    },
+    "third_party/licenses/embedded/raf.txt": {
+      "sha256": "b25f57aba6579ba5ad2b8df4f6a80530aaca3a398345c610124653ece346cd16",
+      "source": "https://github.com/ngryman/raf.js/blob/369d243b8c93c9f60e03929d34d535b337233108/LICENSE-MIT",
+      "source_blob": "a0f33ef42f7b8a6615e57b2b04c0a75329362e57",
+      "kind": "whole-file"
+    },
+    "third_party/licenses/embedded/scrollspy.txt": {
+      "sha256": "a3197470b41662630909e2da3a32ff81e50e5935b9a675cc9bc8b9c19787e4b0",
+      "source": "https://github.com/thesmart/jquery-scrollspy/blob/0ae1076076b77707ecfc783fd8e460933a461b97/LICENSE",
+      "source_blob": "aef5551c188edd90efd88f2274e1488d0b80876e",
+      "kind": "whole-file"
+    },
+    "third_party/licenses/embedded/velocity-shim-attribution.txt": {
+      "sha256": "5574fe600ddf024f14e7cea8bfa30132ba9d695e004369836ea05f29dfe7c907",
+      "source": "https://github.com/Dogfalo/materialize/blob/9bc43a1199ad5dfb78d58ba47726ab039218a939/js/velocity.min.js",
+      "source_blob": "ea21aad889fae591acd6a8d0ef012f53ff5e0efb",
+      "kind": "source-excerpt"
+    },
+    "third_party/licenses/embedded/velocity.txt": {
+      "sha256": "725d6011a8aa52d87469af24ac6815f06add959ddb7dbae96bcb17c29d26a79a",
+      "source": "https://github.com/julianshapiro/velocity/blob/1ad0a8196fa973f96e347a9b7f5bdaf7498ed1a6/LICENSE.md",
+      "source_blob": "55ddc863569afc131875f462743e9f7336f038a6",
+      "kind": "whole-file"
+    },
+    "third_party/licenses/embedded/waves.txt": {
+      "sha256": "27d1feafdc04612114d41d260404d40aa56462a69269c940d35bda0f3a8c8bf3",
+      "source": "https://github.com/fians/Waves/blob/231fa264674b67c31bc7cbaea218ec4afdfe4db2/LICENSE",
+      "source_blob": "e05282848f44ff346cfd8ba6ebb7aaff0ce9dd68",
+      "kind": "whole-file"
+    }
+  },
+  "worker_review": {},
+  "font_provenance": {},
+  "limitations": [
+    "Identified = version/attribution supported by upstream source and shipped marker, not proof of unmodified subcomponent bytes. Partial and restricted entries remain open; no unconditional license clearance.",
+    "Source evidence is pinned to Git commits and blob IDs; exact packaged bytes are separately checked by inventory and official archive verification."
+  ]
+}
