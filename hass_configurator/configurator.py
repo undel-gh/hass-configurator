@@ -199,6 +199,28 @@ def _redacted_settings(settings):
     }
 
 
+
+# Only documented boolean settings are parsed as booleans from environment.
+# A password (or URL) whose literal value is "false" must remain a string.
+_LEGACY_BOOLEAN_SETTINGS = frozenset({
+    "GIT", "DEV", "DIRSFIRST", "HIDEHIDDEN", "IGNORE_SSL", "ENFORCE_BASEPATH",
+})
+_PRIVILEGED_BOOLEAN_SETTINGS = frozenset({
+    "ALLOW_SHELL_COMMANDS", "ALLOW_GIT_OPERATIONS",
+    "ALLOW_NETWORK_ADMIN", "ALLOW_HA_CONTROL",
+})
+_ENV_BOOLEAN_VALUES = {"true": True, "false": False,
+                       "True": True, "False": False}
+
+
+def _legacy_boolean_setting(settings, name, default):
+    """JSON/default booleans must be native bool, never a truthy string/int."""
+    value = settings.get(name, default)
+    if type(value) is not bool:
+        raise ValueError("%s must be a boolean (true or false)" % name)
+    return value
+
+
 def load_settings(args):
     """Load settings from file and environment."""
     global LISTENIP, LISTENPORT, BASEPATH, SSL_CERTIFICATE, SSL_KEY, HASS_API, \
@@ -223,25 +245,28 @@ def load_settings(args):
     ENV_PREFIX = settings.get('ENV_PREFIX', ENV_PREFIX)
     for key, value in os.environ.items():
         if key.startswith(ENV_PREFIX):
-            # Convert booleans
-            if value in ['true', 'false', 'True', 'False']:
-                value = value in ['true', 'True']
-            # Convert None / null
+            name = key[len(ENV_PREFIX):]
+            if name in (_LEGACY_BOOLEAN_SETTINGS | _PRIVILEGED_BOOLEAN_SETTINGS):
+                # Preserve the historical true/false and True/False spelling,
+                # but reject numeric, empty and other ambiguous opt-in values.
+                if value not in _ENV_BOOLEAN_VALUES:
+                    raise ValueError("%s must be true or false" % name)
+                value = _ENV_BOOLEAN_VALUES[value]
             elif value in ['none', 'None', 'null']:
                 value = None
-            # Convert plain numbers
             elif value.isnumeric():
                 value = int(value)
-            # Make lists out of comma separated values for list-settings
-            elif key[len(ENV_PREFIX):] in ["ALLOWED_NETWORKS", "BANNED_IPS", "IGNORE_PATTERN", "EXEC_ALLOWED_BINARIES"]:
+            elif name in ("ALLOWED_NETWORKS", "BANNED_IPS",
+                          "IGNORE_PATTERN", "EXEC_ALLOWED_BINARIES"):
                 value = value.split(',')
-            settings[key[len(ENV_PREFIX):]] = value
+            settings[name] = value
     LOG.debug("Settings after looking at environment:")
     LOG.debug(_redacted_settings(settings))
-    if args.git:
-        GIT = args.git
-    else:
-        GIT = settings.get("GIT", GIT)
+    git_from_settings = _legacy_boolean_setting(settings, "GIT", GIT)
+    GIT = True if args.git else git_from_settings
+    # Do not retain a previously imported GitPython reference if Git is
+    # disabled by a subsequent settings reload.
+    REPO = None
     if GIT:
         try:
             # pylint: disable=redefined-outer-name,import-outside-toplevel
@@ -263,11 +288,10 @@ def load_settings(args):
         BASEPATH = args.basepath
     else:
         BASEPATH = settings.get("BASEPATH", BASEPATH)
-    if args.enforce:
-        ENFORCE_BASEPATH = True
-    else:
-        ENFORCE_BASEPATH = True
-    if settings.get("ENFORCE_BASEPATH") is False:
+    requested_enforcement = _legacy_boolean_setting(
+        settings, "ENFORCE_BASEPATH", ENFORCE_BASEPATH)
+    ENFORCE_BASEPATH = True  # Mandatory even if explicitly disabled in config.
+    if requested_enforcement is False:
         LOG.warning("ENFORCE_BASEPATH=false ignored: P1 confinement is mandatory")
     ALLOW_SHELL_COMMANDS = _secure_flag(settings, "ALLOW_SHELL_COMMANDS", ALLOW_SHELL_COMMANDS)
     EXEC_ALLOWED_BINARIES = settings.get("EXEC_ALLOWED_BINARIES", EXEC_ALLOWED_BINARIES)
@@ -312,27 +336,21 @@ def load_settings(args):
             LOG.warning("Invalid IP address in BANNED_IPS: %s", banned_ip)
             BANNED_IPS.remove(banned_ip)
     BANLIMIT = settings.get("BANLIMIT", BANLIMIT)
-    if args.dev:
-        DEV = True
-    else:
-        DEV = settings.get("DEV", DEV)
+    dev_from_settings = _legacy_boolean_setting(settings, "DEV", DEV)
+    DEV = True if args.dev else dev_from_settings
     IGNORE_PATTERN = settings.get("IGNORE_PATTERN", IGNORE_PATTERN)
     if IGNORE_PATTERN and not all(IGNORE_PATTERN):
         LOG.warning("Invalid value for IGNORE_PATTERN. Using empty list.")
         IGNORE_PATTERN = []
-    if args.dirsfirst:
-        DIRSFIRST = args.dirsfirst
-    else:
-        DIRSFIRST = settings.get("DIRSFIRST", DIRSFIRST)
-    if args.hidehidden:
-        HIDEHIDDEN = args.hidehidden
-    else:
-        HIDEHIDDEN = settings.get("HIDEHIDDEN", HIDEHIDDEN)
+    dirs_from_settings = _legacy_boolean_setting(settings, "DIRSFIRST", DIRSFIRST)
+    hidden_from_settings = _legacy_boolean_setting(settings, "HIDEHIDDEN", HIDEHIDDEN)
+    DIRSFIRST = True if args.dirsfirst else dirs_from_settings
+    HIDEHIDDEN = True if args.hidehidden else hidden_from_settings
     SESAME = settings.get("SESAME", SESAME)
     SESAME_TOTP_SECRET = settings.get("SESAME_TOTP_SECRET", SESAME_TOTP_SECRET)
     VERIFY_HOSTNAME = settings.get("VERIFY_HOSTNAME", VERIFY_HOSTNAME)
     NOTIFY_SERVICE = settings.get("NOTIFY_SERVICE", NOTIFY_SERVICE_DEFAULT)
-    IGNORE_SSL = settings.get("IGNORE_SSL", IGNORE_SSL)
+    IGNORE_SSL = _legacy_boolean_setting(settings, "IGNORE_SSL", IGNORE_SSL)
     if IGNORE_SSL:
         # pylint: disable=protected-access
         ssl._create_default_https_context = ssl._create_unverified_context
@@ -989,14 +1007,35 @@ class RequestHandler(BaseHTTPRequestHandler):
             "message": "Generic failure"
         }
 
-        try:
-            length = int(self.headers.get('Content-Length', ''))
-            limit = 104857600 if req.path == '/api/upload' else 1048576
-            if length < 0 or length > limit:
-                raise ValueError("Invalid request size")
-        except (ValueError, TypeError):
-            self._legacy_route = False  # Router-owned 413 already supplies headers.
-            write_http_response(self, error_response(413))
+        # POST is not chunk-decoded; reject ambiguous HTTP framing instead
+        # of letting front and back proxies disagree on the request boundary.
+        lengths = self.headers.get_all('Content-Length', [])
+        transfers = self.headers.get_all('Transfer-Encoding', [])
+        invalid_length = None
+        length = 0
+        if transfers or len(lengths) > 1:
+            invalid_length = 400
+        elif not lengths:
+            invalid_length = 411
+        elif not lengths[0] or any(char not in '0123456789'
+                                   for char in lengths[0]):
+            invalid_length = 400
+        else:
+            try:
+                length = int(lengths[0])
+            except ValueError:
+                invalid_length = 400
+            else:
+                limit = 104857600 if req.path == '/api/upload' else 1048576
+                if length > limit:
+                    invalid_length = 413
+        if invalid_length is not None:
+            self._legacy_route = False  # Single router-owned header writer.
+            self.close_connection = True  # Never reuse an unread request body.
+            error = error_response(invalid_length)
+            write_http_response(self, Response(
+                error.status, error.body, error.content_type,
+                error.headers + (("Connection", "close"),)))
             return
         if req.path == '/api/save':
             try:

@@ -582,7 +582,9 @@ class SecurityLoopbackTests(unittest.TestCase):
                 status, pairs, payload = raw_post_with_headers(
                     self.server, "/api/save", [csrf] + headers)
                 self.assertEqual(status, expected)
-                self.assertEqual(payload, b"")
+                self.assertEqual(payload, {411: b"Length required",
+                                           400: b"Bad request",
+                                           413: b"Payload too large"}[expected])
                 self.assertEqual(
                     [v for k, v in pairs if k.lower() == "cache-control"],
                     ["no-store"])
