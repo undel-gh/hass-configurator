@@ -1,9 +1,11 @@
 # P1 API security audit and threat model — Issue #7
 
-**Status (2026-11-14): security migration under review in PR #21.**
-This is **not** a sign-off for public exposure or a real Home Assistant OS
-Supervisor deployment. CI must pass on the final PR SHA, and the independent
-security review must resolve all high-severity findings before closing #7.
+**Status (2026-11-26): baseline security PR #21 merged; incremental
+filesystem/Git/shell hardening is a Draft in [#27](https://github.com/undel-gh/hass-configurator/issues/27).
+Real HA OS Ingress was field-tested and closed in a scoped manner in #8
+(HAOS-01…10 and HAOS-12), while HAOS-11 Core REST/WS remains **unverified**
+in #26. This document is **not a public release or full P1 security
+sign-off**; exact-HEAD CI and independent review still govern #27.
 
 ## Trust boundaries and adversaries
 
@@ -129,23 +131,38 @@ and complete remaining XSS audit before public release.
 
 ### Explicit limitations and release blockers
 
-- **Real Supervisor Ingress is NOT VERIFIED** (#8). Loopback binding alone
-  does not authenticate an exposed reverse proxy. Don't grant privileges
-  solely from peer IP or user-provided forwarded headers.
+- **Real Supervisor Ingress: tested scope PASS** (#8, PR #22). The real
+  Core→Supervisor→fixture path, client-spoofed Ingress header overwrite
+  and a direct request from an independent app receiving HTTP 403 were
+  verified by the operator. This is **not** proof that an arbitrary
+  reverse proxy is authenticated by loopback IP: never grant privileges
+  from client-controlled forwarded headers. Privileged Core REST/WS
+  acceptance remains **DEFERRED / NOT VERIFIED** in #26.
 - **Strict CSP is NOT VERIFIED** (#13). Existing inline handlers/scripts
   require a separate staged CSP migration and report-only then enforced tests.
   This PR reduces specific injection paths; it cannot certify that all XSS
   sinks were found.
-- **GitPython TOCTOU remains an explicit residual risk.** `validated_repo`
-  checks the worktree lies inside the workspace, but GitPython resolves
-  `.git`, indexes, and hooks via pathname-based filesystem operations after
-  that validation. An attacker with the same Unix UID and concurrent write
-  access may race symlink/path swaps. Enabling Git is therefore an
-  administrator-only capability with OS-level trust, not a confinement proof.
+- **GitPython TOCTOU remains an explicit residual risk.** Follow-up #27
+  discovers the nearest ordinary in-root `.git` directory itself before
+  opening GitPython (no parent-directory search by GitPython), and validates
+  `working_dir`, `git_dir` and `common_dir` against the configured
+  workspace. Symlinked control directories and `gitdir:` pointer files
+  (including linked worktrees) are deliberately unsupported. Nevertheless,
+  GitPython resolves indexes, hooks and configuration via pathname-based
+  operations after these checks. An attacker with the same Unix UID and
+  concurrent write access may race pathname swaps or configure hooks and
+  arbitrary remotes. Git remains an administrator-only, explicitly enabled
+  capability with OS-level trust, **not an isolated sandbox**.
 - **Allowlisted shell tools and opt-in Git operations are privileged by
   design** and are not sandboxed by the application. Their public deployment
   requires a separate decision to disable them entirely or add host/container
   isolation and audited command policies. The safe default is **off**.
+- **Security regression additions (#27):** filesystem listing now skips
+  non-regular entries (including named pipes and sockets); file read/write
+  still reject them. The shell deadline test verifies that descendants
+  cannot write a marker after an HTTP timeout. This test complements the
+  existing inherited-pipe latency and bounded-output checks, and is designed
+  to fail if process-group termination is removed (see #23).
 - **TOCTOU-resistant `openat`/dir-fd operations require Unix/Linux semantics**
   (`O_NOFOLLOW`, `dir_fd`). Actual HA OS runtime support is part of #8;
   non-Unix platforms cannot claim equivalent hardening until tested.

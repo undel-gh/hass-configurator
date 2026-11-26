@@ -6,6 +6,8 @@ import json
 import os
 from pathlib import Path
 import re
+import shlex
+import time
 import tempfile
 import threading
 import unittest
@@ -267,12 +269,126 @@ class ConfinedFileTests(unittest.TestCase):
         names = {item["name"] for item in self.fs.scan_dir(nested)}
         self.assertIn("real.yaml", names)
         self.assertNotIn("outside", names)
+        if hasattr(os, "mkfifo"):
+            fifo = nested / "named-pipe"
+            os.mkfifo(fifo)
+            names = {item["name"] for item in self.fs.scan_dir(nested)}
+            self.assertNotIn("named-pipe", names)
+            with self.assertRaises(PermissionError):
+                self.fs.read_bytes(fifo)
+            with self.assertRaises(PermissionError):
+                self.fs.write_bytes(fifo, b"unexpected")
         with self.assertRaises(OSError):
             self.fs.scan_dir(nested / "outside")
 
     def test_no_root_removal(self):
         with self.assertRaises(PermissionError):
             self.fs.remove(self.root)
+
+
+
+class GitMetadataConfinementTests(unittest.TestCase):
+    """Git metadata must not escape even if the worktree is inside BASEPATH."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        base = Path(self.tmp.name)
+        self.workspace = base / "workspace"
+        self.workspace.mkdir()
+        self.repo_dir = self.workspace / "project"
+        self.repo_dir.mkdir()
+        self.outside = base / "outside"
+        self.outside.mkdir()
+
+    def test_normal_git_repository_and_nested_file_are_accepted(self):
+        from git import Repo
+        with patch.object(cfg, "BASEPATH", str(self.workspace)), \
+             patch.object(cfg, "REPO", Repo):
+            initialized = cfg.safe_init_repo(str(self.repo_dir))
+            self.assertEqual(Path(initialized.working_dir), self.repo_dir)
+            nested = self.repo_dir / "configs"
+            nested.mkdir()
+            target = nested / "test.yaml"
+            target.write_text("key: true\n", encoding="utf-8")
+            found = cfg.validated_repo(str(target),
+                                       search_parent_directories=True)
+            self.assertEqual(Path(found.working_dir), self.repo_dir)
+            self.assertEqual(Path(found.git_dir), self.repo_dir / ".git")
+
+    def test_repository_at_workspace_root_is_accepted(self):
+        # Protect the cursor == fs.root order: inspect .git before rejecting
+        # a search past the workspace boundary.
+        from git import Repo
+        with patch.object(cfg, "BASEPATH", str(self.workspace)), \
+             patch.object(cfg, "REPO", Repo):
+            initialized = cfg.safe_init_repo(str(self.workspace))
+            self.assertEqual(Path(initialized.working_dir), self.workspace)
+            root_repo = cfg.validated_repo(str(self.workspace),
+                                           search_parent_directories=True)
+            self.assertEqual(Path(root_repo.working_dir), self.workspace)
+            target = self.workspace / "at-root.yaml"
+            target.write_text("inside: true\n", encoding="utf-8")
+            found = cfg.validated_repo(str(target),
+                                       search_parent_directories=True)
+            self.assertEqual(Path(found.working_dir), self.workspace)
+            self.assertEqual(Path(found.common_dir), self.workspace / ".git")
+
+    def test_gitdir_pointer_and_symlink_are_rejected_before_gitpython(self):
+        for mode in ("pointer", "symlink"):
+            with self.subTest(mode=mode):
+                control = self.repo_dir / ".git"
+                if mode == "pointer":
+                    control.write_text("gitdir: " +
+                                       str(self.outside / ".git") + "\n",
+                                       encoding="utf-8")
+                else:
+                    control.symlink_to(self.outside, target_is_directory=True)
+                try:
+                    with patch.object(cfg, "BASEPATH", str(self.workspace)), \
+                         patch.object(cfg, "REPO") as repo_class:
+                        with self.assertRaises(PermissionError):
+                            cfg.validated_repo(str(self.repo_dir),
+                                               search_parent_directories=True)
+                        repo_class.assert_not_called()
+                        with self.assertRaises(PermissionError):
+                            cfg.safe_init_repo(str(self.repo_dir))
+                        repo_class.init.assert_not_called()
+                finally:
+                    control.unlink()
+
+    def test_git_commondir_pointer_refused_before_gitpython(self):
+        control = self.repo_dir / ".git"
+        control.mkdir()
+        (control / "commondir").write_text(str(self.outside) + "\n",
+                                           encoding="utf-8")
+        with patch.object(cfg, "BASEPATH", str(self.workspace)), \
+             patch.object(cfg, "REPO") as repo_class:
+            with self.assertRaises(PermissionError):
+                cfg.validated_repo(str(self.repo_dir))
+            repo_class.assert_not_called()
+            with self.assertRaises(PermissionError):
+                cfg.safe_init_repo(str(self.repo_dir))
+            repo_class.init.assert_not_called()
+
+    def test_gitpython_metadata_redirect_is_rejected_after_discovery(self):
+        from types import SimpleNamespace
+        control = self.repo_dir / ".git"
+        control.mkdir()
+        # Test each metadata location independently; rejecting git_dir alone
+        # must not hide a missing common_dir safety check.
+        for field in ("git_dir", "common_dir"):
+            false_repo = SimpleNamespace(working_dir=str(self.repo_dir),
+                                         git_dir=str(control),
+                                         common_dir=str(control))
+            setattr(false_repo, field, str(self.outside))
+            with self.subTest(field=field), \
+                 patch.object(cfg, "BASEPATH", str(self.workspace)), \
+                 patch.object(cfg, "REPO", return_value=false_repo) as factory:
+                with self.assertRaises(PermissionError):
+                    cfg.validated_repo(str(self.repo_dir))
+                factory.assert_called_once()
+
 
 
 def http_request(server, method, path, data=None, headers=None):
@@ -470,6 +586,38 @@ class SecurityLoopbackTests(unittest.TestCase):
         self.assertIn("timed out", json.loads(raw)["message"])
         self.assertLess(elapsed, 3.0, "Inherited pipes delayed timeout handling")
 
+    @unittest.skipUnless(os.name == "posix", "Process groups require POSIX")
+    def test_shell_timeout_prevents_descendant_post_deadline_write(self):
+        # Unlike the inherited-pipes latency test, this fails if killpg is
+        # deliberately disabled OR weakened to SIGTERM: the child ignores
+        # TERM/INT and writes a marker AFTER the reply unless SIGKILL works.
+        # Keep the marker inside the disposable, isolated HTTP test workspace.
+        with tempfile.TemporaryDirectory(dir=self.workspace.name) as scratch:
+            marker = Path(scratch) / "orphan-wrote-after-timeout"
+            # An ignored SIGTERM/INT makes the test fail if process-group
+            # termination is weakened from SIGKILL to a catchable signal.
+            descendant = ("trap '' TERM INT; sleep 2; printf survived > "
+                          + shlex.quote(str(marker)))
+            command = "/bin/sh -c " + shlex.quote("(" + descendant + ") & wait")
+            headers = {"Content-Type": "application/x-www-form-urlencoded",
+                       "X-CSRF-Token": cfg.HTTP_ROUTER.security.csrf_token}
+            with patch.object(cfg, "ALLOW_SHELL_COMMANDS", True), \
+                 patch.object(cfg, "EXEC_ALLOWED_BINARIES", ["/bin/sh"]):
+                started = time.monotonic()
+                status, _, raw = http_request(
+                    self.server, "POST", "/api/exec_command",
+                    urlencode({"command": command, "timeout": 1}).encode(), headers)
+                elapsed = time.monotonic() - started
+            self.assertEqual(status, 200)
+            self.assertTrue(json.loads(raw)["error"])
+            self.assertIn("timed out", json.loads(raw)["message"])
+            self.assertLess(elapsed, 3.0)
+            # The still-live descendant would write 2s after its start.
+            # Waiting after the 1s deadline detects a lost group kill.
+            time.sleep(1.7)
+            self.assertFalse(marker.exists(),
+                             "Timed-out command left a live descendant")
+
     def test_http_shell_oversized_output_is_terminated(self):
         # yes floods stdout; the server must not buffer it into worker RAM.
         command = "/bin/sh -c 'yes x'"
@@ -559,6 +707,54 @@ class SecurityLoopbackTests(unittest.TestCase):
                 working_dir=str(root.parent))):
             with self.assertRaises(PermissionError):
                 cfg.validated_repo(str(inside), search_parent_directories=True)
+
+    def test_opted_in_git_init_and_add_via_real_http(self):
+        # Exercise the actual route/policy/CSRF path, not only the helper.
+        from git import Repo
+        with tempfile.TemporaryDirectory(dir=self.workspace.name) as scratch:
+            worktree = Path(scratch) / "repo"
+            worktree.mkdir()
+            headers = {"Content-Type": "application/x-www-form-urlencoded",
+                       "X-CSRF-Token": cfg.HTTP_ROUTER.security.csrf_token}
+            with patch.object(cfg, "GIT", True), \
+                 patch.object(cfg, "REPO", Repo), \
+                 patch.object(cfg, "ALLOW_GIT_OPERATIONS", True):
+                status, _, raw = http_request(
+                    self.server, "POST", "/api/init",
+                    urlencode({"path": str(worktree)}).encode(), headers)
+                self.assertEqual(status, 200)
+                self.assertFalse(json.loads(raw)["error"], raw)
+                self.assertTrue((worktree / ".git").is_dir())
+                example = worktree / "example.yaml"
+                example.write_text("hello: world\n", encoding="utf-8")
+                status, _, raw = http_request(
+                    self.server, "POST", "/api/gitadd",
+                    urlencode({"path": str(example)}).encode(), headers)
+                self.assertEqual(status, 200)
+                self.assertFalse(json.loads(raw)["error"], raw)
+                self.assertIn("example.yaml",
+                              Repo(worktree).git.diff("--cached", "--name-only"))
+
+    def test_opted_in_git_init_denies_control_symlink_via_real_http(self):
+        from git import Repo
+        with tempfile.TemporaryDirectory(dir=self.workspace.name) as scratch, \
+             tempfile.TemporaryDirectory() as outside:
+            worktree = Path(scratch) / "repo"
+            worktree.mkdir()
+            (worktree / ".git").symlink_to(outside, target_is_directory=True)
+            headers = {"Content-Type": "application/x-www-form-urlencoded",
+                       "X-CSRF-Token": cfg.HTTP_ROUTER.security.csrf_token}
+            with patch.object(cfg, "GIT", True), \
+                 patch.object(cfg, "REPO", Repo), \
+                 patch.object(cfg, "ALLOW_GIT_OPERATIONS", True):
+                status, _, raw = http_request(
+                    self.server, "POST", "/api/init",
+                    urlencode({"path": str(worktree)}).encode(), headers)
+            self.assertEqual(status, 200)
+            self.assertTrue(json.loads(raw)["error"])
+            self.assertTrue((worktree / ".git").is_symlink())
+            self.assertEqual(list(Path(outside).iterdir()), [])
+
 
     def test_preferences_symlink_cannot_overwrite_file_outside_workspace(self):
         prefs = Path(self.workspace.name) / cfg.PREFS_FILENAME
