@@ -399,6 +399,17 @@ def _git_control_directory(fs, candidate):
         return False
     except (OSError, ValueError) as err:
         raise PermissionError("Unsafe Git control directory") from err
+    # GitPython follows the commondir pointer while constructing Repo.
+    # Reject it BEFORE that construction, not only after it has already
+    # accessed an external common directory. Ordinary repos omit this file.
+    try:
+        fs.resolve_for_read(Path(candidate) / "commondir")
+    except FileNotFoundError:
+        pass
+    except (OSError, ValueError) as err:
+        raise PermissionError("Unsafe Git common directory indirection") from err
+    else:
+        raise PermissionError("Git common directory indirection is unsupported")
     return True
 
 

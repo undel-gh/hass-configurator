@@ -339,6 +339,20 @@ class GitMetadataConfinementTests(unittest.TestCase):
                 finally:
                     control.unlink()
 
+    def test_git_commondir_pointer_refused_before_gitpython(self):
+        control = self.repo_dir / ".git"
+        control.mkdir()
+        (control / "commondir").write_text(str(self.outside) + "\n",
+                                           encoding="utf-8")
+        with patch.object(cfg, "BASEPATH", str(self.workspace)), \
+             patch.object(cfg, "REPO") as repo_class:
+            with self.assertRaises(PermissionError):
+                cfg.validated_repo(str(self.repo_dir))
+            repo_class.assert_not_called()
+            with self.assertRaises(PermissionError):
+                cfg.safe_init_repo(str(self.repo_dir))
+            repo_class.init.assert_not_called()
+
     def test_gitpython_metadata_redirect_is_rejected_after_discovery(self):
         from types import SimpleNamespace
         control = self.repo_dir / ".git"
