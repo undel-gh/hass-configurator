@@ -10,15 +10,7 @@
     <link rel="stylesheet" type="text/css" href="assets/v$asset_version/vendor/materialize/css/materialize.min.css">
     <link rel="stylesheet" type="text/css" href="assets/v$asset_version/style.css" media="screen">
     <script src="assets/v$asset_version/vendor/ace/ace.js" type="text/javascript" charset="utf-8"></script>
-    <script>
-  // Ace dynamic modules and workers share this ingress-relative versioned base.
-  (function () {
-    var aceBase = new URL('assets/v$asset_version/vendor/ace/', document.baseURI).href;
-    ['basePath', 'modePath', 'themePath', 'workerPath'].forEach(function (key) {
-      ace.config.set(key, aceBase);
-    });
-  })();
-</script>
+    <script src="assets/v$asset_version/ace-bootstrap.js"></script>
     <script src="assets/v$asset_version/vendor/ace/ext-modelist.js" type="text/javascript" charset="utf-8"></script>
     <script src="assets/v$asset_version/vendor/ace/ext-language_tools.js" type="text/javascript" charset="utf-8"></script>
 </head>
@@ -82,13 +74,13 @@
                     <li><a class="waves-effect waves-light dropdown-button hide-on-med-and-up" data-activates="file_history" data-beloworigin="true" style="padding-left: 25px; padding-right: 25px;"><i class="material-icons">history</i></a></li>
                 </ul>
                 <ul class="right">
-                    <li><a class="waves-effect waves-light tooltipped hide-on-small-only markdirty hidesave" data-position="bottom" data-delay="500" data-tooltip="Save" onclick="save_check()"><i class="material-icons">save</i></a></li>
+                    <li><a class="waves-effect waves-light tooltipped hide-on-small-only markdirty hidesave" data-position="bottom" data-delay="500" data-tooltip="Save" data-hc-click="hc-1"><i class="material-icons">save</i></a></li>
                     <li><a class="waves-effect waves-light tooltipped hide-on-small-only modal-trigger" data-position="bottom" data-delay="500" data-tooltip="Close" href="#modal_close"><i class="material-icons">close</i></a></li>
-                    <li><a class="waves-effect waves-light tooltipped hide-on-small-only" data-position="bottom" data-delay="500" data-tooltip="Search" onclick="editor.execCommand('replace')"><i class="material-icons">search</i></a></li>
+                    <li><a class="waves-effect waves-light tooltipped hide-on-small-only" data-position="bottom" data-delay="500" data-tooltip="Search" data-hc-click="hc-2"><i class="material-icons">search</i></a></li>
                     <li><a class="waves-effect waves-light dropdown-button hide-on-small-only $versionclass" data-activates="dropdown_menu" data-beloworigin="true"><i class="material-icons right">settings</i></a></li>
-                    <li><a class="waves-effect waves-light hide-on-med-and-up markdirty hidesave" onclick="save_check()"><i class="material-icons">save</i></a></li>
+                    <li><a class="waves-effect waves-light hide-on-med-and-up markdirty hidesave" data-hc-click="hc-1"><i class="material-icons">save</i></a></li>
                     <li><a class="waves-effect waves-light hide-on-med-and-up modal-trigger" href="#modal_close"><i class="material-icons">close</i></a></li>
-                    <li><a class="waves-effect waves-light hide-on-med-and-up" onclick="editor.execCommand('replace')"><i class="material-icons">search</i></a></li>
+                    <li><a class="waves-effect waves-light hide-on-med-and-up" data-hc-click="hc-2"><i class="material-icons">search</i></a></li>
                     <li><a class="waves-effect waves-light dropdown-button hide-on-med-and-up $versionclass" data-activates="dropdown_menu_mobile" data-beloworigin="true"><i class="material-icons right">settings</i></a></li>
                 </ul>
             </div>
@@ -98,14 +90,14 @@
   <main>
     <ul id="file_history" class="dropdown-content z-depth-4"></ul>
     <ul id="dropdown_menu" class="dropdown-content z-depth-4">
-        <li><a onclick="localStorage.setItem('new_tab', true);window.open(window.location.origin+window.location.pathname, '_blank');">New tab</a></li>
+        <li><a data-hc-click="hc-3">New tab</a></li>
         <li class="divider"></li>
-        <li><a onclick="cycleTheme()" id="theme_toggle_item"><i class="material-icons" style="vertical-align:middle;margin-right:8px;font-size:18px;" id="theme_toggle_icon">brightness_auto</i><span id="theme_toggle_label">Theme: Auto</span></a></li>
+        <li><a data-hc-click="hc-4" id="theme_toggle_item"><i class="material-icons" style="vertical-align:middle;margin-right:8px;font-size:18px;" id="theme_toggle_icon">brightness_auto</i><span id="theme_toggle_label">Theme: Auto</span></a></li>
         <li class="divider"></li>
         <li><a target="_blank" href="https://home-assistant.io/components/">Components</a></li>
         <li><a target="_blank" href="https://materialdesignicons.com/">Material Icons</a></li>
         <li><a href="#" data-activates="ace_settings" class="ace_settings-collapse">Editor Settings</a></li>
-        <li><a class="modal-trigger" href="#modal_netstat" onclick="get_netstat()">Network status</a></li>
+        <li><a class="modal-trigger" href="#modal_netstat" data-hc-click="hc-5">Network status</a></li>
         <li><a class="modal-trigger" href="#modal_about">About HASS Configurator</a></li>
         <li class="divider"></li>
         <li><a class="modal-trigger" href="#modal_events">Observe events</a></li>
@@ -117,19 +109,19 @@
         <li><a class="modal-trigger" href="#modal_restart">Restart Home Assistant</a></li>
         <li class="divider"></li>
         <li><a class="modal-trigger" href="#modal_exec_command">Execute shell command</a></li>
-        <li><a onclick="toggle_hass_panels()">Toggle Home Assistant panel</a></li>
-        <li><a onclick="generate_uuid()">Generate UUID</a></li>
+        <li><a data-hc-click="hc-6">Toggle Home Assistant panel</a></li>
+        <li><a data-hc-click="hc-7">Generate UUID</a></li>
     </ul>
     <ul id="dropdown_menu_mobile" class="dropdown-content z-depth-4">
-        <li><a onclick="localStorage.setItem('new_tab', true);window.open(window.location.origin+window.location.pathname, '_blank');">New tab</a></li>
+        <li><a data-hc-click="hc-3">New tab</a></li>
         <li class="divider"></li>
-        <li><a onclick="cycleTheme()"><i class="material-icons" style="vertical-align:middle;margin-right:8px;font-size:18px;" id="theme_toggle_icon_mobile">brightness_auto</i><span id="theme_toggle_label_mobile">Theme: Auto</span></a></li>
+        <li><a data-hc-click="hc-4"><i class="material-icons" style="vertical-align:middle;margin-right:8px;font-size:18px;" id="theme_toggle_icon_mobile">brightness_auto</i><span id="theme_toggle_label_mobile">Theme: Auto</span></a></li>
         <li class="divider"></li>
         <li><a target="_blank" href="https://home-assistant.io/help/">Help</a></li>
         <li><a target="_blank" href="https://home-assistant.io/components/">Components</a></li>
         <li><a target="_blank" href="https://materialdesignicons.com/">Material Icons</a></li>
         <li><a href="#" data-activates="ace_settings" class="ace_settings-collapse">Editor Settings</a></li>
-        <li><a class="modal-trigger" href="#modal_netstat" onclick="get_netstat()">Network status</a></li>
+        <li><a class="modal-trigger" href="#modal_netstat" data-hc-click="hc-5">Network status</a></li>
         <li><a class="modal-trigger" href="#modal_about">About HASS Configurator</a></li>
         <li class="divider"></li>
         <li><a class="modal-trigger" href="#modal_events">Observe events</a></li>
@@ -141,8 +133,8 @@
         <li><a class="modal-trigger" href="#modal_restart">Restart Home Assistant</a></li>
         <li class="divider"></li>
         <li><a class="modal-trigger" href="#modal_exec_command">Execute shell command</a></li>
-        <li><a onclick="toggle_hass_panels()">Toggle Home Assistant panel</a></li>
-        <li><a onclick="generate_uuid()">Generate UUID</a></li>
+        <li><a data-hc-click="hc-6">Toggle Home Assistant panel</a></li>
+        <li><a data-hc-click="hc-7">Generate UUID</a></li>
     </ul>
     <ul id="dropdown_gitmenu" class="dropdown-content z-depth-4">
         <li><a class="modal-trigger nowrap waves-effect" href="#modal_init">git init</a></li>
@@ -672,7 +664,7 @@
                 <form class="col s12">
                     <div class="row">
                         <div class="input-field col s12">
-                            <input type="text" id="ws_uri" placeholder="ws://127.0.0.1:8123/api/websocket" value="$hass_ws_address"/>
+                            <input type="text" id="ws_uri" readonly placeholder="ws://127.0.0.1:8123/api/websocket" value="$hass_ws_address"/>
                             <label for="ws_uri">Websocket URI</label>
                         </div>
                     </div>
@@ -691,9 +683,9 @@
             </div>
         </div>
         <div class="modal-footer">
-          <a onclick="ws_connect()" id="ws_b_c" class="modal-action waves-effect waves-green btn-flat light-blue-text">Connect</a>
-          <a onclick="ws_disconnect()" id="ws_b_d" class="modal-action waves-effect waves-green btn-flat light-blue-text disabled">Disconnect</a>
-          <a onclick="ws_disconnect()" class="modal-action modal-close waves-effect waves-red btn-flat light-blue-text">Close</a>
+          <a data-hc-click="hc-8" id="ws_b_c" class="modal-action waves-effect waves-green btn-flat light-blue-text">Connect</a>
+          <a data-hc-click="hc-9" id="ws_b_d" class="modal-action waves-effect waves-green btn-flat light-blue-text disabled">Disconnect</a>
+          <a data-hc-click="hc-9" class="modal-action modal-close waves-effect waves-red btn-flat light-blue-text">Close</a>
         </div>
     </div>
     <div id="modal_save" class="modal">
@@ -703,7 +695,7 @@
         </div>
         <div class="modal-footer">
           <a class=" modal-action modal-close waves-effect waves-red btn-flat light-blue-text">No</a>
-          <a onclick="save()" class=" modal-action modal-close waves-effect waves-green btn-flat light-blue-text">Yes</a>
+          <a data-hc-click="hc-10" class=" modal-action modal-close waves-effect waves-green btn-flat light-blue-text">Yes</a>
         </div>
     </div>
     <div id="modal_upload" class="modal">
@@ -724,7 +716,7 @@
         </div>
         <div class="modal-footer">
           <a class=" modal-action modal-close waves-effect waves-red btn-flat light-blue-text">Cancel</a>
-          <a onclick="upload()" class="modal-action modal-close waves-effect waves-green btn-flat light-blue-text">OK</a>
+          <a data-hc-click="hc-11" class="modal-action modal-close waves-effect waves-green btn-flat light-blue-text">OK</a>
         </div>
     </div>
     <div id="modal_init" class="modal">
@@ -734,7 +726,7 @@
         </div>
         <div class="modal-footer">
           <a class=" modal-action modal-close waves-effect waves-red btn-flat light-blue-text">Cancel</a>
-          <a onclick="gitinit()" class=" modal-action modal-close waves-effect waves-green btn-flat light-blue-text">OK</a>
+          <a data-hc-click="hc-12" class=" modal-action modal-close waves-effect waves-green btn-flat light-blue-text">OK</a>
         </div>
     </div>
     <div id="modal_commit" class="modal">
@@ -749,7 +741,7 @@
         </div>
         <div class="modal-footer">
           <a class=" modal-action modal-close waves-effect waves-red btn-flat light-blue-text">Cancel</a>
-          <a onclick="commit(document.getElementById('commitmessage').value)" class=" modal-action modal-close waves-effect waves-green btn-flat light-blue-text">OK</a>
+          <a data-hc-click="hc-13" class=" modal-action modal-close waves-effect waves-green btn-flat light-blue-text">OK</a>
         </div>
     </div>
     <div id="modal_push" class="modal">
@@ -759,7 +751,7 @@
         </div>
         <div class="modal-footer">
           <a class=" modal-action modal-close waves-effect waves-red btn-flat light-blue-text">Cancel</a>
-          <a onclick="gitpush()" class=" modal-action modal-close waves-effect waves-green btn-flat light-blue-text">OK</a>
+          <a data-hc-click="hc-14" class=" modal-action modal-close waves-effect waves-green btn-flat light-blue-text">OK</a>
         </div>
     </div>
     <div id="modal_stash" class="modal">
@@ -769,7 +761,7 @@
         </div>
         <div class="modal-footer">
           <a class=" modal-action modal-close waves-effect waves-red btn-flat light-blue-text">Cancel</a>
-          <a onclick="gitstash()" class=" modal-action modal-close waves-effect waves-green btn-flat light-blue-text">OK</a>
+          <a data-hc-click="hc-15" class=" modal-action modal-close waves-effect waves-green btn-flat light-blue-text">OK</a>
         </div>
     </div>
     <div id="modal_close" class="modal">
@@ -779,7 +771,7 @@
         </div>
         <div class="modal-footer">
           <a class=" modal-action modal-close waves-effect waves-red btn-flat light-blue-text">No</a>
-          <a onclick="closefile()" class="modal-action modal-close waves-effect waves-green btn-flat light-blue-text">Yes</a>
+          <a data-hc-click="hc-16" class="modal-action modal-close waves-effect waves-green btn-flat light-blue-text">Yes</a>
         </div>
     </div>
     <div id="modal_rename" class="modal">
@@ -790,7 +782,7 @@
         </div>
         <div class="modal-footer">
           <a class=" modal-action modal-close waves-effect waves-red btn-flat light-blue-text">Cancel</a>
-          <a onclick="rename_file()" class="modal-action modal-close waves-effect waves-green btn-flat light-blue-text">Apply</a>
+          <a data-hc-click="hc-17" class="modal-action modal-close waves-effect waves-green btn-flat light-blue-text">Apply</a>
         </div>
     </div>
     <div id="modal_delete" class="modal">
@@ -800,7 +792,7 @@
         </div>
         <div class="modal-footer">
           <a class=" modal-action modal-close waves-effect waves-red btn-flat light-blue-text">No</a>
-          <a onclick="delete_element()" class="modal-action modal-close waves-effect waves-green btn-flat light-blue-text">Yes</a>
+          <a data-hc-click="hc-18" class="modal-action modal-close waves-effect waves-green btn-flat light-blue-text">Yes</a>
         </div>
     </div>
     <div id="modal_gitadd" class="modal">
@@ -810,7 +802,7 @@
         </div>
         <div class="modal-footer">
           <a class=" modal-action modal-close waves-effect waves-red btn-flat light-blue-text">No</a>
-          <a onclick="gitadd()" class="modal-action modal-close waves-effect waves-green btn-flat light-blue-text">Yes</a>
+          <a data-hc-click="hc-19" class="modal-action modal-close waves-effect waves-green btn-flat light-blue-text">Yes</a>
         </div>
     </div>
     <div id="modal_check_config" class="modal">
@@ -820,7 +812,7 @@
         </div>
         <div class="modal-footer">
           <a class=" modal-action modal-close waves-effect waves-red btn-flat light-blue-text">No</a>
-          <a onclick="check_config()" class=" modal-action modal-close waves-effect waves-green btn-flat light-blue-text">Yes</a>
+          <a data-hc-click="hc-20" class=" modal-action modal-close waves-effect waves-green btn-flat light-blue-text">Yes</a>
         </div>
     </div>
     <div id="modal_reload_automations" class="modal">
@@ -830,7 +822,7 @@
         </div>
         <div class="modal-footer">
           <a class=" modal-action modal-close waves-effect waves-red btn-flat light-blue-text">No</a>
-          <a onclick="reload_automations()" class=" modal-action modal-close waves-effect waves-green btn-flat light-blue-text">Yes</a>
+          <a data-hc-click="hc-21" class=" modal-action modal-close waves-effect waves-green btn-flat light-blue-text">Yes</a>
         </div>
     </div>
     <div id="modal_reload_scripts" class="modal">
@@ -840,7 +832,7 @@
         </div>
         <div class="modal-footer">
           <a class=" modal-action modal-close waves-effect waves-red btn-flat light-blue-text">No</a>
-          <a onclick="reload_scripts()" class=" modal-action modal-close waves-effect waves-green btn-flat light-blue-text">Yes</a>
+          <a data-hc-click="hc-22" class=" modal-action modal-close waves-effect waves-green btn-flat light-blue-text">Yes</a>
         </div>
     </div>
     <div id="modal_reload_groups" class="modal">
@@ -850,7 +842,7 @@
         </div>
         <div class="modal-footer">
           <a class=" modal-action modal-close waves-effect waves-red btn-flat light-blue-text">No</a>
-          <a onclick="reload_groups()" class=" modal-action modal-close waves-effect waves-green btn-flat light-blue-text">Yes</a>
+          <a data-hc-click="hc-23" class=" modal-action modal-close waves-effect waves-green btn-flat light-blue-text">Yes</a>
         </div>
     </div>
     <div id="modal_reload_core" class="modal">
@@ -860,7 +852,7 @@
         </div>
         <div class="modal-footer">
           <a class=" modal-action modal-close waves-effect waves-red btn-flat light-blue-text">No</a>
-          <a onclick="reload_core()" class=" modal-action modal-close waves-effect waves-green btn-flat light-blue-text">Yes</a>
+          <a data-hc-click="hc-24" class=" modal-action modal-close waves-effect waves-green btn-flat light-blue-text">Yes</a>
         </div>
     </div>
     <div id="modal_restart" class="modal">
@@ -870,7 +862,7 @@
         </div>
         <div class="modal-footer">
           <a class=" modal-action modal-close waves-effect waves-red btn-flat light-blue-text">No</a>
-          <a onclick="restart()" class=" modal-action modal-close waves-effect waves-green btn-flat light-blue-text">Yes</a>
+          <a data-hc-click="hc-25" class=" modal-action modal-close waves-effect waves-green btn-flat light-blue-text">Yes</a>
         </div>
     </div>
     <div id="modal_a_net_remove" class="modal">
@@ -880,7 +872,7 @@
         </div>
         <div class="modal-footer">
           <a class=" modal-action modal-close waves-effect waves-red btn-flat light-blue-text">No</a>
-          <a onclick="a_net_remove()" class=" modal-action modal-close waves-effect waves-green btn-flat light-blue-text">Yes</a>
+          <a data-hc-click="hc-26" class=" modal-action modal-close waves-effect waves-green btn-flat light-blue-text">Yes</a>
         </div>
     </div>
     <div id="modal_a_net_add" class="modal">
@@ -890,7 +882,7 @@
             </div>
             <div class="modal-footer">
               <a class=" modal-action modal-close waves-effect waves-red btn-flat light-blue-text">No</a>
-              <a onclick="a_net_add()" class=" modal-action modal-close waves-effect waves-green btn-flat light-blue-text">Yes</a>
+              <a data-hc-click="hc-27" class=" modal-action modal-close waves-effect waves-green btn-flat light-blue-text">Yes</a>
             </div>
         </div>
     <div id="modal_unban" class="modal">
@@ -900,7 +892,7 @@
         </div>
         <div class="modal-footer">
           <a class=" modal-action modal-close waves-effect waves-red btn-flat light-blue-text">No</a>
-          <a onclick="banned_unban()" class=" modal-action modal-close waves-effect waves-green btn-flat light-blue-text">Yes</a>
+          <a data-hc-click="hc-28" class=" modal-action modal-close waves-effect waves-green btn-flat light-blue-text">Yes</a>
         </div>
     </div>
     <div id="modal_ban" class="modal">
@@ -910,7 +902,7 @@
             </div>
             <div class="modal-footer">
               <a class=" modal-action modal-close waves-effect waves-red btn-flat light-blue-text">No</a>
-              <a onclick="banned_ban()" class=" modal-action modal-close waves-effect waves-green btn-flat light-blue-text">Yes</a>
+              <a data-hc-click="hc-29" class=" modal-action modal-close waves-effect waves-green btn-flat light-blue-text">Yes</a>
             </div>
         </div>
     <div id="modal_exec_command" class="modal">
@@ -927,8 +919,8 @@
         </div>
         <div class="modal-footer">
             <a class=" modal-action modal-close waves-effect waves-red btn-flat light-blue-text">Close</a>
-            <a onclick="document.getElementById('command_history').innerText='';" class=" modal-action waves-effect waves-green btn-flat light-blue-text">Clear</a>
-            <a onclick="exec_command()" class=" modal-action waves-effect waves-green btn-flat light-blue-text">Execute</a>
+            <a data-hc-click="hc-30" class=" modal-action waves-effect waves-green btn-flat light-blue-text">Clear</a>
+            <a data-hc-click="hc-31" class=" modal-action waves-effect waves-green btn-flat light-blue-text">Execute</a>
         </div>
     </div>
     <div id="modal_markdirty" class="modal">
@@ -938,8 +930,8 @@
         </div>
         <div class="modal-footer">
           <a class="modal-action modal-close waves-effect waves-red btn-flat light-blue-text">Abort</a>
-          <a onclick="document.getElementById('currentfile').value='';editor.getSession().setValue('');$('.markdirty').each(function(i, o){o.classList.remove('red');});" class="modal-action modal-close waves-effect waves-green btn-flat light-blue-text">Close file</a>
-          <a onclick="save()" class="modal-action modal-close waves-effect waves-green btn-flat light-blue-text">Save changes</a>
+          <a data-hc-click="hc-32" class="modal-action modal-close waves-effect waves-green btn-flat light-blue-text">Close file</a>
+          <a data-hc-click="hc-10" class="modal-action modal-close waves-effect waves-green btn-flat light-blue-text">Save changes</a>
         </div>
     </div>
     <div id="modal_newfolder" class="modal">
@@ -955,7 +947,7 @@
         </div>
         <div class="modal-footer">
           <a class=" modal-action modal-close waves-effect waves-red btn-flat light-blue-text">Cancel</a>
-          <a onclick="newfolder(document.getElementById('newfoldername').value)" class=" modal-action modal-close waves-effect waves-green btn-flat light-blue-text">OK</a>
+          <a data-hc-click="hc-33" class=" modal-action modal-close waves-effect waves-green btn-flat light-blue-text">OK</a>
         </div>
     </div>
     <div id="modal_newfile" class="modal">
@@ -971,7 +963,7 @@
         </div>
         <div class="modal-footer">
           <a class=" modal-action modal-close waves-effect waves-red btn-flat light-blue-text">Cancel</a>
-          <a onclick="newfile(document.getElementById('newfilename').value)" class=" modal-action modal-close waves-effect waves-green btn-flat light-blue-text">OK</a>
+          <a data-hc-click="hc-34" class=" modal-action modal-close waves-effect waves-green btn-flat light-blue-text">OK</a>
         </div>
     </div>
     <div id="modal_newbranch" class="modal">
@@ -986,7 +978,7 @@
         </div>
         <div class="modal-footer">
           <a class=" modal-action modal-close waves-effect waves-red btn-flat light-blue-text">Cancel</a>
-          <a onclick="newbranch(document.getElementById('newbranch').value)" class=" modal-action modal-close waves-effect waves-green btn-flat light-blue-text">OK</a>
+          <a data-hc-click="hc-35" class=" modal-action modal-close waves-effect waves-green btn-flat light-blue-text">OK</a>
         </div>
     </div>
     <div id="modal_netstat" class="modal">
@@ -1000,7 +992,7 @@
                 <ul id="allowed_networks" class="collection with-header"></ul>
                 <br />
                 <div class="input-field">
-                    <a href="#" class="prefix" onclick="helper_a_net_add()"><i class="mdi mdi-plus-circle prefix light-blue-text"></i></a>
+                    <a href="#" class="prefix" data-hc-click="hc-36"><i class="mdi mdi-plus-circle prefix light-blue-text"></i></a>
                     <input placeholder="192.168.0.0/16" id="add_net_ip" type="text">
                     <label for="add_net_ip">Add network / IP</label>
                 </div>
@@ -1009,7 +1001,7 @@
                 <ul id="banned_ips" class="collection with-header"></ul>
                 <br />
                 <div class="input-field">
-                    <a href="#" class="prefix" onclick="helper_banned_ban()"><i class="mdi mdi-plus-circle prefix light-blue-text"></i></a>
+                    <a href="#" class="prefix" data-hc-click="hc-37"><i class="mdi mdi-plus-circle prefix light-blue-text"></i></a>
                     <input placeholder="1.2.3.4" id="add_banned_ip" type="text">
                     <label for="add_banned_ip">Ban IP</label>
                 </div>
@@ -1138,7 +1130,7 @@
         <div id="hass_menu_l" class="col m4 l3 hide-on-small-only">
             <br>
             <div class="input-field col s12">
-                <select onchange="insert(this.value)">
+                <select data-hc-change="hc-38">
                     <option value="" disabled selected>Select trigger platform</option>
                     <option value="calendar">Calendar</option>
                     <option value="conversation">Sentence</option>
@@ -1160,7 +1152,7 @@
                 <label>Trigger platforms</label>
             </div>
             <div class="input-field col s12">
-                <select id="events" onchange="insert(this.value)"></select>
+                <select id="events" data-hc-change="hc-38"></select>
                 <label>Events</label>
             </div>
             <div class="input-field col s12">
@@ -1168,11 +1160,11 @@
                 <label>Search entity</label>
             </div>
             <div class="input-field col s12">
-                <select id="entities" onchange="insert(this.value)"></select>
+                <select id="entities" data-hc-change="hc-38"></select>
                 <label>Entities</label>
             </div>
             <div class="input-field col s12">
-                <select onchange="insert(this.value)">
+                <select data-hc-change="hc-38">
                     <option value="" disabled selected>Select condition</option>
                     <option value="numeric_state">Numeric state</option>
                     <option value="state">State</option>
@@ -1185,14 +1177,14 @@
                 <label>Conditions</label>
             </div>
             <div class="input-field col s12">
-                <select id="services" onchange="insert(this.value)"> </select>
+                <select id="services" data-hc-change="hc-38"> </select>
                 <label>Services</label>
             </div>
         </div>
         <div id="filename_row" class="col s12 m8 l9">
           <div class="card input-field col s12 grey lighten-4 hoverable pathtip">
               <input class="currentfile_input" value="" id="currentfile" type="text">
-              <i class="material-icons" id="lint-status" onclick="show_lint_error()"></i>
+              <i class="material-icons" id="lint-status" data-hc-click="hc-39"></i>
           </div>
         </div>
         <div class="col s12 m8 l9 z-depth-2" id="editor"></div>
@@ -1201,12 +1193,12 @@
             <i class="material-icons">edit</i>
           </a>
           <ul>
-            <li><a class="btn-floating yellow tooltipped" data-position="left" data-delay="50" data-tooltip="Undo" onclick="editor.execCommand('undo')"><i class="material-icons">undo</i></a></li>
-            <li><a class="btn-floating green tooltipped" data-position="left" data-delay="50" data-tooltip="Redo" onclick="editor.execCommand('redo')"><i class="material-icons">redo</i></a></li>
-            <li><a class="btn-floating blue tooltipped" data-position="left" data-delay="50" data-tooltip="Indent" onclick="editor.execCommand('indent')"><i class="material-icons">format_indent_increase</i></a></li>
-            <li><a class="btn-floating orange tooltipped" data-position="left" data-delay="50" data-tooltip="Outdent" onclick="editor.execCommand('outdent')"><i class="material-icons">format_indent_decrease</i></a></li>
-            <li><a class="btn-floating brown tooltipped" data-position="left" data-delay="50" data-tooltip="Fold" onclick="toggle_fold()"><i class="material-icons">all_out</i></a></li>
-            <li><a class="btn-floating grey tooltipped" data-position="left" data-delay="50" data-tooltip="(Un)comment" onclick="editor.execCommand('togglecomment')">#</a></li>
+            <li><a class="btn-floating yellow tooltipped" data-position="left" data-delay="50" data-tooltip="Undo" data-hc-click="hc-40"><i class="material-icons">undo</i></a></li>
+            <li><a class="btn-floating green tooltipped" data-position="left" data-delay="50" data-tooltip="Redo" data-hc-click="hc-41"><i class="material-icons">redo</i></a></li>
+            <li><a class="btn-floating blue tooltipped" data-position="left" data-delay="50" data-tooltip="Indent" data-hc-click="hc-42"><i class="material-icons">format_indent_increase</i></a></li>
+            <li><a class="btn-floating orange tooltipped" data-position="left" data-delay="50" data-tooltip="Outdent" data-hc-click="hc-43"><i class="material-icons">format_indent_decrease</i></a></li>
+            <li><a class="btn-floating brown tooltipped" data-position="left" data-delay="50" data-tooltip="Fold" data-hc-click="hc-44"><i class="material-icons">all_out</i></a></li>
+            <li><a class="btn-floating grey tooltipped" data-position="left" data-delay="50" data-tooltip="(Un)comment" data-hc-click="hc-45">#</a></li>
           </ul>
         </div>
       </div>
@@ -1251,7 +1243,7 @@
           <div class="row col s12 shadow"></div>
           <div id="hass_menu_s" class="z-depth-3 hide-on-med-and-up">
             <div class="input-field col s12" style="margin-top: 30px;">
-              <select onchange="insert(this.value)">
+              <select data-hc-change="hc-38">
                 <option value="" disabled selected>Select trigger platform</option>
                 <option value="calendar">Calendar</option>
                 <option value="conversation">Sentence</option>
@@ -1273,7 +1265,7 @@
               <label>Trigger Platforms</label>
             </div>
             <div class="input-field col s12">
-              <select id="events_side" onchange="insert(this.value)"></select>
+              <select id="events_side" data-hc-change="hc-38"></select>
               <label>Events</label>
             </div>
             <div class="input-field col s12">
@@ -1281,11 +1273,11 @@
                 <label>Search entity</label>
             </div>
             <div class="input-field col s12">
-              <select id="entities_side" onchange="insert(this.value)"></select>
+              <select id="entities_side" data-hc-change="hc-38"></select>
               <label>Entities</label>
             </div>
             <div class="input-field col s12">
-              <select onchange="insert(this.value)">
+              <select data-hc-change="hc-38">
                 <option value="" disabled selected>Select condition</option>
                 <option value="numeric_state">Numeric state</option>
                 <option value="state">State</option>
@@ -1298,7 +1290,7 @@
               <label>Conditions</label>
             </div>
             <div class="input-field col s12">
-              <select id="services_side" onchange="insert(this.value)"></select>
+              <select id="services_side" data-hc-change="hc-38"></select>
               <label>Services</label>
             </div>
           </div>
@@ -1311,51 +1303,51 @@
           <div class="row col s12">
               <p class="col s12"> <a class="waves-effect waves-light btn light-blue modal-trigger" href="#modal_acekeyboard">Keyboard Shortcuts</a> </p>
               <p class="col s12">
-                  <input type="checkbox" class="blue_check" onclick="set_save_prompt(this.checked)" id="savePrompt" />
+                  <input type="checkbox" class="blue_check" data-hc-click="hc-46" id="savePrompt" />
                   <Label for="savePrompt">Prompt before save</label>
               </p>
               <p class="col s12">
-                <input type="checkbox" class="blue_check" onclick="set_hide_filedetails(this.checked)" id="hideDetails" />
+                <input type="checkbox" class="blue_check" data-hc-click="hc-47" id="hideDetails" />
                 <Label for="hideDetails">Hide details in browser</label>
               </p>
               <p class="col s12">
-                  <input type="checkbox" class="blue_check" onclick="editor.setOption('animatedScroll', !editor.getOptions().animatedScroll)" id="animatedScroll" />
+                  <input type="checkbox" class="blue_check" data-hc-click="hc-48" id="animatedScroll" />
                   <Label for="animatedScroll">Animated Scroll</label>
               </p>
               <p class="col s12">
-                  <input type="checkbox" class="blue_check" onclick="editor.setOption('behavioursEnabled', !editor.getOptions().behavioursEnabled)" id="behavioursEnabled" />
+                  <input type="checkbox" class="blue_check" data-hc-click="hc-49" id="behavioursEnabled" />
                   <Label for="behavioursEnabled">Behaviour Enabled</label>
               </p>
               <p class="col s12">
-                  <input type="checkbox" class="blue_check" onclick="editor.setOption('displayIndentGuides', !editor.getOptions().displayIndentGuides)" id="displayIndentGuides" />
+                  <input type="checkbox" class="blue_check" data-hc-click="hc-50" id="displayIndentGuides" />
                   <Label for="displayIndentGuides">Display Indent Guides</label>
               </p>
               <p class="col s12">
-                  <input type="checkbox" class="blue_check" onclick="editor.setOption('fadeFoldWidgets', !editor.getOptions().fadeFoldWidgets)" id="fadeFoldWidgets" />
+                  <input type="checkbox" class="blue_check" data-hc-click="hc-51" id="fadeFoldWidgets" />
                   <Label for="fadeFoldWidgets">Fade Fold Widgets</label>
               </p>
               <div class="input-field col s12">
-                  <input type="number" onchange="editor.setOption('fontSize', parseInt(this.value))" min="6" id="fontSize">
+                  <input type="number" data-hc-change="hc-52" min="6" id="fontSize">
                   <label class="active" for="fontSize">Font Size</label>
               </div>
               <p class="col s12">
-                  <input type="checkbox" class="blue_check" onclick="editor.setOption('highlightActiveLine', !editor.getOptions().highlightActiveLine)" id="highlightActiveLine" />
+                  <input type="checkbox" class="blue_check" data-hc-click="hc-53" id="highlightActiveLine" />
                   <Label for="highlightActiveLine">Highlight Active Line</label>
               </p>
               <p class="col s12">
-                  <input type="checkbox" class="blue_check" onclick="editor.setOption('highlightGutterLine', !editor.getOptions().highlightGutterLine)" id="highlightGutterLine" />
+                  <input type="checkbox" class="blue_check" data-hc-click="hc-54" id="highlightGutterLine" />
                   <Label for="highlightGutterLine">Highlight Gutter Line</label>
               </p>
               <p class="col s12">
-                  <input type="checkbox" class="blue_check" onclick="editor.setOption('highlightSelectedWord', !editor.getOptions().highlightSelectedWord)" id="highlightSelectedWord" />
+                  <input type="checkbox" class="blue_check" data-hc-click="hc-55" id="highlightSelectedWord" />
                   <Label for="highlightSelectedWord">Highlight Selected Word</label>
               </p>
               <p class="col s12">
-                  <input type="checkbox" class="blue_check" onclick="editor.setOption('hScrollBarAlwaysVisible', !editor.getOptions().hScrollBarAlwaysVisible)" id="hScrollBarAlwaysVisible" />
+                  <input type="checkbox" class="blue_check" data-hc-click="hc-56" id="hScrollBarAlwaysVisible" />
                   <Label for="hScrollBarAlwaysVisible">H Scroll Bar Always Visible</label>
               </p>
               <div class="input-field col s12">
-                  <select onchange="editor.setKeyboardHandler(this.value)" id="setKeyboardHandler">
+                  <select data-hc-change="hc-57" id="setKeyboardHandler">
                       <option value="">ace</option>
                       <option value="ace/keyboard/vim">vim</option>
                       <option value="ace/keyboard/emacs">emacs</option>
@@ -1363,7 +1355,7 @@
                   <label for="setKeyboardHandler">Keyboard Handler</label>
               </div>
               <div class="input-field col s12">
-                  <select onchange="editor.setOption('mode', this.value)" id="mode">
+                  <select data-hc-change="hc-58" id="mode">
                       <option value="ace/mode/abap">abap</option>
                       <option value="ace/mode/abc">abc</option>
                       <option value="ace/mode/actionscript">actionscript</option>
@@ -1502,7 +1494,7 @@
                   <label for="mode">Mode</label>
               </div>
               <div class="input-field col s12">
-                  <select onchange="editor.setOption('newLineMode', this.value)" id="newLineMode">
+                  <select data-hc-change="hc-59" id="newLineMode">
                       <option value="auto">Auto</option>
                       <option value="windows">Windows</option>
                       <option value="unix">Unix</option>
@@ -1510,43 +1502,43 @@
                   <label for="newLineMode">New Line Mode</label>
               </div>
               <p class="col s12">
-                  <input type="checkbox" class="blue_check" onclick="editor.setOption('overwrite', !editor.getOptions().overwrite)" id="overwrite" />
+                  <input type="checkbox" class="blue_check" data-hc-click="hc-60" id="overwrite" />
                   <Label for="overwrite">Overwrite</label>
               </p>
               <p class="col s12">
-                  <input type="checkbox" class="blue_check" onclick="editor.setOption('readOnly', !editor.getOptions().readOnly)" id="readOnly" />
+                  <input type="checkbox" class="blue_check" data-hc-click="hc-61" id="readOnly" />
                   <Label for="readOnly">Read Only</label>
               </p>
               <div class="input-field col s12">
-                  <input value="2" type="number" onchange="editor.setOption('scrollSpeed', parseInt(this.value))" id="scrollSpeed">
+                  <input value="2" type="number" data-hc-change="hc-62" id="scrollSpeed">
                   <label class="active" for="scrollSpeed">Scroll Speed</label>
               </div>
               <p class="col s12">
-                  <input type="checkbox" class="blue_check" onclick="editor.setOption('showFoldWidgets', !editor.getOptions().showFoldWidgets)" id="showFoldWidgets" />
+                  <input type="checkbox" class="blue_check" data-hc-click="hc-63" id="showFoldWidgets" />
                   <Label for="showFoldWidgets">Show Fold Widgets</label>
               </p>
               <p class="col s12">
-                  <input type="checkbox" class="blue_check" onclick="editor.setOption('showGutter', !editor.getOptions().showGutter)" id="showGutter" />
+                  <input type="checkbox" class="blue_check" data-hc-click="hc-64" id="showGutter" />
                   <Label for="showGutter">Show Gutter</label>
               </p>
               <p class="col s12">
-                  <input type="checkbox" class="blue_check" onclick="editor.setOption('showInvisibles', !editor.getOptions().showInvisibles)" id="showInvisibles" />
+                  <input type="checkbox" class="blue_check" data-hc-click="hc-65" id="showInvisibles" />
                   <Label for="showInvisibles">Show Invisibles</label>
               </p>
               <p class="col s12">
-                  <input type="checkbox" class="blue_check" onclick="editor.setOption('showPrintMargin', !editor.getOptions().showPrintMargin)" id="showPrintMargin" />
+                  <input type="checkbox" class="blue_check" data-hc-click="hc-66" id="showPrintMargin" />
                   <Label for="showPrintMargin">Show Print Margin</label>
               </p>
               <p class="col s12">
-                  <input type="checkbox" class="blue_check" onclick="editor.setOption('showLineNumbers', !editor.getOptions().showLineNumbers)" id="showLineNumbers" />
+                  <input type="checkbox" class="blue_check" data-hc-click="hc-67" id="showLineNumbers" />
                   <Label for="showLineNumbers">Show Line Numbers</label>
               </p>
               <div class="input-field col s12">
-                  <input type="number" onchange="editor.setOption('tabSize', parseInt(this.value))" min="1" id="tabSize">
+                  <input type="number" data-hc-change="hc-68" min="1" id="tabSize">
                   <label class="active" for="tabSize">Tab Size</label>
               </div>
               <div class="input-field col s12">
-                  <select onchange="editor.setTheme(this.value)" id="theme">
+                  <select data-hc-change="hc-69" id="theme">
                       <optgroup label="Light Themes">
                           <option value="ace/theme/chrome">Chrome</option>
                           <option value="ace/theme/clouds">Clouds</option>
@@ -1590,30 +1582,30 @@
                   <label for="theme">Theme</label>
               </div>
               <p class="col s12">
-                  <input type="checkbox" class="blue_check" onclick="editor.setOption('useSoftTabs', !editor.getOptions().useSoftTabs)" id="useSoftTabs" />
+                  <input type="checkbox" class="blue_check" data-hc-click="hc-70" id="useSoftTabs" />
                   <Label for="useSoftTabs">Use Soft Tabs</label>
               </p>
               <p class="col s12">
-                  <input type="checkbox" class="blue_check" onclick="editor.setOption('useWorker', !editor.getOptions().useWorker)" id="useWorker" />
+                  <input type="checkbox" class="blue_check" data-hc-click="hc-71" id="useWorker" />
                   <Label for="useWorker">Use Worker</label>
               </p>
               <p class="col s12">
-                  <input type="checkbox" class="blue_check" onclick="editor.setOption('vScrollBarAlwaysVisible', !editor.getOptions().vScrollBarAlwaysVisible)" id="vScrollBarAlwaysVisible" />
+                  <input type="checkbox" class="blue_check" data-hc-click="hc-72" id="vScrollBarAlwaysVisible" />
                   <Label for="vScrollBarAlwaysVisible">V Scroll Bar Always Visible</label>
               </p>
               <p class="col s12">
-                  <input type="checkbox" class="blue_check" onclick="editor.setOption('wrapBehavioursEnabled', !editor.getOptions().wrapBehavioursEnabled)" id="wrapBehavioursEnabled" />
+                  <input type="checkbox" class="blue_check" data-hc-click="hc-73" id="wrapBehavioursEnabled" />
                   <Label for="wrapBehavioursEnabled">Wrap Behaviours Enabled</label>
               </p>
               <p class="col s12">
-                  <input type="checkbox" class="blue_check" onclick="editor.getSession().setUseWrapMode(!editor.getSession().getUseWrapMode());if(editor.getSession().getUseWrapMode()){document.getElementById('wrap_limit').focus();document.getElementById('wrap_limit').onchange();}" id="wrap" />
+                  <input type="checkbox" class="blue_check" data-hc-click="hc-74" id="wrap" />
                   <Label for="wrap">Wrap Mode</label>
               </p>
               <div class="input-field col s12">
-                  <input id="wrap_limit" type="number" onchange="editor.setOption('wrap', parseInt(this.value))" min="1" value="80">
+                  <input id="wrap_limit" type="number" data-hc-change="hc-75" min="1" value="80">
                   <label class="active" for="wrap_limit">Wrap Limit</label>
               </div>
-              <a class="waves-effect waves-light btn light-blue" onclick="save_ace_settings()">Save Settings Locally</a>
+              <a class="waves-effect waves-light btn light-blue" data-hc-click="hc-76">Save Settings Locally</a>
               <p class="center col s12"> Ace Editor 1.4.8 </p>
           </div>
         </ul>
@@ -1621,8 +1613,9 @@
 </main>
 <input type="hidden" id="fb_currentfile" value="" />
 <!-- Scripts -->
+<script src="assets/v$asset_version/ui-handlers.js"></script>
 <script src="assets/v$asset_version/jquery-3.6.0.min.js"></script>
-<script>
+<script nonce="$csp_nonce">
 // All same-origin jQuery requests carry a non-persistent, server-rendered token.
 jQuery.ajaxPrefilter(function(options, ignored, xhr) {
     var target = new URL(options.url, document.baseURI);
@@ -1633,7 +1626,7 @@ jQuery.ajaxPrefilter(function(options, ignored, xhr) {
 });
 </script>
 <script src="assets/v$asset_version/materialize.min.js"></script>
-<script>
+<script nonce="$csp_nonce">
     function ws_connect() {
         function msg(str) {
             document.getElementById("ws_events").value = str + "\n\n" + document.getElementById("ws_events").value;
@@ -1641,7 +1634,12 @@ jQuery.ajaxPrefilter(function(options, ignored, xhr) {
         }
 
         try {
-            ws = new WebSocket(document.getElementById("ws_uri").value);
+            var uri = document.getElementById("ws_uri");
+            if (!uri.defaultValue || uri.value !== uri.defaultValue) {
+                msg('No approved Home Assistant WebSocket endpoint configured');
+                return;
+            }
+            ws = new WebSocket(uri.defaultValue);
             ws.addEventListener("open", function(event) {
                 if (document.getElementById("ws_password").value.split(".").length == 3) {
                     var auth = {
@@ -1692,7 +1690,7 @@ jQuery.ajaxPrefilter(function(options, ignored, xhr) {
         }
     }
 </script>
-<script type="text/javascript">
+<script type="text/javascript" nonce="$csp_nonce">
     var init_loadfile = $loadfile;
     var global_current_filepath = null;
     var global_current_filename = null;
@@ -1869,7 +1867,7 @@ jQuery.ajaxPrefilter(function(options, ignored, xhr) {
         $standalone
     });
 </script>
-<script type="text/javascript">
+<script type="text/javascript" nonce="$csp_nonce">
     document.addEventListener("DOMContentLoaded", function() {
         $('.preloader-background').delay(800).fadeOut('slow');
         $('.preloader-wrapper').delay(800).fadeOut('slow');
@@ -1895,7 +1893,7 @@ jQuery.ajaxPrefilter(function(options, ignored, xhr) {
         }
     });
 </script>
-<script>
+<script nonce="$csp_nonce">
     var modemapping = new Object();
     modemapping['c'] = 'ace/mode/c_cpp';
     modemapping['cpp'] = 'ace/mode/c_cpp';
@@ -2972,7 +2970,7 @@ jQuery.ajaxPrefilter(function(options, ignored, xhr) {
     }
 
 </script>
-<script>
+<script nonce="$csp_nonce">
     ace.require("ace/ext/language_tools");
     var editor = ace.edit("editor");
     editor.on("input", function() {
@@ -3194,7 +3192,7 @@ jQuery.ajaxPrefilter(function(options, ignored, xhr) {
 
 </script>
 <script src="assets/v$asset_version/js-yaml.min.js" type="text/javascript" charset="utf-8"></script>
-<script type="text/javascript">
+<script type="text/javascript" nonce="$csp_nonce">
 var lint_timeout;
 var lint_status = $('#lint-status'); // speed optimization
 var lint_error = "";

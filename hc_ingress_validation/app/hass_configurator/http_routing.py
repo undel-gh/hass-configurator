@@ -28,6 +28,8 @@ POST_API = frozenset((
 # Transitional aliases remain revalidated for existing clients. New HTML uses
 # versioned paths and no permanent redirect is necessary.
 PACKAGE_ASSETS = {
+    "ace-bootstrap.js": "text/javascript; charset=utf-8",
+    "ui-handlers.js": "text/javascript; charset=utf-8",
     "jquery-3.6.0.min.js": "text/javascript; charset=utf-8",
     "js-yaml.min.js": "text/javascript; charset=utf-8",
     "materialize.min.js": "text/javascript; charset=utf-8",
@@ -153,7 +155,8 @@ class Assets:
 
 
 def error_response(status, allow=""):
-    labels = {400: "Bad request", 404: "Not found", 405: "Method not allowed"}
+    labels = {400: "Bad request", 404: "Not found", 405: "Method not allowed",
+              411: "Length required", 413: "Payload too large"}
     hdrs = [("Cache-Control", NO_STORE)]
     if allow:
         hdrs.append(("Allow", allow))

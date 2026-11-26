@@ -1,5 +1,5 @@
 name: "HASS Configurator Ingress Validation (temporary)"
-version: "0.0.2"
+version: "0.0.3"
 slug: hc_ingress_validation
 description: "Temporary sandboxed Home Assistant Ingress test fixture; not a file editor replacement"
 arch:

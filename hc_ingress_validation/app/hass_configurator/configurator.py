@@ -6,6 +6,7 @@ Configurator for Home Assistant.
 https://github.com/danielperna84/hass-configurator
 """
 import os
+from pathlib import Path
 import sys
 import argparse
 import json
@@ -30,6 +31,9 @@ from string import Template
 from http.server import BaseHTTPRequestHandler
 from hass_configurator.http_routing import Router, Response, error_response, send_response as write_http_response
 from hass_configurator._version import VERSION
+from hass_configurator.csp import (
+    configured_websocket, new_nonce, page_headers, UNTRUSTED_FILE_POLICY,
+)
 from hass_configurator.api_security import ConfinedFS, FileReadLimitExceeded, run_bounded_command
 import urllib.request
 from urllib.parse import urlparse, parse_qs, unquote, quote
@@ -198,6 +202,28 @@ def _redacted_settings(settings):
     }
 
 
+
+# Only documented boolean settings are parsed as booleans from environment.
+# A password (or URL) whose literal value is "false" must remain a string.
+_LEGACY_BOOLEAN_SETTINGS = frozenset({
+    "GIT", "DEV", "DIRSFIRST", "HIDEHIDDEN", "IGNORE_SSL", "ENFORCE_BASEPATH",
+})
+_PRIVILEGED_BOOLEAN_SETTINGS = frozenset({
+    "ALLOW_SHELL_COMMANDS", "ALLOW_GIT_OPERATIONS",
+    "ALLOW_NETWORK_ADMIN", "ALLOW_HA_CONTROL",
+})
+_ENV_BOOLEAN_VALUES = {"true": True, "false": False,
+                       "True": True, "False": False}
+
+
+def _legacy_boolean_setting(settings, name, default):
+    """JSON/default booleans must be native bool, never a truthy string/int."""
+    value = settings.get(name, default)
+    if type(value) is not bool:
+        raise ValueError("%s must be a boolean (true or false)" % name)
+    return value
+
+
 def load_settings(args):
     """Load settings from file and environment."""
     global LISTENIP, LISTENPORT, BASEPATH, SSL_CERTIFICATE, SSL_KEY, HASS_API, \
@@ -222,25 +248,28 @@ def load_settings(args):
     ENV_PREFIX = settings.get('ENV_PREFIX', ENV_PREFIX)
     for key, value in os.environ.items():
         if key.startswith(ENV_PREFIX):
-            # Convert booleans
-            if value in ['true', 'false', 'True', 'False']:
-                value = value in ['true', 'True']
-            # Convert None / null
+            name = key[len(ENV_PREFIX):]
+            if name in (_LEGACY_BOOLEAN_SETTINGS | _PRIVILEGED_BOOLEAN_SETTINGS):
+                # Preserve the historical true/false and True/False spelling,
+                # but reject numeric, empty and other ambiguous opt-in values.
+                if value not in _ENV_BOOLEAN_VALUES:
+                    raise ValueError("%s must be true or false" % name)
+                value = _ENV_BOOLEAN_VALUES[value]
             elif value in ['none', 'None', 'null']:
                 value = None
-            # Convert plain numbers
             elif value.isnumeric():
                 value = int(value)
-            # Make lists out of comma separated values for list-settings
-            elif key[len(ENV_PREFIX):] in ["ALLOWED_NETWORKS", "BANNED_IPS", "IGNORE_PATTERN", "EXEC_ALLOWED_BINARIES"]:
+            elif name in ("ALLOWED_NETWORKS", "BANNED_IPS",
+                          "IGNORE_PATTERN", "EXEC_ALLOWED_BINARIES"):
                 value = value.split(',')
-            settings[key[len(ENV_PREFIX):]] = value
+            settings[name] = value
     LOG.debug("Settings after looking at environment:")
     LOG.debug(_redacted_settings(settings))
-    if args.git:
-        GIT = args.git
-    else:
-        GIT = settings.get("GIT", GIT)
+    git_from_settings = _legacy_boolean_setting(settings, "GIT", GIT)
+    GIT = True if args.git else git_from_settings
+    # Do not retain a previously imported GitPython reference if Git is
+    # disabled by a subsequent settings reload.
+    REPO = None
     if GIT:
         try:
             # pylint: disable=redefined-outer-name,import-outside-toplevel
@@ -262,11 +291,10 @@ def load_settings(args):
         BASEPATH = args.basepath
     else:
         BASEPATH = settings.get("BASEPATH", BASEPATH)
-    if args.enforce:
-        ENFORCE_BASEPATH = True
-    else:
-        ENFORCE_BASEPATH = True
-    if settings.get("ENFORCE_BASEPATH") is False:
+    requested_enforcement = _legacy_boolean_setting(
+        settings, "ENFORCE_BASEPATH", ENFORCE_BASEPATH)
+    ENFORCE_BASEPATH = True  # Mandatory even if explicitly disabled in config.
+    if requested_enforcement is False:
         LOG.warning("ENFORCE_BASEPATH=false ignored: P1 confinement is mandatory")
     ALLOW_SHELL_COMMANDS = _secure_flag(settings, "ALLOW_SHELL_COMMANDS", ALLOW_SHELL_COMMANDS)
     EXEC_ALLOWED_BINARIES = settings.get("EXEC_ALLOWED_BINARIES", EXEC_ALLOWED_BINARIES)
@@ -311,27 +339,21 @@ def load_settings(args):
             LOG.warning("Invalid IP address in BANNED_IPS: %s", banned_ip)
             BANNED_IPS.remove(banned_ip)
     BANLIMIT = settings.get("BANLIMIT", BANLIMIT)
-    if args.dev:
-        DEV = True
-    else:
-        DEV = settings.get("DEV", DEV)
+    dev_from_settings = _legacy_boolean_setting(settings, "DEV", DEV)
+    DEV = True if args.dev else dev_from_settings
     IGNORE_PATTERN = settings.get("IGNORE_PATTERN", IGNORE_PATTERN)
     if IGNORE_PATTERN and not all(IGNORE_PATTERN):
         LOG.warning("Invalid value for IGNORE_PATTERN. Using empty list.")
         IGNORE_PATTERN = []
-    if args.dirsfirst:
-        DIRSFIRST = args.dirsfirst
-    else:
-        DIRSFIRST = settings.get("DIRSFIRST", DIRSFIRST)
-    if args.hidehidden:
-        HIDEHIDDEN = args.hidehidden
-    else:
-        HIDEHIDDEN = settings.get("HIDEHIDDEN", HIDEHIDDEN)
+    dirs_from_settings = _legacy_boolean_setting(settings, "DIRSFIRST", DIRSFIRST)
+    hidden_from_settings = _legacy_boolean_setting(settings, "HIDEHIDDEN", HIDEHIDDEN)
+    DIRSFIRST = True if args.dirsfirst else dirs_from_settings
+    HIDEHIDDEN = True if args.hidehidden else hidden_from_settings
     SESAME = settings.get("SESAME", SESAME)
     SESAME_TOTP_SECRET = settings.get("SESAME_TOTP_SECRET", SESAME_TOTP_SECRET)
     VERIFY_HOSTNAME = settings.get("VERIFY_HOSTNAME", VERIFY_HOSTNAME)
     NOTIFY_SERVICE = settings.get("NOTIFY_SERVICE", NOTIFY_SERVICE_DEFAULT)
-    IGNORE_SSL = settings.get("IGNORE_SSL", IGNORE_SSL)
+    IGNORE_SSL = _legacy_boolean_setting(settings, "IGNORE_SSL", IGNORE_SSL)
     if IGNORE_SSL:
         # pylint: disable=protected-access
         ssl._create_default_https_context = ssl._create_unverified_context
@@ -368,6 +390,17 @@ def _js_safe(value):
             .replace("&", r"\u0026")
             .replace("\u2028", r"\u2028").replace("\u2029", r"\u2029"))
 
+def _safe_json_list(value):
+    """HA bootstrap responses are data, not trusted executable JS."""
+    try:
+        decoded = json.loads(value)
+        if not isinstance(decoded, list):
+            return "[]"
+        return _js_safe(json.dumps(decoded, ensure_ascii=True, allow_nan=False))
+    except (ValueError, TypeError, RecursionError):
+        return "[]"
+
+
 def _secure_flag(settings, name, default):
     """Privileged capabilities require an actual JSON/env boolean, not a truthy string."""
     value = settings.get(name, default)
@@ -390,19 +423,82 @@ def is_safe_path(basedir, path, follow_symlinks=True):
         return False
 
 
+def _git_control_directory(fs, candidate):
+    """Accept only an ordinary in-workspace .git directory, never a link/file."""
+    try:
+        fs.resolve_for_read(candidate, directory=True)
+    except FileNotFoundError:
+        return False
+    except (OSError, ValueError) as err:
+        raise PermissionError("Unsafe Git control directory") from err
+    # GitPython follows the commondir pointer while constructing Repo.
+    # Reject it BEFORE that construction, not only after it has already
+    # accessed an external common directory. Ordinary repos omit this file.
+    try:
+        fs.resolve_for_read(Path(candidate) / "commondir")
+    except FileNotFoundError:
+        pass
+    except (OSError, ValueError) as err:
+        raise PermissionError("Unsafe Git common directory indirection") from err
+    else:
+        raise PermissionError("Git common directory indirection is unsupported")
+    return True
+
+
+def _verify_git_metadata(repo, fs, worktree):
+    """Reject worktrees with redirected Git metadata before any Git action.
+
+    GitPython is pathname-based, so this narrows the administrative Git
+    capability; it does NOT eliminate races by a same-UID local adversary.
+    Linked worktrees and gitdir: pointer files are intentionally unsupported.
+    """
+    try:
+        if Path(repo.working_dir) != Path(worktree):
+            raise PermissionError("Unexpected Git worktree")
+        for name in ("git_dir", "common_dir"):
+            metadata = getattr(repo, name, None)
+            if not metadata:
+                raise PermissionError("Missing Git metadata directory")
+            fs.resolve_for_read(metadata, directory=True)
+    except (OSError, ValueError, TypeError, AttributeError) as err:
+        raise PermissionError("Git metadata outside configured workspace") from err
+    return repo
+
+
 def validated_repo(path, **kwargs):
-    """Never let search_parent_directories escape the workspace root."""
+    """Find a Git root inside BASEPATH without GitPython parent traversal.
+
+    The nearest .git must be a directory, not a symlink or a gitdir: file.
+    Inspect metadata before accepting the GitPython instance; privilege
+    opt-in and OS-level trust are still necessary for hooks/other Git I/O.
+    """
     if REPO is None:
         raise PermissionError("Git integration is disabled")
-    checked = _fs().resolve_for_read(
-        path, directory=os.path.isdir(path))
-    repo = REPO(checked, **kwargs)
-    root = _fs()
-    try:
-        root.resolve_for_read(repo.working_dir, directory=True)
-    except OSError as err:
-        raise PermissionError("Git worktree outside configured root") from err
-    return repo
+    fs = _fs()
+    checked = fs.resolve_for_read(path, directory=os.path.isdir(path))
+    cursor = Path(checked) if os.path.isdir(checked) else Path(checked).parent
+    while True:
+        if _git_control_directory(fs, cursor / ".git"):
+            break
+        if cursor == fs.root:
+            raise PermissionError("Git repository not found inside workspace")
+        cursor = cursor.parent
+    # Never let GitPython itself search upwards outside the validated root.
+    kwargs["search_parent_directories"] = False
+    repo = REPO(str(cursor), **kwargs)
+    return _verify_git_metadata(repo, fs, cursor)
+
+
+def safe_init_repo(path):
+    """Initialize Git only where existing .git metadata is not redirected."""
+    if REPO is None:
+        raise PermissionError("Git integration is disabled")
+    fs = _fs()
+    checked = fs.resolve_for_read(path, directory=True)
+    _git_control_directory(fs, Path(checked) / ".git")
+    repo = REPO.init(checked)
+    return _verify_git_metadata(repo, fs, checked)
+
 
 def get_dircontent(path, repo=None):
     """Get content of directory."""
@@ -630,7 +726,8 @@ class RequestHandler(BaseHTTPRequestHandler):
                                     else "text/plain; charset=utf-8")
                     if not (guessed and guessed.startswith("image/")):
                         payload.decode("utf-8")  # Preserve text-editor UTF-8 contract.
-                    headers = (("Cache-Control", "no-store"),)
+                    headers = (("Cache-Control", "no-store"),
+                               ("Content-Security-Policy", UNTRUSTED_FILE_POLICY))
                 else:
                     safe_name = quote(os.path.basename(filename), safe="")
                     content_type = "application/octet-stream"
@@ -638,6 +735,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         ("Cache-Control", "no-store"),
                         ("Content-Disposition",
                          "attachment; filename*=UTF-8''%s" % safe_name),
+                        ("Content-Security-Policy", UNTRUSTED_FILE_POLICY),
                     )
                 response = Response(200, payload, content_type=content_type, headers=headers)
             except FileReadLimitExceeded:
@@ -815,7 +913,11 @@ class RequestHandler(BaseHTTPRequestHandler):
             self.wfile.write(bytes(json.dumps(res), "utf8"))
             return
         elif req.path.endswith('/'):
+            nonce = new_nonce()
+            ws_api = configured_websocket(HASS_API, HASS_WS_API)
             self.send_header('Content-type', 'text/html')
+            for name, value in page_headers(nonce, ws_api):
+                self.send_header(name, value)
             self.end_headers()
 
             loadfile = query.get('loadfile', [None])[0]
@@ -865,23 +967,15 @@ class RequestHandler(BaseHTTPRequestHandler):
                 LOG.warning(err)
 
             color = ""
-            ws_api = ""
-            if HASS_API:
-                protocol, uri = HASS_API.split("//")
-                ws_api = "%s://%swebsocket" % (
-                    "wss" if protocol == 'https' else 'ws', uri
-                )
-            if HASS_WS_API:
-                ws_api = HASS_WS_API
             standalone = ""
             if not HASS_API:
                 standalone = "toggle_hass_panels();"
             try:
                 html = Template(load_file("dev.html", static=True).decode('utf-8'))
                 html = html.safe_substitute(
-                    services=_js_safe(services),
-                    events=_js_safe(events),
-                    states=_js_safe(states),
+                    services=_safe_json_list(services),
+                    events=_safe_json_list(events),
+                    states=_safe_json_list(states),
                     loadfile=loadfile,
                     current=VERSION,
                     versionclass=color,
@@ -896,6 +990,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                     # Never embed server-held HA credentials into HTML/DOM.
                     api_password="",
                     csrf_token=HTTP_ROUTER.security.csrf_token,
+                    csp_nonce=nonce,
                     standalone=standalone,
                     ui_theme=(load_prefs().get('ui_theme', 'auto')
                               if load_prefs().get('ui_theme', 'auto')
@@ -925,14 +1020,40 @@ class RequestHandler(BaseHTTPRequestHandler):
             "message": "Generic failure"
         }
 
-        try:
-            length = int(self.headers.get('Content-Length', ''))
+        # POST is not chunk-decoded; reject ambiguous HTTP framing instead
+        # of letting front and back proxies disagree on the request boundary.
+        lengths = self.headers.get_all('Content-Length', [])
+        transfers = self.headers.get_all('Transfer-Encoding', [])
+        invalid_length = None
+        length = 0
+        if transfers or len(lengths) > 1:
+            invalid_length = 400
+        elif not lengths:
+            invalid_length = 411
+        elif not lengths[0] or any(char not in '0123456789'
+                                   for char in lengths[0]):
+            invalid_length = 400
+        else:
+            # Compare the magnitude as decimal text before calling int().
+            # Python 3.11+ rejects thousands-digit int conversions even
+            # when every character is ASCII decimal. Treat numeric overflow
+            # as 413, not 400, and allow arbitrarily padded leading zeros.
+            digits = lengths[0].lstrip('0') or '0'
             limit = 104857600 if req.path == '/api/upload' else 1048576
-            if length < 0 or length > limit:
-                raise ValueError("Invalid request size")
-        except (ValueError, TypeError):
-            self._legacy_route = False  # Router-owned 413 already supplies headers.
-            write_http_response(self, error_response(413))
+            maximum = str(limit)
+            if (len(digits) > len(maximum) or
+                    (len(digits) == len(maximum) and digits > maximum)):
+                invalid_length = 413
+            else:
+                # This conversion is bounded to <= len(str(limit)) digits.
+                length = int(digits)
+        if invalid_length is not None:
+            self._legacy_route = False  # Single router-owned header writer.
+            self.close_connection = True  # Never reuse an unread request body.
+            error = error_response(invalid_length)
+            write_http_response(self, Response(
+                error.status, error.body, error.content_type,
+                error.headers + (("Connection", "close"),)))
             return
         if req.path == '/api/save':
             try:
@@ -1335,7 +1456,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                         repopath = unquote(postvars['path'][0])
                         response['path'] = repopath
                         try:
-                            repo = REPO.init(_fs().resolve_for_read(repopath, directory=True))
+                            repo = safe_init_repo(repopath)
                             response['error'] = False
                             response['message'] = "Initialized repository in %s" % repopath
                             self.send_response(200)

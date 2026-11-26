@@ -1,21 +1,14 @@
-# Temporary HA OS Ingress validation app (Issue #8)
+# Temporary HA OS Ingress and CSP validation app (Issues #8 / #13)
 
-**TEST-ONLY, not the official File Editor. Do not install as a production replacement.**
+**TEST ONLY. Not a production replacement for the official File Editor.**
 
-Pinned from [PR #22](https://github.com/undel-gh/hass-configurator/pull/22), source commit `8ce8ffb1cd579431261329597f7b7ce10baba4b6` (exact-HEAD [CI run](https://github.com/undel-gh/hass-configurator/actions/runs/45135844692) green). The app uses only `/data/hc-ingress-validation`; no real HA configuration, shared directories, supervisor admin API access, or published host port. It starts manually and is accessible exclusively through Supervisor Ingress.
+Fixture 0.0.3 (CSP-A) is pinned to [PR #30](https://github.com/undel-gh/hass-configurator/pull/30) source commit `bbab9cc7051c1a90db256ffbb30a06360f3226fc` ([exact source CI 4/4](https://github.com/undel-gh/hass-configurator/actions/runs/45848462928)). The copied package differs from the source only by a harmless CSS cache revision comment. No Core API privilege, host ports, configuration or shared-directory mounts; editing is confined to `/data/hc-ingress-validation`.
 
-## Install on Home Assistant OS
+Install/update manually through Home Assistant Settings → Apps → Install app → Repositories:
+`https://github.com/undel-gh/hass-configurator#haos-ingress-validation`
 
-1. Make a Home Assistant backup and confirm the OS architecture is **amd64** or **aarch64**.
-2. Settings → Apps → Install app → menu **⋮** → **Repositories** → **Add**:
-   `https://github.com/undel-gh/hass-configurator#haos-ingress-validation`
-3. Open **HASS Configurator Ingress Validation (temporary)** from the new repository section and choose **Install**. Supervisor builds this disposable Docker image on the HA OS device; **no prebuilt GHCR image is published**.
-4. Start manually; open **Open Web UI**. Inspect the app logs if the build/start fails. Do **not** enable homeassistant_api or change mounts/privileges.
-5. Follow the acceptance [runbook](https://github.com/undel-gh/hass-configurator/blob/8ce8ffb1cd579431261329597f7b7ce10baba4b6/docs/HAOS_REAL_INGRESS.md). Never share opaque ingress URLs, cookie or token, Playwright storageState, HAR, or unredacted traces.
-6. When testing is complete, stop/uninstall the app and remove this custom repository if no longer needed. This repository is **not** a replacement for the official File Editor.
+Use an isolated test installation, make a backup, keep the same slug, and use Supervisor Update (not uninstall/reinstall) for the A→B warm-cache test. Keep the same normal browser profile, do not clear cache, and keep DevTools Disable cache off. Do not enable Home Assistant API or other privileges. Supervisor builds locally; no prebuilt image or release is published.
 
-## Evidence
+Follow the [real HA OS runbook](https://github.com/undel-gh/hass-configurator/blob/bbab9cc7051c1a90db256ffbb30a06360f3226fc/docs/HAOS_REAL_INGRESS.md) and [CSP policy](https://github.com/undel-gh/hass-configurator/blob/bbab9cc7051c1a90db256ffbb30a06360f3226fc/docs/P1_CSP.md). Never share ingress URLs, cookies, tokens, raw HAR, or private Playwright state/reports.
 
-See `hc_ingress_validation/fixture-provenance.json` for source SHA and vendor manifest SHA-256. Issue #8 remains **open** until real HAOS-01…12 evidence; PR #22 stays **Draft**.
-
-Installation is initiated and controlled by the Home Assistant administrator. Nothing in this branch installs software automatically.
+See `hc_ingress_validation/fixture-provenance.json` for the source and vendor manifest identity. Issue #13 remains open; PR #30 remains Draft / HOLD pending real HAOS and inline-style disposition. Issue #26 is out of scope. Installation is controlled by the administrator.
