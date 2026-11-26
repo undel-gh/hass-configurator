@@ -1021,14 +1021,19 @@ class RequestHandler(BaseHTTPRequestHandler):
                                    for char in lengths[0]):
             invalid_length = 400
         else:
-            try:
-                length = int(lengths[0])
-            except ValueError:
-                invalid_length = 400
+            # Compare the magnitude as decimal text before calling int().
+            # Python 3.11+ rejects thousands-digit int conversions even
+            # when every character is ASCII decimal. Treat numeric overflow
+            # as 413, not 400, and allow arbitrarily padded leading zeros.
+            digits = lengths[0].lstrip('0') or '0'
+            limit = 104857600 if req.path == '/api/upload' else 1048576
+            maximum = str(limit)
+            if (len(digits) > len(maximum) or
+                    (len(digits) == len(maximum) and digits > maximum)):
+                invalid_length = 413
             else:
-                limit = 104857600 if req.path == '/api/upload' else 1048576
-                if length > limit:
-                    invalid_length = 413
+                # This conversion is bounded to <= len(str(limit)) digits.
+                length = int(digits)
         if invalid_length is not None:
             self._legacy_route = False  # Single router-owned header writer.
             self.close_connection = True  # Never reuse an unread request body.
