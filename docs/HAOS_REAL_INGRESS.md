@@ -260,9 +260,61 @@ deferral to #26 is not a proof of successful HAOS-11. Do not install the
 privileged probe in the working HA OS; downstream inclusion in the official
 File Editor is a separate packaging decision.
 
-## CSP regression after #13 (not part of the historical #8 PASS)
+## CSP regression after #13 (separate from historical #8 PASS)
 
-Use a disposable fixture built from the reviewed #13 source SHA, with the default `homeassistant_api: false`. Re-run the `test:haos` suite including the new CSP test; also open the app from the actual HA sidebar iframe and in a new tab (direct navigation alone cannot prove `frame-ancestors` compatibility). Repeat local asset/worker, file roundtrip and warm-profile A→B checks. Record only PASS/FAIL, versions and SHAs; no raw policy, nonce, opaque URL or unredacted browser reports. A configured live observer remains #26; the standalone fixture must reject browser-supplied WS URLs without disrupting editing. See [P1 CSP](P1_CSP.md). Until performed, CSP real-HAOS acceptance is NOT VERIFIED.
+**Status 2026-11-26: CSP-HAOS-01…09 PASS (operator-reported, tested paths).**
+Use a disposable fixture built from the reviewed #13 source SHA, default
+`homeassistant_api: false`, no new mounts/host ports. Re-run `test:haos`
+with isolated file mutation opt-in; test the actual HA sidebar iframe and
+new tab (direct navigation alone cannot establish frame compatibility).
+Repeat local asset/worker, file roundtrip and warm-profile A→B checks.
+Record only sanitized evidence; no raw policy, nonce, opaque URL or raw
+browser reports.
+
+### Field record
+
+Reviewed source: `bbab9cc7051c1a90db256ffbb30a06360f3226fc`, PR #30, [CI 4/4](https://github.com/undel-gh/hass-configurator/actions/runs/45848462928),
+131 Python tests. Deployment branch `haos-ingress-validation`; both copies
+use the same product source, with distinct fixture version and harmless CSS
+cache marker. Vendor manifest SHA-256:
+`f2f35d2c38dc9edec6846bfedded278d7b18cf714b1efbe34a49ca5b102065c1`
+(460 resources). Current HA OS/Core/Supervisor/Frontend/Chrome build versions
+were not newly recorded for #13; do not substitute historical #8 values as
+fresh measurements. Manual checks used real HA Ingress (public origin
+confirmed on A); B Playwright used renewed local-origin authenticated session.
+
+| Fixture | Deployment commit | Asset fingerprint | Real Playwright |
+| --- | --- | --- | --- |
+| A 0.0.3 / CSP-A | `76cb0585bf9d31cd5537be434efb37723fc8b347` | `73486dd6f3a6fd02` | 6 passed, 1 skipped, 0 failed (14.0s) |
+| B 0.0.4 / CSP-B | `5576000a41b3b4e186839588f9f3eeaff996c129` | `240f323d2ccd89a0` | 6 passed, 1 skipped, 0 failed (9.3s) |
+
+| ID | Evidence | Result |
+| --- | --- | --- |
+| CSP-HAOS-01 | Actual public-origin document: both expected CSP policies, no-store, nosniff, text/html. Two independent fetches HTTP 200; 7 nonce-bearing inline scripts; matching enforcement/Report-Only/HTML nonces and fresh nonce per response. | PASS |
+| CSP-HAOS-02 | Actual HA sidebar iframe opens and works normally (manual A). | PASS |
+| CSP-HAOS-03 | Playwright Settings > New tab retains opaque prefix on A/B. | PASS |
+| CSP-HAOS-04 | Syntax highlighting, theme changes, YAML error detection/clearing; automated worker and local asset tests on A/B. Tested modes only, not every vendor mode/plugin. | PASS (scope) |
+| CSP-HAOS-05 | Manual create/edit/save/rename/delete on A; isolated upload/download with matching text payload on A/B. | PASS (scope) |
+| CSP-HAOS-06 | Browser denies nonce-less inline script and inline event handler through actual Supervisor; test control variables never set, expected enforce events. | PASS |
+| CSP-HAOS-07 | Automated Report-Only style event; manual console shows template, Ace and Materialize inline CSS violations. No unexpected enforced violations observed on exercised paths. Detailed element/attribute inventory deferred to #31. | PASS (scope) |
+| CSP-HAOS-08 | Supervisor in-place A→B update; same normal Chrome profile, no cache clearing or Hard Reload, Disable cache off (explicit operator confirmation). Fingerprint changed, updated editor functional, B suite passed. Not a measurement of individual cache-hit ratios. | PASS (operator-attested) |
+| CSP-HAOS-09 | No external browser requests observed on exercised paths; B worker on/off observation and guarded Playwright A/B. Not exhaustive proof for every browser extension or feature. | PASS (scope) |
+
+Both suites also pass Supervisor header spoof replacement and fail-closed
+unconfigured observer behavior. Only the opt-in privileged Core REST/WS
+test is skipped by design (#26); no real HA observer authentication is
+claimed. Two earlier FetchEvent network-error messages had an unisolated
+cause; no observed functional regression. Evidence is operator-reported,
+not independently replayed by public CI.
+
+Evidence: [A](https://github.com/undel-gh/hass-configurator/issues/13#issuecomment-7198223217),
+[B](https://github.com/undel-gh/hass-configurator/issues/13#issuecomment-7198512184),
+[warm-profile confirmation](https://github.com/undel-gh/hass-configurator/issues/13#issuecomment-7198608252).
+The maintainer explicitly accepted the temporary inline-CSS-only exception
+on 2026-11-26; [#31](https://github.com/undel-gh/hass-configurator/issues/31)
+owns remediation with review/expiry 2026-12-31 or before first public release,
+whichever comes first. See [P1 CSP](P1_CSP.md). This does not close #26 or
+establish overall AT-11/AT-12/P1/public-release acceptance.
 
 ## 6. Cleanup
 

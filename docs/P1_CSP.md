@@ -1,6 +1,9 @@
 # P1 Content Security Policy (#13)
 
-Status: implementation candidate in Draft PR #30; not a release-risk acceptance.
+Status (2026-11-26): scoped #13 implementation reviewed and real-HAOS
+CSP-HAOS-01…09 accepted within tested paths; temporary inline CSS exception
+explicitly accepted by the maintainer and tracked in #31. PR #30 is not a
+public-release signoff; final documentation-only HEAD CI/merge remain separate.
 Owner of the issue: repository maintainer (`undel-gh`), with independent #7
 security co-review. No new HA OS or external service permissions are requested.
 
@@ -50,7 +53,7 @@ security co-review. No new HA OS or external service permissions are requested.
 | worker-src | 'self' blob: | Ace blob launcher and local worker scripts; no public URL |
 | connect-src | 'self' + explicit configured WS URL, when valid | same; no blanket ws:/wss: or wildcard host |
 | object-src / base-uri | 'none' | deny plugin objects and injected base tags |
-| frame-ancestors | 'self' | HA same-origin Ingress iframe; actual Supervisor/browser acceptance required |
+| frame-ancestors | 'self' | HA same-origin Ingress iframe; operator-confirmed real Supervisor/browser PASS |
 | form-action | 'self' | no off-origin form submission |
 | frame-src | 'none' | no embedded child frames required |
 
@@ -95,21 +98,35 @@ origin and browser CSP scheme/redirect semantics apply.
 | Browser enforcement | e2e/csp.spec.cjs: real editor/handler, script + event denial, report-only style event, same-origin frame, direct SVG sandbox |
 | Existing UX and worker behavior | e2e/offline-dynamic.spec.cjs, offline-smoke, ingress-operations, release-matrix, Docker/wheel/sdist |
 | Observer | e2e/ha-outage.spec.cjs: configured URI and failed connection do not prevent editing; invalid browser override refused; native local mock handshake on approved endpoint and denial on another path (not HA authentication) |
-| Real Supervisor | e2e/haos-real.spec.cjs plus sidebar iframe/new tab, isolated file roundtrip, warm-profile upgrade; pending manual evidence |
+| Real Supervisor | e2e/haos-real.spec.cjs plus actual sidebar iframe/new tab, isolated file CRUD/roundtrip, warm-profile upgrade; CSP-HAOS-01…09 PASS within exercised scope (operator evidence) |
 | Acceptance | two independent reviews and exact-HEAD CI; #26 actual Core REST/WS still separate |
 
 Tests-only RED and all follow-up CI results belong in PR #30 with exact SHAs.
 Public CI simulates Ingress; prior #8 field evidence is not evidence for new
-CSP headers or framing behavior. See HAOS_REAL_INGRESS.md for safe retest.
+CSP headers or framing behavior. The new #13 field results are recorded in
+[HAOS_REAL_INGRESS.md](HAOS_REAL_INGRESS.md), separate from historical #8.
+Reviewed runtime/test source `bbab9cc7051c1a90db256ffbb30a06360f3226fc`
+passed [CI 4/4](https://github.com/undel-gh/hass-configurator/actions/runs/45848462928)
+(131 Python tests), two independent reviews and focused mutation follow-up.
+Both real HAOS fixtures were built from this source with only a harmless CSS
+cache marker in the copied package. Final documentation-only changes do not
+alter tested runtime/test files; verify CI on their exact new HEAD.
 
-## Release-risk decision (required, not accepted)
+## Release-risk decision (explicit temporary acceptance)
 
 | Residual | Owner / issue | Expiry / gate | Disposition |
 | --- | --- | --- | --- |
-| Inline styles allowed in enforcement, strict CSS only Report-Only | maintainer `undel-gh` / #13 | before first public release; proposed review by 2026-12-31 | OPEN; remove via targeted CSS migration or record explicit maintainer acceptance with dated expiry and follow-up. No silent waiver. |
-| Real HA OS CSP/iframe compatibility | maintainer `undel-gh` / #13 | before #13 acceptance | OPEN; real fixture retest. |
+| Inline styles allowed in enforcement, strict CSS only Report-Only | maintainer `undel-gh` / [#31](https://github.com/undel-gh/hass-configurator/issues/31) | expiry/review 2026-12-31 or before first public release, whichever comes first | TEMPORARILY ACCEPTED by maintainer 2026-11-26 for scoped #13, not unconditional release approval. Remove/narrow or explicitly re-evaluate with dated signoff; no silent rollover. |
+| Real HA OS CSP/iframe compatibility | maintainer `undel-gh` / #13 | before #13 acceptance | PASS (operator-reported CSP-HAOS-01…09, including same-profile warm upgrade); tested paths only. |
 | Live Core REST/WS observer/auth | maintainer / #26 | before claiming live support | DEFERRED, not validated by this PR. |
 
-Do not mark NFR-010, ADR-008, AT-12 or overall P1/public release verified merely
-because this implementation or a simulated CI run is green. Broader frontend
+The exception is limited to inline CSS for the template, Ace and Materialize;
+no script unsafe-inline/unsafe-eval or other policy relaxation is accepted.
+Inline CSS still permits UI manipulation and potentially CSS-based disclosure
+through allowed resource channels. Strict CSS Report-Only is diagnostic, not
+preventive; enforced script/resource restrictions and #7 remain compensating
+controls. See [maintainer decision](https://github.com/undel-gh/hass-configurator/issues/13#issuecomment-7198566758)
+and [field completion](https://github.com/undel-gh/hass-configurator/issues/13#issuecomment-7198608252).
+Do not mark NFR-010, ADR-008, AT-12 or overall P1/public release unconditionally
+verified merely because the scoped #13 implementation is accepted. Broader frontend
 architecture work remains #11, not a blanket waiver of CSP requirements.
