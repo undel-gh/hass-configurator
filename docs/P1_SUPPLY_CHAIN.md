@@ -216,8 +216,8 @@ open review records (Browserify shims and themes/snippets). Of the records,
 of identified code, not exhaustive attribution or a final legal signoff.
 The separate `hass_configurator/third_party/embedded.json` carries pinned
 source commit/blob references, exact container-file markers, notice hashes,
-version evidence and explicit unresolved dispositions. 23 additional full
-license files or marked source excerpts are shipped and hash-checked. The
+version evidence and explicit unresolved dispositions. 26 additional notice
+texts, excerpts or reference files are shipped and hash-checked. The
 source CycloneDX BOM expands from 12 to 40 library components, with parent
 edges for embedded code. Review records are not fictitious libraries. Unknown
 or contradictory versions are not assigned purls; only known ecosystem and
@@ -230,7 +230,20 @@ compares whole notices or exact excerpts, and verifies original font lineage.
 It uploads `embedded-upstream-evidence.json` with SHA-256 and Git blob
 identities; no source archive is executed. Local checks still require no
 network. Existing npm archive closure and installed artifact byte checks
-remain in force. New exact-HEAD CI required; no claimed execution before it.
+remain in force. Historical Round 3 candidate `b07e3a89fe2b3a2a27e1a42378a7c638c284e879`
+passed [run #342 / 45881820227](https://github.com/undel-gh/hass-configurator/actions/runs/45881820227)
+(4/4 jobs; 149 Python tests). Source artifact 15147950993 was reviewed
+(54 upstream files, 26 notice/reference checks, two literal source relationships,
+40 unique BOM refs). Installed/candidate artifact 15148036080 was subsequently
+reviewed: ZIP CRC and published SHA-256 match, 498 verified application files
+per wheel/sdist/image, Docker lock match, identical image IDs, and source-bound
+OSV completed (223 queries, 79 matched). The candidate browser JSON reports
+passed, with zero external requests, browser errors or CSP violations; HA tags
+still produce warnings. This is research-only, not integrated or real-Supervisor
+acceptance. These results apply to that historical SHA; any later documentation
+commit needs its own exact-HEAD CI and artifact review. Remaining attribution,
+JSHint licensing and #33–#35 risk dispositions and final independent merge
+decision are still open.
 
 ### Materialize 0.100.2 — nested licenses
 
