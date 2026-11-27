@@ -140,3 +140,9 @@ license template with placeholders, NOT an original Gruvbox copyright
 notice or a license grant from SPDX. Earlier original-license uncertainty
 is superseded; exact historical port lineage and ordinary Gruvbox CLA /
 2017 contribution independence remain open. No license clearance implied.
+
+Nord Dark (Sven Greb / Nord) and One Dark (GitHub / Atom One Dark Syntax)
+original MIT whole-file references retained. Ace PR #4203 and #4415
+explicitly grant permission for the respective contributions. Historical
+BSD Ace wrappers and current source pins recorded; exact original revision
+and any intermediate port lineage remain open. See embedded.json.

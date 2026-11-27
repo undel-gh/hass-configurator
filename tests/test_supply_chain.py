@@ -75,6 +75,22 @@ class SupplyChainTests(unittest.TestCase):
                     with self.assertRaisesRegex(ValueError, "Missing or unsafe inventory file"):
                         read_file(root, name)
 
+    def test_nord_and_one_dark_attribution(self):
+        inv, vendor = source_inventory()
+        for name, theme in (("nord", "nord_dark"), ("one-dark", "one_dark")):
+            record = next(c for c in inv["embedded"]["components"]
+                          if c["id"] == "ace-theme-" + name)
+            self.assertEqual(record["status"], "partial")
+            self.assertEqual(record["license"], "MIT")
+            self.assertIsNone(record["version"])
+            self.assertIsNone(record["ecosystem"])
+            self.assertEqual([x["file"] for x in record["locations"]],
+                             ["vendor/ace/theme-" + theme + ".js"])
+            self.assertEqual(len(record["evidence"]), 5)
+            self.assertEqual(len(record["notices"]), 1)
+            self.assertEqual(inv["embedded"]["notices"][record["notices"][0]]["kind"],
+                             "whole-file")
+
     def test_original_gruvbox_license_declaration_inventory(self):
         inv, vendor = source_inventory()
         record = next(c for c in inv["embedded"]["components"]

@@ -1823,7 +1823,101 @@
         "third_party/licenses/embedded/gruvbox-original-license-reference.txt",
         "third_party/licenses/embedded/gruvbox-original-mit-standard-reference.txt"
       ],
-      "note": "Original author explicitly declared MIT/X11 in README at 2012-12-02 commit 317ca28 adding colors/gruvbox.vim; declaration remains at descendant ef8864bb (193 ahead, 0 behind at research). Both README and Vim source pins retained. Exact original declaration excerpt and separately labelled unmodified SPDX standard MIT template (placeholders, not an original copyright header) shipped; attribution to Pavel Pertsev supported by Ace Hard input metadata, morhetz by original source header. This establishes original project's declared license, not exact external revision used by each Ace port, uninterrupted terms at every intermediate commit, or complete third-party provenance. Ordinary Gruvbox 2016 CLA revert and 2017 contribution independence remain open; no risk acceptance."
+      "note": "Original author explicitly declared MIT/X11 in README at 2012-12-02 commit 317ca28 adding colors/gruvbox.vim; declaration remains at descendant ef8864bb (193 ahead, 0 behind at research). Both README and Vim source pins retained. Exact original declaration excerpt and separately labelled unmodified SPDX standard MIT template (placeholders, not an original copyright header) shipped; attribution to Pavel Pertsev supported by Ace Hard input metadata, morhetz by original source header. This establishes original project's declared license, not exact external revision used by each Ace port, uninterrupted terms at every intermediate commit, or complete third-party provenance. Ordinary Gruvbox 2016 CLA revert and 2017 contribution independence remain open; no risk acceptance. Original Ace PR #2916 discussion explicitly requests CLA (comment 221365903) and records revert for missing CLA (comment 223543383, PR #2985). Issue #3268 and PR #3269 establish reintroduction, not later signature or independent authorship. No inference of infringement from missing CLA alone."
+    },
+    {
+      "id": "ace-theme-nord",
+      "parent": "ace",
+      "kind": "library",
+      "name": "Nord Dark theme (Ace port)",
+      "version": null,
+      "ecosystem": null,
+      "status": "partial",
+      "license": "MIT",
+      "locations": [
+        {
+          "file": "vendor/ace/theme-nord_dark.js",
+          "marker": "ace/theme/nord_dark"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/nordtheme/nord/blob/1cef71605416a222e57225b544540ce0fcec18d4/license",
+          "git_blob": "996f8fb61226844c6bbd2167a8b1a118be10609f",
+          "marker": "Sven Greb"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/9115b68eacecd13c3ea077e67b66ac1577bd062d/lib/ace/theme/nord_dark.css",
+          "git_blob": "8ef6e886ec756ddae8c28d7b106a78cc28a6a264",
+          "marker": "ace-nord-dark"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/theme/nord_dark-css.js",
+          "git_blob": "2622853f183215112b27d655ab4738e584ba02cc",
+          "marker": "ace-nord-dark"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/9115b68eacecd13c3ea077e67b66ac1577bd062d/lib/ace/theme/nord_dark.js",
+          "git_blob": "b1a19372687c7b578ed12fe49be92730a6484e3e",
+          "marker": "ace-nord-dark"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/theme/nord_dark.js",
+          "git_blob": "e014fd8e16df3185544fc0c3398069d72cee8a76",
+          "marker": "ace-nord-dark"
+        }
+      ],
+      "notices": [
+        "third_party/licenses/embedded/nord-theme-mit.txt"
+      ],
+      "note": "Ace PR #4203 explicitly references original theme and grants permission to use, modify, copy and redistribute the contributor's contribution under terms of choice. Historical BSD-3-Clause Ace wrapper and original MIT license reference pinned separately. Current CSS differs from historical input by typo correction and active indent guide in inspected comparison. Original exact external revision and any intermediate port lineage not established; no risk acceptance."
+    },
+    {
+      "id": "ace-theme-one-dark",
+      "parent": "ace",
+      "kind": "library",
+      "name": "One Dark theme (Ace port)",
+      "version": null,
+      "ecosystem": null,
+      "status": "partial",
+      "license": "MIT",
+      "locations": [
+        {
+          "file": "vendor/ace/theme-one_dark.js",
+          "marker": "ace/theme/one_dark"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/atom/one-dark-syntax/blob/9c96f4454362267ac45322063e193ccf9d2debb1/LICENSE.md",
+          "git_blob": "4e47b02a28a95c1d3001e4b747ce0638f11475e1",
+          "marker": "GitHub"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/3359dfc12d9500cf41916594878098029d5c6ce5/lib/ace/theme/one_dark.css",
+          "git_blob": "70852888dbf8a73b26aaf91becde51b323fe9c53",
+          "marker": "ace-one-dark"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/theme/one_dark-css.js",
+          "git_blob": "eaa251981f07da0ac3fb3c1aa67b4a20336bc5ff",
+          "marker": "ace-one-dark"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/3359dfc12d9500cf41916594878098029d5c6ce5/lib/ace/theme/one_dark.js",
+          "git_blob": "90d2c06a5f3ffacae00de8d36c517144a52f72ad",
+          "marker": "ace-one-dark"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/theme/one_dark.js",
+          "git_blob": "3fd6fd61c4d585d26dac410f2abb8e079115217a",
+          "marker": "ace-one-dark"
+        }
+      ],
+      "notices": [
+        "third_party/licenses/embedded/one-dark-theme-mit.txt"
+      ],
+      "note": "Ace PR #4415 explicitly references original theme and grants permission to use, modify, copy and redistribute the contributor's contribution under terms of choice. Historical BSD-3-Clause Ace wrapper and original MIT license reference pinned separately. Historical CSS payload retained with active indent guide addition. Original exact external revision and any intermediate port lineage not established; no risk acceptance."
     }
   ],
   "font_provenance": {
@@ -1853,7 +1947,8 @@
     "Research #4 native base source mapping verified; review record is not a new SBOM component. Browser-pack loader attribution recovered; exact package version and REx historical output/grammar grant remain open. Theme/snippet source equality is not historical license clearance.",
     "Historical Ace contributions establish nine exact TextMate input blobs for Tomorrow, Solarized and Gruvbox Hard; original-project MIT notices retained as pinned whole files. No exact external release, signed CLA, complete historical license clearance or original Gruvbox rights inferred.",
     "Historical Gozalishvili wrapper notice preserved, bounded relations for three wrappers and 2017 Gruvbox CSS; does not establish original color scheme rights or CLA clearance.",
-    "Supersedes earlier original Gruvbox license uncertainty: author MIT/X11 README declaration established at 317ca28 and descendant ef8864bb; exact source excerpt and separately identified SPDX MIT template retained. No original full copyright notice invented. Exact port lineage, independent contributions and CLA remain open."
+    "Supersedes earlier original Gruvbox license uncertainty: author MIT/X11 README declaration established at 317ca28 and descendant ef8864bb; exact source excerpt and separately identified SPDX MIT template retained. No original full copyright notice invented. Exact port lineage, independent contributions and CLA remain open.",
+    "Nord/One Dark original MIT whole-file references and historical/current Ace CSS/wrapper pins retained. PR #4203/#4415 contribution permissions recorded; exact external revision and any intermediate port lineage remain open. Gruvbox original PR #2916 / revert #2985 discussion reviewed; CLA resolution not established."
   ],
   "notices": {
     "third_party/licenses/embedded/ace-legacy-linters.txt": {
@@ -2275,6 +2370,18 @@
       "sha256": "b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5",
       "source": "https://github.com/spdx/license-list-data/blob/cc4fe1ac462bd3ad3c81a07234baf7d9541ee871/text/MIT.txt",
       "source_blob": "d817195dad53ec992418c28ffca5fbd1cd86502a"
+    },
+    "third_party/licenses/embedded/nord-theme-mit.txt": {
+      "kind": "whole-file",
+      "sha256": "25ac8188d670bd2ad2ce2f4f55ab88573010ee9f7a4502543cb1eea1e2274f8a",
+      "source": "https://github.com/nordtheme/nord/blob/1cef71605416a222e57225b544540ce0fcec18d4/license",
+      "source_blob": "996f8fb61226844c6bbd2167a8b1a118be10609f"
+    },
+    "third_party/licenses/embedded/one-dark-theme-mit.txt": {
+      "kind": "whole-file",
+      "sha256": "e1bd6bab503e4d7990504df1e646f6e7465a9096648304335e4c0b55c88f1f54",
+      "source": "https://github.com/atom/one-dark-syntax/blob/9c96f4454362267ac45322063e193ccf9d2debb1/LICENSE.md",
+      "source_blob": "4e47b02a28a95c1d3001e4b747ce0638f11475e1"
     }
   },
   "schema": 1,
