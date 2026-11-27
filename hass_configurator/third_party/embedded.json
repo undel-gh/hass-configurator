@@ -438,6 +438,66 @@
           "url": "https://github.com/kennethreitz-archive/krTheme.tmTheme/blob/ec21b6d65a3d38d699b47b76026b2746f38d1681/Readme.md",
           "git_blob": "b9618416c8e135efd9e84520495b551415eb1bd4",
           "marker": "Copyright 2010 Kenneth Reitz. All Rights Reserved."
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/ecfdc5fbc4691b7d3933416b65da340768111f04/lib/ace/theme/monokai.css",
+          "git_blob": "77afbd619335b7406fcbc6de01ec9d7db72e7303",
+          "marker": "ace-monokai"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/ecfdc5fbc4691b7d3933416b65da340768111f04/lib/ace/theme/monokai.js",
+          "git_blob": "fe4283c6d02c86d36cddebbed7cc8ceb11dd6faf",
+          "marker": "Copyright (c) 2010, Ajax.org B.V."
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/theme/monokai-css.js",
+          "git_blob": "26b925e3f929baa0a7dd74cc8340c2316bc16146",
+          "marker": "ace-monokai"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/theme/monokai.js",
+          "git_blob": "7477167672a5feccd19b93c02d305dc6d6acf253",
+          "marker": "ace-monokai"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/ecfdc5fbc4691b7d3933416b65da340768111f04/lib/ace/theme/chrome.css",
+          "git_blob": "2b8d60f9e123a422a8a94c126afc7a721cf7ec43",
+          "marker": "ace-chrome"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/ecfdc5fbc4691b7d3933416b65da340768111f04/lib/ace/theme/chrome.js",
+          "git_blob": "b0d0248012d19eb2d51677a4f771d6be9e994156",
+          "marker": "Copyright (c) 2010, Ajax.org B.V."
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/theme/chrome-css.js",
+          "git_blob": "419f25a12639f21c01e68a3341e9598a4c25c432",
+          "marker": "ace-chrome"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/theme/chrome.js",
+          "git_blob": "e5210c1a72f9f182f785fbb86854043a5dc01626",
+          "marker": "ace-chrome"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/ecfdc5fbc4691b7d3933416b65da340768111f04/lib/ace/theme/textmate.css",
+          "git_blob": "c328b3aa6e152693af967b31f1c6e2e956b98a40",
+          "marker": "ace-tm"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/ecfdc5fbc4691b7d3933416b65da340768111f04/lib/ace/theme/textmate.js",
+          "git_blob": "47bbae0b57a75e31a0dc22773e519e56e79b7afc",
+          "marker": "Copyright (c) 2010, Ajax.org B.V."
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/theme/textmate-css.js",
+          "git_blob": "f9954255941a3f10c5a7d9e70b9de5edd836ffe7",
+          "marker": "ace-tm"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/theme/textmate.js",
+          "git_blob": "37285fefd30300d9105ade6e79dac5796e1deb8e",
+          "marker": "ace-tm"
         }
       ],
       "id": "ace-theme-snippet-attribution",
@@ -455,10 +515,18 @@
         {
           "file": "vendor/ace/theme-xcode.js",
           "marker": "ace/theme/xcode"
+        },
+        {
+          "file": "vendor/ace/theme-chrome.js",
+          "marker": "ace/theme/chrome"
+        },
+        {
+          "file": "vendor/ace/ace.js",
+          "marker": "ace/theme/textmate"
         }
       ],
       "name": "Ace theme conversion and snippet attribution review",
-      "note": "Current source tool/tmthemes/LICENSE has explicit per-file exceptions, and tmtheme.js maps only a subset of themes to TextMate files. tmsnippets.js is a generic converter, not proof of individual snippet origin. Dracula MIT block separately mapped. Per-file scan and original payload comparison are required; absence of a marker is not blanket BSD clearance. Research #4 verified 47 theme and 50 snippet static payloads; remaining packaging cases investigated separately. Per-file original lineage/terms remain open. Research #9 CI completed successfully; external current-reference comparison is not historical input equality. Separate partial theme records now preserve original MIT notices for Tomorrow, Solarized and Gruvbox Hard; remaining per-file lineage/terms open. Historical TextMate bundle README (2011) contains corresponding permission and exceptions; Ace directory LICENSE introduced 2010. Research pins four exact initial TextMate imports and later Ace input changes, plus three Ace-only historical inputs. License scope and per-file exceptions remain under review. No new component or blanket license designation. External port references: exact Xcode author-source and Kuroir port input blobs; krTheme author archive has differing input and README All Rights Reserved, exact third-party collection copy is not original permission. Individual permissions OPEN; no MIT/BSD inference or clearance. Research gate pins four external source/README pairs. krTheme excluded by maintainer-approved #37 curated theme disposition; historical source and copyright evidence retained, no active payload location. Exact package/image evidence and independent review pending.",
+      "note": "Current source tool/tmthemes/LICENSE has explicit per-file exceptions, and tmtheme.js maps only a subset of themes to TextMate files. tmsnippets.js is a generic converter, not proof of individual snippet origin. Dracula MIT block separately mapped. Per-file scan and original payload comparison are required; absence of a marker is not blanket BSD clearance. Research #4 verified 47 theme and 50 snippet static payloads; remaining packaging cases investigated separately. Per-file original lineage/terms remain open. Research #9 CI completed successfully; external current-reference comparison is not historical input equality. Separate partial theme records now preserve original MIT notices for Tomorrow, Solarized and Gruvbox Hard; remaining per-file lineage/terms open. Historical TextMate bundle README (2011) contains corresponding permission and exceptions; Ace directory LICENSE introduced 2010. Research pins four exact initial TextMate imports and later Ace input changes, plus three Ace-only historical inputs. License scope and per-file exceptions remain under review. No new component or blanket license designation. External port references: exact Xcode author-source and Kuroir port input blobs; krTheme author archive has differing input and README All Rights Reserved, exact third-party collection copy is not original permission. Individual permissions OPEN; no MIT/BSD inference or clearance. Research gate pins four external source/README pairs. krTheme excluded by maintainer-approved #37 curated theme disposition; historical source and copyright evidence retained, no active payload location. Exact package/image evidence and independent review pending. R5.2f: original Monokai author Wimer Hazenberg and 2006 publication corroborated by author-site history; historical third-party mirror shares UUID with Ace input but differs in palette settings, original redistribution grant not established. Chrome initial 2011 Ace contribution followed by 2012 import from Austin Cummings credited input; external source and terms open. Mac Classic exact historic TextMate input and early Ace implementation, conversion lineage remains open. All three 2012 CSS snapshots differ from current literal payloads; historical wrappers contain existing Ajax.org BSD notice. Source pins only, no full attribution clearance or new license assignment.",
       "notices": [
         "third_party/licenses/embedded/ace-tmthemes-reference.txt"
       ],

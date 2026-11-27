@@ -549,3 +549,80 @@ lacks author fields for these nine; Katzenmilch has a comment, not a grant.
 Prior evidence for Cobalt/Dawn/Pastels/Twilight, external ports, MIT theme
 families and krTheme remains intact. No new notices or license assignments,
 no runtime changes, no issue closures. New CI pending.
+
+## R5.2e research correction and verified group output
+
+At 1c0e5a4, research 46038798881 failed with a Python SyntaxError:
+the JS replacement-string interpolation of a regex ending in dollar
+and single quote inserted the suffix of the old research function
+inside the expression. Fix 414ce2ac77a991af9a4ee507a57f5682ece14ecb
+restores the expression and includes grouped_textmate in the actual
+research return. Research 46039207297 SUCCESS on exact fix HEAD.
+Native artifact 15218568053 downloaded and inspected: SHA-256
+e90b5563356427a942d6334cc3d368bda1f1d8b0f8f1c4e77838901003ed86db,
+published digest matches, ZIP CRC OK, source_checkout exact.
+47 theme static payloads, 52 nonempty snippets and 150 generated empty
+stubs. Group rows 11/11: Clouds 29/29, Clouds Midnight 30/30,
+idleFingers 31/32, Merbivore 23/24, Merbivore Soft 23/26,
+monoindustrial 34/34, Monokai 22/29, Katzenmilch 27/27,
+Vibrant Ink 37/38, iPlastic 23/23, Mac Classic 35/35.
+All eleven current and historical marker lists empty; no matching
+current companion-license filename. No inference of permission.
+iPlastic unmapped, Mac Classic commented, other nine active.
+Other workflows/artifacts for this fix HEAD not yet accepted.
+
+## R5.2f core theme provenance leads (review open)
+
+Monokai: Wimer Hazenberg's official history
+https://monokai.pro/history confirms original 2006 TextMate theme,
+publication via the TextMate wiki, later unofficial adaptations, and
+separate Monokai Pro product from 2017. No express historic redistribution
+grant found in that history. Modern Pro license is not evidence of
+historic 2006 terms. Archive URL for original blog was inaccessible
+during this review. A third-party mirror
+https://gist.github.com/ntwb/7316a3b610ede7e4fd51871fb00bf3f3
+(2017, links to 2007 archived download) shows UUID
+D8D5E82E-3D5B-46B5-B38E-8C841C21347D, same as both pinned Ace
+inputs, and matching background #272822, caret #F8F8F0, foreground
+#F8F8F2, selection #49483E. Mirror invisibles #3B3A32 and lineHighlight
+#3E3D32 differ from 2010 Ace values #49483E for both. Mirror is not
+author-controlled evidence; no byte equality or exact external version
+asserted. Original license remains OPEN; MIT of a third-party port
+is not the original grant. Monokai is a runtime dark-mode/fallback
+dependency; no removal without explicit design decision.
+
+Chrome: initial Ace contribution by Bernie Telles at
+a32ade33006608b9b2ba68439d2910fcf3d2477b (2011-11-16),
+lib/ace/theme/chrome.js blob 546766f1338da39abc932532ca4be7861758aa82,
+historical MPL/GPL/LGPL header. After upstream BSD header migration,
+f1e5e6fbffbd4f2ad3dba696ae665c21fa7df24c (2012-09-11,
+Garen Torikian, Add new GitHub/Chrome builds from tmtheme) adds
+tool/tmthemes/Chrome.tmTheme blob 8f14e4fa36a49e2ba7467b8e2efafafeaf7c0362,
+credits Austin Cummings, and generated Chrome CSS references UUID
+4FCFA210-B247-11D9-9D00-000D93347A42. Same input blob in current
+tool/tmthemes/Chrome DevTools.tmTheme. Current converter mapping commented.
+Do not attribute entire implementation solely to initial Ace contributor
+or assume Chrome/Chromium licensing applies to Cummings' theme.
+External author source, terms and later CSS lineage OPEN.
+
+TextMate: early Ace theme file renamed from _textmate.js to textmate.js
+in 2c0368ff6c914734fb27d9b7fce603bd059a10fc (2010-11-09),
+blob 80599f10298812552f57f338d5a4737d896f1702, alongside monokai.js
+blob e7122013450c9279e68d7a961797cd1cd38eca88. Mac Classic input exact
+TextMate historical blob 4b789dfea34e1328a9b4a6fa4c7172aeb023310f as
+previously established; Ace changes include 25c15cf57a89fd6570679c4fb950ba5e67c4a102
+(2011-08-02, use same active line as in TextMate). Current textmate
+CSS and module are mapped to shipped static payload by native research.
+Exact conversion lineage from historic plist to runtime CSS not established.
+
+At 2012-09-12 Ace ecfdc5fbc4691b7d3933416b65da340768111f04,
+all three theme JS wrappers carry the Ajax.org B.V. 2010 BSD-3-Clause
+notice already covered by shipped Ace license. CSS compared to
+current 1.45.2 literal payload: Chrome 3222 vs 3051 characters,
+Monokai 2611 vs 2560, TextMate 3095 vs 2917; all differ in raw,
+trimmed and prefix comparisons. No exact historic-to-current CSS
+transformation asserted. Twelve historical/current CSS/wrapper
+source references now pinned in the review record; no new notice
+or license assignment. These pins are evidence of file identity,
+not an automated CSS lineage relation. No runtime change or license
+clearance. New exact-HEAD verification pending.
