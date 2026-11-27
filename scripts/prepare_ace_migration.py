@@ -159,7 +159,9 @@ def main():
         raise ValueError("Full rehearsal family differs from runtime lock")
     family = {name: family[name] for name in selected}
     report["curated_family_files"] = len(family)
-    report["excluded_workers"] = sorted(set(runtime_lock["files_sha256"]) - set(family))
+    removed = set(runtime_lock["files_sha256"]) - set(family)
+    report["excluded_workers"] = sorted(name for name in removed if name.startswith("worker-"))
+    report["excluded_themes"] = sorted(name for name in removed if name.startswith("theme-"))
     dest.mkdir()
     pkg = dest / "hass_configurator"
     shutil.copytree(ROOT / "hass_configurator", pkg)

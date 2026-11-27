@@ -1,4 +1,4 @@
-"""Read the single #37 worker profile from the first-party bootstrap.
+"""Read the single #37 curated Ace profile from the first-party bootstrap.
 
 Validate the curated subset against the complete upstream lock.
 """
@@ -29,10 +29,10 @@ def read_profile(path=BOOTSTRAP):
 
 
 def selected_family(profile, lock):
-    """Check exact partition of upstream workers; preserve all non-workers."""
-    if set(profile) != {"schema", "ace_version", "infrastructure", "languages", "excluded"}:
+    """Check upstream worker partition and explicit theme exclusions."""
+    if set(profile) != {"schema", "ace_version", "infrastructure", "languages", "excluded", "excluded_themes"}:
         raise ValueError("Unexpected worker profile fields")
-    if profile["schema"] != 1 or profile["ace_version"] != lock["version"]:
+    if profile["schema"] != 2 or profile["ace_version"] != lock["version"]:
         raise ValueError("Worker profile version mismatch")
     if profile["infrastructure"] != ["worker-base.js"]:
         raise ValueError("Unexpected worker infrastructure")
@@ -51,8 +51,16 @@ def selected_family(profile, lock):
             or set(kept) & set(excluded) or set(kept) | set(excluded) != workers
             or workers != set(lock["worker_files"])):
         raise ValueError("Worker profile does not exactly partition upstream family")
+    themes = profile["excluded_themes"]
+    if (not isinstance(themes, list) or
+            any(not isinstance(name, str) or not re.fullmatch(r"theme-[a-z0-9_]+\.js", name)
+                or name not in lock["files_sha256"]
+                or name in {"theme-monokai.js", "theme-chrome.js", "theme-textmate.js"}
+                for name in themes) or len(set(themes)) != len(themes)):
+        raise ValueError("Invalid curated theme exclusions")
+    removed = set(excluded) | set(themes)
     return {name: digest for name, digest in lock["files_sha256"].items()
-            if name not in excluded}
+            if name not in removed}
 
 
 def validate_manifest(profile, lock, manifest):
@@ -89,6 +97,7 @@ def main():
     verify_vendor_tree(ROOT / "hass_configurator", manifest["resources"])
     print(json.dumps({"status": "curated-profile-verified", "upstream_family": len(lock["files_sha256"]),
                       "target_family": len(selected), "excluded": profile["excluded"],
+                      "excluded_themes": profile["excluded_themes"],
                       "target_workers": sorted(name for name in selected if name.startswith("worker-"))},
                      indent=2))
 

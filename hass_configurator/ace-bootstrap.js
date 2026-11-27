@@ -1,11 +1,11 @@
 /* First-party Ace policy. The JSON literal is also read by build tooling.
- * #37: enforce the curated worker policy for the shipped archive subset.
+ * #37: enforce the curated worker and theme policy for the shipped archive subset.
  * The complete upstream lock remains separate; no retained Ace bytes change.
  */
 (function () {
     'use strict';
     var profile = /* HC_WORKER_PROFILE_BEGIN */ {
-        "schema": 1,
+        "schema": 2,
         "ace_version": "1.45.2",
         "infrastructure": ["worker-base.js"],
         "languages": {
@@ -15,7 +15,8 @@
             "ace/mode/json": {"module": "ace/mode/json_worker", "file": "worker-json.js", "class": "JsonWorker"},
             "ace/mode/yaml": {"module": "ace/mode/yaml_worker", "file": "worker-yaml.js", "class": "YamlWorker"}
         },
-        "excluded": ["worker-coffee.js", "worker-lua.js", "worker-php.js", "worker-xml.js", "worker-xquery.js"]
+        "excluded": ["worker-coffee.js", "worker-lua.js", "worker-php.js", "worker-xml.js", "worker-xquery.js"],
+        "excluded_themes": ["theme-kr_theme.js"]
     } /* HC_WORKER_PROFILE_END */;
     var aceBase = new URL('vendor/ace/', document.currentScript.src).href;
     ['basePath', 'modePath', 'themePath', 'workerPath'].forEach(function (key) {
@@ -78,5 +79,16 @@
         return loadModule.apply(this, arguments);
     };
 
+    // Saved settings from earlier versions may name a physically absent theme.
+    // Preserve every other option and choose a retained dark theme instead.
+    window.hcAceResolveTheme = function (theme) {
+        if (typeof theme === 'string') {
+            var name = theme.replace(/^ace\/theme\//, '');
+            if (profile.excluded_themes.indexOf('theme-' + name + '.js') !== -1) {
+                return 'ace/theme/monokai';
+            }
+        }
+        return theme;
+    };
     window.hcAceSupportsWorker = supportsMode;
 })();

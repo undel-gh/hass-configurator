@@ -17,8 +17,8 @@ class VendoredAssetsTests(unittest.TestCase):
     def test_hash_manifest_is_complete_and_matches_every_file(self):
         self.assertEqual(MANIFEST["schema"], 1)
         resources = MANIFEST["resources"]
-        self.assertEqual(len([p for p in resources if p.startswith("vendor/ace/")]), 490)
-        self.assertEqual(len(resources), 510)
+        self.assertEqual(len([p for p in resources if p.startswith("vendor/ace/")]), 489)
+        self.assertEqual(len(resources), 509)
         for name, checksum in resources.items():
             with self.subTest(name=name):
                 source = PACKAGE / name
@@ -84,14 +84,24 @@ class VendoredAssetsTests(unittest.TestCase):
                 self.assertEqual(router.match("GET", route + "/escape").kind,
                                  "not_found")
 
-    def test_excluded_worker_routes_not_served(self):
+    def test_excluded_ace_routes_not_served(self):
         from scripts.ace_worker_profile import read_profile
         assets = Assets()
         router = Router(assets)
-        for name in read_profile()["excluded"]:
+        profile = read_profile()
+        for name in profile["excluded"] + profile["excluded_themes"]:
             for version in (assets.version, "0" * 16):
                 route = "/assets/v%s/vendor/ace/%s" % (version, name)
                 self.assertEqual(router.match("GET", route).kind, "not_found")
+
+    def test_removed_theme_payload_markers_absent_from_retained_ace(self):
+        # A label in the unmodified upstream theme list is metadata, not CSS.
+        for path in (PACKAGE / "vendor/ace").rglob("*.js"):
+            with self.subTest(path=path):
+                raw = path.read_bytes()
+                self.assertNotIn(b"ace/theme/kr_theme-css", raw)
+                self.assertNotIn(b".ace-kr-theme", raw)
+        self.assertNotIn("ace/theme/kr_theme", (PACKAGE / "dev.html").read_text("utf8"))
 
     def test_missing_or_tampered_vendored_file_fails_at_startup(self):
         # Copy only the baseline files and manifest with one tampered resource,

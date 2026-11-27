@@ -44,7 +44,9 @@ def main():
     ap.add_argument("--output", type=Path, required=True)
     args = ap.parse_args()
     lock = json.loads(LOCK.read_text("utf-8"))
-    excluded = {name: lock["files_sha256"][name] for name in read_profile()["excluded"]}
+    profile = read_profile()
+    excluded = {name: lock["files_sha256"][name]
+                for name in profile["excluded"] + profile["excluded_themes"]}
     report = inspect(args.image, excluded)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")

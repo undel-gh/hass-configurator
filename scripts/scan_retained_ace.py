@@ -23,6 +23,7 @@ MARKERS = {
     "coffee": ("CoffeeScript Compiler", 'version:"2.2.1"', "coffee-script"),
     "xqlint": ("xqlint", "XQueryTokenizer", "JSONiqTokenizer", "ace/mode/xquery/xquery_lexer", "ace/mode/xquery/jsoniq_lexer"),
     "jshint": ("Good, not Evil", "ace/mode/javascript/jshint"),
+    "kr-theme-payload": ("ace/theme/kr_theme-css", ".ace-kr-theme"),
 }
 
 
@@ -54,7 +55,11 @@ def main():
         name = path.relative_to(PACKAGE).as_posix()
         if name in manifest["resources"] and hashlib.sha256(raw).hexdigest() != manifest["resources"][name]:
             raise ValueError("Retained resource hash mismatch: " + name)
-        rows.append({"file": name, "sha256": hashlib.sha256(raw).hexdigest(), "hits": scan(raw)})
+        hits = scan(raw)
+        if ("theme-kr_theme.js" in profile["excluded_themes"] and
+                "kr-theme-payload" in hits and name.startswith("vendor/ace/")):
+            raise ValueError("Excluded krTheme payload marker in retained Ace: " + name)
+        rows.append({"file": name, "sha256": hashlib.sha256(raw).hexdigest(), "hits": hits})
     upstream = []
     with tarfile.open(args.ace, "r:gz") as tar:
         members = {}
@@ -78,7 +83,8 @@ def main():
             upstream.append({"file": name, "sha256": hashlib.sha256(raw).hexdigest(), "hits": scan(raw)})
     report = {"source_checkout": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
               "status": "marker-evidence-review-required", "excluded_workers": profile["excluded"],
-              "retained_family": len(selected), "runtime_files": rows,
+              "excluded_themes": profile["excluded_themes"],
+               "retained_family": len(selected), "runtime_files": rows,
               "upstream_unminified_counterparts": upstream,
               "limitations": ["Literal indicators may be false positives or miss renamed/minified code.",
                               "Historical notices and excluded archive members are not runtime code.",

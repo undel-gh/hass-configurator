@@ -118,7 +118,7 @@ class SupplyChainTests(unittest.TestCase):
     def test_source_inventory_and_bom(self):
         inv, vendor = source_inventory()
         self.assertEqual(len(inv["components"]), 7)
-        self.assertEqual(len(vendor["resources"]), 510)
+        self.assertEqual(len(vendor["resources"]), 509)
         bom = sbom(inv, vendor)
         self.assertEqual(bom["bomFormat"], "CycloneDX")
         self.assertEqual(next(c for c in bom["components"] if c["bom-ref"] == "asset:ace")["version"], "1.45.2")

@@ -12,11 +12,13 @@ import tarfile
 from urllib.request import urlopen
 
 try:
+    from .ace_worker_profile import read_profile, selected_family
     from .audit_external_themes import research as external_theme_research
     from .audit_supply_chain import read_file, sha, git_blob_sha1
     from .rebuild_retained_ace import materialize
     from .attribute_ace_workers import sri, require, exact_member
 except ImportError:
+    from ace_worker_profile import read_profile, selected_family
     from audit_external_themes import research as external_theme_research
     from audit_supply_chain import read_file, sha, git_blob_sha1
     from rebuild_retained_ace import materialize
@@ -126,7 +128,8 @@ def main():
         theme_inputs[name] = {"source": filename, "present": filename in source_rows,
                               "evidence": source_rows.get(filename),
                               "relation": "converter-input-reference-not-license-clearance"}
-    selected = sorted(name for name in lock["files_sha256"] if
+    profile = read_profile()
+    selected = sorted(name for name in selected_family(profile, lock) if
                       name in {"worker-base.js", "ace.js"} or name.startswith(("theme-", "snippets/")))
     assets = []
     with tarfile.open(fileobj=io.BytesIO(raw), mode="r:gz") as archive:
@@ -164,6 +167,7 @@ def main():
         "typescript": {"version": version, "archive_sha256": sha(ts), "integrity": sri(ts),
                        "provenance": "upstream declared version, exact archive observed in research #4 and now pinned"},
         "sources": source_rows, "assets": assets, "theme_converter_inputs": theme_inputs,
+        "excluded_themes": profile["excluded_themes"],
         "native_sources": {key: value[0] for key, value in NATIVE.items()},
         "external_theme_research": external_theme_research(source, work, fetch, source_file),
         "limitations": [

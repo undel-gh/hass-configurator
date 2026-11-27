@@ -1,11 +1,11 @@
-# #37 — Curated Ace worker profile
+# #37 — Curated Ace worker and theme profile
 
 Status: **phase 2 curated source committed; installed acceptance and retained attribution pending**.
 
 The sole machine-readable target profile is the JSON literal delimited by
 HC_WORKER_PROFILE_BEGIN / END in the first-party ace-bootstrap.js. The same
 data controls worker start and creation and is read by scripts/ace_worker_profile.py.
-Full upstream Ace 1.45.2 lock remains unchanged. The proposed subset keeps
+Full upstream Ace 1.45.2 lock remains unchanged. The initial worker subset kept
 all non-worker files and six workers: base, YAML, JSON, JavaScript, CSS, HTML.
 The five exclusions are XML, PHP, Lua, CoffeeScript and XQuery. Unknown modes
 (including SVG and SCSS aliases) have no background diagnostics; their modes
@@ -51,3 +51,30 @@ Maintainer disposition: both historical Lodash 4.17.21 XML-worker CVEs
 remediated by physical component removal for the independently reviewed
 f72a7810 runtime configuration. See P1_SUPPLY_CHAIN.md for scope, evidence,
 limitations and reopen conditions. Not a blanket VEX, waiver or release signoff.
+
+## Curated theme extension (maintainer-approved)
+
+The #37 scope now also excludes krTheme: historical permission for the
+distributed variant has not been established, and the theme is optional.
+Profile schema 2 adds an explicit excluded_themes list, separate from
+the unchanged worker partition. The complete upstream lock stays intact.
+The target contains 489 Ace assets (six workers, 47 theme files) and 509
+vendor resources. Every retained upstream asset remains byte-identical.
+
+Remove the first-party selector entry. Before restoring saved editor
+options, map both ace/theme/kr_theme and kr_theme to ace/theme/monokai,
+preserving other saved options. The existing UI light/dark preference
+may subsequently select a retained theme as usual. The upstream
+ext-themelist.js still contains a name-only metadata entry: preserve
+its reviewed bytes; this entry is not the removed CSS or module.
+No claim that arbitrary direct calls to the Ace API cannot request
+an absent resource; the server must return 404.
+
+Extend selected-family validation, rehearsal overlay, native research
+selection, vendor manifest/routes, retained payload marker scan and
+Docker layer filename/digest inspection. Historical source evidence
+remains research-only. E2E covers direct and simulated Ingress startup
+with old saved settings, absence from the first-party selector, retained
+theme loading and an explicit 404 after checking no automatic request.
+Select these tests for installed wheel/sdist and Docker. New exact-HEAD
+CI, artifact contents, independent review and real HAOS remain pending.

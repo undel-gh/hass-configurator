@@ -435,3 +435,31 @@ krTheme: kennethreitz-archive/krTheme.tmTheme at ec21b6d65a3d38d699b47b76026b274
 Slate: Wilson Miner's author announcement found in TextMate mailing-list archive (https://lists.macromates.com/hyperkitty/list/textmate%40lists.macromates.com/latest?count=100&page=87, subject tmTheme: Slate); sharing announcement is not explicit redistribution/modification license. Original attachment and terms not verified.
 
 Research now pins and compares four external theme/README pairs, records exact/different results and distinct source/rights statuses. No new shipped license, component, or runtime changes. REx #80 still no response at check. New CI pending; full release HOLD.
+
+## R5.2b follow-up: independent Gruvbox adaptation evidence
+
+Compared historical CSS blobs e8d72de790a67822c0d423085bcd22caccc4ee88
+(2016, Hecatoncheir) and 48a4161e6866f562d091fccf506d83f4559c447f
+(2017, Jaime Alvarez). A simple selector/declaration comparison
+(expand comma-separated selectors, trim/collapse whitespace, lower-case
+declaration text, sort declarations) yields 38 versus 23 unique selectors:
+21 old-only, 6 new-only, 17 shared. Of the shared selectors, only two
+have equal normalized declaration sets: active line and active gutter
+background #3c3836, present in the original 2012 Gruvbox MIT/X11 palette.
+Fifteen shared selectors have different declarations. This is supporting
+evidence for separate adaptations of the same original and Ace API,
+not proof of independent creation, a general CSS parser, or CLA closure.
+Keep all three Gruvbox themes; do not treat the 2016 missing CLA as a
+finding against every later variant. Record the remaining question
+about protected 2016 contribution reuse without inferring infringement.
+
+## R5.2d krTheme disposition (target source)
+
+Maintainer approved physical exclusion from the #37 curated distribution.
+Historical copyright evidence and research inputs remain pinned; do not
+infer a license grant from this disposition. Remove theme-kr_theme.js
+(SHA-256 f19940a65591c8da719215e6d3d206430892b74d295dc9abed7eda87cff07451)
+and its live review location, retain the upstream lock, and migrate saved
+theme choices to a retained theme before loading options. Kuroir, Xcode,
+Cobalt/Slate and other unresolved themes are not excluded by this change.
+Exact-HEAD package/image/CI verification and independent review pending.

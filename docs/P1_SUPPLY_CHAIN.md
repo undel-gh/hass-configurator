@@ -461,3 +461,21 @@ prelude MIT notice is recovered. This supersedes the earlier unresolved
 wrapper attribution; exact browser-pack package version is not asserted.
 REx historical output grant and grammar lineage remain open, as do original
 theme/snippet terms. No scope change or release approval.
+
+## #37 krTheme target-source disposition
+
+Maintainer approved extending curated distribution to remove the optional
+krTheme payload because historical redistribution permission for the
+specific variant remains unestablished. This is removal, not a finding
+of infringement, a license grant, an exception, or risk acceptance.
+Retain historical evidence, full upstream lock and all other retained
+upstream bytes; remove its active runtime location and selector entry,
+and map legacy saved settings to Monokai before Ace restores them.
+Expected source closure: 489 Ace files / 509 vendor resources. Extend
+wheel/sdist and Docker closure via the shared selected-family policy,
+with marker checks in retained Ace assets and filename/digest checks
+across image layers. Upstream ext-themelist name-only metadata remains.
+Physical removal at target source is distinct from installed acceptance;
+exact-HEAD CI, artifact inspection, independent review and real HAOS
+warm-cache upgrade/rollback remain release gates. Reopen if an asset,
+profile, version or later discovery invalidates removal evidence.

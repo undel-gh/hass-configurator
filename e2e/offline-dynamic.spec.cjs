@@ -418,3 +418,44 @@ for (const savedMode of ['xml', 'yaml']) {
     expect(errors).toEqual([]);
   });
 }
+
+for (const variant of ['direct', 'ingress']) {
+  test('Ace curated theme restores legacy krTheme settings via ' + variant, async ({ page }) => {
+    const forbidden = [];
+    const errors = [];
+    page.on('pageerror', error => errors.push(error.message));
+    page.on('request', req => {
+      if (new URL(req.url()).pathname.endsWith('/theme-kr_theme.js')) forbidden.push(req.url());
+    });
+    if (variant === 'ingress') {
+      await page.route('**/ingress/test/**', async route => {
+        const target = new URL(route.request().url());
+        target.pathname = target.pathname.replace(/^\/ingress\/test\//, '/');
+        await route.fulfill({ response: await route.fetch({ url: target.toString() }) });
+      });
+    }
+    await page.addInitScript(savedTheme => {
+      localStorage.setItem('pochass', JSON.stringify({
+        theme: savedTheme, tabSize: 3, mode: 'ace/mode/yaml', useWorker: false
+      }));
+    }, variant === 'direct' ? 'ace/theme/kr_theme' : 'kr_theme');
+    await page.goto(server + (variant === 'ingress' ? '/ingress/test/' : '/'), { waitUntil: 'domcontentloaded' });
+    await expect.poll(() => page.evaluate(() => Boolean(window.editor))).toBe(true);
+    await expect.poll(() => page.evaluate(() => editor.getSession().getTabSize())).toBe(3);
+    await expect(page.locator('#theme option[value="ace/theme/kr_theme"]')).toHaveCount(0);
+    expect(await page.evaluate(() => [
+      hcAceResolveTheme('ace/theme/kr_theme'), hcAceResolveTheme('kr_theme'),
+      hcAceResolveTheme('ace/theme/github')
+    ])).toEqual(['ace/theme/monokai', 'ace/theme/monokai', 'ace/theme/github']);
+    expect(await page.evaluate(() => editor.getTheme())).not.toContain('kr_theme');
+    await page.evaluate(() => editor.setTheme('ace/theme/monokai'));
+    await expect.poll(() => page.evaluate(() => editor.getTheme())).toBe('ace/theme/monokai');
+    await page.evaluate(() => editor.setTheme('ace/theme/github'));
+    await expect.poll(() => page.evaluate(() => editor.getTheme())).toBe('ace/theme/github');
+    expect(forbidden).toEqual([]);
+    expect(errors).toEqual([]);
+    // Explicit HTTP probe only after verifying no automatic request.
+    expect(await page.evaluate(async () =>
+      (await fetch(new URL('theme-kr_theme.js', ace.config.get('themePath')))).status)).toBe(404);
+  });
+}

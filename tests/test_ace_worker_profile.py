@@ -13,14 +13,15 @@ class AceWorkerProfileTests(unittest.TestCase):
         self.profile = read_profile()
         self.lock = json.loads(LOCK.read_text("utf-8"))
 
-    def test_agreed_profile_preserves_every_non_worker(self):
+    def test_agreed_profile_preserves_all_other_upstream_assets(self):
         selected = selected_family(self.profile, self.lock)
         excluded = {"worker-coffee.js", "worker-lua.js", "worker-php.js",
-                    "worker-xml.js", "worker-xquery.js"}
+                    "worker-xml.js", "worker-xquery.js", "theme-kr_theme.js"}
+        self.assertEqual(self.profile["excluded_themes"], ["theme-kr_theme.js"])
         self.assertEqual(set(self.lock["files_sha256"]) - set(selected), excluded)
         self.assertEqual(set(self.profile["languages"]), {"ace/mode/" + name for name in
                          ("yaml", "json", "javascript", "css", "html")})
-        self.assertEqual(len(selected), 490)
+        self.assertEqual(len(selected), 489)
         self.assertEqual(selected, {n: h for n, h in self.lock["files_sha256"].items() if n not in excluded})
 
     def test_reject_unclassified_or_duplicate_workers(self):
@@ -30,6 +31,15 @@ class AceWorkerProfileTests(unittest.TestCase):
                 profile = copy.deepcopy(self.profile)
                 profile["excluded"] = excluded
                 with self.assertRaisesRegex(ValueError, "partition"):
+                    selected_family(profile, self.lock)
+
+    def test_reject_invalid_theme_exclusions(self):
+        for excluded in (["ace.js"], ["theme-missing.js"], ["theme-monokai.js"],
+                         ["theme-kr_theme.js", "theme-kr_theme.js"], ["../theme-kr_theme.js"]):
+            with self.subTest(excluded=excluded):
+                profile = copy.deepcopy(self.profile)
+                profile["excluded_themes"] = excluded
+                with self.assertRaisesRegex(ValueError, "theme exclusions"):
                     selected_family(profile, self.lock)
 
     def test_reject_wrong_module_or_version(self):
@@ -46,6 +56,7 @@ class AceWorkerProfileTests(unittest.TestCase):
         expected = {"vendor/ace/" + n: h for n, h in selected_family(self.profile, self.lock).items()}
         validate_manifest(self.profile, self.lock, {"resources": expected})
         for change in ({**expected, "vendor/ace/worker-xml.js": self.lock["files_sha256"]["worker-xml.js"]},
+                       {**expected, "vendor/ace/theme-kr_theme.js": self.lock["files_sha256"]["theme-kr_theme.js"]},
                        {**expected, "vendor/ace/ace.js": "0" * 64}):
             with self.assertRaisesRegex(ValueError, "Curated Ace manifest"):
                 validate_manifest(self.profile, self.lock, {"resources": change})
