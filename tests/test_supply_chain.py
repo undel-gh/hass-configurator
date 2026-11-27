@@ -482,7 +482,7 @@ class SupplyChainTests(unittest.TestCase):
                 self.assertFalse(embedded_source_relation(raw, changed, relation))
         self.assertFalse(embedded_source_relation(b"unrelated", wrapped, relation))
 
-    def test_snipmate_exact_payload_attribution(self):
+    def test_snipmate_exact_and_modified_payload_attribution(self):
         inv, vendor = source_inventory()
         record = next(c for c in inv["embedded"]["components"]
                       if c["id"] == "ace-snipmate-snippets")
@@ -491,6 +491,10 @@ class SupplyChainTests(unittest.TestCase):
         self.assertIsNone(record["version"])
         self.assertIsNone(record["ecosystem"])
         names = {"actionscript", "c_cpp", "clojure", "coffee", "css", "diff", "django", "erlang", "haml", "haskell", "java", "jsp", "lua", "makefile", "perl", "rst", "ruby", "snippets", "sql", "tcl", "tex", "textile"}
+        exact_names = names.copy()
+        modified = {"dart", "html", "javascript", "markdown", "php", "python", "r", "sh"}
+        self.assertTrue(exact_names.isdisjoint(modified))
+        names |= modified
         self.assertEqual({loc["file"] for loc in record["locations"]},
                          {"vendor/ace/snippets/" + n + ".js" for n in names})
         self.assertEqual(len(record["locations"]), len(names))
@@ -509,6 +513,52 @@ class SupplyChainTests(unittest.TestCase):
         self.assertEqual(len(relations), len(names))
         self.assertEqual({r["container"]["url"].rsplit("/", 1)[1] for r in relations},
                          {n + ".snippets.js" for n in names})
+        # Distinguish original unchanged inputs from modified historical endpoints.
+        by_name = {r["container"]["url"].rsplit("/", 1)[1].removesuffix(".snippets.js"): r
+                   for r in relations}
+        evidence = {item["url"]: item["git_blob"] for item in record["evidence"]}
+        for n in exact_names:
+            self.assertIn("https://github.com/honza/vim-snippets/blob/", by_name[n]["upstream"]["url"])
+        modified_pins = {
+            "dart": ("6f0b8ac5e5ba87851513a3f9dd2b808e2e70ad81",
+                "93673bbe8b0a1e90a773aa3dd94fe8fa112f7af5", "14a1c3e5939d691de25aa390ff7f17c4e5b42a70",
+                "fa6a8452fcd7faec4f7aa1a70d0a93fc47059f55"),
+            "html": ("0f75efd08a2c7917bc9b880a7952de97479fb3ec",
+                "96850288dca9b632aaa79b4f9bdf1305ae5d9694", "5f0e46b476083398e70a53e7d9630383bfb4fe99",
+                "8fd5affd801799b79f14f645c7ddd3c95dc1a1da"),
+            "javascript": ("fc845fa02198562dda841591126d2eb107fd2ae8",
+                "2d0b980c65966e45260ba341e176b9cde0c57399", "83b15aab6f41fdf08692dd8e9167a5b95fc266c5",
+                "6e4d29a4dbab301680f762d7bd0838059ebe0d55"),
+            "markdown": ("e4efd3c2d014fe8a9b6ba92fd08e1483aea5d1c3",
+                "3c6cd4d16f89de0531d7e8f06c5e791839ab9eb6", "a5110fc9a3d79f0aa98796237773393e4a836e97",
+                "26ad61345a037c5197d28ef1798a252f585ae149"),
+            "php": ("e861a5be96827edc8a2182d76d864b5b4a8a6b60",
+                "f36ade1647e90d20480d93ac6da6169fc55e65e5", "12b6c358d6927bd245ac3a8e1f9a5fe47f8f4b2a",
+                "987e34d04474aa6cb5ffa64a7bb31731f60d0f8d"),
+            "python": ("dd2e8123dcc8db911c92a260a771f2116146ff57",
+                "eac48f519040e8e2d17dd1a5b76c2818ecf58cd1", "347bbdebfd9d13e17cdd0131523eef30db186a26",
+                "5d556cf6f7d6f54eb41d815b1b9862e9e80397e7"),
+            "r": ("71186e35b47f2aa8d46071d89ab9ffcfc727a888",
+                "f17c67cd01316d4fdbbd5625594d81e28c894083", "948542f5bbacc0de657e65d95dc2d54c52c0f13e",
+                "dbac55301a26b64aedf8342d4b883a81ee44a4c9"),
+            "sh": ("9a48eb514c5306d2fa7223a0e45703381d7b69bd",
+                "b6463844b04758745f99b1553416f4cf4b8ad013", "305fb661ed25a75093d8e168f46deb012f662c07",
+                "8c5e7f6c288d2078e4d4dfe9bc481ab536b3a7fe"),
+        }
+        self.assertEqual(set(modified_pins), modified)
+        for n, (original, revision, endpoint, current) in modified_pins.items():
+            with self.subTest(modified=n):
+                relation = by_name[n]
+                imported = "https://github.com/ajaxorg/ace/blob/d16daddc5ea91e578fafde6c9c17b41cdb036579/lib/ace/snippets/" + n + ".snippets"
+                source = "https://github.com/honza/vim-snippets/blob/02593f7d57b4944bd857e0aeacfcd5410c0e81f2/snippets/" + n + ".snippets"
+                historical = "https://github.com/ajaxorg/ace/blob/" + revision + "/lib/ace/snippets/" + n + ".snippets"
+                self.assertEqual(evidence[imported], original)
+                self.assertEqual(evidence[source], original)
+                self.assertEqual(evidence[historical], endpoint)
+                self.assertEqual(relation["upstream"]["url"], historical)
+                self.assertEqual(relation["upstream"]["git_blob"], endpoint)
+                self.assertEqual(relation["container"]["git_blob"], current)
+                self.assertNotEqual(original, endpoint)
         component = next(c for c in sbom(inv, vendor)["components"]
                          if c["bom-ref"] == "embedded:ace-snipmate-snippets")
         self.assertNotIn("version", component)

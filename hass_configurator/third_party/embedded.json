@@ -2454,6 +2454,126 @@
           "git_blob": "396439e19c2729f91addc113ccbd0ba97e8ff9f6",
           "marker": "module.exports",
           "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/snippets/textile.snippets.js"
+        },
+        {
+          "git_blob": "6f0b8ac5e5ba87851513a3f9dd2b808e2e70ad81",
+          "marker": "snippet",
+          "url": "https://github.com/honza/vim-snippets/blob/02593f7d57b4944bd857e0aeacfcd5410c0e81f2/snippets/dart.snippets"
+        },
+        {
+          "git_blob": "6f0b8ac5e5ba87851513a3f9dd2b808e2e70ad81",
+          "marker": "snippet",
+          "url": "https://github.com/ajaxorg/ace/blob/d16daddc5ea91e578fafde6c9c17b41cdb036579/lib/ace/snippets/dart.snippets"
+        },
+        {
+          "git_blob": "14a1c3e5939d691de25aa390ff7f17c4e5b42a70",
+          "marker": "snippet",
+          "url": "https://github.com/ajaxorg/ace/blob/93673bbe8b0a1e90a773aa3dd94fe8fa112f7af5/lib/ace/snippets/dart.snippets"
+        },
+        {
+          "git_blob": "0f75efd08a2c7917bc9b880a7952de97479fb3ec",
+          "marker": "snippet",
+          "url": "https://github.com/honza/vim-snippets/blob/02593f7d57b4944bd857e0aeacfcd5410c0e81f2/snippets/html.snippets"
+        },
+        {
+          "git_blob": "0f75efd08a2c7917bc9b880a7952de97479fb3ec",
+          "marker": "snippet",
+          "url": "https://github.com/ajaxorg/ace/blob/d16daddc5ea91e578fafde6c9c17b41cdb036579/lib/ace/snippets/html.snippets"
+        },
+        {
+          "git_blob": "5f0e46b476083398e70a53e7d9630383bfb4fe99",
+          "marker": "snippet",
+          "url": "https://github.com/ajaxorg/ace/blob/96850288dca9b632aaa79b4f9bdf1305ae5d9694/lib/ace/snippets/html.snippets"
+        },
+        {
+          "git_blob": "fc845fa02198562dda841591126d2eb107fd2ae8",
+          "marker": "snippet",
+          "url": "https://github.com/honza/vim-snippets/blob/02593f7d57b4944bd857e0aeacfcd5410c0e81f2/snippets/javascript.snippets"
+        },
+        {
+          "git_blob": "fc845fa02198562dda841591126d2eb107fd2ae8",
+          "marker": "snippet",
+          "url": "https://github.com/ajaxorg/ace/blob/d16daddc5ea91e578fafde6c9c17b41cdb036579/lib/ace/snippets/javascript.snippets"
+        },
+        {
+          "git_blob": "83b15aab6f41fdf08692dd8e9167a5b95fc266c5",
+          "marker": "snippet",
+          "url": "https://github.com/ajaxorg/ace/blob/2d0b980c65966e45260ba341e176b9cde0c57399/lib/ace/snippets/javascript.snippets"
+        },
+        {
+          "git_blob": "e4efd3c2d014fe8a9b6ba92fd08e1483aea5d1c3",
+          "marker": "snippet",
+          "url": "https://github.com/honza/vim-snippets/blob/02593f7d57b4944bd857e0aeacfcd5410c0e81f2/snippets/markdown.snippets"
+        },
+        {
+          "git_blob": "e4efd3c2d014fe8a9b6ba92fd08e1483aea5d1c3",
+          "marker": "snippet",
+          "url": "https://github.com/ajaxorg/ace/blob/d16daddc5ea91e578fafde6c9c17b41cdb036579/lib/ace/snippets/markdown.snippets"
+        },
+        {
+          "git_blob": "a5110fc9a3d79f0aa98796237773393e4a836e97",
+          "marker": "snippet",
+          "url": "https://github.com/ajaxorg/ace/blob/3c6cd4d16f89de0531d7e8f06c5e791839ab9eb6/lib/ace/snippets/markdown.snippets"
+        },
+        {
+          "git_blob": "e861a5be96827edc8a2182d76d864b5b4a8a6b60",
+          "marker": "snippet",
+          "url": "https://github.com/honza/vim-snippets/blob/02593f7d57b4944bd857e0aeacfcd5410c0e81f2/snippets/php.snippets"
+        },
+        {
+          "git_blob": "e861a5be96827edc8a2182d76d864b5b4a8a6b60",
+          "marker": "snippet",
+          "url": "https://github.com/ajaxorg/ace/blob/d16daddc5ea91e578fafde6c9c17b41cdb036579/lib/ace/snippets/php.snippets"
+        },
+        {
+          "git_blob": "12b6c358d6927bd245ac3a8e1f9a5fe47f8f4b2a",
+          "marker": "snippet",
+          "url": "https://github.com/ajaxorg/ace/blob/f36ade1647e90d20480d93ac6da6169fc55e65e5/lib/ace/snippets/php.snippets"
+        },
+        {
+          "git_blob": "dd2e8123dcc8db911c92a260a771f2116146ff57",
+          "marker": "snippet",
+          "url": "https://github.com/honza/vim-snippets/blob/02593f7d57b4944bd857e0aeacfcd5410c0e81f2/snippets/python.snippets"
+        },
+        {
+          "git_blob": "dd2e8123dcc8db911c92a260a771f2116146ff57",
+          "marker": "snippet",
+          "url": "https://github.com/ajaxorg/ace/blob/d16daddc5ea91e578fafde6c9c17b41cdb036579/lib/ace/snippets/python.snippets"
+        },
+        {
+          "git_blob": "347bbdebfd9d13e17cdd0131523eef30db186a26",
+          "marker": "snippet",
+          "url": "https://github.com/ajaxorg/ace/blob/eac48f519040e8e2d17dd1a5b76c2818ecf58cd1/lib/ace/snippets/python.snippets"
+        },
+        {
+          "git_blob": "71186e35b47f2aa8d46071d89ab9ffcfc727a888",
+          "marker": "snippet",
+          "url": "https://github.com/honza/vim-snippets/blob/02593f7d57b4944bd857e0aeacfcd5410c0e81f2/snippets/r.snippets"
+        },
+        {
+          "git_blob": "71186e35b47f2aa8d46071d89ab9ffcfc727a888",
+          "marker": "snippet",
+          "url": "https://github.com/ajaxorg/ace/blob/d16daddc5ea91e578fafde6c9c17b41cdb036579/lib/ace/snippets/r.snippets"
+        },
+        {
+          "git_blob": "948542f5bbacc0de657e65d95dc2d54c52c0f13e",
+          "marker": "snippet",
+          "url": "https://github.com/ajaxorg/ace/blob/f17c67cd01316d4fdbbd5625594d81e28c894083/lib/ace/snippets/r.snippets"
+        },
+        {
+          "git_blob": "9a48eb514c5306d2fa7223a0e45703381d7b69bd",
+          "marker": "snippet",
+          "url": "https://github.com/honza/vim-snippets/blob/02593f7d57b4944bd857e0aeacfcd5410c0e81f2/snippets/sh.snippets"
+        },
+        {
+          "git_blob": "9a48eb514c5306d2fa7223a0e45703381d7b69bd",
+          "marker": "snippet",
+          "url": "https://github.com/ajaxorg/ace/blob/d16daddc5ea91e578fafde6c9c17b41cdb036579/lib/ace/snippets/sh.snippets"
+        },
+        {
+          "git_blob": "305fb661ed25a75093d8e168f46deb012f662c07",
+          "marker": "snippet",
+          "url": "https://github.com/ajaxorg/ace/blob/b6463844b04758745f99b1553416f4cf4b8ad013/lib/ace/snippets/sh.snippets"
         }
       ],
       "id": "ace-snipmate-snippets",
@@ -2481,6 +2601,10 @@
           "marker": "ace/snippets/css"
         },
         {
+          "file": "vendor/ace/snippets/dart.js",
+          "marker": "ace/snippets/dart"
+        },
+        {
           "file": "vendor/ace/snippets/diff.js",
           "marker": "ace/snippets/diff"
         },
@@ -2501,8 +2625,16 @@
           "marker": "ace/snippets/haskell"
         },
         {
+          "file": "vendor/ace/snippets/html.js",
+          "marker": "ace/snippets/html"
+        },
+        {
           "file": "vendor/ace/snippets/java.js",
           "marker": "ace/snippets/java"
+        },
+        {
+          "file": "vendor/ace/snippets/javascript.js",
+          "marker": "ace/snippets/javascript"
         },
         {
           "file": "vendor/ace/snippets/jsp.js",
@@ -2517,8 +2649,24 @@
           "marker": "ace/snippets/makefile"
         },
         {
+          "file": "vendor/ace/snippets/markdown.js",
+          "marker": "ace/snippets/markdown"
+        },
+        {
           "file": "vendor/ace/snippets/perl.js",
           "marker": "ace/snippets/perl"
+        },
+        {
+          "file": "vendor/ace/snippets/php.js",
+          "marker": "ace/snippets/php"
+        },
+        {
+          "file": "vendor/ace/snippets/python.js",
+          "marker": "ace/snippets/python"
+        },
+        {
+          "file": "vendor/ace/snippets/r.js",
+          "marker": "ace/snippets/r"
         },
         {
           "file": "vendor/ace/snippets/rst.js",
@@ -2527,6 +2675,10 @@
         {
           "file": "vendor/ace/snippets/ruby.js",
           "marker": "ace/snippets/ruby"
+        },
+        {
+          "file": "vendor/ace/snippets/sh.js",
+          "marker": "ace/snippets/sh"
         },
         {
           "file": "vendor/ace/snippets/snippets.js",
@@ -2549,8 +2701,8 @@
           "marker": "ace/snippets/textile"
         }
       ],
-      "name": "SnipMate snippets collection (exact retained Ace payloads)",
-      "note": "Historical honza/vim-snippets January 2013 MIT collection, 31 relevant import blob matches; this record covers only 22 exact decoded current payloads (cpp to c_cpp, make to makefile included). Original LICENSE references AUTHORS; both whole files retained. Eight modified candidates have historical Ace payload snapshots and root BSD declarations but complete delta attribution remains review-open; original MIT attribution remains applicable to historical material, not a blanket license for the modified assets or wrappers. No exact collection version/PURL or legal clearance asserted.",
+      "name": "SnipMate snippets collection (historical material in retained Ace payloads)",
+      "note": "Historical honza/vim-snippets January 2013 MIT collection, 31 relevant import blob matches. Scoped attribution covers historical MIT material in 30 retained payloads: 22 exact decoded matches (cpp to c_cpp, make to makefile included) and eight modified descendants with exact historical endpoint-to-current relations. Four have prior exact net-delta replay (dart, markdown, python, sh); four have 18 exact path-history patch transitions (html, javascript, php, r). Original LICENSE references AUTHORS; both whole files retained. MIT applies to the historical collection material, not a blanket license for Ace modifications, wrappers or other snippets. Ace root BSD declaration is separate; individual contribution rights and additional inputs remain review-open. No exact collection version/PURL or legal clearance asserted.",
       "notices": [
         "third_party/licenses/embedded/snipmate-snippets-mit.txt",
         "third_party/licenses/embedded/snipmate-snippets-authors.txt"
@@ -2593,7 +2745,8 @@
     "krTheme historical author README states All Rights Reserved; permission for Ace's exact variant is not established. Xcode and Kuroir exact external inputs established, explicit original distribution permissions remain open. No inference that copyright statement by itself forbids a separate grant.",
     "krTheme removal approved, target runtime excludes theme-kr_theme.js; source/installed artifact and CI review required. Historical permission question retained; not a grant or risk acceptance. Original Ace ext-themelist metadata remains, without the excluded CSS/module payload. Other retained themes unchanged.",
     "REx #80 author response confirms v5.30 generated portions of two lexer files may be redistributed (including modified/minified) under Apache-2.0 or permissive license, no additional requirements; grammar lineage remains open. No changes to generated files, shipped notices or component status.",
-    "SnipMate historical MIT notice recovery: 22 exact retained payloads mapped with bounded template-literal source relations; eight modified candidates and other snippets, wrapper history, underlying contribution rights and final review remain open. No package version/PURL or full license clearance."
+    "SnipMate historical MIT notice recovery: 22 exact retained payloads mapped with bounded template-literal source relations; eight modified candidates and other snippets, wrapper history, underlying contribution rights and final review remain open. No package version/PURL or full license clearance.",
+    "R5.3a expanded scoped SnipMate attribution to 30 retained payloads (22 unchanged, eight modified); 18 additional path-history patch transitions checked interactively with exact snapshot equality and historical Ace root BSD license blob. Network gate verifies eight additional historical endpoint-to-current static relations and historical import evidence pins, not patch replay itself. Other 22 nonempty payloads, empty stubs, wrapper and original third-party/contribution rights remain open; no release clearance."
   ],
   "notices": {
     "third_party/licenses/embedded/ace-legacy-linters.txt": {
@@ -3488,6 +3641,110 @@
         "git_blob": "396439e19c2729f91addc113ccbd0ba97e8ff9f6",
         "marker": "module.exports",
         "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/snippets/textile.snippets.js"
+      },
+      "relation": "ace-snippet-template-literal"
+    },
+    {
+      "upstream": {
+        "git_blob": "14a1c3e5939d691de25aa390ff7f17c4e5b42a70",
+        "marker": "snippet",
+        "url": "https://github.com/ajaxorg/ace/blob/93673bbe8b0a1e90a773aa3dd94fe8fa112f7af5/lib/ace/snippets/dart.snippets"
+      },
+      "container": {
+        "git_blob": "fa6a8452fcd7faec4f7aa1a70d0a93fc47059f55",
+        "marker": "module.exports",
+        "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/snippets/dart.snippets.js"
+      },
+      "relation": "ace-snippet-template-literal"
+    },
+    {
+      "upstream": {
+        "git_blob": "5f0e46b476083398e70a53e7d9630383bfb4fe99",
+        "marker": "snippet",
+        "url": "https://github.com/ajaxorg/ace/blob/96850288dca9b632aaa79b4f9bdf1305ae5d9694/lib/ace/snippets/html.snippets"
+      },
+      "container": {
+        "git_blob": "8fd5affd801799b79f14f645c7ddd3c95dc1a1da",
+        "marker": "module.exports",
+        "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/snippets/html.snippets.js"
+      },
+      "relation": "ace-snippet-template-literal"
+    },
+    {
+      "upstream": {
+        "git_blob": "83b15aab6f41fdf08692dd8e9167a5b95fc266c5",
+        "marker": "snippet",
+        "url": "https://github.com/ajaxorg/ace/blob/2d0b980c65966e45260ba341e176b9cde0c57399/lib/ace/snippets/javascript.snippets"
+      },
+      "container": {
+        "git_blob": "6e4d29a4dbab301680f762d7bd0838059ebe0d55",
+        "marker": "module.exports",
+        "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/snippets/javascript.snippets.js"
+      },
+      "relation": "ace-snippet-template-literal"
+    },
+    {
+      "upstream": {
+        "git_blob": "a5110fc9a3d79f0aa98796237773393e4a836e97",
+        "marker": "snippet",
+        "url": "https://github.com/ajaxorg/ace/blob/3c6cd4d16f89de0531d7e8f06c5e791839ab9eb6/lib/ace/snippets/markdown.snippets"
+      },
+      "container": {
+        "git_blob": "26ad61345a037c5197d28ef1798a252f585ae149",
+        "marker": "module.exports",
+        "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/snippets/markdown.snippets.js"
+      },
+      "relation": "ace-snippet-template-literal"
+    },
+    {
+      "upstream": {
+        "git_blob": "12b6c358d6927bd245ac3a8e1f9a5fe47f8f4b2a",
+        "marker": "snippet",
+        "url": "https://github.com/ajaxorg/ace/blob/f36ade1647e90d20480d93ac6da6169fc55e65e5/lib/ace/snippets/php.snippets"
+      },
+      "container": {
+        "git_blob": "987e34d04474aa6cb5ffa64a7bb31731f60d0f8d",
+        "marker": "module.exports",
+        "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/snippets/php.snippets.js"
+      },
+      "relation": "ace-snippet-template-literal"
+    },
+    {
+      "upstream": {
+        "git_blob": "347bbdebfd9d13e17cdd0131523eef30db186a26",
+        "marker": "snippet",
+        "url": "https://github.com/ajaxorg/ace/blob/eac48f519040e8e2d17dd1a5b76c2818ecf58cd1/lib/ace/snippets/python.snippets"
+      },
+      "container": {
+        "git_blob": "5d556cf6f7d6f54eb41d815b1b9862e9e80397e7",
+        "marker": "module.exports",
+        "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/snippets/python.snippets.js"
+      },
+      "relation": "ace-snippet-template-literal"
+    },
+    {
+      "upstream": {
+        "git_blob": "948542f5bbacc0de657e65d95dc2d54c52c0f13e",
+        "marker": "snippet",
+        "url": "https://github.com/ajaxorg/ace/blob/f17c67cd01316d4fdbbd5625594d81e28c894083/lib/ace/snippets/r.snippets"
+      },
+      "container": {
+        "git_blob": "dbac55301a26b64aedf8342d4b883a81ee44a4c9",
+        "marker": "module.exports",
+        "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/snippets/r.snippets.js"
+      },
+      "relation": "ace-snippet-template-literal"
+    },
+    {
+      "upstream": {
+        "git_blob": "305fb661ed25a75093d8e168f46deb012f662c07",
+        "marker": "snippet",
+        "url": "https://github.com/ajaxorg/ace/blob/b6463844b04758745f99b1553416f4cf4b8ad013/lib/ace/snippets/sh.snippets"
+      },
+      "container": {
+        "git_blob": "8c5e7f6c288d2078e4d4dfe9bc481ab536b3a7fe",
+        "marker": "module.exports",
+        "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/snippets/sh.snippets.js"
       },
       "relation": "ace-snippet-template-literal"
     }

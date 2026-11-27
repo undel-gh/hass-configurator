@@ -281,3 +281,35 @@ forms. This is not a new automated historical patch replay gate.
 No vendor/curated runtime bytes changed. Final R5.3 disposition matrix,
 empty stubs, remaining 22 payloads, exact-HEAD CI/artifacts and independent
 review remain open. No issue or merge/release gate closed.
+
+
+## R5.3a follow-up — four remaining modified payload histories and scoped expansion
+
+Baseline Configurator `0790b24516656b00465d7d522565dad3fbc9c28c`: all three exact-HEAD workflows SUCCESS after rerun of the failed Routing/inventory job (46063743806; initial HTTP 503 Backend.max_conn reached in upstream evidence fetch; no code relaxation), rehearsal 46063743784, research 46063743797. Workflow metadata verified; archive content and independent review remain open.
+
+GitHub REST path history, `GET /repos/ajaxorg/ace/commits?sha=<endpoint>&path=lib/ace/snippets/<name>.snippets&per_page=100`, returned the import plus 3 HTML, 10 JavaScript, 3 PHP and 2 R changes. Replayed each file-specific patch from the preceding path snapshot in chronological ancestry order (not author-date order), requiring exact old and new hunk positions, counts and context; no fuzzy matching, normalization or JS execution. Every reconstructed complete text equals the next immutable snapshot (18/18). All 17 distinct change commits have the same root LICENSE blob `4760be2a6220cf545129b233e20574f2a7bb630e` (BSD-3-Clause). This is path-history/net-change evidence, not proof of every merge parent, contributor grant or independent origin of newly added material. The API's path-history simplification is not exhaustive DAG traversal.
+
+| Asset | Ace change commit | Resulting raw blob | Added / removed lines |
+| --- | --- | --- | --- |
+| html | [d9b38ac3](https://github.com/ajaxorg/ace/commit/d9b38ac378d0dea6e1ca820c0e8294f04c46010a) | `20a73d72e339c352216ce4803e6c5b842f7d7212` | +28 / -1 |
+| html | [9d930d82](https://github.com/ajaxorg/ace/commit/9d930d829d263c02bb624edcf9b28b04e194943b) | `e3286ab04550fa1874d8c3e558b6f64276cf2517` | +1 / -3 |
+| html | [96850288](https://github.com/ajaxorg/ace/commit/96850288dca9b632aaa79b4f9bdf1305ae5d9694) | `5f0e46b476083398e70a53e7d9630383bfb4fe99` | +1 / -1 |
+| javascript | [3d43f42f](https://github.com/ajaxorg/ace/commit/3d43f42f8ab1b5239ad4359467b5469d349fe2c3) | `73f7b93f24239f36ed2ec3630e94f5fbfd387552` | +41 / -19 |
+| javascript | [f87f542c](https://github.com/ajaxorg/ace/commit/f87f542c8e1bbec23637d4c62ec740c834a97311) | `fe1d5bcf78110deca583e027e7960be8f689c1f0` | +44 / -18 |
+| javascript | [943e690b](https://github.com/ajaxorg/ace/commit/943e690bf60bd9d973532cf6ab7d4966f280dd11) | `b5c4f72c4df4890ecc06fd14cc1bdd75ad9d4e9e` | +15 / -13 |
+| javascript | [47ba638f](https://github.com/ajaxorg/ace/commit/47ba638f4bc49d1e9b0ec73b13ef3514918d8581) | `0019314e6d64103f83f8debe02153ea36acf6f68` | +7 / -20 |
+| javascript | [336e30c6](https://github.com/ajaxorg/ace/commit/336e30c62d84378abe35d0dc711c24d90f32c112) | `313e61196f26fd5197f4e87821c9c7a913b9b4f7` | +7 / -9 |
+| javascript | [19ea0fe9](https://github.com/ajaxorg/ace/commit/19ea0fe979462838d93f58df13a7364ffa89f8f1) | `813876e277f214f5e40b1f625782b1d1c1ab5538` | +1 / -1 |
+| javascript | [f9ed2055](https://github.com/ajaxorg/ace/commit/f9ed205557aa979d4d1b05d2878b7438add4367d) | `9c2ad1b2650ec7a40c31f7f584b0a184b845eb39` | +4 / -4 |
+| javascript | [e7fa7eb3](https://github.com/ajaxorg/ace/commit/e7fa7eb390d0e9965366b4f5919eafcefde3cbf9) | `d55c86c6dc49833709710a3efa5f31da3bd245a9` | +3 / -0 |
+| javascript | [28943dcf](https://github.com/ajaxorg/ace/commit/28943dcf1d594c957d21a9e3342938aa89e3b3f5) | `287862eb40e4f3b642a71a5414bc34f3dc1d015b` | +5 / -4 |
+| javascript | [2d0b980c](https://github.com/ajaxorg/ace/commit/2d0b980c65966e45260ba341e176b9cde0c57399) | `83b15aab6f41fdf08692dd8e9167a5b95fc266c5` | +2 / -2 |
+| php | [0479acfe](https://github.com/ajaxorg/ace/commit/0479acfea78f4fb3f4cd8e9c122b41748f5844e3) | `97f17bc18f011235383707a9850dde0d85ac4154` | +1 / -1 |
+| php | [62c51413](https://github.com/ajaxorg/ace/commit/62c514135d5ebd912c3a0c8e7c200b59ad0f6fca) | `8d11a2815ced35d9610e8ec3a8f6ba22f5fa4268` | +6 / -6 |
+| php | [f36ade16](https://github.com/ajaxorg/ace/commit/f36ade1647e90d20480d93ac6da6169fc55e65e5) | `12b6c358d6927bd245ac3a8e1f9a5fe47f8f4b2a` | +40 / -34 |
+| r | [0479acfe](https://github.com/ajaxorg/ace/commit/0479acfea78f4fb3f4cd8e9c122b41748f5844e3) | `cfe482bc5508f76e221cced1ac190a83589be294` | +4 / -4 |
+| r | [f17c67cd](https://github.com/ajaxorg/ace/commit/f17c67cd01316d4fdbbd5625594d81e28c894083) | `948542f5bbacc0de657e65d95dc2d54c52c0f13e` | +1 / -1 |
+
+All eight historical endpoints were freshly fetched and their complete decoded current template literals matched exactly (8/8). The previous four direct net-delta proofs (Dart, Markdown, Python, Shell) remain separately described above. PHP endpoint full revision is `f36ade1647e90d20480d93ac6da6169fc55e65e5`. HTML CDN URLs are snippet text, not bundled or automatically fetched libraries; JavaScript class/module templates have earlier demo lineage to assess if needed, and Markdown Octopress mention remains open. Low priority PHP/R do not justify a weaker license standard; no exclusion or runtime profile change is necessary on the basis of the present reconstruction. Revisit exclusion only if unresolved rights warrant a maintainer-approved change.
+
+Promote historical MIT attribution to all 30 demonstrated SnipMate descendants (22 exact and eight modified). Existing MIT LICENSE and AUTHORS bytes stay unchanged. The partial component maps historical material, not the entire modified file under MIT. Add the eight original collection/import pins and endpoint-to-current static relations to the existing networked verification; unit regression separates the exact and modified source sets. Patch replay is interactive evidence, not a new automated history replay gate. Additional source rights, wrapper origins, 22 other nonempty assets, 150 empty stubs, dispositions, artifact inspection and independent exact-HEAD review remain OPEN. No runtime, vendor, license text or curated profile change; no final clearance or merge/release approval.
