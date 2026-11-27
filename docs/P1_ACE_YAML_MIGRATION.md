@@ -4,8 +4,23 @@
 
 The #33 branch now promotes exact Ace 1.45.2 and js-yaml 4.3.2 bytes from reviewed pins. Current lock/manifest/inventory updated. Non-Ace resources unchanged. Prior Ace inventory preserved at docs/history/ace-1.9.6-embedded.json; old notice references retained conservatively. New source/marker evidence is partial: no inferred exact nested versions or final licensing clearance. Historical JSHint module/license literal absence is only marker evidence. Main-thread validation, HA/ESPHome tag semantics, current nested attribution, full CI and real HAOS rollback remain open. No merge/public release acceptance.
 
-Status: **implementation preparation; no runtime bytes promoted**.
+Status: **runtime bytes promoted on the draft #33 branch; full acceptance pending**.
+The original preparation checkpoint below is historical.
 Stacked onto PR #32 at b5924860ad8e27a2c47cecb71cac7905627a2819.
+Transfer commit: caf070a7dca38e40b926e283a69f61f6748f61d1 (parent e23d7dae).
+One-time transfer workflow run 45977039640; artifact 15187527210, verified ZIP SHA-256
+`df7c663c8caa9c702b8fed61f166c19897f8e995045781e48b3f97008ab524c7`.
+Patch SHA-256 `2ef0e00499ed0c2e861537494d6c446fb32737f58783978f581d6af4d5d7d6ac`.
+Preparation job verified new source, exact 495-file archive, all 174 UI files,
+source BOM, bounded Node probes and 158 Python tests. Author checked actual
+patch, source BOM and input report, and all 495 remote Git blob identities;
+js-yaml patch bytes hash to the reviewed member and committed Git blob
+ed652e67e0803fb8baf2f74cfb7b06e70d11fcdc. This is pre-final CI evidence.
+Temporary workflow and generator are removed after successful branch-only
+transfer; both are retained in immutable parent e23d7daedb57bdc8ae4bba97f7834e24cf592af8.
+The temporary writer used GitHub's built-in contents-write token only in its
+separate patch-apply job, no PAT/secrets, exact branch/parent guard and normal
+fast-forward push. No master/audit/checkpoint changes.
 Do not merge this checkpoint or close #33/#9 before the migration and gates.
 
 ## First implementation checkpoint
@@ -54,12 +69,12 @@ Do not merge this checkpoint or close #33/#9 before the migration and gates.
 
 ## Remaining acceptance
 
-1. Confirm correction HEAD CI and artifacts for both workflows; independent
-   review of pin and test changes before committed promotion.
-2. Commit exact Ace family and js-yaml member, update lock/verifier, manifest,
-   runtime inventory, embedded component attribution and notices, packaging
-   checks, source/installed SBOM and risk register. Do not relabel old
-   JSHint records as new or infer exact worker versions from ranges.
+1. Historical preparation gates completed on b63eac42; independent pin review
+   confirmed by supplied reviews. Promoted source verified in transfer job.
+2. Exact Ace family and js-yaml member committed; current lock/verifier,
+   manifest, top-level inventory and partial current attribution updated.
+   Complete nested attribution, license evidence, risk register and full
+   exact-HEAD installed-artifact checks before acceptance.
 3. Determine exact embedded worker dependency identities and licensing; retain
    explicit unresolved gaps and separate release gates. Test #24 YAML tags,
    multi-document, anchors, merge/omap, NBSP and worker-disable semantics.

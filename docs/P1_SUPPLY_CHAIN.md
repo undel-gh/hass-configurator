@@ -5,6 +5,9 @@
 The original audit below describes Ace 1.9.6 and js-yaml 4.1.0 on checkpoint b5924860ad8e27a2c47cecb71cac7905627a2819. On the #33 draft branch, exact reviewed Ace 1.45.2 and js-yaml 4.3.2 bytes are promoted; the current lock, manifest and top-level inventory supersede the old version assertions. Historical risks remain documented. New embedded inventory is partial, not a license clearance; installed wheel/sdist/Docker, exact-HEAD OSV and independent review are pending. #9, #33–#35 remain release gates. No automatic risk acceptance.
 
 Status: **audit implementation candidate; not release acceptance**.
+The following baseline findings are historical wherever they describe Ace
+1.9.6/js-yaml 4.1.0. Current #33 branch evidence is scoped in the promotion
+checkpoint and P1_ACE_YAML_MIGRATION.md; exact nested identities remain open.
 Source baseline: master `196907aa1e37d75adf0bfde7df45c43bcd3d01c0`.
 Owner: maintainer. No runtime dependency/version upgrade or privilege change
 in this audit candidate.
