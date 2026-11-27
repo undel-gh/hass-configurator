@@ -13,7 +13,7 @@ from scripts.audit_supply_chain import (
     PACKAGE, NOTICE, source_inventory, sbom, query_osv, scan_queries, verify_legacy_relation,
     read_file, EMBEDDED, immutable_raw_url, git_blob_sha1, embedded_upstream_evidence,
     check_npm_notice_pin, verify_npm_notice, embedded_source_relation,
-    textmate_snippet_collection, textmate_collection_records,
+    textmate_snippet_collection, textmate_collection_records, textmate_plist_entry,
 )
 
 
@@ -662,6 +662,34 @@ class SupplyChainTests(unittest.TestCase):
         ):
             self.assertFalse(textmate_snippet_collection(inputs, output, "io"))
         self.assertFalse(textmate_snippet_collection(sources, good, "vala"))
+
+
+    def test_textmate_io_historical_return_key_exact_cr(self):
+        # Exact original XML bytes; this is the only observed literal CR.
+        raw = ("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n\t<key>content</key>\n\t<string>\n\t$0\n</string>\n\t<key>keyEquivalent</key>\n\t<string>\r</string>\n\t<key>name</key>\n\t<string>Special: Return Inside Empty Parenthesis</string>\n\t<key>scope</key>\n\t<string>source.io meta.empty-parenthesis.io, source.io meta.comma-parenthesis.io</string>\n\t<key>uuid</key>\n\t<string>0F687653-BF6D-4C2C-A75E-C9193E870BBC</string>\n</dict>\n</plist>\n").encode("utf-8")
+        self.assertEqual(git_blob_sha1(raw), "97bfd34c245f79c304f9e3f6c2810477b1037958")
+        parsed = textmate_plist_entry(raw)
+        self.assertEqual(parsed["name"], "Special: Return Inside Empty Parenthesis")
+        self.assertEqual(parsed["keyEquivalent"], "\r")
+        self.assertEqual(parsed["content"], "\n\t$0\n")
+        self.assertEqual(parsed["scope"], "io meta.empty-parenthesis.io, io meta.comma-parenthesis.io")
+        self.assertEqual(textmate_plist_entry(raw.replace(b"\r", b"\n"))["keyEquivalent"], "\n")
+        for changed in (raw + b"\n", raw.replace(b"\r", b"\r\r"),
+                        raw.replace(b"<string>\r</string>", b"<string>\n</string>").replace(b"$0", b"$0\r")):
+            with self.assertRaisesRegex(ValueError, "Unexpected literal CR"):
+                textmate_plist_entry(changed)
+        sources = [raw] + [
+            (f'<plist version="1.0"><dict><key>name</key><string>n{i}</string>'
+             '<key>content</key><string>x</string><key>scope</key><string>source.io</string>'
+             '<key>uuid</key><string>12345678-1234-1234-1234-123456789abc</string>'
+             '</dict></plist>').encode() for i in range(9)]
+        rows = [parsed] + [{"name": f"n{i}", "content": "x", "scope": "io"} for i in range(9)]
+        def module(entries):
+            return ('"use strict";\n\nexports.snippets = ' + json.dumps(entries)
+                    + ';\nexports.scope = "io";\n').encode()
+        self.assertTrue(textmate_snippet_collection(sources, module(rows), "io"))
+        rows[0] = {**parsed, "keyEquivalent": "\n"}
+        self.assertFalse(textmate_snippet_collection(sources, module(rows), "io"))
 
     def test_textmate_collection_inventory_and_bom(self):
         inv, vendor = source_inventory()

@@ -279,6 +279,15 @@ def textmate_collection_records(embedded):
 def textmate_plist_entry(raw):
     """Parse only observed XML string dictionaries; never resolve DTDs."""
     text = raw.decode("utf-8")
+    if "\r" in text:
+        # XML 1.0 normally converts literal CR to LF. The historical Io
+        # converter preserved one literal CR as the Return key equivalent.
+        # Reproduce only this immutable source, never normalize other fields.
+        observed = "<key>keyEquivalent</key>\n\t<string>\r</string>"
+        if (git_blob_sha1(raw) != "97bfd34c245f79c304f9e3f6c2810477b1037958"
+                or text.count("\r") != 1 or text.count(observed) != 1):
+            raise ValueError("Unexpected literal CR in TextMate plist")
+        text = text.replace(observed, observed.replace("\r", "&#13;"))
     text = re.sub(r'^\s*<\?xml version="1\.0" encoding="UTF-8"\?>\s*', "", text, count=1)
     text = re.sub(
         r'^<!DOCTYPE plist PUBLIC "-//Apple(?: Computer)?//DTD PLIST 1\.0//EN" '
