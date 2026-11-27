@@ -1688,7 +1688,7 @@
       ],
       "review_priority": "elevated",
       "proposed_disposition": "retain-review-open",
-      "remaining_review": "Exact historical endpoint after reconstructed delta; MIT original material only. Octopress input and separate contribution rights open."
+      "remaining_review": "Octopress-tag templates introduced by two exact 2012 SnipMate patches under existing MIT; 12-template suffix retained exactly. External documentation/example origin and individual contributor attribution review remain open."
     },
     {
       "snippet": "mask",

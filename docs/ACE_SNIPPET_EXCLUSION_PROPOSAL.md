@@ -1,0 +1,31 @@
+# R5.3c — snippet-only exclusion decision proposal
+
+Status: **maintainer decision pending**. No exclusion authorized or implemented by this document.
+Baseline `c32d0f12ed6522b28f9a3b0dedf7e3a00de96e2d` (R5.3b): exact-head workflows 46071297199, 46071297176, 46071297249 SUCCESS; 219 Python tests, 7 jobs. Source artifact 15233385149 and native artifact 15232204358 metadata observed; content inspection and independent review not completed.
+
+## Proposed scope
+
+| Payload | Bytes (shipped JS) | Why consider exclusion | Mode retained |
+| --- | ---: | --- | --- |
+| abc | 1421 | Zupfnoter intermediate match; applicable GPL/Commercial scope unknown | mode-abc.js |
+| edifact | 4807 | Mostly Java-derived templates, low language relevance; existing scoped SnipMate MIT | mode-edifact.js |
+| gobstones | 39606 | Expanded collection origin open, GPL web-project association not proof of GPL snippet input | mode-gobstones.js |
+| lsl | 35897 | Exact Builders Brewery source, grant scope open | mode-lsl.js |
+| **Total** | **81731** | No license violation finding asserted | All four retained unchanged |
+
+Tree sizes from exact baseline; not a gzip/container-size estimate. Proposed removal of four distinct snippet JS files would reduce retained snippet count 202→198 (52→48 nonempty, 150 stubs unchanged), Ace assets 489→485, vendor resources 509→505. Matrix remains 202 upstream names, with 4 explicit excluded rows. Modes, highlight rules and other retained upstream bytes stay unchanged. Does not resolve licensing of language modes themselves or authorize any issue closure.
+
+## Runtime dependency review (pinned Ace 68d7fd1)
+
+- [src/mode/abc.js](https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/mode/abc.js) blob `7c27dc18e1184d5bbe5b1b02de15db17500584df`; [edifact.js](https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/mode/edifact.js) `49a2c297bb600599d2ff4a57ebc030fdaf090e15`; [gobstones.js](https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/mode/gobstones.js) `4250d1fe51ee46ab1494d4bfca83a773278fcfb2`; [lsl.js](https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/mode/lsl.js) `49ca28ae3d23175948f7924719ccbb5255b7665e`. Each has explicit snippetFileId and separate tokenizer/highlight rules. Gobstones inherits JavaScript mode but overrides createWorker with null.
+- [src/ext/language_tools.js](https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/ext/language_tools.js#L138-L172) blob `cc04a46c7b881ec187d4e0a97b9e8307a26ce136` loads snippets on mode change via config.loadModule, and may recurse into submodes/includeScopes. It initializes snippetManager.files[id] before load; a falsy module callback returns safely. Configurator dev.html enables snippets in both relevant editor options blocks and loads first-party ace-bootstrap.js before ext-language_tools.js.
+- [src/config.js](https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/config.js#L120-L172) blob `bb624a983e5fbf7820acf72b2c8b2b36561fd648` accepts both string and typed-array module IDs, tries already-loaded modules/dynamic loaders, and can call net.loadScript when packaged. Physical deletion alone is insufficient. Existing bootstrap only intercepts worker loads and resolves excluded themes. Proposed extend first-party interception of config.loadModule for the four exact canonical snippet module IDs, return an absent module via callback (if provided), without network, module cache mutation, synthetic third-party snippet or disabling all completions. Guard both string and array forms; retain normal callback/this/arguments for others. Verify behavior against actual browser runtime; no claim of full dependency closure from inspected sources alone. Audit all retained mode/snippet assets for static embedded copies/references and distinguish expected mode metadata from actual embedded payload before removal.
+
+## Implementation acceptance (only after explicit maintainer approval)
+
+1. Bump curated profile schema and add validated exact excluded_snippets list; reject missing/unknown/duplicate/unsafe paths. Keep complete upstream lock unchanged; selected_family, vendor archive generation, manifest/resource ownership and physical filesystem closure reflect only approved subset. Recalculate manifest pin. No replacement vendor stub or edited retained upstream JS.
+2. Update first-party loader policy as above; check retained modes/tokenization, theme and worker policy, no requests to excluded URLs even with snippets enabled, mode switching/repeat, ordinary completions/retained snippets and callback behavior. Direct excluded static route returns normal not-found response, not external fetch. Test prefix/Ingress deployment and cache-version boundaries; previously cached bytes on client are not remotely erased by removing files.
+3. Keep all 202 matrix rows and original source pins, represent actual distribution excluded and proposed excluded-reassessment-open; separate historical references from active distributed component mapping. Compare retained native report against 198 rows, verify excluded upstream evidence separately without asserting shipment. Preserve exact stub loader evidence for 150. Update source inventory/evidence validators, SBOM scope and docs; remove EDIFACT active SnipMate location (others and notices remain), move LSL review-only active location to historical documentation rather than an absent-file inventory record. Retain historical source pins/relations where appropriately scoped; do not claim removed bytes shipped. Update tests/counts that explicitly pin old subset; validate manifest generation, distribution wheel/sdist/container, native and migration workflows.
+4. Require exact-HEAD CI, offline browser smoke for each mode, tamper/reintroduction tests, artifact content inspection and independent review. No issue closure, no merge or public-release signoff. #9/#33/#37 open; #36/#32 Draft/HOLD.
+
+Decision requested: approve exactly ABC, EDIFACT, Gobstones and LSL snippet-only removal, or specify a smaller set. Retaining any candidate keeps its review-open status; restoration after exclusion requires explicit decision and renewed source review.
