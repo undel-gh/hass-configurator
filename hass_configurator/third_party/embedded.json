@@ -390,7 +390,7 @@
         }
       ],
       "name": "XQLint and generated XQuery/JSONiq lexers",
-      "note": "Two retained lexer modes contain generated XQLint tokenizer code, not the removed xquery worker. Source relationships verify exact tokenizer bytes from XQLint 0.1.5 source commit; no full npm package identity asserted. Both exact 2014 REx v5.30 generator copyright/command headers now shipped as separate notices; modern REx Apache-2.0 license at 52f3bcc3 is a source reference only, not proof of 2014 output rights. XQLint source is Apache-2.0, grammar provenance and historical REx output permissions require confirmation. All three XQLint modules per lexer have exact source relations (tokenizer and shared lexer literal; language wrapper two require renames). Browser-pack loader separately mapped with MIT notice and bounded standalone adaptation; exact package version remains unspecified. No risk acceptance.",
+      "note": "Two retained lexer modes contain generated XQLint tokenizer code, not the removed xquery worker. Source relationships verify exact tokenizer bytes from XQLint 0.1.5 source commit; no full npm package identity asserted. Both exact 2014 REx v5.30 generator copyright/command headers now shipped as separate notices; modern REx Apache-2.0 license at 52f3bcc3 is a source reference only, not proof of 2014 output rights. XQLint source is Apache-2.0, grammar provenance and historical REx output permissions require confirmation. All three XQLint modules per lexer have exact source relations (tokenizer and shared lexer literal; language wrapper two require renames). Browser-pack loader separately mapped with MIT notice and bounded standalone adaptation; exact package version remains unspecified. No risk acceptance. Historical 2013 BSD notice matches shipped Ace LICENSE after comment/whitespace normalization; upstream REx issue #80 awaits clarification. Full grammar ancestry remains open.",
       "notices": [
         "third_party/licenses/embedded/xqlint-reference.txt",
         "third_party/licenses/embedded/rex-2014-xquery-generator-notice.txt",
@@ -440,7 +440,7 @@
         }
       ],
       "name": "Ace theme conversion and snippet attribution review",
-      "note": "Current source tool/tmthemes/LICENSE has explicit per-file exceptions, and tmtheme.js maps only a subset of themes to TextMate files. tmsnippets.js is a generic converter, not proof of individual snippet origin. Dracula MIT block separately mapped. Per-file scan and original payload comparison are required; absence of a marker is not blanket BSD clearance. Research #4 verified 47 theme and 50 snippet static payloads; remaining packaging cases investigated separately. Per-file original lineage/terms remain open.",
+      "note": "Current source tool/tmthemes/LICENSE has explicit per-file exceptions, and tmtheme.js maps only a subset of themes to TextMate files. tmsnippets.js is a generic converter, not proof of individual snippet origin. Dracula MIT block separately mapped. Per-file scan and original payload comparison are required; absence of a marker is not blanket BSD clearance. Research #4 verified 47 theme and 50 snippet static payloads; remaining packaging cases investigated separately. Per-file original lineage/terms remain open. Research #9 CI completed successfully; external current-reference comparison is not historical input equality. Separate partial theme records now preserve original MIT notices for Tomorrow, Solarized and Gruvbox Hard; remaining per-file lineage/terms open.",
       "notices": [
         "third_party/licenses/embedded/ace-tmthemes-reference.txt"
       ],
@@ -1493,6 +1493,201 @@
       ],
       "notices": [],
       "note": "Parent Ace BSD-3-Clause notice applies to native Ace code; not a new npm component. Research #4 run 46014275424 artifact 15205796171: exact bootstrap, exact nine-module unminified closure and 9/9 source AST relations after upstream TS 5.9.2 transformation; pinned official minified archive unchanged. No raw native minified rebuild or independent license clearance claimed."
+    },
+    {
+      "id": "ace-theme-tomorrow",
+      "parent": "ace",
+      "kind": "library",
+      "name": "Tomorrow theme family",
+      "version": null,
+      "ecosystem": null,
+      "status": "partial",
+      "license": "MIT",
+      "locations": [
+        {
+          "file": "vendor/ace/theme-tomorrow.js",
+          "marker": "ace/theme/tomorrow"
+        },
+        {
+          "file": "vendor/ace/theme-tomorrow_night.js",
+          "marker": "ace/theme/tomorrow_night"
+        },
+        {
+          "file": "vendor/ace/theme-tomorrow_night_blue.js",
+          "marker": "ace/theme/tomorrow_night_blue"
+        },
+        {
+          "file": "vendor/ace/theme-tomorrow_night_bright.js",
+          "marker": "ace/theme/tomorrow_night_bright"
+        },
+        {
+          "file": "vendor/ace/theme-tomorrow_night_eighties.js",
+          "marker": "ace/theme/tomorrow_night_eighties"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/chriskempson/tomorrow-theme/blob/ccf6666d888198d341b26b3a99d0bc96500ad503/LICENSE.md",
+          "git_blob": "0e689d0a004eb37155ef430fe615a6e27209d30f",
+          "marker": "Chris Kempson"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/a1df4237b04a91e91a2bbb0ee7dbf840b139edda/tool/tmthemes/Tomorrow.tmTheme",
+          "git_blob": "8c98c22657b272436fd55d6ce4ab3b99a1382877",
+          "marker": "Tomorrow"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/tool/tmthemes/Tomorrow.tmTheme",
+          "git_blob": "8c98c22657b272436fd55d6ce4ab3b99a1382877",
+          "marker": "Tomorrow"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/a1df4237b04a91e91a2bbb0ee7dbf840b139edda/tool/tmthemes/Tomorrow-Night.tmTheme",
+          "git_blob": "bb1efaf06ae1687ff138243935dbeed4f3dbc8c9",
+          "marker": "Tomorrow"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/tool/tmthemes/Tomorrow-Night.tmTheme",
+          "git_blob": "bb1efaf06ae1687ff138243935dbeed4f3dbc8c9",
+          "marker": "Tomorrow"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/a1df4237b04a91e91a2bbb0ee7dbf840b139edda/tool/tmthemes/Tomorrow-Night-Blue.tmTheme",
+          "git_blob": "b1669a27dcab9a916323f544f8bf81a2083cf615",
+          "marker": "Tomorrow"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/tool/tmthemes/Tomorrow-Night-Blue.tmTheme",
+          "git_blob": "b1669a27dcab9a916323f544f8bf81a2083cf615",
+          "marker": "Tomorrow"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/a1df4237b04a91e91a2bbb0ee7dbf840b139edda/tool/tmthemes/Tomorrow-Night-Bright.tmTheme",
+          "git_blob": "15d401066ce80589fccf0f63ae0f5615076e7cb1",
+          "marker": "Tomorrow"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/tool/tmthemes/Tomorrow-Night-Bright.tmTheme",
+          "git_blob": "15d401066ce80589fccf0f63ae0f5615076e7cb1",
+          "marker": "Tomorrow"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/a1df4237b04a91e91a2bbb0ee7dbf840b139edda/tool/tmthemes/Tomorrow-Night-Eighties.tmTheme",
+          "git_blob": "33dabddf5e03966e995bb81a71149ca0969dd0e7",
+          "marker": "Tomorrow"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/tool/tmthemes/Tomorrow-Night-Eighties.tmTheme",
+          "git_blob": "33dabddf5e03966e995bb81a71149ca0969dd0e7",
+          "marker": "Tomorrow"
+        }
+      ],
+      "notices": [
+        "third_party/licenses/embedded/tomorrow-theme-mit.txt"
+      ],
+      "note": "Direct author contribution PR #432; signed CLA promised, actual agreement not inspected. Current external reference differs from historical input; MIT notice retained for original theme contribution, not exhaustive historical clearance."
+    },
+    {
+      "id": "ace-theme-solarized",
+      "parent": "ace",
+      "kind": "library",
+      "name": "Solarized theme family",
+      "version": null,
+      "ecosystem": null,
+      "status": "partial",
+      "license": "MIT",
+      "locations": [
+        {
+          "file": "vendor/ace/theme-solarized_dark.js",
+          "marker": "ace/theme/solarized_dark"
+        },
+        {
+          "file": "vendor/ace/theme-solarized_light.js",
+          "marker": "ace/theme/solarized_light"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/altercation/solarized/blob/62f656a02f93c5190a8753159e34b385588d5ff3/LICENSE",
+          "git_blob": "ee08d7e44f15108ef5359550399dad55955b56ca",
+          "marker": "Ethan Schoonover"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/69778adb4c19d4b083127515559f74f96f2a6a09/tool/tmthemes/Solarized-dark.tmTheme",
+          "git_blob": "4efdabdbd5ca5e588d0357c2b3d8aa7b255f7813",
+          "marker": "Solarized"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/tool/tmthemes/Solarized-dark.tmTheme",
+          "git_blob": "4efdabdbd5ca5e588d0357c2b3d8aa7b255f7813",
+          "marker": "Solarized"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/69778adb4c19d4b083127515559f74f96f2a6a09/tool/tmthemes/Solarized-light.tmTheme",
+          "git_blob": "9db72b86d208eec6b7611416b0376f7acc1d1927",
+          "marker": "Solarized"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/tool/tmthemes/Solarized-light.tmTheme",
+          "git_blob": "9db72b86d208eec6b7611416b0376f7acc1d1927",
+          "marker": "Solarized"
+        }
+      ],
+      "notices": [
+        "third_party/licenses/embedded/solarized-theme-mit.txt"
+      ],
+      "note": "Initial import explicitly cites Ethan Schoonover; PR #917 replaced both historical Ace wrapper tri-license headers with BSD-3-Clause. Original MIT notice retained; no exact external historical version or individual CLA asserted."
+    },
+    {
+      "id": "ace-theme-gruvbox-hard",
+      "parent": "ace",
+      "kind": "library",
+      "name": "Gruvbox Hard theme port (Brian Reilly)",
+      "version": null,
+      "ecosystem": null,
+      "status": "partial",
+      "license": "MIT",
+      "locations": [
+        {
+          "file": "vendor/ace/theme-gruvbox_dark_hard.js",
+          "marker": "ace/theme/gruvbox_dark_hard"
+        },
+        {
+          "file": "vendor/ace/theme-gruvbox_light_hard.js",
+          "marker": "ace/theme/gruvbox_light_hard"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/Briles/gruvbox/blob/75407cc80c51814d61beb1df07e380d6f58ad767/LICENSE",
+          "git_blob": "1d533cf6dcb3dd57aba8c955001f89d4ed03db81",
+          "marker": "Brian Reilly"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/6b1e67f844056fd238a35094e8f4e4b197e0a9a4/tool/tmthemes/gruvboxDarkHard.tmTheme",
+          "git_blob": "64c80d32a27dad6d38edc1b74005f805c802b979",
+          "marker": "Brian Reilly"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/tool/tmthemes/gruvboxDarkHard.tmTheme",
+          "git_blob": "64c80d32a27dad6d38edc1b74005f805c802b979",
+          "marker": "Brian Reilly"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/6b1e67f844056fd238a35094e8f4e4b197e0a9a4/tool/tmthemes/gruvboxLightHard.tmTheme",
+          "git_blob": "c75d15f76891a0e1c5c38011834de03a360e9fb9",
+          "marker": "Brian Reilly"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/tool/tmthemes/gruvboxLightHard.tmTheme",
+          "git_blob": "c75d15f76891a0e1c5c38011834de03a360e9fb9",
+          "marker": "Brian Reilly"
+        }
+      ],
+      "notices": [
+        "third_party/licenses/embedded/gruvbox-hard-theme-mit.txt"
+      ],
+      "note": "PR #3673 explicitly imports Briles/gruvbox. MIT applies to identified port contribution only; original Pavel Pertsev terms and exact historical port version OPEN. Ordinary Gruvbox is not covered by this record. No risk acceptance."
     }
   ],
   "font_provenance": {
@@ -1519,7 +1714,8 @@
     "All 15 retained replacement-worker source-lock candidate versions now have exact reconstructed minified runtime evidence from 16 original package paths, plus pinned CRLF-to-LF relation for published unminified forms. All 15 original candidate archives revalidated; native base, theme/snippets, XQuery lexer/generator terms, nested source-level notices and independent final review remain open. No public-release approval.",
     "Retained native/theme/snippet evidence being collected; REx v5.30 original output grant, Browserify loader and grammar lineage remain unresolved. Historical libc++ license/credits reference added for estraverse MIT-adapted fragment; exact revision not asserted. Dracula MIT source copyright notice separately retained.",
     "XQLint retained source closure expanded to both shared lexer and two language wrappers; browser-pack prelude bounded adaptation verified, MIT notice retained. REx historical output/grammar licensing remains unresolved. No runtime version asserted for browser-pack.",
-    "Research #4 native base source mapping verified; review record is not a new SBOM component. Browser-pack loader attribution recovered; exact package version and REx historical output/grammar grant remain open. Theme/snippet source equality is not historical license clearance."
+    "Research #4 native base source mapping verified; review record is not a new SBOM component. Browser-pack loader attribution recovered; exact package version and REx historical output/grammar grant remain open. Theme/snippet source equality is not historical license clearance.",
+    "Historical Ace contributions establish nine exact TextMate input blobs for Tomorrow, Solarized and Gruvbox Hard; original-project MIT notices retained as pinned whole files. No exact external release, signed CLA, complete historical license clearance or original Gruvbox rights inferred."
   ],
   "notices": {
     "third_party/licenses/embedded/ace-legacy-linters.txt": {
@@ -1905,6 +2101,24 @@
       "sha256": "435a6722c786b0a56fbe7387028f1d9d3f3a2d0fb615bb8fee118727c3f59b7b",
       "source": "https://github.com/browserify/browser-pack/blob/9d4039e508488cd3b7cb49019985e97630a9339b/LICENSE",
       "source_blob": "ee27ba4b4412b0e4a05af5e3d8a005bc6681fdf3"
+    },
+    "third_party/licenses/embedded/tomorrow-theme-mit.txt": {
+      "kind": "whole-file",
+      "sha256": "a9773fd575f48ea3648b54eeaf09d1512a9f0c7c20d284dc3f8295bd92123bf9",
+      "source": "https://github.com/chriskempson/tomorrow-theme/blob/ccf6666d888198d341b26b3a99d0bc96500ad503/LICENSE.md",
+      "source_blob": "0e689d0a004eb37155ef430fe615a6e27209d30f"
+    },
+    "third_party/licenses/embedded/solarized-theme-mit.txt": {
+      "kind": "whole-file",
+      "sha256": "494aefdabf86acce06bd63001ad8aedad4ee38da23509d3f917d95aa3368b9a6",
+      "source": "https://github.com/altercation/solarized/blob/62f656a02f93c5190a8753159e34b385588d5ff3/LICENSE",
+      "source_blob": "ee08d7e44f15108ef5359550399dad55955b56ca"
+    },
+    "third_party/licenses/embedded/gruvbox-hard-theme-mit.txt": {
+      "kind": "whole-file",
+      "sha256": "8e61f5850485a8323fd9145a95aca7571b608fffb28c9b0698b04164b30e4264",
+      "source": "https://github.com/Briles/gruvbox/blob/75407cc80c51814d61beb1df07e380d6f58ad767/LICENSE",
+      "source_blob": "1d533cf6dcb3dd57aba8c955001f89d4ed03db81"
     }
   },
   "schema": 1,

@@ -115,3 +115,12 @@ with original notice; exact package version unspecified (shared blob across
 multiple tags). XQLint common lexer and both language wrappers verified
 against pinned source with two exact require renames. Historic REx output
 rights and grammar provenance remain open.
+
+Historical theme attribution: Tomorrow (Chris Kempson, MIT, five themes,
+Ace PR #432), Solarized (Ethan Schoonover, MIT, two themes, initial import
+69778adb; Ace wrapper BSD relicensing PR #917), and Gruvbox Hard port
+(Brian Reilly, MIT, two themes, Ace PR #3673) now retain pinned original
+whole-file notices. Nine historical TextMate inputs match current Ace Git
+blobs. Original Gruvbox rights, ordinary Gruvbox CLA/reintroduction and
+historical wrapper copyright remain OPEN. No external package version or
+full historical license clearance asserted. See embedded.json.

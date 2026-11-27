@@ -93,6 +93,14 @@ class SupplyChainTests(unittest.TestCase):
         self.assertEqual(yaml["purl"], "pkg:npm/yaml@2.8.3")
         self.assertEqual(inv["legacy_archive_locks"]["js-yaml.min.js"]["relation"], "exact")
         self.assertEqual(len(inv["embedded"]["worker_review"]), 6)
+        for theme, count in (("tomorrow", 5), ("solarized", 2), ("gruvbox-hard", 2)):
+            record = next(c for c in inv["embedded"]["components"] if c["id"] == "ace-theme-" + theme)
+            self.assertEqual(record["status"], "partial")
+            self.assertEqual(len(record["locations"]), count)
+            self.assertIsNone(record["ecosystem"])
+            self.assertEqual(record["license"], "MIT")
+            self.assertEqual(len(record["notices"]), 1)
+            self.assertEqual(inv["embedded"]["notices"][record["notices"][0]]["kind"], "whole-file")
         historical = json.loads((PACKAGE.parent / "docs/history/ace-1.9.6-embedded.json").read_text("utf-8"))
         self.assertIn("ace-jshint", {c["id"] for c in historical["components"]})
         for retired in ("ace-coffee", "ace-luaparse", "ace-xml-lodash", "ace-xml-chevrotain"):
