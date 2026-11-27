@@ -364,3 +364,17 @@ current package. Candidate exploratory OSV queries are separate from the
 current runtime scan and explicitly mark source-minimum-version hypotheses.
 No auto-promotion; require actual report, independent review, exact bundled
 licenses/versions, #33/#24 regression and real HAOS before migration.
+
+## #33 current XML worker finding
+
+The #351 attribution artifact 15187533994 returned candidate OSV matches
+for lodash 4.17.21: [GHSA-r5fr-rjxr-66jc](https://github.com/advisories/GHSA-r5fr-rjxr-66jc)
+and [GHSA-xxjr-mmjv-4gpg](https://github.com/advisories/GHSA-xxjr-mmjv-4gpg).
+Current shipped XML worker has the exact version and module path markers;
+license archive and immutable Git release bytes match. Now included in
+active embedded inventory and main OSV query. **OPEN / release gate**:
+review actual vulnerable functions, XML worker reachability and fixed
+compatible upstream replacement. No waiver, no inference of server RCE.
+Chevrotain 7.1.1 similarly has an exact version/module marker and verified
+notice; candidate OSV had no matches. Remaining source-lock candidates
+are not exact runtime version claims. See ACE_WORKER_ATTRIBUTION.md.

@@ -52,8 +52,8 @@ versions of copied fragments or the full original shim license.
 
 Ace 1.45.2 uses the independently reviewed 495-file upstream build family.
 Current embedded attribution is partial. Source evidence for ace-legacy-linters
-(candidate 1.0.2, MIT notice retained), @babel/parser and yaml is recorded;
-exact bundled versions, remaining worker dependencies, theme/snippet licenses
+(1.0.2, eight exact published worker pairs; MIT source notice retained), @babel/parser and yaml is recorded;
+remaining exact nested versions, worker dependencies, theme/snippet licenses
 and full attribution remain OPEN. The old JSHint module and historical JSON
 license literal were not found in the verified new family; this marker check
 is not exhaustive license clearance. Historical Ace 1.9.6 records and
@@ -73,3 +73,5 @@ XQLint (Apache-2.0; both generated lexer source files at the 2014-07-24
 commit are literal subsets of tagged Ace source bundles), and xmldom 0.1.19
 (MIT/LGPL choice links, historical parent only). These references do not
 establish the entire historical fork license/version; retain partial status.
+
+Current XML worker also contains lodash 4.17.21 (MIT; exact version/module markers) and Chevrotain 7.1.1 (Apache-2.0); release notices match official npm archive bytes. Other source-lock candidates and their attribution remain open. See docs/ACE_WORKER_ATTRIBUTION.md. The ace-legacy-linters npm LICENSE differs from the retained exact Git source LICENSE solely by 21 CRLF-to-LF line endings, verified against exact archive and notice pins.

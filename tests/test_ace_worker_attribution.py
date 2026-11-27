@@ -3,6 +3,7 @@ import io
 import json
 import tarfile
 import unittest
+from unittest.mock import patch
 
 from scripts import attribute_ace_workers as audit
 
@@ -72,3 +73,19 @@ class WorkerAttributionTests(unittest.TestCase):
             return raw if url_ == url else json.dumps(meta).encode()
         with self.assertRaisesRegex(ValueError, "source-lock SRI mismatch"):
             audit.notices_for(name, version, {"sha512-not-the-lock"}, fetch)
+
+    def test_linter_notice_accepts_only_pinned_crlf_to_lf(self):
+        shipped = b"license\n" * 21
+        upstream = shipped.replace(b"\n", b"\r\n")
+        with patch.multiple(audit, LINTER_ARCHIVE_LICENSE_SHA256=audit.sha(upstream),
+                            LINTER_ARCHIVE_LICENSE_BLOB=audit.git_blob_sha1(upstream),
+                            LINTER_LICENSE_BLOB=audit.git_blob_sha1(shipped)):
+            self.assertEqual(audit.linter_license_relation(upstream, shipped), "crlf-to-lf-exact")
+            self.assertEqual(audit.linter_license_relation(upstream + b" ", shipped), "mismatch")
+            self.assertEqual(audit.linter_license_relation(upstream, shipped + b" "), "mismatch")
+            self.assertEqual(audit.linter_license_relation(shipped, shipped), "mismatch")
+        mixed = upstream.replace(b"\r\n", b"\n", 1)
+        with patch.multiple(audit, LINTER_ARCHIVE_LICENSE_SHA256=audit.sha(mixed),
+                            LINTER_ARCHIVE_LICENSE_BLOB=audit.git_blob_sha1(mixed),
+                            LINTER_LICENSE_BLOB=audit.git_blob_sha1(shipped)):
+            self.assertEqual(audit.linter_license_relation(mixed, shipped), "mismatch")

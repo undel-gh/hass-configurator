@@ -31,6 +31,11 @@ WORKSPACE = "packages/ace-legacy-linters"
 SOURCE_COMMIT = "e0d223c5a880cb2f258c96ccd22feaaffb29e5a5"
 LOCK_BLOB = "17e9297cb3a744c12b1bd2a6c55a7b3138b39918"
 LINTER_LICENSE_BLOB = "319b7eddf9ad9ee57746f4bb486597c87a35929c"
+# Exact archive and notice reviewed in #351 artifact 15187533994.
+LINTER_SHA256 = "3b816b72064cbe56412885b2a22703ac2dbdc13784ece24bed46b5ee9c0a435f"
+LINTER_SRI = "sha512-b/mdaiAJwO0jBc3cQ7090h0FjPakf8km+3JmONujczKlYEhiakhX7W2zf9VCey+JpvyYloH8UNFHqZuniC0rkA=="
+LINTER_ARCHIVE_LICENSE_SHA256 = "3432ec591bb26b6461a86be1198f2c9538107cb8cf0c41107be53df0b9e56903"
+LINTER_ARCHIVE_LICENSE_BLOB = "c5b1603adc228961316de4dfd99a4d033c4a0bca"
 LINTER_URL = "https://registry.npmjs.org/ace-legacy-linters/-/ace-legacy-linters-1.0.2.tgz"
 REPLACEMENTS = frozenset("worker-" + name + ".js" for name in
                          ("php", "lua", "html", "json", "css", "xml", "yaml", "javascript"))
@@ -151,6 +156,19 @@ def notices_for(name, version, integrities, fetcher=fetch):
             "identity_basis": "source-lock candidate; not final runtime attribution"}
 
 
+def linter_license_relation(archive, shipped):
+    """Only the reviewed exact CRLF archive and exact LF Git source may differ."""
+    if (sha(archive) != LINTER_ARCHIVE_LICENSE_SHA256
+            or git_blob_sha1(archive) != LINTER_ARCHIVE_LICENSE_BLOB
+            or git_blob_sha1(shipped) != LINTER_LICENSE_BLOB):
+        return "mismatch"
+    normalized = archive.replace(b"\r\n", b"\n")
+    if (archive.count(b"\r\n") == 21 and archive.count(b"\n") == 21
+            and b"\r" not in normalized and normalized == shipped):
+        return "crlf-to-lf-exact"
+    return "mismatch"
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ("ace", "linters", "registry", "source-lock", "output"):
@@ -163,6 +181,8 @@ def main():
     registry = load(args.registry)
     require(registry.get("dist.tarball") == LINTER_URL and
             registry.get("dist.integrity") == sri(linter_raw), "Linter archive registry mismatch")
+    require(sha(linter_raw) == LINTER_SHA256 and sri(linter_raw) == LINTER_SRI,
+            "Linter archive differs from independently inspected #351 pin")
     lock_raw = args.source_lock.read_bytes()
     require(git_blob_sha1(lock_raw) == LOCK_BLOB, "Linter source lock Git blob mismatch")
     packages = json.loads(lock_raw)["packages"]
@@ -177,8 +197,8 @@ def main():
         # A different archive notice is a finding, not permission to use it.
         # Collect actual bytes and worker comparisons before failing the gate.
         shipped_license = read_file(PKG, "third_party/licenses/embedded/ace-legacy-linters.txt")
-        license_match = (git_blob_sha1(license_bytes) == LINTER_LICENSE_BLOB
-                         and license_bytes == shipped_license)
+        license_relation = linter_license_relation(license_bytes, shipped_license)
+        license_match = license_relation == "crlf-to-lf-exact"
         workers = []
         for name in sorted(REPLACEMENTS | NATIVE):
             actual = read_file(PKG, "vendor/ace/" + name)
@@ -204,6 +224,7 @@ def main():
                   "shipped_license_sha256": sha(shipped_license),
                   "license_source_equal": git_blob_sha1(license_bytes) == LINTER_LICENSE_BLOB,
                   "license_shipped_equal": license_bytes == shipped_license,
+                  "license_relation": license_relation,
                   "source_lock_git_blob": LOCK_BLOB,
                   "source_commit": SOURCE_COMMIT},
               "workers": workers, "candidate_notices": [],

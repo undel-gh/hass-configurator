@@ -81,3 +81,47 @@ archive notice bytes (base64), Git blob, SHA-256 and source/shipped equality
 flags in the report, still fails the attribution gate on mismatch, and
 retains evidence for worker comparisons and candidate notices/OSV first.
 No npm archive notice substituted into the runtime without review.
+
+## Actual archive correlation and notice disposition
+
+#351 source artifact [15187533994](https://github.com/undel-gh/hass-configurator/actions/runs/45978519039/artifacts/15187533994), exact HEAD 5c25067e2e1311fc70714e0e928ca527fe4b03db: downloaded and inspected, CRC and SHA-256
+4bbf25465cf6fee3b2bb5c3cb364f35afffd18dfe12a560784938c270b3ad389 match.
+All eight minified **and** unminified worker pairs match the official
+ace-legacy-linters 1.0.2 npm archive byte-for-byte. Archive SHA-256
+3b816b72064cbe56412885b2a22703ac2dbdc13784ece24bed46b5ee9c0a435f.
+License archive SHA-256 3432ec591bb26b6461a86be1198f2c9538107cb8cf0c41107be53df0b9e56903,
+Git blob c5b1603adc228961316de4dfd99a4d033c4a0bca; 21 CRLF, zero bare LF,
+zero stray CR. Exact CRLF-to-LF conversion reproduces existing Git source
+blob 319b7eddf9ad9ee57746f4bb486597c87a35929c and shipped LF SHA-256
+33d28673699c4240c72143daf1fb349e39d0b0cd703d21c300bc4e0cdf2a3433.
+This specific pinned relation is now checked; arbitrary normalization is
+not allowed. No license content changed. Source inventory identifies the
+linter package, not all dependencies.
+
+25 unique source-lock candidate package/version pairs, all paths resolved;
+23 packages with root notices, two without (@vscode/l10n 0.0.18 and
+esrecurse 4.3.0; investigate source/embedded notices). 25 root notice files
+collected. Source-lock candidates, **not verified installed versions**:
+
+| Worker | Candidate versions from the exact path in published unminified build and pinned source lock |
+|---|---|
+| All 8 replacement workers | ace-code 1.43.6 |
+| JavaScript | @babel/parser 7.29.2; eslint-scope 9.1.2; esrecurse 4.3.0; estraverse 5.3.0 (two distinct lock paths); globals 14.0.0 |
+| YAML | yaml 2.8.3 (workspace-local) |
+| CSS | vscode-css-languageservice 6.3.10; @vscode/l10n 0.0.18; vscode-languageserver-textdocument 1.0.12; vscode-languageserver-types 3.17.5 |
+| JSON | vscode-json-languageservice 5.7.2; jsonc-parser 3.3.1; vscode-uri 3.1.0; same three shared @vscode/l10n/languageserver packages |
+| HTML | htmlhint 1.9.2 |
+| PHP | php-parser 3.4.0 |
+| Lua | luaparse 0.3.1 (existing shipped version marker) |
+| XML | @xml-tools/ast 5.0.5; common 0.1.6; constraints 1.1.1; parser 1.0.11; validation 1.0.16; chevrotain 7.1.1; lodash 4.17.21; regexp-to-ast 0.5.0 |
+
+Candidate OSV 26 pairs including linter package, one matched pair:
+lodash 4.17.21 (GHSA-r5fr-rjxr-66jc, GHSA-xxjr-mmjv-4gpg). Author then
+verified specific version and module-path markers in actual minified XML
+worker for lodash 4.17.21 and chevrotain 7.1.1, and exact npm LICENSE blob
+identity against each immutable Git release. Both added as identified
+active SBOM entries with exact notices. Lodash advisories must now be
+tracked in the main scan and risk register; no automatic acceptance or
+claim of exploitability. Other source-lock version candidates remain
+separate pending stronger evidence. All 8 worker package mappings and
+native coffee/XQuery mappings partial for nested closure; base open.
