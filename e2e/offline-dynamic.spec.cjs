@@ -241,7 +241,9 @@ test('simulated Ingress preserves lazy Ace mode/theme/keybinding and YAML worker
   expect(pageErrors).toEqual([]);
 });
 
-test('Ace worker profile blocks excluded modes and preserves preference', async ({ page }) => {
+for (const variant of ['direct', 'ingress']) {
+test('Ace worker profile blocks excluded modes and preserves preference via ' + variant, async ({ page }) => {
+  test.setTimeout(60000);
   const forbidden = [];
   const external = [];
   const errors = [];
@@ -262,7 +264,20 @@ test('Ace worker profile blocks excluded modes and preserves preference', async 
       await route.continue();
     }
   });
-  await page.goto(server + '/', { waitUntil: 'domcontentloaded' });
+  if (variant === 'ingress') {
+    await page.route('**/ingress/test/**', async route => {
+      const target = new URL(route.request().url());
+      target.pathname = target.pathname.replace(/^\/ingress\/test\//, '/');
+      await route.fulfill({ response: await route.fetch({ url: target.toString() }) });
+    });
+  }
+  await page.addInitScript(() => {
+    window.hcWorkerCspViolations = [];
+    document.addEventListener('securitypolicyviolation', e => {
+      if (e.disposition === 'enforce') window.hcWorkerCspViolations.push(e.violatedDirective);
+    });
+  });
+  await page.goto(server + (variant === 'ingress' ? '/ingress/test/' : '/'), { waitUntil: 'domcontentloaded' });
   await expect.poll(() => page.evaluate(() => Boolean(window.editor))).toBe(true);
   expect(await page.evaluate(() => editor.session.getUseWorker())).toBe(false);
   const mode = async name => {
@@ -299,6 +314,16 @@ test('Ace worker profile blocks excluded modes and preserves preference', async 
   await page.evaluate(() => editor.setValue('again: [valid]\n', -1));
   await expect.poll(() => page.evaluate(() => editor.session.getAnnotations().filter(a => a.type === 'error').length),
     { timeout: 12000 }).toBe(0);
+  // Every allowed language must actually create its own worker.
+  for (const [name, sample] of [
+    ['json', '{"valid":true}'], ['javascript', 'var value = 1;'],
+    ['css', 'body { color: red; }'], ['html', '<div>valid</div>']
+  ]) {
+    await mode(name);
+    expect(await page.evaluate(() => Boolean(editor.session.$worker))).toBe(true);
+    await page.evaluate(value => editor.setValue(value, -1), sample);
+    await expect.poll(() => workers.length).toBeGreaterThan(0);
+  }
   // Check the lower-level worker creation guard before it allocates a Worker.
   const rejected = await page.evaluate(() => {
     const Client = ace.require('ace/worker/worker_client').WorkerClient;
@@ -317,4 +342,14 @@ test('Ace worker profile blocks excluded modes and preserves preference', async 
   expect(forbidden).toEqual([]);
   expect(external).toEqual([]);
   expect(errors).toEqual([]);
+  expect(await page.evaluate(() => hcWorkerCspViolations)).toEqual([]);
+  // Deliberate HTTP probes happen only AFTER asserting no automatic requests.
+  // The curated server must deny each removed resource even when requested.
+  const statuses = await page.evaluate(async names => {
+    const base = ace.config.get('workerPath');
+    return Promise.all(names.map(async name =>
+      (await fetch(new URL('worker-' + name + '.js', base))).status));
+  }, excluded);
+  expect(statuses).toEqual(excluded.map(() => 404));
 });
+}

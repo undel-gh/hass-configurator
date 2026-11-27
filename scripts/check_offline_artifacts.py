@@ -83,7 +83,13 @@ def main(wheel_dir, sdist_dir):
         if len(dist_info) != 1:
             raise RuntimeError("wheel missing unique distribution METADATA")
         assert_metadata(archive.read(dist_info[0]), "wheel")
-        verify({n: archive.read(n) for n in archive.namelist() if
+        names = [item.filename for item in archive.infolist() if not item.is_dir()]
+        if len(names) != len(set(names)):
+            raise RuntimeError("Duplicate wheel member")
+        for item in archive.infolist():
+            if item.filename.startswith("hass_configurator/vendor/") and (item.external_attr >> 16) & 0o170000 == 0o120000:
+                raise RuntimeError("Unsafe vendor wheel symlink")
+        verify({n: archive.read(n) for n in names if
                 n.startswith(("hass_configurator/vendor/", "hass_configurator/third_party/")) or
                 n == "hass_configurator/_version.py" or
                 n in {"hass_configurator/" + filename for filename in (set(PACKAGE_ASSETS) | {"dev.html"})}},
@@ -99,9 +105,15 @@ def main(wheel_dir, sdist_dir):
             raise RuntimeError("sdist missing unique root PKG-INFO")
         assert_metadata(archive.extractfile(top_metadata[0]).read(), "sdist")
         for member in archive.getmembers():
-            if not member.isfile() or "hass_configurator/" not in member.name:
+            if "hass_configurator/" not in member.name:
                 continue
             path = member.name[member.name.index("hass_configurator/"):]
+            if path.startswith("hass_configurator/vendor/") and not member.isfile() and not member.isdir():
+                raise RuntimeError("Unsafe vendor sdist member")
+            if not member.isfile():
+                continue
+            if path in files:
+                raise RuntimeError("Duplicate sdist member")
             if path.startswith(("hass_configurator/vendor/", "hass_configurator/third_party/")) or path == "hass_configurator/_version.py" or path in {
                     "hass_configurator/" + name for name in (set(PACKAGE_ASSETS) | {"dev.html"})}:
                 files[path] = archive.extractfile(member).read()

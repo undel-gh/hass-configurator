@@ -354,7 +354,7 @@ jobs:
               cd e2e
               EDITOR_URL="http://127.0.0.1:$port" \
               E2E_WORKSPACE="$work" E2E_PYTHON="$venv/bin/python" \
-                npm test -- --grep 'full UI attempts|real HTML resolves|Ace modes, themes|file browser|release identity'
+                npm test -- --grep 'full UI attempts|real HTML resolves|Ace modes, themes|Ace worker profile|file browser|release identity'
             )
             kill "$app_pid"
             wait "$app_pid" || true
@@ -405,6 +405,9 @@ jobs:
             exit 1
           fi
           docker tag hc-fork-p0:build-a hc-fork-p0:ci
+          docker save hc-fork-p0:ci -o /tmp/hc-curated-image.tar
+          python scripts/check_curated_image_layers.py /tmp/hc-curated-image.tar --output e2e/artifacts/supply-chain/ace-image-layer-absence.json
+          rm /tmp/hc-curated-image.tar
           # Nonsecret, machine-readable inventory for release provenance and
           # future #9 vulnerability/SBOM review; no credentials or Ingress URLs.
           mkdir -p e2e/artifacts
@@ -510,7 +513,7 @@ jobs:
             E2E_BASIC_USER="$basic_user" E2E_BASIC_PASSWORD="$basic_password" \
             E2E_WORKSPACE=/tmp/hc-fork-p0-sandbox \
             E2E_CONTAINER_PATH=/config \
-              npm test -- --grep 'fork-built Docker|full UI attempts|real HTML resolves|Ace modes, themes|release identity'
+              npm test -- --grep 'fork-built Docker|full UI attempts|real HTML resolves|Ace modes, themes|Ace worker profile|release identity'
           )
           docker rm -f hc-fork-p0-browser
           trap - EXIT

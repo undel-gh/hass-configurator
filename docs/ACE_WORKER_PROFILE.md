@@ -32,3 +32,10 @@ Fresh exact-HEAD CI, installed artifact review and HAOS upgrade/rollback pending
 The retained marker audit records all package JS/HTML/CSS/Python files and
 same-archive unminified counterparts, with exact hashes and explicit hits.
 This is additional evidence, not an automated non-applicability decision.
+
+Direct and simulated-Ingress browser policy tests are also selected for
+installed wheel/sdist and Docker. Separate explicit 404 probes follow the
+no-automatic-request assertion. File browser round-trips cover each excluded
+language; the real installed image layers are checked by filename and exact
+JS digest, not by looking only at the final filesystem. Full HAOS cache
+upgrade/rollback remains a separate gate.

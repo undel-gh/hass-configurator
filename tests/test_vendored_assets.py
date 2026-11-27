@@ -84,6 +84,15 @@ class VendoredAssetsTests(unittest.TestCase):
                 self.assertEqual(router.match("GET", route + "/escape").kind,
                                  "not_found")
 
+    def test_excluded_worker_routes_not_served(self):
+        from scripts.ace_worker_profile import read_profile
+        assets = Assets()
+        router = Router(assets)
+        for name in read_profile()["excluded"]:
+            for version in (assets.version, "0" * 16):
+                route = "/assets/v%s/vendor/ace/%s" % (version, name)
+                self.assertEqual(router.match("GET", route).kind, "not_found")
+
     def test_missing_or_tampered_vendored_file_fails_at_startup(self):
         # Copy only the baseline files and manifest with one tampered resource,
         # so a mismatch is discovered before the HTTP server starts.
