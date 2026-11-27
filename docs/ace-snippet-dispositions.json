@@ -1091,7 +1091,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-review-open",
-      "remaining_review": "Five scaffolds; historical rename preserves raw blob. Original contribution and external input review.",
+      "remaining_review": "PR #3144 documents self-authored schema support and rename; 5/5 raw payload exact to current. Historical Ace BSD declaration; no explicit contribution grant/CLA receipt found. External input review remains bounded/open.",
       "exclusion_reason": null
     },
     {
@@ -2479,7 +2479,7 @@
       "additional_components": [],
       "review_priority": "elevated",
       "proposed_disposition": "retain-review-open",
-      "remaining_review": "Eleven triggers across two contributions. Review original template sources and intervening modifications.",
+      "remaining_review": "PR #4614 includes explicit use/modify/copy/redistribute grant; same contributor added 5 then finalized 11 triggers. Final raw exact to current. Candidate retain with parent Ace BSD; external input/independent review remains open.",
       "exclusion_reason": null
     },
     {
@@ -3073,7 +3073,7 @@
       ],
       "review_priority": "elevated",
       "proposed_disposition": "retain-review-open",
-      "remaining_review": "All 31 TextMate entries exactly mapped; later MIT grant on identical subtree. Earlier Daniel Lucraft rights and pre-import grant remain open.",
+      "remaining_review": "31/31 TextMate dictionaries mapped. Original Redcar Bundles 2009 TextMate permission and all 14 initial import blobs verified; 13 unchanged, class adapted, 17 additions by Butcher. MIT PR #11 approved by maintainer. Scoped notice/provenance update and independent review pending.",
       "exclusion_reason": null
     },
     {

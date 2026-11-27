@@ -624,3 +624,86 @@ Re-read the three historical Ace raw blobs listed above, including the intermedi
 Static review (not execution against SQL Server): createfn omits required parameter parentheses and a RETURN expression unless the user fills these manually; compare [CREATE FUNCTION syntax](https://learn.microsoft.com/en-us/sql/t-sql/statements/create-function-transact-sql). stuffxml prepends comma-space but removes one character, leaving a leading space; it also lacks typed XML extraction, so XML-escaped text can be returned. Compare [STUFF](https://learn.microsoft.com/en-us/sql/t-sql/functions/stuff-transact-sql) and [TYPE directive](https://learn.microsoft.com/en-us/sql/relational-databases/xml/type-directive-in-for-xml-queries). A modern STRING_AGG alternative would require SQL Server 2017 or later, so it must not silently replace older-server functionality. No SQL engine test performed.
 
 Recommended disposition: preserve SQL Server functionality, but prefer a separately approved first-party replacement of the complete small snippet module if the remaining original rights cannot be supported within a bounded effort. Keep all 12 trigger names, author original functional scaffolds from documented language syntax or explicitly adapt MIT-covered Microsoft templates with original notice, correct the two functional defects, optionally add version-labelled STRING_AGG only as a separate enhancement. Do not represent replacement bytes as the pinned upstream Ace artifact. If authorized, extend curated profile with an exact upstream exclusion, separately pin first-party replacement/provenance and package/route it offline, verify registration, expansion, no excluded upstream requests, direct/Ingress, wheel/sdist/Docker, cache identity and tamper rejection. Preserve historical Microsoft evidence; classify notice as active only for material actually used. Alternative: retain exact upstream bytes pending an explicit independent rights review and maintainer acceptance; do not infer clearance from generic BSD or short syntax alone. No replacement, additional exclusion or rights outreach approved/performed in this assessment. SQL Server remains retained/review-open with existing attribution. No change to Vala, Robot or GraphQLSchema decisions; no merge, issue closure or public release acceptance.
+
+## R5.3 follow-up — GraphQLSchema, Robot Framework and original Vala bundle
+
+Baseline `336b2e2c6b77730619d0d4927fc6cbbc11043668`: offline #404 (46082144684), rehearsal #61 (46082144708), research #46 (46082144682) all SUCCESS. Downloaded all five artifact ZIPs, verified CRC and published SHA256 (15237805591 E2E/installed, 15237387935 source, 15236784993 rehearsal, 15237348165 rebuild, 15236998603 native). Actual JSON: 55 BOM components, 46 embedded records, 68 notices, 4 literal + 43 transformed relations, 573 application resources per wheel/sdist/Docker variant, 473 retained Ace assets, 16 excluded snippet paths, 10 layers/481 JS/zero prohibited hits, zero recorded runtime attempts, five retained workers exact rebuild. Native report confirms retained static source/minified/unminified payload equality for GraphQLSchema (539 decoded bytes), Robot (1506), Vala (3311) and SQL Server (2073); existing TextMate gate verifies both collections (Io 10, Vala 31). Scope is technical/artifact evidence, not independent license clearance or real HAOS acceptance.
+
+### GraphQLSchema — original contribution evidence
+
+[Ace PR #3144](https://github.com/ajaxorg/ace/pull/3144), DxCx, merged 2017-05-16. Read description, issue/inline comments and commit list. Contributor describes adding schema highlighting/snippets and discusses snippet looping and naming; says they added server-schema support themselves. Maintainer references language-graphql only in a highlighting comparison, not as an identified snippet source. No explicit contribution grant or CLA receipt in reviewed public discussion. This supports original-contribution assessment, not a legal proof of ownership or absence of external inputs.
+
+- Introduction [f5a98d4f](https://github.com/ajaxorg/ace/blob/f5a98d4f87751e77eb0ac27bcfdd6dae2bf985b6/lib/ace/snippets/graphqlscheme.snippets), rename parent `cd9b91b07cd38e5f21d5b4ce3f3801367ab3300b` and [4cfeb90e](https://github.com/ajaxorg/ace/blob/4cfeb90e96b0fedb5e5b345b33e6f92830685dd5/lib/ace/snippets/graphqlschema.snippets) have the same raw blob `32c6286c42d1b728bbd50840b177d8d9d7e73030`. Rename author is the same contributor. Both inspected contribution endpoints have root BSD-3-Clause blob `4760be2a6220cf545129b233e20574f2a7bb630e`.
+- All five triggers (type, input, interface, union, enum) are small conventional SDL scaffolds. Raw text exactly equals current static template literal (restricted escape decoding, no execution), current source blob `5fa4ce4f53dd90c0cd4c9f01cacc45cca1e91739`. No new external source identity established by targeted placeholder search. Do not infer the license of another language bundle or GraphQL implementation for this payload.
+
+Recommendation: retain original bytes as a native Ace contribution candidate under the parent BSD declaration; independent contribution/source rights review still open. No extra package/version/PURL or notice inferred. No separate outreach required at this research stage.
+
+### Robot Framework — explicit contribution grant
+
+[Ace PR #4614](https://github.com/ajaxorg/ace/pull/4614), SullyJHF, merged 2022-06-27. PR description explicitly confirms permission to use, modify, copy and redistribute the contribution under terms of the recipient's choice. Read comments and commits; the contributor specifically discusses adding snippets, then correcting indentation following maintainer advice. The two snippet commits are by the PR author.
+
+| Snapshot | Raw Git blob | Triggers |
+| --- | --- | ---: |
+| [5d7cf109](https://github.com/ajaxorg/ace/blob/5d7cf10916e671bd7f81427be622c641c01fc36e/lib/ace/snippets/robot.snippets) | `fe5c23a7404ac19d3ccceb12ec435746663ed4d6` | 5 |
+| [e91705e4](https://github.com/ajaxorg/ace/blob/e91705e41cb32deab6d827386b1c3905d4e007c2/lib/ace/snippets/robot.snippets) | `2cb13946ec15c85866c414dcb9b53119d3a56ee9` | 11 |
+| PR final `843c017298270f401060486b82644eba3561a5c2` | `2cb13946ec15c85866c414dcb9b53119d3a56ee9` | 11 |
+
+Both contribution endpoints retain root BSD blob `4760be2a6220cf545129b233e20574f2a7bb630e`. Final raw exactly equals current static template literal (restricted escape decoding, no execution), source blob `41d3316b49a64bbb812a5c63e5f0bb7b86bf8956`. Four section templates, two testcase/keyword templates and five control-flow templates. The grant directly concerns the actual contribution, including the snippet changes in this PR, rather than a generic repository-license inference. No independently identified third-party input established by the targeted review; it does not grant rights the contributor did not hold. No evidence that a Robot Framework package or its documentation was incorporated as a separate library. Recommendation: retain unchanged under parent Ace BSD with explicit PR grant evidence, pending independent review. No new package, license assignment or outreach.
+
+### Vala — original permissive grant recovered
+
+The earlier research stopped at Matt Butcher's MIT LICENSE addition in 2014 and an unresolved Daniel Lucraft source. The original linked 2008 blog URL is inaccessible, but the earlier repository has now been located in [danlucraft/redcar-bundles](https://github.com/danlucraft/redcar-bundles), described as TextMate bundles ported to Redcar.
+
+- [Initial snapshot 21ff196d](https://github.com/danlucraft/redcar-bundles/tree/21ff196d839c2793c83db9df08160ab1852e07fc/Bundles/Vala.tmbundle), 2009-02-13, Daniel Lucraft. Complete recursive tree, 14 original snippet files; Snippets tree `b204825ca15eb75dade9a06d805f0643c03d309b` exactly equals the initial Matt Butcher import [6ea1cc18](https://github.com/technosophos/Vala-TMBundle/tree/6ea1cc187c3e1be58ac05624b735b81c0e2dd6f2/Snippets), 2010-11-12.
+- [2010 snapshot 594eb0c2](https://github.com/danlucraft/redcar-bundles/tree/594eb0c20836d563ea4d31fac06b5218c8e83d08/Bundles/Vala.tmbundle/Snippets) (2010-07-27, filename sanitization) preserves all 14 Git blobs, tree `027dc8ce2321dd7f78bbe431968f29cacccfdf25`. Both precede Butcher's import.
+- Root [LICENSE at 2009 snapshot](https://github.com/danlucraft/redcar-bundles/blob/21ff196d839c2793c83db9df08160ab1852e07fc/LICENSE) and [2010 snapshot](https://github.com/danlucraft/redcar-bundles/blob/594eb0c20836d563ea4d31fac06b5218c8e83d08/LICENSE) have identical blob `4446030e4815a6abda7152a72dabc028ff7e042f`. It grants copying, use, modification, sale and distribution of repository files unless a file-specific exception applies. The historical license mentions the Macromates SVN bundle repository; scope assessment is based on this exact text in Lucraft's repository containing Vala, not on the TextMate editor's GPL license. All 14 original plist files individually read; no copyright/license markers identified; complete Vala bundle tree has no accompanying license/copyright exception files. This is affirmative permissive historical evidence, not an assignment of authorship of each conventional construct.
+- Independent cross-check: [danlucraft/redcar 39ac44c6](https://github.com/danlucraft/redcar/tree/39ac44c6feb3c791f34b04207ea9614381719495/assets/textmate/Bundles/Vala.tmbundle/Snippets), 2012-03-27, has the same sanitized 14-file tree. Redcar application's root GPLv2/alternative terms (`1a302a9fe49313f28840c66dc0c9f32a2bc5e590`) are a distinct repository context; the earlier redcar-bundles explicit grant is the scoped source for the snippets. Do not classify the snippets as GPL based on later editor aggregation.
+
+Original 2009 plist filename and exact shared blob (all 14):
+
+| Name (.plist) | Git blob | Final bundle |
+| --- | --- | --- |
+| Console.WriteLine (writeline) | `d7828633f15704389c7027eff003dc88e37072de` | unchanged |
+| case | `818d8e9586479c0e981866c547e07664dc5261d3` | unchanged |
+| class | `0e1e95593a44be52975074a6acb388b779ed3916` | adapted |
+| do while | `9dd440145033f6fc0a5ac2a62a4f33ddbfe4547a` | unchanged |
+| else if (elseif) | `a637fbb794e3ae72b872bb2297ac748c3d1291e3` | unchanged |
+| else | `0fb763415925f90fcd870c8947ea094dc5d2eb14` | unchanged |
+| for | `e26a938aff3e8f48e486fd9a54b8ae86a95d6c18` | unchanged |
+| foreach | `5d0254b6fc3773ebf0427ec0008d44e45ea1fc42` | unchanged |
+| if | `fb5a269903b238fc14ddeca5807b1b658a9a328d` | unchanged |
+| namespace (ns) | `2682216c02b2a77f892f7d0d74cca2a7f903b075` | unchanged |
+| property (prop) | `572447dc0595f4b3c0c97e63e0405c96110711e6` | unchanged |
+| read-only property (roprop) | `333d5fb20dee592811fd246098fd326e9a6d3a68` | unchanged |
+| switch | `b44baff8fc7fcec7537521b6ed03a4ee86a12846` | unchanged |
+| while | `eb784d1a64de35902ae8466baafe17acc7d88128` | unchanged |
+
+#### Butcher contribution and MIT grant scope
+
+[cfca3a64](https://github.com/technosophos/Vala-TMBundle/commit/cfca3a64285c76857147947139fd31cc2691d68a), 2010-11-17, adds 17 tmSnippet files and modifies class.plist to include documentation, inheritance and a constructor; new class blob `bafc69bdcab709bffebcb9d93f9687133363e92f`. Tree `67aba7ae0bcbbcdffaaf3b8e9bf1e5dbe1c403cd`. [af55cfc7](https://github.com/technosophos/Vala-TMBundle/commit/af55cfc7c0b034c9e032d6a14720deee9fa70cfe), 2010-12-08, changes only printf in the Snippets tree (semicolon and trailing newline), final blob `274ee7a3a2347aa18142590228615a595c5af679`, tree `4d4f64ac0d43f93472416d79d20ba1177489df00`. [0f40b5d0](https://github.com/technosophos/Vala-TMBundle/commit/0f40b5d0da80444124ee9ac039c3b1163647f84c), Matt Farina, 2011-07-27, renames 14 plist extensions to tmSnippet; all 31 normalized filename/blob pairs unchanged. Resulting tree `2506df0b1ff0b4b3d360c1c74d829d0457e44d31` identical at 2013 pre-Ace snapshot and 2014 MIT addition. The 17 added source blob pins (before printf fix):
+
+| Name (.tmSnippet) | Git blob |
+| --- | --- |
+| Comment (multiline) | `1f58883393206674f86d8eced7e1225876b46398` |
+| DBus annotation | `e8f6e1c54bd760612a9c8fba4bad1d2bdced3f29` |
+| DocBlock | `d00916a9d4fa1d7f44b947318f146655e9c24fef` |
+| Gee_ArrayList | `d67415cbdc1c243d235601356145ce52e5dcf326` |
+| Gee_HashMap | `e96031b7ab04d5afefd0b1467b7894cfcbf38cd7` |
+| Gee_HashSet | `6b3b6806665841cd03255ddfd17a4fc9a7acfc37` |
+| Main function | `bd86c7e4ca31823ce41e6fa46945911d0d2d51ca` |
+| String template (@) | `6e488970ee80ecdf6829d50cfc032dc063433e00` |
+| Verbatim string (""") | `c3afa7bfd0d7dc71abd5341cd5e620c8104e7a75` |
+| closure | `e63ee79c17f2c963f3cd5791e1515b1302649ef0` |
+| delegate | `7e79b111ca44585948fc1eb5be7ba9af4cb7cf23` |
+| enum | `5b1f36bc90d9f31c5e427222db2749b1601897d5` |
+| error domain | `730dd21376c574b72a93d0e14e2257152675c66d` |
+| interface | `e7cf218c5415533d0153640e9e3841a06600770f` |
+| printf | `6d5f571eec42288a6a7e572e718e498f37c5bb36` |
+| struct | `3ed0b3ffff5fc71895f07c023b321e8946aeb225` |
+| try:catch | `610ede504a37d18f9f9a9f3ac5f9524002db72` |
+
+[Ace PR #1988](https://github.com/ajaxorg/ace/pull/1988) imported Vala mode in June 2014; existing exact 31-dictionary source-to-current Ace gate remains. Crucially, [Vala-TMBundle PR #11](https://github.com/technosophos/Vala-TMBundle/pull/11) documents GitHub's request for a license for reuse in its syntax highlighter. Adam Roben proposed the MIT text, and Matt Butcher (technosophos) explicitly thanked the contributor for making licensing clear and merged the PR on 2014-11-14 (merge commit `9d0f29c636a623c8f2ba2d4968b47107afae5e95`, LICENSE addition `2fd9373f90bf74eef0b15f43c7240c28d55bebaa`). This is maintainer-approved MIT evidence for the identical 31-file tree, including the 17 additions and class/printf modifications. The earlier repository grant independently addresses inherited material. The dates do not show an MIT grant at Ace import; the later grant supports present/future distribution of the licensed material. No inference about past distribution, other external inputs, or Vala grammar rights.
+
+Recommendation: retain the original 31 snippets, and promote the scoped 2009 Redcar Bundles permission into active attribution in a separate reviewed increment. Preserve original LICENSE verbatim, use source-specific LicenseRef-TextMate-Bundle (already used for Io, not necessarily identical license bytes), retain existing Vala MIT notice and the 31-dictionary gate. Record 14 inherited input pairs, 13 final exact matches plus the class delta, 17 added templates and printf delta; enforce exact historical source/notice pins and path closure (no broad URL allowlist expansion). Do not assert that the whole Vala mode or unrelated Redcar libraries are licensed under these terms. The discovered evidence materially reduces earlier-rights uncertainty, pending scoped attribution implementation and independent review.
+
+Research-only disposition: preserve all three original shipped assets and SQL Server unchanged; no exclusions, replacement, contributor outreach, runtime/vendor/profile or active notices/SBOM changes. Canonical matrix remaining-review text updated; evidence classes and review-open states unchanged. No independent approval, issue closure, merge, P1/AT-12 or public release signoff.
