@@ -115,3 +115,118 @@ profile changes are authorized by this document. No issue or release gate
 is closed. The baseline CI and supplied Round 6 approvals do not transfer
 to this documentation commit. Correction-HEAD artifact content inspection
 remains separately open.
+
+
+## R5.3a follow-up — SnipMate historical source and current payload comparison
+
+Research baseline `4861322a331812b98f0606f8ed4eff5173491e57`. This section supersedes initial
+name-only leads for the investigated group; earlier observations are
+retained as historical evidence.
+
+### Immutable historical match
+
+Ace import [d16daddc5ea91e578fafde6c9c17b41cdb036579](https://github.com/ajaxorg/ace/commit/d16daddc5ea91e578fafde6c9c17b41cdb036579)
+(2013-03-17, add snipmate snippets) contains 31 relevant historical files
+under `lib/ace/snippets/*.snippets`: 28 same-basename leads plus c, cpp
+and make. GitHub contents API comparisons gave 27/31 matching blob IDs
+at [honza/vim-snippets 91f24bd88b9aaf040eeea78024e1e2d786219a2b](https://github.com/honza/vim-snippets/tree/91f24bd88b9aaf040eeea78024e1e2d786219a2b)
+(2013-03-15). Line comparison found two changed HTML lines, JavaScript
+loop/object-template edits, four added Python property lines, and
+Ruby additions and a spacing change.
+
+All **31/31** historical blob IDs match [honza/vim-snippets 02593f7d57b4944bd857e0aeacfcd5410c0e81f2](https://github.com/honza/vim-snippets/tree/02593f7d57b4944bd857e0aeacfcd5410c0e81f2)
+(2013-01-17), paths `snippets/<name>.snippets`. The four previously
+different blobs also match snapshot `6c1721a78b79067f2ec21ea1021a3bf4c4ce1e4e`
+(2012-12-21; only those four checked there). These are content-matching
+snapshots, not proof of a unique checkout or direct copying event.
+No complete import-directory closure is claimed.
+
+### Historical license evidence
+
+Files fetched at the January matching snapshot:
+
+| File | Git blob |
+| --- | --- |
+| [LICENSE](https://github.com/honza/vim-snippets/blob/02593f7d57b4944bd857e0aeacfcd5410c0e81f2/LICENSE) | `495ced27810b679dad1c75375e48db9ae9c9c9aa` |
+| [AUTHORS](https://github.com/honza/vim-snippets/blob/02593f7d57b4944bd857e0aeacfcd5410c0e81f2/AUTHORS) | `1261dc82ddfea218e2a61077fb4ed0d64b42c2bb` |
+| [README.md](https://github.com/honza/vim-snippets/blob/02593f7d57b4944bd857e0aeacfcd5410c0e81f2/README.md) | `a242eca196cc56c47121319f1a815f6754d78181` |
+
+LICENSE contains MIT terms and the literal copyright line
+`Copyright (c) 2011 see AUTHORS`. README explicitly declares MIT
+for the snippets collection. Preserve both original LICENSE and
+AUTHORS when promoting the notice; do not substitute a generic MIT
+template or the plugin license. This establishes the historical
+collection's declaration, not independent clearance of all earlier
+third-party contributions.
+
+### Import-to-current static payload comparison
+
+Fetch historical Ace raw snippets and current payload modules at the
+pinned Ace source commit above. Require a single complete
+module.exports template-literal assignment; reject unescaped interpolation
+and unknown escapes; decode only escaped backslash, backtick, dollar,
+n/r/t and two-digit xHH. No JS execution, trimming or whitespace
+normalization for equality. This was interactive research, not an
+automated repository gate. For differences, old/new/LCS counts are
+exact-line longest common subsequence lengths using LF splitting,
+including final empty lines; they are similarity evidence only.
+
+| Historical basename | Shared January / import blob | Current asset | Import-to-current comparison |
+| --- | --- | --- | --- |
+| actionscript | `af9611c3f6deb8a640817b1739822c52b32aff9b` | actionscript | Exact decoded text |
+| clojure | `e247debf68403a3adbb7258033123ac04363c278` | clojure | Exact decoded text |
+| coffee | `83b77ebab2e56351e9d5581f741a21734aaed3ec` | coffee | Exact decoded text |
+| css | `72212d2d8dde088fda8e6ec2f75373e9cba11259` | css | Exact decoded text |
+| dart | `6f0b8ac5e5ba87851513a3f9dd2b808e2e70ad81` | dart | Different; old / new / LCS lines 83 / 84 / 76 |
+| diff | `7ba288ded0c8e8aefb16d73560ec7da102c7486b` | diff | Exact decoded text |
+| django | `8296cce25dfd071313a1b5bd8a76d7293be867b8` | django | Exact decoded text |
+| erlang | `acc6fd195eebf7ab6d99fe3ff7a23bfeb461e4b0` | erlang | Exact decoded text |
+| haml | `61e9cf28779936f1acb9acdd0dabae6d07ce6042` | haml | Exact decoded text |
+| haskell | `bcda8a5b4974c2de4037ddb18ad05ef04a5340a0` | haskell | Exact decoded text |
+| html | `0f75efd08a2c7917bc9b880a7952de97479fb3ec` | html | Different; old / new / LCS lines 829 / 854 / 824 |
+| java | `854f14ac22f148309d4f9ec450fda38244ede6ec` | java | Exact decoded text |
+| javascript | `fc845fa02198562dda841591126d2eb107fd2ae8` | javascript | Different; old / new / LCS lines 157 / 196 / 121 |
+| jsp | `a5239f5eb13c3bd7fa0c7b6b9c4873ab6a539399` | jsp | Exact decoded text |
+| lua | `34ae25eb6ae64b914b8ce0b3bce3c82c08d65ef2` | lua | Exact decoded text |
+| markdown | `e4efd3c2d014fe8a9b6ba92fd08e1483aea5d1c3` | markdown | Different; old / new / LCS lines 88 / 89 / 83 |
+| perl | `9cebedeacf033a78d8b3fab3ee4e16033b4efc7d` | perl | Exact decoded text |
+| php | `e861a5be96827edc8a2182d76d864b5b4a8a6b60` | php | Different; old / new / LCS lines 378 / 384 / 337 |
+| python | `dd2e8123dcc8db911c92a260a771f2116146ff57` | python | Different; old / new / LCS lines 159 / 159 / 156 |
+| r | `71186e35b47f2aa8d46071d89ab9ffcfc727a888` | r | Different; old / new / LCS lines 122 / 122 / 117 |
+| rst | `97845de3f0f6d140b670e606e9cbea20901ff2d2` | rst | Exact decoded text |
+| ruby | `0500aaa13d52594f671f85eba5765eccd1c7d0a9` | ruby | Exact decoded text |
+| sh | `9a48eb514c5306d2fa7223a0e45703381d7b69bd` | sh | Different; old / new / LCS lines 84 / 84 / 83 |
+| snippets | `4223fa3943bc1438622fbd28b94cb3dcc1eab520` | snippets | Exact decoded text |
+| sql | `eb4b37caf1cd65c7218c05f22fac3b6063244d94` | sql | Exact decoded text |
+| tcl | `1fe1cb960eb2f2c83c879bd24d5eada9b8c6501c` | tcl | Exact decoded text |
+| tex | `10fa82eff7ac04fb9114ecfd4319f0e6ea8f3037` | tex | Exact decoded text |
+| textile | `c78d6ec81b5252c92c3646f3d563cea702ccf953` | textile | Exact decoded text |
+| c | `c476de4abf842c2490ae6842c35d32563c71f8f6` | c_cpp (candidate only) | Not equal; old / new / LCS lines 236 / 132 / 12; no separate C attribution inferred |
+| cpp | `c3e19fe9370f0d0f80f89a5334719d4664225b59` | c_cpp | Exact decoded text |
+| make | `43648136382429fc97d61964c9dceaf63fd7d1ea` | makefile | Exact decoded text |
+
+**22/30** current assets match historical raw snippet text exactly:
+20 same-basename assets plus c_cpp from cpp and makefile from make.
+The original C payload is not an exact match; do not describe c_cpp
+as the merged C and C++ payload. The other 8/30 current candidates
+differ with substantial line overlap; intervening edits and additional
+rights/notices remain open. For the other 22 of 52 nonempty assets,
+this comparison establishes no SnipMate relation.
+
+Proposed disposition for independent review: historical collection MIT
+attribution supported for 22 exact current payloads; investigate the
+eight modified descendants and retain applicable historical attribution
+after edit-history review. No blanket MIT assignment to Ace wrappers
+or all 52 snippets, exact source version, PURL, automated provenance
+gate, final license clearance or merge approval. Wrapper and external
+origin checks remain open; final notice/inventory promotion belongs to
+R5.3d–f. No shipped files, SBOM, notices or curated profile changed.
+
+### Baseline verification
+
+At `4861322a331812b98f0606f8ed4eff5173491e57` GitHub workflow metadata confirmed all three runs
+completed successfully: Offline foundation 46061855401, migration
+rehearsal 46061855442, retained/native research 46061855452. Job logs,
+ZIP content and independent review were not checked in this increment.
+Results do not transfer to the follow-up commit; 684ffe9 artifact
+content review remains separately OPEN.
