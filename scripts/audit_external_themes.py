@@ -329,6 +329,105 @@ def grouped_textmate(source, fetch, source_file):
                             "Historical companion directories and upstream ports require individual review."]}
 
 
+
+# Historical license declarations on complete Ace theme implementations.
+# Keep the original misspelling in the 2010 paths.
+HEADER_PARENT = "b32d86fd609be6e625ce6fad4e759f55e600e23d"
+HEADER_COMMIT = "bb6854aeeb62efd0a5bf084175c170b100bcaa3c"
+SPLIT_PARENT = "0e6bf2bd822015eeaa26d9133c2de199c59fbfdf"
+SPLIT_COMMIT = "8a3e7b0f00e7cf7e0f10e693f0502a3da6920576"
+BSD_COMMIT = "16b2f1c9cff5cc01385fcde4ad9eaac0e77e670c"
+# name, pre-header JS, licensed JS, pre-split JS, split CSS, split JS, BSD JS
+HISTORIC_THEME_LICENSES = (
+    ("clouds", "f0f266319c1ed5c2649afe6db09397c1cd0e370a", "5af60b1c6f488c54f200ae80596d81479d3482e0", "2b31c1b268f21e964de5defd784a5f633a9671de", "e666fa8b4446bbd9b3cae0381698dcf612919043", "cc8bafce375a07f4c0964eca598b9ddd79aaf980", "05e8e7199ae96e89c8f7d339c39994c20f6c5519"),
+    ("clouds_midnight", "4b51d3f0fde20953b60aff740b600af9af60eefe", "130af6f44a7df0edd9073694ba8a7d28a89e06be", "6d5899db8a15ad9b6ad622c625f9a42ec8a3ec96", "0a9f338214df03799f93776725ffa540bbe5c310", "5ce5dbf0a59591c87ac89ec7b5922d20613e1127", "df4340434ae7279d095ebdb2a27acf13bead2340"),
+    ("cobalt", "3e16fbbb03b6540b238a914a970daec2d261a5f1", "13e95a90e2aaf848e26663d1e21559a997ab6a23", "80b92df8c67d4fbf2312f107dbaedb7f5298e40f", "fc4c8118fb7d087aa452c144e2ea04db7417e92f", "f88f10dff9a803c6d8cee36970e2c4942dfd100d", "de0bfff7c0adc3f46824aa39e307cc635fc1eb70"),
+    ("dawn", "72b57968d42777dcb7b04155bb4936aea95735c6", "638ad9c4845e0afe7074e05985256aa237fbe17f", "ff5d4c6bb875b1ac76d401f28313618d496615a3", "86fe47dd20cbef142fc2d6a7603e9935c837d963", "f8f3b181468a6d5505cdcab7fa9d51c57fce993c", "4e85d1e93774c6faa9316bba6856c7c9ec34e7c5"),
+    ("eclipse", "c25a60124153196ccb8851086b2ad6c4f8b4c13f", "9a03f9e900de5ff4e3b88d3e1cf68b98bc67d097", "dd30655c27c175477bb0901256748f037c3b6578", "c39a8470aed38b147838717337b9f3e85b4fb33c", "25eaf27b3279636978ad1449e36283f61e1e73b2", "aabeeab23d814b5add173762742ba35db8a77f67"),
+    ("idle_fingers", "0c02b12f530156b0d41ba5d2fe8d7d1f7d054280", "a236413bf672929f742ac440af892b31164199ad", "11afc31ab8a2042b02dd9ec20d3039985f07ee26", "a7737f6de359db744a9323fd178a26fea5f82a86", "e8606835db54a2653d1556ceaf2c9e5a4f0f890a", "251d6e631c4a50369eef718cbdb6046b078dbca6"),
+    ("kr_theme", "2aa26bdee6ac9213d328dd119dd4694d5f114683", "07ddfb0c8a71d93d4c63cb01c9ef4a07f8f10476", "a12b6ab935a46a217c53484ae42b0badca90467a", "57ad4be1b888bf6702f94e85415f217f51fa7006", "2c3d667211ada8d76004df62616a3b2b9b188e68", "da7dd1d3925723b7a3c67d789f551736eefe4060"),
+    ("mono_industrial", "c58fc1c29c5d7f2e96578f252ae31c56f2015c16", "d9ac5845baf8b2e5a6715dcf79fb1c8e13980b1e", "3e1e5510f798817e3b89243285813151e208eac3", "3eaf1cae368bb0a6a02f2eaeef0ba09f7a556dd3", "d967b2e46430f2eed8b24b49ff8cf01e76810f5b", "d17f39f2bf4f118d7b4d20fbced2eb45f194a041"),
+    ("monokai", "e410b51c2b6d747bc6682617a2a2209df25bd206", "5bb1f5f5e43983e1dcc7679c41258fab9d219d43", "346554c48c73169c52f611b34cdb786e9de33ce7", "36b0a23c06d433eb3a4b9f36a3b0e26f3d42c1c7", "4b9062484be170deffec995b3f9a9fe404dc0265", "b41141b005bd44394b082b51d6771353f2fe5abd"),
+    ("textmate", "5ffd3523d803e052e7b2afad2db028c70af27c94", "30689c8397d9a88a82da47a29da2bc1eb041cf04", "a7d028c967830813754c4ce390358bc394a1a925", "dafb9fa1e93eb577e071460f6804ba7f125628ac", "cd83f116c08d3ec5a51ef540c5042477f1f0a01a", "47bbae0b57a75e31a0dc22773e519e56e79b7afc"),
+    ("twilight", "1455257a32a27cb2b4b957ae9e3bb39f61e445a1", "74e3ff90b6f54eb4e4c8180bb7b80caca6aa8ce4", "e6b09b540b76a11c423508e8934606374f4769a3", "a9637b09fc2aa8218e667dd9ddff743def863f11", "b497826fe5d0c3a9150045a400de6139a0a1d0c7", "766ba9b33846b248fbff79dba37e3e25c91dfbf6"),
+)
+
+
+def historic_header(raw, marker):
+    start = b"/* ***** BEGIN LICENSE BLOCK *****"
+    end = b"***** END LICENSE BLOCK ***** */\n\n"
+    if not raw.startswith(start) or raw.count(end) != 1:
+        raise ValueError("Unexpected historical theme header boundary")
+    header, body = raw.split(end, 1)
+    if marker not in header or not body.startswith(b"define("):
+        raise ValueError("Unexpected historical theme license or body")
+    return header + end, body
+
+
+def split_css_source(raw):
+    # This is a physical source-text relation, not a JS string decoder.
+    # Only the observed backslash/LF continuation is accepted.
+    prefix = b'exports.cssText = "'
+    if raw.count(prefix) != 1:
+        raise ValueError("Expected unique historical CSS assignment")
+    tail = raw.split(prefix, 1)[1]
+    if tail.count(b'";') != 1:
+        raise ValueError("Unexpected historical CSS literal terminator")
+    literal = tail.split(b'";', 1)[0]
+    restored = literal.replace(b"\\\n", b"\n")
+    if b"\\" in restored or b'"' in restored or b"\r" in restored:
+        raise ValueError("Unexpected historical CSS escape")
+    return restored
+
+
+def historic_license_research(fetch, source, source_file):
+    old_marker = b"Version: MPL 1.1/GPL 2.0/LGPL 2.1"
+    bsd_marker = b"Distributed under the BSD license:"
+    rows = []
+    def pin(revision, name, blob, ext="js"):
+        return reference("ajaxorg/ace", revision,
+                         "lib/ace/theme/" + name + "." + ext, blob, fetch)
+    for name, old_blob, header_blob, pre_split_blob, css_blob, split_blob, bsd_blob in HISTORIC_THEME_LICENSES:
+        early = "clouds_mignight" if name == "clouds_midnight" else name
+        old, old_pin = pin(HEADER_PARENT, early, old_blob)
+        licensed, header_pin = pin(HEADER_COMMIT, early, header_blob)
+        header, body = historic_header(licensed, old_marker)
+        if body != old:
+            raise ValueError("Historical header-only relation failed: " + name)
+        inline = b'var cssText = "' in body
+        if inline != (name not in {"eclipse", "textmate"}):
+            raise ValueError("Historical inline CSS scope drift: " + name)
+        pre_split, pre_split_pin = pin(SPLIT_PARENT, name, pre_split_blob)
+        _, pre_split_body = historic_header(pre_split, old_marker)
+        css, css_pin = pin(SPLIT_COMMIT, name, css_blob, "css")
+        if split_css_source(pre_split_body) != css:
+            raise ValueError("Historical CSS extraction differs: " + name)
+        wrapper, split_pin = pin(SPLIT_COMMIT, name, split_blob)
+        _, wrapper_body = historic_header(wrapper, old_marker)
+        if ("./" + name + ".css").encode() not in wrapper_body:
+            raise ValueError("Historical CSS wrapper reference differs: " + name)
+        bsd, bsd_pin = pin(BSD_COMMIT, name, bsd_blob)
+        _, bsd_body = historic_header(bsd, bsd_marker)
+        if bsd_body != wrapper_body:
+            raise ValueError("BSD wrapper body differs: " + name)
+        rows.append({"theme": name, "pre_header": old_pin, "licensed_2010": header_pin,
+                     "header_only": True, "inline_css_2010": inline,
+                     "licensed_before_split": pre_split_pin, "split_css": css_pin,
+                     "split_wrapper": split_pin, "bsd_wrapper": bsd_pin,
+                     "css_source_transfer_exact": True, "bsd_wrapper_body_equal": True,
+                     "disposition": "excluded-reassessment-open" if name == "kr_theme" else "retained-review-open"})
+    root, root_pin = reference("ajaxorg/ace", BSD_COMMIT, "LICENSE",
+                               "4760be2a6220cf545129b233e20574f2a7bb630e", fetch)
+    current, _ = source_file(source, "LICENSE")
+    if root != current:
+        raise ValueError("Historical BSD root license differs from current")
+    return {"themes": rows, "bsd_root_license": root_pin,
+            "limitations": ["Header declarations do not prove authority over third-party inputs.",
+                            "CSS transfer is source-text equality, not runtime JS decoding.",
+                            "Later changes and original-input license exceptions remain separate.",
+                            "krTheme remains physically excluded; reassessment is not restoration."]}
+
+
 def research(source, work, fetch, source_file):
     licenses = {}
     for family, pin in LICENSES.items():
@@ -354,5 +453,6 @@ def research(source, work, fetch, source_file):
     return {"licenses": licenses, "themes": rows,
             "historical_textmate": historical_textmate(source, fetch, source_file),
             "grouped_textmate": grouped_textmate(source, fetch, source_file),
+            "historical_ace_theme_licenses": historic_license_research(fetch, source, source_file),
             "limitations": ["Pinned reference identity and comparisons are not historical lineage or license clearance.",
                             "Differences are evidence, not failures; pin drift fails closed."]}

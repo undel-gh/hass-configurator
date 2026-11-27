@@ -626,3 +626,45 @@ source references now pinned in the review record; no new notice
 or license assignment. These pins are evidence of file identity,
 not an automated CSS lineage relation. No runtime change or license
 clearance. New exact-HEAD verification pending.
+
+## R5.2g historical Ace theme implementation licensing
+
+Baseline f9acca2226629f376b2c8720b83305fe8cfbe03c all three workflows
+SUCCESS (46039596207, 46039596336, 46039596209); artifacts not reviewed.
+Maintainer identified upstream bb6854ae (2010-11-18 Joe Walker),
+adding missing license headers. Full source comparisons against parent
+b32d86fd confirm all 11 bodies unchanged; each patch adds 37 lines,
+removes none. Identical MPL 1.1/GPL 2.0/LGPL 2.1 header names Ajax.org
+Services B.V. and contributor Fabian Jakobs. Nine contain inline CSS;
+Eclipse and TextMate still load separate CSS in this snapshot. Original
+Clouds Midnight path is clouds_mignight.js, not a typo in evidence.
+
+At 0e6bf2bd immediately before 8a3e7b0f (2012-05-11), all eleven
+have inline CSS and the historical tri-license header. Extracted
+physical string source (remove assignment and literal delimiters,
+replace backslash-LF with LF, no other escape transformations)
+matches full new CSS file bytes for 11/11 themes. This is not decoded
+JS runtime string equality. BSD headers added at 8b971619 (2012-09-06)
+and merged at 16b2f1c9 (PR #917). All eleven wrapper paths in merge
+tree have expected BSD blobs; root LICENSE blob
+4760be2a6220cf545129b233e20574f2a7bb630e is the current pinned Ace
+license. Split wrappers have same blobs at pre-BSD parent c0b23a78;
+CSS had further edits between May and September, not claimed unchanged
+through all history. New research gate pins six snapshots per theme
+and root LICENSE, checks header-only bodies, early inline scope,
+exact CSS source-text transfer, wrapper reference and BSD wrapper
+body equality, and root license identity. Added positive/negative
+unit tests; new CI pending, no local test claim.
+
+Disposition reassessment: Monokai remains retained/review-open; do not
+treat absence of separate original palette permission as proof of a
+license violation or proof a separate grant is needed. krTheme remains
+physically excluded under approved #37 policy, with reassessment-open.
+Historical Ace license declarations strengthen the evidence for its
+implementation, but do not by themselves establish permission over
+Kenneth Reitz's original material. Explicit original copyright evidence
+remains in the record; no permission inferred, no restoration authorized.
+Compare the actual original input and its derivatives, identify whether
+material requiring separate permission is present, and seek independent
+review before changing disposition. No new shipped notices, SBOM
+components or runtime changes; original input lineage remains open.

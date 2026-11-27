@@ -498,6 +498,61 @@
           "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/theme/textmate.js",
           "git_blob": "37285fefd30300d9105ade6e79dac5796e1deb8e",
           "marker": "ace-tm"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/bb6854aeeb62efd0a5bf084175c170b100bcaa3c/lib/ace/theme/clouds.js",
+          "git_blob": "5af60b1c6f488c54f200ae80596d81479d3482e0",
+          "marker": "Version: MPL 1.1/GPL 2.0/LGPL 2.1"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/bb6854aeeb62efd0a5bf084175c170b100bcaa3c/lib/ace/theme/clouds_mignight.js",
+          "git_blob": "130af6f44a7df0edd9073694ba8a7d28a89e06be",
+          "marker": "Version: MPL 1.1/GPL 2.0/LGPL 2.1"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/bb6854aeeb62efd0a5bf084175c170b100bcaa3c/lib/ace/theme/cobalt.js",
+          "git_blob": "13e95a90e2aaf848e26663d1e21559a997ab6a23",
+          "marker": "Version: MPL 1.1/GPL 2.0/LGPL 2.1"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/bb6854aeeb62efd0a5bf084175c170b100bcaa3c/lib/ace/theme/dawn.js",
+          "git_blob": "638ad9c4845e0afe7074e05985256aa237fbe17f",
+          "marker": "Version: MPL 1.1/GPL 2.0/LGPL 2.1"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/bb6854aeeb62efd0a5bf084175c170b100bcaa3c/lib/ace/theme/eclipse.js",
+          "git_blob": "9a03f9e900de5ff4e3b88d3e1cf68b98bc67d097",
+          "marker": "Version: MPL 1.1/GPL 2.0/LGPL 2.1"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/bb6854aeeb62efd0a5bf084175c170b100bcaa3c/lib/ace/theme/idle_fingers.js",
+          "git_blob": "a236413bf672929f742ac440af892b31164199ad",
+          "marker": "Version: MPL 1.1/GPL 2.0/LGPL 2.1"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/bb6854aeeb62efd0a5bf084175c170b100bcaa3c/lib/ace/theme/kr_theme.js",
+          "git_blob": "07ddfb0c8a71d93d4c63cb01c9ef4a07f8f10476",
+          "marker": "Version: MPL 1.1/GPL 2.0/LGPL 2.1"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/bb6854aeeb62efd0a5bf084175c170b100bcaa3c/lib/ace/theme/mono_industrial.js",
+          "git_blob": "d9ac5845baf8b2e5a6715dcf79fb1c8e13980b1e",
+          "marker": "Version: MPL 1.1/GPL 2.0/LGPL 2.1"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/bb6854aeeb62efd0a5bf084175c170b100bcaa3c/lib/ace/theme/monokai.js",
+          "git_blob": "5bb1f5f5e43983e1dcc7679c41258fab9d219d43",
+          "marker": "Version: MPL 1.1/GPL 2.0/LGPL 2.1"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/bb6854aeeb62efd0a5bf084175c170b100bcaa3c/lib/ace/theme/textmate.js",
+          "git_blob": "30689c8397d9a88a82da47a29da2bc1eb041cf04",
+          "marker": "Version: MPL 1.1/GPL 2.0/LGPL 2.1"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/bb6854aeeb62efd0a5bf084175c170b100bcaa3c/lib/ace/theme/twilight.js",
+          "git_blob": "74e3ff90b6f54eb4e4c8180bb7b80caca6aa8ce4",
+          "marker": "Version: MPL 1.1/GPL 2.0/LGPL 2.1"
         }
       ],
       "id": "ace-theme-snippet-attribution",
@@ -526,7 +581,7 @@
         }
       ],
       "name": "Ace theme conversion and snippet attribution review",
-      "note": "Current source tool/tmthemes/LICENSE has explicit per-file exceptions, and tmtheme.js maps only a subset of themes to TextMate files. tmsnippets.js is a generic converter, not proof of individual snippet origin. Dracula MIT block separately mapped. Per-file scan and original payload comparison are required; absence of a marker is not blanket BSD clearance. Research #4 verified 47 theme and 50 snippet static payloads; remaining packaging cases investigated separately. Per-file original lineage/terms remain open. Research #9 CI completed successfully; external current-reference comparison is not historical input equality. Separate partial theme records now preserve original MIT notices for Tomorrow, Solarized and Gruvbox Hard; remaining per-file lineage/terms open. Historical TextMate bundle README (2011) contains corresponding permission and exceptions; Ace directory LICENSE introduced 2010. Research pins four exact initial TextMate imports and later Ace input changes, plus three Ace-only historical inputs. License scope and per-file exceptions remain under review. No new component or blanket license designation. External port references: exact Xcode author-source and Kuroir port input blobs; krTheme author archive has differing input and README All Rights Reserved, exact third-party collection copy is not original permission. Individual permissions OPEN; no MIT/BSD inference or clearance. Research gate pins four external source/README pairs. krTheme excluded by maintainer-approved #37 curated theme disposition; historical source and copyright evidence retained, no active payload location. Exact package/image evidence and independent review pending. R5.2f: original Monokai author Wimer Hazenberg and 2006 publication corroborated by author-site history; historical third-party mirror shares UUID with Ace input but differs in palette settings, original redistribution grant not established. Chrome initial 2011 Ace contribution followed by 2012 import from Austin Cummings credited input; external source and terms open. Mac Classic exact historic TextMate input and early Ace implementation, conversion lineage remains open. All three 2012 CSS snapshots differ from current literal payloads; historical wrappers contain existing Ajax.org BSD notice. Source pins only, no full attribution clearance or new license assignment.",
+      "note": "Current source tool/tmthemes/LICENSE has explicit per-file exceptions, and tmtheme.js maps only a subset of themes to TextMate files. tmsnippets.js is a generic converter, not proof of individual snippet origin. Dracula MIT block separately mapped. Per-file scan and original payload comparison are required; absence of a marker is not blanket BSD clearance. Research #4 verified 47 theme and 50 snippet static payloads; remaining packaging cases investigated separately. Per-file original lineage/terms remain open. Research #9 CI completed successfully; external current-reference comparison is not historical input equality. Separate partial theme records now preserve original MIT notices for Tomorrow, Solarized and Gruvbox Hard; remaining per-file lineage/terms open. Historical TextMate bundle README (2011) contains corresponding permission and exceptions; Ace directory LICENSE introduced 2010. Research pins four exact initial TextMate imports and later Ace input changes, plus three Ace-only historical inputs. License scope and per-file exceptions remain under review. No new component or blanket license designation. External port references: exact Xcode author-source and Kuroir port input blobs; krTheme author archive has differing input and README All Rights Reserved, exact third-party collection copy is not original permission. Individual permissions OPEN; no MIT/BSD inference or clearance. Research gate pins four external source/README pairs. krTheme excluded by maintainer-approved #37 curated theme disposition; historical source and copyright evidence retained, no active payload location. Exact package/image evidence and independent review pending. R5.2f: original Monokai author Wimer Hazenberg and 2006 publication corroborated by author-site history; historical third-party mirror shares UUID with Ace input but differs in palette settings, original redistribution grant not established. Chrome initial 2011 Ace contribution followed by 2012 import from Austin Cummings credited input; external source and terms open. Mac Classic exact historic TextMate input and early Ace implementation, conversion lineage remains open. All three 2012 CSS snapshots differ from current literal payloads; historical wrappers contain existing Ajax.org BSD notice. Source pins only, no full attribution clearance or new license assignment. R5.2g verifies historical implementation declarations separately from original-input rights: 11 header-only additions, nine with inline CSS in 2010; all eleven had inline CSS under historic tri-license before exact source-text extraction in May 2012, BSD wrappers in September. Research pins all historical snapshots; current BSD root license unchanged. Monokai retained review-open, krTheme excluded reassessment-open; no automatic license clearance or restoration.",
       "notices": [
         "third_party/licenses/embedded/ace-tmthemes-reference.txt"
       ],

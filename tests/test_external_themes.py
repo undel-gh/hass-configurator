@@ -1,7 +1,7 @@
 """External theme evidence must not hide changes or imply license clearance."""
 import plistlib
 import unittest
-from scripts.audit_external_themes import compare_plist, verify_blob, reference, verify_historical_import, textmate_license_relation, verify_expected_comparison, input_rights_indicators, converter_input_status
+from scripts.audit_external_themes import compare_plist, verify_blob, reference, verify_historical_import, textmate_license_relation, verify_expected_comparison, input_rights_indicators, converter_input_status, historic_header, split_css_source
 from scripts.audit_supply_chain import git_blob_sha1
 
 
@@ -91,3 +91,22 @@ class ExternalThemeTests(unittest.TestCase):
         self.assertEqual(converter_input_status(converter, "c", "C.tmTheme"), "unmapped")
         with self.assertRaisesRegex(ValueError, "Unexpected converter mapping"):
             converter_input_status(converter, "a", "Wrong.tmTheme")
+
+    def test_historic_header_scope_and_boundary(self):
+        header = (b"/* ***** BEGIN LICENSE BLOCK *****\n * Version: MPL 1.1/GPL 2.0/LGPL 2.1\n"
+                  b" * ***** END LICENSE BLOCK ***** */\n\n")
+        body = b'define(function() {});\n'
+        self.assertEqual(historic_header(header + body, b"Version: MPL"), (header, body))
+        for raw in (body, header + b"other()", header + header + body):
+            with self.assertRaises(ValueError):
+                historic_header(raw, b"Version: MPL")
+        with self.assertRaises(ValueError):
+            historic_header(header + body, b"BSD")
+
+    def test_historic_css_transfer_is_physical_source_text(self):
+        raw = b'exports.cssText = "\\\n.a {\\\n  color: red;\\\n}";'
+        self.assertEqual(split_css_source(raw), b"\n.a {\n  color: red;\n}")
+        for bad in (raw + raw, b'exports.cssText = "a\\nb";',
+                    b'exports.cssText = "a"; extra";'):
+            with self.assertRaises(ValueError):
+                split_css_source(bad)
