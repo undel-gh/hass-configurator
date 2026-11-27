@@ -17,8 +17,8 @@ class VendoredAssetsTests(unittest.TestCase):
     def test_hash_manifest_is_complete_and_matches_every_file(self):
         self.assertEqual(MANIFEST["schema"], 1)
         resources = MANIFEST["resources"]
-        self.assertEqual(len([p for p in resources if p.startswith("vendor/ace/")]), 440)
-        self.assertGreaterEqual(len(resources), 455)
+        self.assertEqual(len([p for p in resources if p.startswith("vendor/ace/")]), 495)
+        self.assertEqual(len(resources), 515)
         for name, checksum in resources.items():
             with self.subTest(name=name):
                 source = PACKAGE / name
@@ -30,10 +30,10 @@ class VendoredAssetsTests(unittest.TestCase):
                          {"vendor/manifest.json"}, set(resources))
 
     def test_provenance_integrity_matches_pinned_ace_lock(self):
-        original = json.loads((ROOT / "docs" / "ace-builds-1.9.6-lock.json")
+        original = json.loads((ROOT / "docs" / "ace-builds-1.45.2-lock.json")
                               .read_text("utf8"))
         ace = MANIFEST["provenance"]["ace"]
-        self.assertEqual(ace["version"], "1.9.6")
+        self.assertEqual(ace["version"], "1.45.2")
         self.assertEqual(ace["npm_integrity"], original["npm_integrity"])
         self.assertEqual(ace["sha256"], original["sha256"])
         for filename, value in original["files_sha256"].items():

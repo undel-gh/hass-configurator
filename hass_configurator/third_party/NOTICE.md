@@ -4,16 +4,16 @@ This package includes offline third-party resources. Their upstream license
 texts are distributed unmodified in `../vendor/licenses/` and `licenses/`.
 See `inventory.json` for component-to-file ownership, checksums and
 immutable license-source references. Existing vendor manifest covers the
-original 460 resources; this separate inventory covers inherited JS/font
+515 resources on the #33 migration branch; this separate inventory covers inherited JS/font
 assets and notices without making notice files web routes.
 
-- Ace 1.9.6: Ajax.org B.V., BSD-3-Clause; complete selected upstream build family.
+- Ace 1.45.2: Ajax.org B.V., BSD-3-Clause; complete selected upstream build family.
 - Materialize 0.100.2: Copyright 2014-2017 Materialize, MIT.
 - Material Design Icons 3.4.93: Austin Andrews, reserved font name Material
   Design Icons (OFL-1.1); upstream notice also credits Google material icons
   (Apache-2.0). No modified font or standalone font sale.
 - jQuery 3.6.0: OpenJS Foundation and other contributors, MIT.
-- js-yaml 4.1.0: Vitaly Puzrin, MIT.
+- js-yaml 4.3.2: Vitaly Puzrin, MIT.
 - Legacy Roboto fonts distributed by Materialize: Copyright 2011 Google Inc.
   All Rights Reserved. Name-table version 2.136 (2017); Apache-2.0 explicitly
   embedded in all ten font files; historical license included separately.
@@ -50,18 +50,17 @@ adapter, raf.js (Nicolas Gryman, original polyfill Erik Möller) and
 Underscore fragments. Historical candidate notices do not establish exact
 versions of copied fragments or the full original shim license.
 
-Ace workers contain JSHint 2.11.0, Underscore 1.10.2, CSSLint 1.0.5,
-Parser-Lib 1.1.2, CoffeeScript 2.2.1, luaparse 0.3.1, php.js 0.1.0,
-JSON.org json_parse (2008-09-18, public domain statement), adapted yaml-lint,
-legacy js-yaml 3.x-style code, modular Lodash, HTML5 SAX parser, XMLDOM,
-XQLint and additional Browserify shims. Review of transitive licenses,
-themes/snippets and unresolved exact versions remains OPEN. jQuery 3.6.0
-also embeds Sizzle 2.3.6; its upstream MIT text is included.
-
-**JSHint historical restriction:** the JSHint 2.11.0 top-level MIT text and
-JSON-licensed source header are both retained. The latter's field-of-use
-condition is not MIT; later JSHint relicensing must not be silently applied
-to historical bytes. Public-release decision/remediation required (#9).
+Ace 1.45.2 uses the independently reviewed 495-file upstream build family.
+Current embedded attribution is partial. Source evidence for ace-legacy-linters
+(candidate 1.0.2, MIT notice retained), @babel/parser and yaml is recorded;
+exact bundled versions, remaining worker dependencies, theme/snippet licenses
+and full attribution remain OPEN. The old JSHint module and historical JSON
+license literal were not found in the verified new family; this marker check
+is not exhaustive license clearance. Historical Ace 1.9.6 records and
+notices are retained as references, not as assertions of active components.
+The original restricted JSHint 2.11.0 license was not retroactively changed.
+jQuery 3.6.0 still embeds Sizzle 2.3.6; its MIT text is included.
+No public redistribution approval is implied.
 
 The inherited Google Material Icons font exactly matches the 2019-12-29
 HASS Configurator introduction commit 6e3611006c84cf103318a9c4bb5a661e5da73411;
@@ -69,7 +68,7 @@ the previous HTML used Google's online stylesheet. The original CDN archive
 was not recorded. A historical official repository WOFF2 differs. Do not
 claim the original binary origin is fully resolved.
 
-Further historical reference notices: HTML5 parser upstream (MIT, Aria Stewart),
+Further historical Ace 1.9.6 reference notices (not current worker identities): HTML5 parser upstream (MIT, Aria Stewart),
 XQLint (Apache-2.0; both generated lexer source files at the 2014-07-24
 commit are literal subsets of tagged Ace source bundles), and xmldom 0.1.19
 (MIT/LGPL choice links, historical parent only). These references do not

@@ -1,5 +1,9 @@
 # Ace upgrade research — #9 / #33 / #24
 
+## Historical research scope
+
+This research describes the old-runtime checkpoint and candidate selection. The #33 migration branch now contains the verified candidate bytes; see P1_ACE_YAML_MIGRATION.md. Historical results below do not verify new installed artifacts.
+
 Status: **candidate investigation; runtime remains Ace 1.9.6**.
 
 - First known update to relicensed JSHint: Ace 1.10.0 (2022-08-31),

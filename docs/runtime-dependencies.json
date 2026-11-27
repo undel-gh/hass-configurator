@@ -1,56 +1,15 @@
 {
-  "schema_version": 1,
-  "source_branch": "feat/offline-vendored-ace-styles",
-  "audited_date": "2026-11-13",
-  "status": "P0 static HTML inventory and supported dynamic browser-origin attempts are clean under strict CI; real Supervisor Ingress and license/SBOM acceptance are separate P1 tasks",
-  "required_runtime_origins": [],
-  "required_external_files": [],
-  "auto_loaded_external_images": [],
-  "optional_documentation_links": [
-    "http://materializecss.com/",
-    "https://ace.c9.io/",
-    "https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API",
-    "https://github.com/AtoxIO",
-    "https://github.com/Munsio",
-    "https://github.com/danielperna84",
-    "https://github.com/danielperna84/hass-configurator/",
-    "https://github.com/danielperna84/hass-configurator/releases/",
-    "https://github.com/dimagoltsman",
-    "https://github.com/emontnemery",
-    "https://github.com/javawizard",
-    "https://github.com/jmart518",
-    "https://github.com/mallewski",
-    "https://github.com/maweki",
-    "https://github.com/nodeca/js-yaml",
-    "https://github.com/salim-b",
-    "https://github.com/sytone",
-    "https://github.com/tjorim",
-    "https://github.com/wrt54g",
-    "https://gitpython.readthedocs.io",
-    "https://home-assistant.io/",
-    "https://home-assistant.io/components/",
-    "https://home-assistant.io/help/",
-    "https://jquery.com/",
-    "https://materialdesignicons.com/"
-  ],
-  "local_assets": [
-    "ace-bootstrap.js",
-    "ui-handlers.js",
-    "jquery-3.6.0.min.js",
-    "js-yaml.min.js",
-    "materialize.min.js",
-    "style.css",
-    "material-icons.fallback.css",
-    "flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2"
-  ],
   "ace": {
-    "currently_loaded_core": "assets/v<digest>/vendor/ace/ace.js",
-    "proposed_package": "ace-builds",
-    "proposed_version": "1.9.6",
-    "candidate_archive_url": "https://registry.npmjs.org/ace-builds/-/ace-builds-1.9.6.tgz",
-    "selected_build_family": "src-min-noconflict",
-    "archive_integrity": "sha512-M/Li4hPruMSbkkg35LgdbsIBq0WuwrV4ztP2pKaww47rC/MvDc1bOrYxwJrfgxdlzyLKrja5bn+9KwwuzqB2xQ==",
+    "archive_integrity": "sha512-a0IADaETGBnBW5CIkniUJn7F+NyTuHWKqlv1A8FXaMmFflJsMGnU3TzkiyslInqIZ3odfcVKOdXBGIKBefzFDA==",
     "archive_integrity_status": "Pinned and checked by scripts/verify_ace_archive.py in GitHub Actions; matching npm SRI, tarball SHA-256 and per-file hashes required on each tested commit. A prior workflow run does not verify future HEADs.",
+    "archive_sha256": "5260354a14533fa8e94572597b1ff53025b1bb0a9b2e25d50ecf2a01e57aa9e0",
+    "candidate_archive_url": "https://registry.npmjs.org/ace-builds/-/ace-builds-1.45.2.tgz",
+    "currently_loaded_core": "assets/v<digest>/vendor/ace/ace.js",
+    "dynamic_modules_status": "All 495 files of pinned src-min-noconflict family are local; new runtime exact-HEAD acceptance pending.",
+    "keyboard_bindings_offered": [
+      "vim",
+      "emacs"
+    ],
     "language_modes_offered": [
       "abap",
       "abc",
@@ -187,6 +146,12 @@
       "xquery",
       "yaml"
     ],
+    "lock_file": "docs/ace-builds-1.45.2-lock.json",
+    "missing_ui_modes": [],
+    "proposed_package": "ace-builds",
+    "proposed_version": "1.45.2",
+    "selected_build_family": "src-min-noconflict",
+    "selection_status": "Promoted candidate on #33 draft branch; all 174 UI-required filenames present; no public-release approval.",
     "themes_offered": [
       "ambiance",
       "chaos",
@@ -223,17 +188,20 @@
       "twilight",
       "vibrant_ink",
       "xcode"
-    ],
-    "keyboard_bindings_offered": [
-      "vim",
-      "emacs"
-    ],
-    "dynamic_modules_status": "All 440 files of pinned src-min-noconflict package are local; supported UI modes/themes, YAML worker and keybindings have active Playwright runtime tests",
-    "archive_sha256": "b9facb2b1187cd1b0792eb5b23aac2faae772ea293d128c70c13c7a4f9f2c61d",
-    "lock_file": "docs/ace-builds-1.9.6-lock.json",
-    "missing_ui_modes": [],
-    "selection_status": "accepted P0: 1.9.6 src-min-noconflict and all currently selectable modes are present; original three absent selectors were intentionally removed in PR #16"
+    ]
   },
+  "audited_date": "2026-11-13",
+  "auto_loaded_external_images": [],
+  "local_assets": [
+    "ace-bootstrap.js",
+    "ui-handlers.js",
+    "jquery-3.6.0.min.js",
+    "js-yaml.min.js",
+    "materialize.min.js",
+    "style.css",
+    "material-icons.fallback.css",
+    "flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2"
+  ],
   "notes": [
     "Known CDN script/stylesheet requests and remote GitHub avatar images removed. Strict runtime browser attempt gate is the source of truth.",
     "Optional documentation links are only opened on deliberate user action; no preload.",
@@ -241,16 +209,48 @@
     "Three old Ace selector modes (bro, dummy, dummysyntax) were removed because upstream Ace 1.9.6 archive does not include the corresponding module files.",
     "Vendor origin package SRI, tarball SHA-256, file SHA-256 and licenses are recorded in hass_configurator/vendor/manifest.json."
   ],
-  "vendor_manifest": "hass_configurator/vendor/manifest.json",
+  "optional_documentation_links": [
+    "http://materializecss.com/",
+    "https://ace.c9.io/",
+    "https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API",
+    "https://github.com/AtoxIO",
+    "https://github.com/Munsio",
+    "https://github.com/danielperna84",
+    "https://github.com/danielperna84/hass-configurator/",
+    "https://github.com/danielperna84/hass-configurator/releases/",
+    "https://github.com/dimagoltsman",
+    "https://github.com/emontnemery",
+    "https://github.com/javawizard",
+    "https://github.com/jmart518",
+    "https://github.com/mallewski",
+    "https://github.com/maweki",
+    "https://github.com/nodeca/js-yaml",
+    "https://github.com/salim-b",
+    "https://github.com/sytone",
+    "https://github.com/tjorim",
+    "https://github.com/wrt54g",
+    "https://gitpython.readthedocs.io",
+    "https://home-assistant.io/",
+    "https://home-assistant.io/components/",
+    "https://home-assistant.io/help/",
+    "https://jquery.com/",
+    "https://materialdesignicons.com/"
+  ],
+  "required_external_files": [],
+  "required_runtime_origins": [],
+  "schema_version": 1,
+  "source_branch": "feat/offline-vendored-ace-styles",
+  "status": "P0 static HTML inventory and supported dynamic browser-origin attempts are clean under strict CI; real Supervisor Ingress and license/SBOM acceptance are separate P1 tasks",
   "validation": {
-    "evidence_baseline": "GitHub Actions #206 on PR #19 source HEAD b111986521d7c769ea339f2ba5a1aabb21ba4c62",
     "ci_rule": "Each new PR must pass strict static inventory and real Chromium attempted-request E2E on its exact source SHA; prior runs are historical",
-    "simulated_ingress_only": true,
+    "evidence_baseline": "GitHub Actions #206 on PR #19 source HEAD b111986521d7c769ea339f2ba5a1aabb21ba4c62",
     "p1_exclusions": [
       "#8 real HA OS Supervisor Ingress",
       "#9 license/SBOM/vulnerability decisions",
       "#7 privileged API security",
       "#13 CSP"
-    ]
-  }
+    ],
+    "simulated_ingress_only": true
+  },
+  "vendor_manifest": "hass_configurator/vendor/manifest.json"
 }

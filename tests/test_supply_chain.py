@@ -73,19 +73,23 @@ class SupplyChainTests(unittest.TestCase):
     def test_source_inventory_and_bom(self):
         inv, vendor = source_inventory()
         self.assertEqual(len(inv["components"]), 7)
-        self.assertEqual(len(vendor["resources"]), 460)
+        self.assertEqual(len(vendor["resources"]), 515)
         bom = sbom(inv, vendor)
         self.assertEqual(bom["bomFormat"], "CycloneDX")
-        self.assertEqual(len(bom["components"]), 40)
+        self.assertEqual(next(c for c in bom["components"] if c["bom-ref"] == "asset:ace")["version"], "1.45.2")
+        self.assertEqual(next(c for c in bom["components"] if c["bom-ref"] == "asset:js-yaml")["version"], "4.3.2")
         embedded = [c for c in bom["components"] if c["bom-ref"].startswith("embedded:")]
-        self.assertEqual(len(embedded), 28)
-        self.assertIn("embedded:ace-jshint", next(d for d in bom["dependencies"]
+        self.assertNotIn("embedded:ace-jshint", {c["bom-ref"] for c in embedded})
+        self.assertIn("embedded:ace-legacy-linters", next(d for d in bom["dependencies"]
                       if d["ref"] == "asset:ace")["dependsOn"])
-        jshint = next(c for c in embedded if c["bom-ref"] == "embedded:ace-jshint")
-        self.assertEqual(jshint["licenses"], [{"expression": "MIT AND JSON"}])
         yaml = next(c for c in embedded if c["bom-ref"] == "embedded:ace-yaml-parser")
+        self.assertEqual(yaml["name"], "yaml (Ace worker)")
         self.assertNotIn("version", yaml)
         self.assertNotIn("purl", yaml)
+        self.assertEqual(inv["legacy_archive_locks"]["js-yaml.min.js"]["relation"], "exact")
+        self.assertEqual(len(inv["embedded"]["worker_review"]), 11)
+        historical = json.loads((PACKAGE.parent / "docs/history/ace-1.9.6-embedded.json").read_text("utf-8"))
+        self.assertIn("ace-jshint", {c["id"] for c in historical["components"]})
         refs = [c["bom-ref"] for c in bom["components"]]
         self.assertEqual(len(refs), len(set(refs)))
         self.assertEqual("2.136", next(c for c in bom["components"]
@@ -110,7 +114,7 @@ class SupplyChainTests(unittest.TestCase):
 
     def test_embedded_missing_notice_and_marker_rejected(self):
         def no_notice(doc):
-            next(c for c in doc["components"] if c["id"] == "ace-jshint")["notices"] = []
+            next(c for c in doc["components"] if c["id"] == "mat-hammer")["notices"] = []
         self.mutate_embedded(no_notice, "Missing embedded license notice")
         def wrong_marker(doc):
             doc["components"][0]["locations"][0]["marker"] = "never-present-marker-58ef5"
@@ -124,11 +128,11 @@ class SupplyChainTests(unittest.TestCase):
             del doc["worker_review"]["vendor/ace/worker-yaml.js"]
         self.mutate_embedded(missing_worker, "Incomplete Ace worker review")
         def wrong_relationship(doc):
-            doc["source_relationships"][0]["relation"] = "loosely-normalized"
+            doc["source_relationships"].append({"relation": "loosely-normalized"})
         self.mutate_embedded(wrong_relationship, "Unknown embedded source relationship")
 
     def test_embedded_notice_bytes_are_pinned(self):
-        self.mutate(lambda root: (root / "third_party/licenses/embedded/jshint-json.txt")
+        self.mutate(lambda root: (root / "third_party/licenses/embedded/ace-legacy-linters.txt")
                     .write_bytes(b"changed"), "SHA256 mismatch")
 
     def test_upstream_pin_is_immutable_and_mismatch_fails(self):
@@ -181,9 +185,11 @@ class SupplyChainTests(unittest.TestCase):
                   "debian_packages": [{"source": "openssl", "source_version": "3.0.0"}]}
         queries = scan_queries(inv, [report, report])
         self.assertIn({"package": {"ecosystem": "npm", "name": "js-yaml"},
-                       "version": "4.1.0"}, queries)
-        self.assertIn({"package": {"ecosystem": "npm", "name": "jshint"},
-                       "version": "2.11.0"}, queries)
+                       "version": "4.3.2"}, queries)
+        self.assertIn({"package": {"ecosystem": "npm", "name": "ace-builds"},
+                       "version": "1.45.2"}, queries)
+        self.assertNotIn({"package": {"ecosystem": "npm", "name": "jshint"},
+                          "version": "2.11.0"}, queries)
         self.assertIn({"package": {"ecosystem": "npm", "name": "hammerjs"},
                        "version": "2.0.4"}, queries)
         self.assertFalse(any(q["package"]["name"] in {"Velocity.js", "js-yaml (Ace embedded parser)"}

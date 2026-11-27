@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Inspect a pinned Ace npm tarball; no silent build-family mixing.
 
-Called in CI using `npm pack ace-builds@1.9.6`. Outputs a lock candidate
+Called in CI using `npm pack ace-builds@1.45.2`. Outputs a lock candidate
 as JSON between markers for review/commit. Does not vendor the package.
 """
 import argparse
@@ -26,10 +26,18 @@ def inspect(tarball):
     required.update(("keybinding-vim.js", "keybinding-emacs.js"))
     digest = hashlib.sha256(tarball.read_bytes()).hexdigest()
     with tarfile.open(tarball, "r:gz") as archive:
-        members = {
-            n.name[len(BUILD):]: n for n in archive.getmembers()
-            if n.isfile() and n.name.startswith(BUILD)
-        }
+        members = {}
+        for n in archive.getmembers():
+            if not n.name.startswith(BUILD) or n.isdir():
+                continue
+            name = n.name[len(BUILD):]
+            if not n.isfile() or name in members:
+                raise ValueError("Duplicate or unsafe Ace member: " + n.name)
+            members[name] = n
+        licenses = [n for n in archive.getmembers() if n.name == "package/LICENSE"]
+        if len(licenses) != 1 or not licenses[0].isfile():
+            raise ValueError("Missing or unsafe Ace LICENSE")
+        license_sha256 = hashlib.sha256(archive.extractfile(licenses[0]).read()).hexdigest()
         missing = sorted(required.difference(members))
         # All files in the build family are fingerprinted. The next step
         # can vendor the required subset plus verified transitive deps.
@@ -38,9 +46,9 @@ def inspect(tarball):
             data = archive.extractfile(members[name]).read()
             hashes[name] = hashlib.sha256(data).hexdigest()
     return {
-        "name": "ace-builds", "version": "1.9.6",
-        "tarball": "https://registry.npmjs.org/ace-builds/-/ace-builds-1.9.6.tgz",
-        "sha256": digest, "family": "src-min-noconflict",
+        "name": "ace-builds", "version": "1.45.2",
+        "tarball": "https://registry.npmjs.org/ace-builds/-/ace-builds-1.45.2.tgz",
+        "sha256": digest, "license_sha256": license_sha256, "family": "src-min-noconflict",
         "required_files_checked": len(required), "family_files": len(members),
         "missing_required_files": missing,
         "worker_files": sorted(k for k in members if k.startswith("worker-")),
@@ -57,9 +65,9 @@ def main():
     print(json.dumps(report, indent=2, sort_keys=True))
     print("ACE_LOCK_CANDIDATE_END")
     # Commit-based supply-chain lock makes upstream tarball changes visible.
-    lock = json.loads((ROOT / "docs" / "ace-builds-1.9.6-lock.json")
+    lock = json.loads((ROOT / "docs" / "ace-builds-1.45.2-lock.json")
                       .read_text(encoding="utf-8"))
-    for key in ("sha256", "family", "worker_files", "files_sha256"):
+    for key in ("name", "version", "tarball", "sha256", "license_sha256", "family", "worker_files", "files_sha256"):
         if lock[key] != report[key]:
             print("Pinned Ace archive mismatch: " + key, file=sys.stderr)
             return 1

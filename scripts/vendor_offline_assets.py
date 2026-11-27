@@ -3,7 +3,7 @@
 
 This is a BUILD-TIME command (network is external to this script). Runtime
 must never download assets. Usage:
-  python scripts/vendor_offline_assets.py --ace /tmp/ace-builds-1.9.6.tgz \
+  python scripts/vendor_offline_assets.py --ace /tmp/ace-builds-1.45.2.tgz \
       --materialize /tmp/materialize-css-0.100.2.tgz \
       --mdi /tmp/mdi-font-3.4.93.tgz
 The source artifacts must be downloaded only by an authenticated package manager
@@ -20,9 +20,9 @@ from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "hass_configurator" / "vendor"
-ACE_LOCK = json.loads((ROOT / "docs/ace-builds-1.9.6-lock.json").read_text("utf8"))
+ACE_LOCK = json.loads((ROOT / "docs/ace-builds-1.45.2-lock.json").read_text("utf8"))
 SOURCES = {
-    "ace": ("ace-builds", "1.9.6", "package/src-min-noconflict/"),
+    "ace": ("ace-builds", "1.45.2", "package/src-min-noconflict/"),
     "materialize": ("materialize-css", "0.100.2", "package/dist/css/"),
     "mdi": ("@mdi/font", "3.4.93", "package/css/"),
 }
@@ -146,6 +146,8 @@ def build(archives, integrity_values, verify_only=False):
                                            (package, tarpath))
                     add_file(resources, alias + "/" + dep, member_bytes(archive, tarpath))
             license_file = package_license(archive, alias, resources)
+            if alias == "ace" and digest(resources["licenses/ace.txt"]) != ACE_LOCK["license_sha256"]:
+                raise RuntimeError("Ace license differs from pinned artifact")
         provenance[alias] = {
             "package": package, "version": version,
             "tarball": "https://registry.npmjs.org/" +

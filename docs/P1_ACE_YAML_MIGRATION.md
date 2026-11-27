@@ -1,5 +1,9 @@
 # Ace / YAML migration — Issue #33
 
+## Runtime promotion checkpoint
+
+The #33 branch now promotes exact Ace 1.45.2 and js-yaml 4.3.2 bytes from reviewed pins. Current lock/manifest/inventory updated. Non-Ace resources unchanged. Prior Ace inventory preserved at docs/history/ace-1.9.6-embedded.json; old notice references retained conservatively. New source/marker evidence is partial: no inferred exact nested versions or final licensing clearance. Historical JSHint module/license literal absence is only marker evidence. Main-thread validation, HA/ESPHome tag semantics, current nested attribution, full CI and real HAOS rollback remain open. No merge/public release acceptance.
+
 Status: **implementation preparation; no runtime bytes promoted**.
 Stacked onto PR #32 at b5924860ad8e27a2c47cecb71cac7905627a2819.
 Do not merge this checkpoint or close #33/#9 before the migration and gates.

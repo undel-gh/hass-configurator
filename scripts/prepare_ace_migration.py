@@ -145,7 +145,7 @@ def main():
     report = {"status": "verified-rehearsal-input", "source_checkout": ace["source_checkout"],
               "candidate_only": True, "ace": ace, "js_yaml": yaml, "osv": osv,
               "limitations": ["No committed runtime migration or nested license clearance.",
-                              "js-yaml hashes pinned from prior rehearsal; promotion review pending.",
+                              "js-yaml pins independently reviewed; actual runtime acceptance separate.",
                               "Not installed artifact or real Supervisor acceptance."]}
     report_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     if any(row["advisories"] for row in osv):
@@ -174,8 +174,8 @@ def main():
     manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     report["overlay_verification"] = verify_overlay(pkg, manifest, yaml)
     report_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    # The overlay intentionally retains the old audit inventory, which MUST NOT
-    # pass the release audit. This is an integration rehearsal, not a package.
+    # The overlay retains the checkout audit inventory. Historical old-runtime
+    # checkouts cannot pass a candidate release audit. Never package this overlay.
     print("Rehearsal overlay prepared:", dest)
 
 

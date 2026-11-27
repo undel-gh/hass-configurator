@@ -17,7 +17,7 @@ from scripts.audit_runtime_assets import extract
 
 ROOT = Path(__file__).resolve().parents[1]
 INVENTORY = ROOT / "docs" / "runtime-dependencies.json"
-ACE_LOCK = ROOT / "docs" / "ace-builds-1.9.6-lock.json"
+ACE_LOCK = ROOT / "docs" / "ace-builds-1.45.2-lock.json"
 VENDOR_LOCK = ROOT / "hass_configurator" / "vendor" / "manifest.json"
 
 
@@ -62,10 +62,10 @@ class P0CloseoutTests(unittest.TestCase):
         lock = json.loads(ACE_LOCK.read_text("utf8"))
         vendor = json.loads(VENDOR_LOCK.read_text("utf8"))
         self.assertEqual(lock["name"], "ace-builds")
-        self.assertEqual(lock["version"], "1.9.6")
+        self.assertEqual(lock["version"], "1.45.2")
         self.assertEqual(lock["family"], "src-min-noconflict")
-        self.assertEqual(lock["family_files"], 440)
-        self.assertEqual(len(lock["files_sha256"]), 440)
+        self.assertEqual(lock["family_files"], 495)
+        self.assertEqual(len(lock["files_sha256"]), 495)
         self.assertEqual(vendor["provenance"]["ace"]["npm_integrity"],
                          lock["npm_integrity"])
         self.assertEqual(vendor["provenance"]["ace"]["sha256"], lock["sha256"])
