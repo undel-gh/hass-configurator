@@ -17,7 +17,7 @@
         },
         "excluded": ["worker-coffee.js", "worker-lua.js", "worker-php.js", "worker-xml.js", "worker-xquery.js"],
         "excluded_themes": ["theme-kr_theme.js"],
-        "excluded_snippets": ["snippets/abc.js","snippets/edifact.js","snippets/gobstones.js","snippets/lsl.js"]
+        "excluded_snippets": ["snippets/abc.js","snippets/cedar.js","snippets/cedarschema.js","snippets/csound_document.js","snippets/csound_orchestra.js","snippets/drools.js","snippets/edifact.js","snippets/fsl.js","snippets/gobstones.js","snippets/jsoniq.js","snippets/lsl.js","snippets/maze.js","snippets/razor.js","snippets/velocity.js","snippets/wollok.js","snippets/xquery.js"]
     } /* HC_WORKER_PROFILE_END */;
     var aceBase = new URL('vendor/ace/', document.currentScript.src).href;
     ['basePath', 'modePath', 'themePath', 'workerPath'].forEach(function (key) {

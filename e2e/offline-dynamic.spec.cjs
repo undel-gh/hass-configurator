@@ -463,8 +463,8 @@ for (const variant of ['direct', 'ingress']) {
 
 for (const variant of ['direct', 'ingress']) {
   test('Ace curated snippet excludes payloads but preserves modes via ' + variant, async ({ page }) => {
-    test.setTimeout(60000);
-    const names = ['abc', 'edifact', 'gobstones', 'lsl'];
+    test.setTimeout(120000);
+    const names = ["abc","cedar","cedarschema","csound_document","csound_orchestra","drools","edifact","fsl","gobstones","jsoniq","lsl","maze","razor","velocity","wollok","xquery"];
     const forbidden = [], external = [], errors = [], responses = [];
     page.on('pageerror', e => errors.push(e.message));
     page.on('request', req => {
@@ -496,8 +496,25 @@ for (const variant of ['direct', 'ingress']) {
     await page.goto(server + (variant === 'ingress' ? '/ingress/test/' : '/'), {waitUntil: 'domcontentloaded'});
     await expect.poll(() => page.evaluate(() => Boolean(window.editor))).toBe(true);
     await page.evaluate(() => editor.setOptions({enableSnippets: true, enableBasicAutocompletion: true}));
-    const samples = [['abc', 'X:1'], ['edifact', "UNH+1+ORDERS:D:96A:UN'"],
-                     ['gobstones', 'program { Skip }'], ['lsl', 'default { state_entry() {} }']];
+    const samples = [
+      ["abc","X:1"],
+      ["cedar","permit(principal, action, resource);"],
+      ["cedarschema","entity Light;"],
+      ["csound_document","<CsoundSynthesizer>"],
+      ["csound_orchestra","instr 1"],
+      ["drools","rule Light"],
+      ["edifact","UNH+1+ORDERS:D:96A:UN'"],
+      ["fsl","a -> b;"],
+      ["gobstones","program { Skip }"],
+      ["jsoniq","1"],
+      ["lsl","default { state_entry() {} }"],
+      ["maze","move"],
+      ["razor","@if (true) {"],
+      ["velocity","#set($x = 1)"],
+      ["wollok","object light {}"],
+      ["xquery","1"]
+    ];
+    expect(samples.map(([name]) => name)).toEqual(names);
     for (const [name, sample] of [...samples, ...samples]) {
       const actual = await page.evaluate(async ({name, sample}) => {
         await new Promise(resolve => editor.session.setMode('ace/mode/' + name, resolve));
@@ -522,18 +539,27 @@ for (const variant of ['direct', 'ingress']) {
       }, {name, sample});
       expect(actual).toEqual({mode: 'ace/mode/' + name, text: sample, value: sample,
         callbacks: [true, true], fileEmpty: true, snippets: 0, enabled: true, basic: true, ordinary: true});
-      expect(responses.some(r => r.path.endsWith('/vendor/ace/mode-' + name + '.js') && r.status === 200)).toBe(true);
+      // A retained mode may already have been loaded as a bundled dependency.
+      // HTTP availability for every retained mode is checked explicitly below.
     }
     // Exercise a retained, nonempty snippet collection after repeated exclusions.
     await page.evaluate(() => new Promise(resolve => editor.session.setMode('ace/mode/java', resolve)));
     await expect.poll(() => page.evaluate(() =>
       (ace.require('ace/snippets').snippetManager.snippetMap.java || []).length)).toBeGreaterThan(0);
     expect(responses.some(r => r.path.endsWith('/vendor/ace/snippets/java.js') && r.status === 200)).toBe(true);
+    await page.evaluate(() => new Promise(resolve => editor.session.setMode('ace/mode/sqlserver', resolve)));
+    await expect.poll(() => page.evaluate(() =>
+      (ace.require('ace/snippets').snippetManager.snippetMap.sqlserver || []).length)).toBeGreaterThan(0);
+    expect(responses.some(r => r.path.endsWith('/vendor/ace/snippets/sqlserver.js') && r.status === 200)).toBe(true);
     expect(forbidden).toEqual([]);
     expect(external).toEqual([]);
     expect(errors).toEqual([]);
     expect(await page.evaluate(() => hcSnippetCspViolations)).toEqual([]);
     // Separate deliberate requests from the preceding no-automatic-request test.
+    const modeStatuses = await page.evaluate(async names =>
+      Promise.all(names.map(async name =>
+        (await fetch(new URL('mode-' + name + '.js', ace.config.get('basePath')))).status)), names);
+    expect(modeStatuses).toEqual(names.map(() => 200));
     const statuses = await page.evaluate(async names =>
       Promise.all(names.map(async name =>
         (await fetch(new URL('snippets/' + name + '.js', ace.config.get('basePath')))).status)), names);

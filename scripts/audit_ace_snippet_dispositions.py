@@ -56,7 +56,19 @@ EXCLUSION_REASONS = {
     "abc": "Zupfnoter-specific templates; low HA Configurator utility and unresolved CLA/grant.",
     "edifact": "Product-only: mostly Java templates are irrelevant to EDIFACT. Scoped MIT/BSD evidence retained historically; no licensing-driven exclusion.",
     "gobstones": "Educational language; low HA Configurator utility does not justify additional rights research or contributor outreach.",
-    "lsl": "Second Life scripting; low HA Configurator utility does not justify historical grant outreach."
+    "lsl": "Second Life scripting; low HA Configurator utility does not justify historical grant outreach.",
+    "cedar": "Authorization policy templates; low HA Configurator utility does not warrant further source rights research.",
+    "cedarschema": "Authorization schema templates; low HA Configurator utility does not warrant further source rights research.",
+    "csound_document": "Audio synthesis document templates; low HA Configurator utility does not warrant further source rights research.",
+    "csound_orchestra": "Audio synthesis orchestra templates; low HA Configurator utility does not warrant further source rights research.",
+    "drools": "Business rules templates; low HA Configurator utility does not warrant further source rights research.",
+    "fsl": "Finite-state machines templates; low HA Configurator utility does not warrant further source rights research.",
+    "jsoniq": "Specialized query templates; low HA Configurator utility does not warrant further source rights research. Separate mode/grammar review remains open.",
+    "maze": "Specialized language templates; low HA Configurator utility does not warrant further source rights research.",
+    "razor": "ASP.NET templates; low HA Configurator utility does not warrant further source rights research.",
+    "velocity": "Java template language templates; low HA Configurator utility does not warrant further source rights research.",
+    "wollok": "Educational language templates; low HA Configurator utility does not warrant further source rights research. Historical scoped SnipMate MIT evidence retained in archive.",
+    "xquery": "XML query templates; low HA Configurator utility does not warrant further source rights research. Separate mode/grammar review remains open."
 }
 EXACT = set("actionscript c_cpp clojure coffee css diff django erlang haml haskell java jsp lua makefile perl rst ruby snippets sql tcl tex textile".split())
 MODIFIED = set("dart html javascript markdown php python r sh".split())
@@ -219,9 +231,12 @@ def verify_snippet_dispositions(matrix, lock, vendor, embedded):
                     and relations[0]["upstream"]["git_blob"] == hist["git_blob"],
                     "mapped source relation drift: " + name)
     require("ace-lsl-snippet-source-review" not in by_component, "excluded LSL active component")
-    require(not any(re.search(r"/(?:edifact|lsl)\.snippets(?:\.js)?$", r[key]["url"])
+    require(not any(re.search(r"/(?:edifact|lsl|wollok)\.snippets(?:\.js)?$", r[key]["url"])
                     for r in embedded["source_relationships"] for key in ("upstream", "container")),
             "excluded snippet active source relationship")
+    require(not any(re.search(r"/wollok\.snippets(?:\.js)?$", e["url"])
+                    for c in embedded["components"] for e in c["evidence"]),
+            "excluded Wollok active source evidence")
     require(dict(counts) == COUNTS, "evidence class totals drift")
     return dict(sorted(counts.items()))
 
@@ -376,9 +391,9 @@ def verify_native_snippet_dispositions(matrix, report):
 
 def render_document(matrix):
     counts = Counter(x["evidence_class"] for x in matrix["rows"])
-    result = "# Ace snippet disposition matrix (R5.3)\n\nThe [machine-readable matrix](ace-snippet-dispositions.json) is canonical.\nThis records the approved distribution and review dispositions, not legal clearance or release acceptance.\n198 assets retained, four physically excluded by maintainer decision. The matrix\ntracks all 202 upstream names; historical hashes are not shipped hashes.\nThe Ace root BSD-3-Clause declaration applies separately, not as proof of external\ninput rights. Additional component IDs refer to `hass_configurator/third_party/embedded.json`.\nA partial attribution is not a license for the whole payload. Review-only records\nare not libraries. Priority is proposed review order, not a risk rating.\nHistorical references record research endpoints or exact original inputs, not\nnecessarily a unique copy revision. See [research](ACE_SNIPPET_RESEARCH.md).\n\nThe offline source inventory gate checks exact row closure, hashes against\nthe lock and vendor manifest, generated stub bytes by their exact hash,\ncomponent mappings, source pin consistency for mapped records and this rendered\ndocument. The native research gate separately compares all 202 upstream row types and\nthe 52 current source Git blobs (48 retained nonempty, 4 archive-only) against\nthe immutable checkout and static\npayload/empty-stub evidence. It does not replay all historical transformations\nor adjudicate rights. R5.3b maps the 150 generated loaders to the exact Ace\nexportAce extModules template, with a file-specific BSD-3-Clause header identical\nto the existing parent notice. Independent artifact inspection and review remain open.\n\n## Counts\n\n| Evidence class | Count |\n| --- | ---: |\n"
+    result = "# Ace snippet disposition matrix (R5.3)\n\nThe [machine-readable matrix](ace-snippet-dispositions.json) is canonical.\nThis records the approved distribution and review dispositions, not legal clearance or release acceptance.\n186 assets retained, sixteen physically excluded by maintainer decision. The matrix\ntracks all 202 upstream names; historical hashes are not shipped hashes.\nThe Ace root BSD-3-Clause declaration applies separately, not as proof of external\ninput rights. Additional component IDs refer to `hass_configurator/third_party/embedded.json`.\nA partial attribution is not a license for the whole payload. Review-only records\nare not libraries. Priority is proposed review order, not a risk rating.\nHistorical references record research endpoints or exact original inputs, not\nnecessarily a unique copy revision. See [research](ACE_SNIPPET_RESEARCH.md).\n\nThe offline source inventory gate checks exact row closure, hashes against\nthe lock and vendor manifest, generated stub bytes by their exact hash,\ncomponent mappings, source pin consistency for mapped records and this rendered\ndocument. The native research gate separately compares all 202 upstream row types and\nthe 52 current source Git blobs (36 retained nonempty, 16 archive-only) against\nthe immutable checkout and static\npayload/empty-stub evidence. It does not replay all historical transformations\nor adjudicate rights. R5.3b maps the 150 generated loaders to the exact Ace\nexportAce extModules template, with a file-specific BSD-3-Clause header identical\nto the existing parent notice. Independent artifact inspection and review remain open.\n\n## Counts\n\n| Evidence class | Count |\n| --- | ---: |\n"
     result += "".join(f"| {key} | {count} |\n" for key, count in sorted(counts.items()))
-    result += "\nMaintainer-approved exclusions: abc, edifact, gobstones, lsl.\nEDIFACT removal is product-only; historical MIT/BSD evidence retained.\nLanguage modes are unchanged. Reinstatement requires explicit approval and renewed review.\n\n## Nonempty payloads\n\n| Snippet | Distribution | Evidence class | Additional components | Priority | Proposed disposition | Exclusion reason | Remaining review |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n"
+    result += "\nMaintainer-approved exclusions: abc, cedar, cedarschema, csound_document, csound_orchestra, drools, edifact, fsl, gobstones, jsoniq, lsl, maze, razor, velocity, wollok, xquery.\nEDIFACT removal is product-only; historical MIT/BSD evidence retained.\nLanguage modes are unchanged. Reinstatement requires explicit approval and renewed review.\n\n## Nonempty payloads\n\n| Snippet | Distribution | Evidence class | Additional components | Priority | Proposed disposition | Exclusion reason | Remaining review |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n"
     for row in matrix["rows"]:
         if row["payload_kind"] == "nonempty":
             result += "| " + " | ".join((row["snippet"], row["distribution"], row["evidence_class"],

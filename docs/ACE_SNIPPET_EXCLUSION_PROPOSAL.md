@@ -42,3 +42,24 @@ Decision requested: prioritize grant/CLA requests for ABC, Gobstones and LSL, or
 | **Total** | **81731** | All four snippet-only, not a license violation finding |
 
 Approved profile schema 3: four exact excluded_snippets; full upstream lock unchanged. 198 retained snippets (48 nonempty, 150 stubs), 485 Ace assets, 505 vendor resources. Matrix 202 upstream rows; four excluded-reassessment-open records with explicit reasons and original pins. Move five historical EDIFACT/LSL relationships and LSL review record to docs/history/ace-snippet-exclusions.json; 32 active SnipMate locations, all original notices retained. Native research compares four excluded archive members with upstream-only hash fields, never claims shipment. First-party loader returns undefined for excluded canonical string/array IDs without requests; ordinary mode/worker/theme behavior unchanged. Direct and simulated Ingress browser regression and installed selection added. Exact-HEAD CI, artifact inspection, independent review and real HAOS acceptance pending. Restoration requires separate explicit approval and renewed license review. Historical grant routes retained as evidence, not prerequisites for removing these assets. PR #36/#32 Draft/HOLD; #9/#33/#37 open.
+
+## Second approved decision (2026-11-28)
+
+Maintainer requested targeted assessment of retaining SQL Server and approved snippet-only exclusion of the other twelve candidates. SQL Server, GraphQLSchema, Robot and Vala remain retained and review-open. No contributor outreach performed.
+
+| Additional payload | Reason |
+| --- | --- |
+| cedar | Authorization policy templates; low HA Configurator utility does not warrant further source rights research. |
+| cedarschema | Authorization schema templates; low HA Configurator utility does not warrant further source rights research. |
+| csound_document | Audio synthesis document templates; low HA Configurator utility does not warrant further source rights research. |
+| csound_orchestra | Audio synthesis orchestra templates; low HA Configurator utility does not warrant further source rights research. |
+| drools | Business rules templates; low HA Configurator utility does not warrant further source rights research. |
+| fsl | Finite-state machines templates; low HA Configurator utility does not warrant further source rights research. |
+| jsoniq | Specialized query templates; low HA Configurator utility does not warrant further source rights research. Separate mode/grammar review remains open. |
+| maze | Specialized language templates; low HA Configurator utility does not warrant further source rights research. |
+| razor | ASP.NET templates; low HA Configurator utility does not warrant further source rights research. |
+| velocity | Java template language templates; low HA Configurator utility does not warrant further source rights research. |
+| wollok | Educational language templates; low HA Configurator utility does not warrant further source rights research. Historical scoped SnipMate MIT evidence retained in archive. |
+| xquery | XML query templates; low HA Configurator utility does not warrant further source rights research. Separate mode/grammar review remains open. |
+
+Profile schema 3 retains exact allowlist semantics: 16 exclusions total, 186 retained snippet assets (36 nonempty, 150 stubs), 473 Ace files, 493 vendor resources. Upstream 495-file lock and 202 matrix rows remain unchanged in coverage; historical pins preserved. All 16 modes remain unchanged. Archive both Wollok source relationships and scoped evidence, leaving 31 active SnipMate locations and all 68 original notices. Existing scoped Microsoft attribution stays active and is not full rights clearance. Separate JSONiq/XQuery mode/grammar rights remain open. Exact-HEAD CI, artifact inspection, independent review and real HAOS acceptance required. PR #36/#32 Draft/HOLD; no merge or public-release sign-off.

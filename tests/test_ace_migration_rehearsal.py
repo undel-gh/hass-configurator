@@ -231,7 +231,7 @@ class MigrationRehearsalTests(unittest.TestCase):
                 verify.assert_called_once()
                 self.assertEqual(verify.call_args.args[0], dest / "hass_configurator")
                 result = json.loads(report.read_text("utf-8"))
-                self.assertEqual(result["curated_family_files"], 485)
+                self.assertEqual(result["curated_family_files"], 473)
                 self.assertEqual(result["overlay_verification"], {
                     "vendor_resources_verified": 486, "js_yaml_files_verified": 2})
                 self.assertEqual(len(result["excluded_workers"]), 5)

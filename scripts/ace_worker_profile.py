@@ -59,7 +59,7 @@ def selected_family(profile, lock):
                 for name in themes) or len(set(themes)) != len(themes)):
         raise ValueError("Invalid curated theme exclusions")
     snippets = profile["excluded_snippets"]
-    approved = ["snippets/abc.js","snippets/edifact.js","snippets/gobstones.js","snippets/lsl.js"]
+    approved = ["snippets/abc.js","snippets/cedar.js","snippets/cedarschema.js","snippets/csound_document.js","snippets/csound_orchestra.js","snippets/drools.js","snippets/edifact.js","snippets/fsl.js","snippets/gobstones.js","snippets/jsoniq.js","snippets/lsl.js","snippets/maze.js","snippets/razor.js","snippets/velocity.js","snippets/wollok.js","snippets/xquery.js"]
     if snippets != approved or any(name not in lock["files_sha256"] for name in approved):
         raise ValueError("Invalid curated snippet exclusions")
     removed = set(excluded) | set(themes) | set(snippets)

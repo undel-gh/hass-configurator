@@ -17,13 +17,13 @@ class AceWorkerProfileTests(unittest.TestCase):
         selected = selected_family(self.profile, self.lock)
         excluded = {"worker-coffee.js", "worker-lua.js", "worker-php.js",
                     "worker-xml.js", "worker-xquery.js", "theme-kr_theme.js",
-                    "snippets/abc.js", "snippets/edifact.js", "snippets/gobstones.js", "snippets/lsl.js"}
+                    "snippets/abc.js", "snippets/cedar.js", "snippets/cedarschema.js", "snippets/csound_document.js", "snippets/csound_orchestra.js", "snippets/drools.js", "snippets/edifact.js", "snippets/fsl.js", "snippets/gobstones.js", "snippets/jsoniq.js", "snippets/lsl.js", "snippets/maze.js", "snippets/razor.js", "snippets/velocity.js", "snippets/wollok.js", "snippets/xquery.js"}
         self.assertEqual(self.profile["excluded_themes"], ["theme-kr_theme.js"])
         self.assertEqual(set(self.lock["files_sha256"]) - set(selected), excluded)
         self.assertEqual(set(self.profile["languages"]), {"ace/mode/" + name for name in
                          ("yaml", "json", "javascript", "css", "html")})
-        self.assertEqual(len(selected), 485)
-        self.assertEqual(self.profile["excluded_snippets"], ["snippets/abc.js","snippets/edifact.js","snippets/gobstones.js","snippets/lsl.js"])
+        self.assertEqual(len(selected), 473)
+        self.assertEqual(self.profile["excluded_snippets"], ["snippets/abc.js","snippets/cedar.js","snippets/cedarschema.js","snippets/csound_document.js","snippets/csound_orchestra.js","snippets/drools.js","snippets/edifact.js","snippets/fsl.js","snippets/gobstones.js","snippets/jsoniq.js","snippets/lsl.js","snippets/maze.js","snippets/razor.js","snippets/velocity.js","snippets/wollok.js","snippets/xquery.js"])
         self.assertEqual(selected, {n: h for n, h in self.lock["files_sha256"].items() if n not in excluded})
 
     def test_reject_unclassified_or_duplicate_workers(self):

@@ -120,7 +120,7 @@ class SupplyChainTests(unittest.TestCase):
     def test_source_inventory_and_bom(self):
         inv, vendor = source_inventory()
         self.assertEqual(len(inv["components"]), 7)
-        self.assertEqual(len(vendor["resources"]), 505)
+        self.assertEqual(len(vendor["resources"]), 493)
         bom = sbom(inv, vendor)
         self.assertEqual(bom["bomFormat"], "CycloneDX")
         self.assertEqual(next(c for c in bom["components"] if c["bom-ref"] == "asset:ace")["version"], "1.45.2")
@@ -631,7 +631,7 @@ class SupplyChainTests(unittest.TestCase):
         exact_names = names.copy()
         modified = {"dart", "html", "javascript", "markdown", "php", "python", "r", "sh"}
         self.assertTrue(exact_names.isdisjoint(modified))
-        derived = {"liquid", "wollok"}
+        derived = {"liquid"}
         self.assertTrue(derived.isdisjoint(exact_names | modified))
         names |= modified | derived
         self.assertEqual({loc["file"] for loc in record["locations"]},
@@ -703,9 +703,6 @@ class SupplyChainTests(unittest.TestCase):
             "liquid": ("ace-liquid-html-prefix",
                 "https://github.com/ajaxorg/ace/blob/d9b38ac378d0dea6e1ca820c0e8294f04c46010a/lib/ace/snippets/html.snippets", "20a73d72e339c352216ce4803e6c5b842f7d7212",
                 "58fcde32061df7d7f6ef38a6bfcf306b0f800f92", "b3e3c982cfa70d04544b74652bbe85e702f5ebf2", "7c72fe03a9fce8c65f6b486d83fbc88f618a97b5"),
-            "wollok": ("ace-wollok-java-retained-blocks",
-                "https://github.com/ajaxorg/ace/blob/4f9cd17910cfe36dc504b456ea5ef62c15189f2d/lib/ace/snippets/java.snippets", "854f14ac22f148309d4f9ec450fda38244ede6ec",
-                "1693305c8974a5dd4f350bb0b9d48b134fca113c", "f98f8587908fefe10bc9dc3a9fa02443a60bb1aa", "04d3c58efa7c958cb98aa84e76bcbdcc0bb6dd8b"),
         }
         self.assertEqual(set(derived_pins), derived)
         for n, (kind, original_url, original_blob, revision, endpoint, current) in derived_pins.items():
@@ -729,6 +726,19 @@ class SupplyChainTests(unittest.TestCase):
         self.assertEqual(len(edifact), 1)
         self.assertEqual(edifact[0]["upstream"]["git_blob"], "854f14ac22f148309d4f9ec450fda38244ede6ec")
         self.assertEqual(edifact[0]["container"]["git_blob"], "624b87ad3d9e135050ba3415237fff3e38241bbc")
+        self.assertNotIn("vendor/ace/snippets/wollok.js", vendor["resources"])
+        self.assertEqual(archive["former_wollok_snipmate_location"], {"file": "vendor/ace/snippets/wollok.js", "marker": "ace/snippets/wollok"})
+        historical_wollok = {e["url"]: e["git_blob"] for e in archive["former_wollok_snipmate_evidence"]}
+        self.assertEqual(historical_wollok, {"https://github.com/ajaxorg/ace/blob/4f9cd17910cfe36dc504b456ea5ef62c15189f2d/lib/ace/snippets/java.snippets":"854f14ac22f148309d4f9ec450fda38244ede6ec","https://github.com/ajaxorg/ace/blob/1693305c8974a5dd4f350bb0b9d48b134fca113c/lib/ace/snippets/wollok.snippets":"f98f8587908fefe10bc9dc3a9fa02443a60bb1aa"})
+        self.assertFalse(set(historical_wollok) & set(evidence))
+        wollok = [r for r in archive["source_relationships"] if r["relation"] == "ace-wollok-java-retained-blocks"]
+        self.assertEqual(len(wollok), 1)
+        self.assertEqual(wollok[0]["upstream"]["git_blob"], "854f14ac22f148309d4f9ec450fda38244ede6ec")
+        self.assertEqual(wollok[0]["container"]["git_blob"], "f98f8587908fefe10bc9dc3a9fa02443a60bb1aa")
+        mapped_wollok = [r for r in archive["source_relationships"] if r["container"]["url"].endswith("/wollok.snippets.js")]
+        self.assertEqual(len(mapped_wollok), 1)
+        self.assertEqual(mapped_wollok[0]["upstream"]["git_blob"], "f98f8587908fefe10bc9dc3a9fa02443a60bb1aa")
+        self.assertEqual(mapped_wollok[0]["container"]["git_blob"], "04d3c58efa7c958cb98aa84e76bcbdcc0bb6dd8b")
         component = next(c for c in sbom(inv, vendor)["components"]
                          if c["bom-ref"] == "embedded:ace-snipmate-snippets")
         self.assertNotIn("version", component)

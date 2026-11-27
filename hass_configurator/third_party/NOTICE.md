@@ -156,11 +156,12 @@ this theme, not legacy GitHub or GitHub Dark. See docs/ace-theme-dispositions.js
 
 SnipMate snippets collection (honza/vim-snippets): historical January 2013 MIT
 LICENSE and its referenced AUTHORS file retained verbatim. The embedded
-record maps historical MIT material in 32 retained Ace payloads: 22 exact
+record maps historical MIT material in 31 retained Ace payloads: 22 exact
 decoded matches (including cpp -> c_cpp and make -> makefile) and eight
 modified descendants with reconstructed deltas and exact historical
-endpoint-to-current relations, plus Liquid (historical HTML payload with a fixed additional prefix), plus
-retained Java material in Wollok (16 unique ordered shared spans). This is not a blanket MIT license for
+endpoint-to-current relations, plus Liquid (historical HTML payload with a fixed additional prefix).
+Historical EDIFACT and Wollok evidence remains in docs/history/ace-snippet-exclusions.json,
+not active inventory. This is not a blanket MIT license for
 Ace modifications, wrappers or other snippets; additional inputs and
 contribution rights remain review-open. See docs/ACE_SNIPPET_RESEARCH.md.
 No external version, PURL, full license clearance or risk acceptance is asserted.

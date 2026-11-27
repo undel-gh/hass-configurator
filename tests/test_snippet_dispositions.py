@@ -31,12 +31,15 @@ class SnippetDispositionTests(unittest.TestCase):
         self.assertEqual(sum(r["payload_kind"] == "empty-stub" for r in self.matrix["rows"]), 150)
         self.assertEqual({r["snippet"] for r in self.matrix["rows"]
                           if r["proposed_disposition"] == "excluded-reassessment-open"},
-                         {"abc", "edifact", "gobstones", "lsl"})
-        self.assertEqual(sum(r["distribution"] == "retained" for r in self.matrix["rows"]), 198)
+                         {"abc", "cedar", "cedarschema", "csound_document", "csound_orchestra", "drools", "edifact", "fsl", "gobstones", "jsoniq", "lsl", "maze", "razor", "velocity", "wollok", "xquery"})
+        self.assertEqual(sum(r["distribution"] == "retained" for r in self.matrix["rows"]), 186)
         edifact = next(r for r in self.matrix["rows"] if r["snippet"] == "edifact")
         self.assertEqual(edifact["distribution"], "excluded")
         self.assertEqual(edifact["additional_components"], [])
         self.assertIn("Product-only", edifact["exclusion_reason"])
+        sqlserver = next(r for r in self.matrix["rows"] if r["snippet"] == "sqlserver")
+        self.assertEqual(sqlserver["distribution"], "retained")
+        self.assertEqual(sqlserver["additional_components"], ["ace-sqlserver-microsoft-template-material"])
         self.assertIn("The [machine-readable matrix](ace-snippet-dispositions.json) is canonical.",
                       render_document(self.matrix))
 
@@ -73,7 +76,7 @@ class SnippetDispositionTests(unittest.TestCase):
         vendor["resources"].pop("vendor/ace/snippets/abap.js")
         with self.assertRaises(ValueError):
             self.verify(self.matrix, vendor=vendor)
-        for name in ("abc", "edifact", "gobstones", "lsl"):
+        for name in ("abc", "cedar", "cedarschema", "csound_document", "csound_orchestra", "drools", "edifact", "fsl", "gobstones", "jsoniq", "lsl", "maze", "razor", "velocity", "wollok", "xquery"):
             changed = copy.deepcopy(self.vendor)
             row = next(r for r in self.matrix["rows"] if r["snippet"] == name)
             changed["resources"]["vendor/ace/snippets/" + name + ".js"] = row["asset_sha256"]
@@ -84,6 +87,11 @@ class SnippetDispositionTests(unittest.TestCase):
         embedded["components"].extend(archive["components"])
         with self.assertRaises(ValueError):
             self.verify(self.matrix, embedded=embedded)
+        for relation in archive["source_relationships"]:
+            changed = copy.deepcopy(self.embedded)
+            changed["source_relationships"].append(relation)
+            with self.subTest(archived_relation=relation["relation"]), self.assertRaises(ValueError):
+                self.verify(self.matrix, embedded=changed)
 
     def test_native_matrix_requires_all_rows_and_exact_source_pins(self):
         # Synthetic report tests the cross-check, not upstream parsing.
@@ -101,7 +109,7 @@ class SnippetDispositionTests(unittest.TestCase):
                 report["sources"][src["path"]] = {"git_blob": src["git_blob"]}
                 asset["source_files"].append({"source": src["path"], "source_present": True})
             report["theme_snippet_assets"].append(asset)
-        self.assertEqual(verify_native_snippet_dispositions(self.matrix, report)["nonempty"], 48)
+        self.assertEqual(verify_native_snippet_dispositions(self.matrix, report)["nonempty"], 36)
         for mutation in (
             lambda r: r["theme_snippet_assets"].pop(),
             lambda r: next(a for a in r["theme_snippet_assets"] if a["file"] == "snippets/abc.js").update(distribution="retained"),

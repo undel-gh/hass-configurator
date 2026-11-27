@@ -146,6 +146,50 @@
         "git_blob": "7e33bdc2855b5f7e3ff0cb5d4f5f546dc809ccf5",
         "marker": "module.exports"
       }
+    },
+    {
+      "upstream": {
+        "url": "https://github.com/ajaxorg/ace/blob/4f9cd17910cfe36dc504b456ea5ef62c15189f2d/lib/ace/snippets/java.snippets",
+        "git_blob": "854f14ac22f148309d4f9ec450fda38244ede6ec",
+        "marker": "## Basic Java packages and import"
+      },
+      "container": {
+        "url": "https://github.com/ajaxorg/ace/blob/1693305c8974a5dd4f350bb0b9d48b134fca113c/lib/ace/snippets/wollok.snippets",
+        "git_blob": "f98f8587908fefe10bc9dc3a9fa02443a60bb1aa",
+        "marker": "## Basic Java packages and import"
+      },
+      "relation": "ace-wollok-java-retained-blocks"
+    },
+    {
+      "upstream": {
+        "url": "https://github.com/ajaxorg/ace/blob/1693305c8974a5dd4f350bb0b9d48b134fca113c/lib/ace/snippets/wollok.snippets",
+        "git_blob": "f98f8587908fefe10bc9dc3a9fa02443a60bb1aa",
+        "marker": "## Basic Java packages and import"
+      },
+      "container": {
+        "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/snippets/wollok.snippets.js",
+        "git_blob": "04d3c58efa7c958cb98aa84e76bcbdcc0bb6dd8b",
+        "marker": "module.exports"
+      },
+      "relation": "ace-snippet-template-literal"
     }
-  ]
+  ],
+  "additional_exclusion_baseline_commit": "e7c6da7ea2f6d743a61b18bb413e9d1dfbc0c825",
+  "former_wollok_snipmate_location": {
+    "file": "vendor/ace/snippets/wollok.js",
+    "marker": "ace/snippets/wollok"
+  },
+  "former_wollok_snipmate_evidence": [
+    {
+      "url": "https://github.com/ajaxorg/ace/blob/4f9cd17910cfe36dc504b456ea5ef62c15189f2d/lib/ace/snippets/java.snippets",
+      "git_blob": "854f14ac22f148309d4f9ec450fda38244ede6ec",
+      "marker": "## Basic Java packages and import"
+    },
+    {
+      "url": "https://github.com/ajaxorg/ace/blob/1693305c8974a5dd4f350bb0b9d48b134fca113c/lib/ace/snippets/wollok.snippets",
+      "git_blob": "f98f8587908fefe10bc9dc3a9fa02443a60bb1aa",
+      "marker": "## Basic Java packages and import"
+    }
+  ],
+  "former_wollok_snipmate_note": "Sixteen unique ordered literal spans (510 bytes) of historical Java/SnipMate material mapped to Wollok; raw and endpoint pins and bounded relations retained. No whole-payload or adaptation rights assertion."
 }

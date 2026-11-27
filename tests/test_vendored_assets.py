@@ -17,8 +17,8 @@ class VendoredAssetsTests(unittest.TestCase):
     def test_hash_manifest_is_complete_and_matches_every_file(self):
         self.assertEqual(MANIFEST["schema"], 1)
         resources = MANIFEST["resources"]
-        self.assertEqual(len([p for p in resources if p.startswith("vendor/ace/")]), 485)
-        self.assertEqual(len(resources), 505)
+        self.assertEqual(len([p for p in resources if p.startswith("vendor/ace/")]), 473)
+        self.assertEqual(len(resources), 493)
         for name, checksum in resources.items():
             with self.subTest(name=name):
                 source = PACKAGE / name

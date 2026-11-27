@@ -312,7 +312,7 @@
     },
     {
       "snippet": "cedar",
-      "distribution": "retained",
+      "distribution": "excluded",
       "asset_sha256": "2acdc876063b478337e6ac521dc58c520255ec642219fb876551d1d0b0f587c2",
       "payload_kind": "nonempty",
       "source_payload": {
@@ -327,13 +327,13 @@
       "evidence_class": "historical-endpoint-review-open",
       "additional_components": [],
       "review_priority": "standard",
-      "proposed_disposition": "retain-review-open",
-      "remaining_review": "PR #5944 policy scaffolds; no named snippets in examined vscode-cedar tree. Individual contribution/source rights open.",
-      "exclusion_reason": null
+      "proposed_disposition": "excluded-reassessment-open",
+      "remaining_review": "PR #5944 policy scaffolds; no named snippets in examined vscode-cedar tree. Individual contribution/source rights open. Historical evidence retained; reassess only if reinstatement is requested.",
+      "exclusion_reason": "Authorization policy templates; low HA Configurator utility does not warrant further source rights research."
     },
     {
       "snippet": "cedarschema",
-      "distribution": "retained",
+      "distribution": "excluded",
       "asset_sha256": "f0aaef8bb458d819e5a61c7aa23b41a01a54538df2c201694b95dd9f99eba6f9",
       "payload_kind": "nonempty",
       "source_payload": {
@@ -348,9 +348,9 @@
       "evidence_class": "historical-endpoint-review-open",
       "additional_components": [],
       "review_priority": "standard",
-      "proposed_disposition": "retain-review-open",
-      "remaining_review": "PR #5944 schema scaffolds; cited vscode-cedar TextMate grammar is not snippet provenance. Individual contribution/source rights open.",
-      "exclusion_reason": null
+      "proposed_disposition": "excluded-reassessment-open",
+      "remaining_review": "PR #5944 schema scaffolds; cited vscode-cedar TextMate grammar is not snippet provenance. Individual contribution/source rights open. Historical evidence retained; reassess only if reinstatement is requested.",
+      "exclusion_reason": "Authorization schema templates; low HA Configurator utility does not warrant further source rights research."
     },
     {
       "snippet": "cirru",
@@ -484,7 +484,7 @@
     },
     {
       "snippet": "csound_document",
-      "distribution": "retained",
+      "distribution": "excluded",
       "asset_sha256": "c53c63a0ed7815efa87b3a90f7e9bbd8d326187e35904accb6bb357ed053b3e5",
       "payload_kind": "nonempty",
       "source_payload": {
@@ -499,13 +499,13 @@
       "evidence_class": "historical-endpoint-review-open",
       "additional_components": [],
       "review_priority": "standard",
-      "proposed_disposition": "retain-review-open",
-      "remaining_review": "One XML scaffold; mode Pygments/Csound references do not establish snippet provenance. Original contribution review.",
-      "exclusion_reason": null
+      "proposed_disposition": "excluded-reassessment-open",
+      "remaining_review": "One XML scaffold; mode Pygments/Csound references do not establish snippet provenance. Original contribution review. Historical evidence retained; reassess only if reinstatement is requested.",
+      "exclusion_reason": "Audio synthesis document templates; low HA Configurator utility does not warrant further source rights research."
     },
     {
       "snippet": "csound_orchestra",
-      "distribution": "retained",
+      "distribution": "excluded",
       "asset_sha256": "77b3b802be45d61d73c744a2a6661d599356a3609053425d41c4077a62cfbd57",
       "payload_kind": "nonempty",
       "source_payload": {
@@ -520,9 +520,9 @@
       "evidence_class": "historical-endpoint-review-open",
       "additional_components": [],
       "review_priority": "standard",
-      "proposed_disposition": "retain-review-open",
-      "remaining_review": "Nine language scaffolds; mode references do not establish snippet provenance. Original contribution review.",
-      "exclusion_reason": null
+      "proposed_disposition": "excluded-reassessment-open",
+      "remaining_review": "Nine language scaffolds; mode references do not establish snippet provenance. Original contribution review. Historical evidence retained; reassess only if reinstatement is requested.",
+      "exclusion_reason": "Audio synthesis orchestra templates; low HA Configurator utility does not warrant further source rights research."
     },
     {
       "snippet": "csound_score",
@@ -730,7 +730,7 @@
     },
     {
       "snippet": "drools",
-      "distribution": "retained",
+      "distribution": "excluded",
       "asset_sha256": "6f854346cbd04321c5a56fb13aee1bc3a977cf4c3d918e5f4d9bd60acdfcbae8",
       "payload_kind": "nonempty",
       "source_payload": {
@@ -745,9 +745,9 @@
       "evidence_class": "historical-endpoint-review-open",
       "additional_components": [],
       "review_priority": "standard",
-      "proposed_disposition": "retain-review-open",
-      "remaining_review": "Three rule/query/declare scaffolds; mode BSD header and drools.org reference do not establish separate snippet rights.",
-      "exclusion_reason": null
+      "proposed_disposition": "excluded-reassessment-open",
+      "remaining_review": "Three rule/query/declare scaffolds; mode BSD header and drools.org reference do not establish separate snippet rights. Historical evidence retained; reassess only if reinstatement is requested.",
+      "exclusion_reason": "Business rules templates; low HA Configurator utility does not warrant further source rights research."
     },
     {
       "snippet": "edifact",
@@ -907,7 +907,7 @@
     },
     {
       "snippet": "fsl",
-      "distribution": "retained",
+      "distribution": "excluded",
       "asset_sha256": "707a497d5351ddc67d4279f8a5eb0482367ca0927719cc22bb9ddb721c3b6a11",
       "payload_kind": "nonempty",
       "source_payload": {
@@ -922,9 +922,9 @@
       "evidence_class": "historical-endpoint-review-open",
       "additional_components": [],
       "review_priority": "standard",
-      "proposed_disposition": "retain-review-open",
-      "remaining_review": "Same-author JSSM MIT examples share metadata conventions, not exact header. machine_license is template content, not a grant.",
-      "exclusion_reason": null
+      "proposed_disposition": "excluded-reassessment-open",
+      "remaining_review": "Same-author JSSM MIT examples share metadata conventions, not exact header. machine_license is template content, not a grant. Historical evidence retained; reassess only if reinstatement is requested.",
+      "exclusion_reason": "Finite-state machines templates; low HA Configurator utility does not warrant further source rights research."
     },
     {
       "snippet": "ftl",
@@ -1444,7 +1444,7 @@
     },
     {
       "snippet": "jsoniq",
-      "distribution": "retained",
+      "distribution": "excluded",
       "asset_sha256": "9b60dfaf46f84262d3e4865157cd0a150b347139359552518cf8b38109a10d11",
       "payload_kind": "nonempty",
       "source_payload": {
@@ -1459,9 +1459,9 @@
       "evidence_class": "historical-endpoint-review-open",
       "additional_components": [],
       "review_priority": "elevated",
-      "proposed_disposition": "retain-review-open",
-      "remaining_review": "Identical raw to XQuery; legacy static module, source rights open. XQLint Apache and REx grant do not cover snippets.",
-      "exclusion_reason": null
+      "proposed_disposition": "excluded-reassessment-open",
+      "remaining_review": "Identical raw to XQuery; legacy static module, source rights open. XQLint Apache and REx grant do not cover snippets. Historical evidence retained; reassess only if reinstatement is requested.",
+      "exclusion_reason": "Specialized query templates; low HA Configurator utility does not warrant further source rights research. Separate mode/grammar review remains open."
     },
     {
       "snippet": "jsp",
@@ -1825,7 +1825,7 @@
     },
     {
       "snippet": "maze",
-      "distribution": "retained",
+      "distribution": "excluded",
       "asset_sha256": "648223d356b330d54fd98b6e6a404188a333ac730666171ec613f889ef360917",
       "payload_kind": "nonempty",
       "source_payload": {
@@ -1840,9 +1840,9 @@
       "evidence_class": "historical-endpoint-review-open",
       "additional_components": [],
       "review_priority": "standard",
-      "proposed_disposition": "retain-review-open",
-      "remaining_review": "Two entries with duplicate trigger and distinct descriptions. Preserve both; original contribution review.",
-      "exclusion_reason": null
+      "proposed_disposition": "excluded-reassessment-open",
+      "remaining_review": "Two entries with duplicate trigger and distinct descriptions. Preserve both; original contribution review. Historical evidence retained; reassess only if reinstatement is requested.",
+      "exclusion_reason": "Specialized language templates; low HA Configurator utility does not warrant further source rights research."
     },
     {
       "snippet": "mediawiki",
@@ -2386,7 +2386,7 @@
     },
     {
       "snippet": "razor",
-      "distribution": "retained",
+      "distribution": "excluded",
       "asset_sha256": "aa845a481fd97fdcab549579734ad816aa6c556afc0bb8d66fc0defd4cd350d9",
       "payload_kind": "nonempty",
       "source_payload": {
@@ -2401,9 +2401,9 @@
       "evidence_class": "historical-endpoint-review-open",
       "additional_components": [],
       "review_priority": "standard",
-      "proposed_disposition": "retain-review-open",
-      "remaining_review": "Single 35-byte conditional scaffold; original contribution review.",
-      "exclusion_reason": null
+      "proposed_disposition": "excluded-reassessment-open",
+      "remaining_review": "Single 35-byte conditional scaffold; original contribution review. Historical evidence retained; reassess only if reinstatement is requested.",
+      "exclusion_reason": "ASP.NET templates; low HA Configurator utility does not warrant further source rights research."
     },
     {
       "snippet": "rdoc",
@@ -2827,7 +2827,7 @@
       ],
       "review_priority": "elevated",
       "proposed_disposition": "retain-review-open",
-      "remaining_review": "Official 2018 MIT SSMS source, 4+6 scoped shared blocks; original 2015 copy revision, adaptations and other ten triggers open.",
+      "remaining_review": "Retain for targeted research: PRs #2457/#2460 and three immutable historical snapshots verified; official 2018 MIT SSMS source, 4+6 scoped shared blocks; earlier source grant and adapted content remain open.",
       "exclusion_reason": null
     },
     {
@@ -3092,7 +3092,7 @@
     },
     {
       "snippet": "velocity",
-      "distribution": "retained",
+      "distribution": "excluded",
       "asset_sha256": "59f031f5cd92e4dfa73cd84a96761ccf1f1e6e0cdf783c16b87680687bd39372",
       "payload_kind": "nonempty",
       "source_payload": {
@@ -3107,9 +3107,9 @@
       "evidence_class": "historical-endpoint-review-open",
       "additional_components": [],
       "review_priority": "standard",
-      "proposed_disposition": "retain-review-open",
-      "remaining_review": "Six common directive templates. Original contribution and external input review.",
-      "exclusion_reason": null
+      "proposed_disposition": "excluded-reassessment-open",
+      "remaining_review": "Six common directive templates. Original contribution and external input review. Historical evidence retained; reassess only if reinstatement is requested.",
+      "exclusion_reason": "Java template language templates; low HA Configurator utility does not warrant further source rights research."
     },
     {
       "snippet": "verilog",
@@ -3169,7 +3169,7 @@
     },
     {
       "snippet": "wollok",
-      "distribution": "retained",
+      "distribution": "excluded",
       "asset_sha256": "0013a6e56d004b76dee613a404ff356e7389ed25d1ca70d03b6209709bdf6cec",
       "payload_kind": "nonempty",
       "source_payload": {
@@ -3182,13 +3182,11 @@
         "git_blob": "f98f8587908fefe10bc9dc3a9fa02443a60bb1aa"
       },
       "evidence_class": "snipmate-derived",
-      "additional_components": [
-        "ace-snipmate-snippets"
-      ],
+      "additional_components": [],
       "review_priority": "elevated",
-      "proposed_disposition": "retain-review-open",
-      "remaining_review": "16 ordered shared Java spans; MIT covers retained Java material only; adaptations/new triggers and original contribution rights open.",
-      "exclusion_reason": null
+      "proposed_disposition": "excluded-reassessment-open",
+      "remaining_review": "16 ordered shared Java spans; MIT covers retained Java material only; adaptations/new triggers and original contribution rights open. Historical evidence retained; reassess only if reinstatement is requested.",
+      "exclusion_reason": "Educational language templates; low HA Configurator utility does not warrant further source rights research. Historical scoped SnipMate MIT evidence retained in archive."
     },
     {
       "snippet": "xml",
@@ -3206,7 +3204,7 @@
     },
     {
       "snippet": "xquery",
-      "distribution": "retained",
+      "distribution": "excluded",
       "asset_sha256": "0d4eb8d83d3a439a4c1f4311c5eeeeb6dc18cf72db27f4a0fa1ee115b0f8f023",
       "payload_kind": "nonempty",
       "source_payload": {
@@ -3221,9 +3219,9 @@
       "evidence_class": "historical-endpoint-review-open",
       "additional_components": [],
       "review_priority": "elevated",
-      "proposed_disposition": "retain-review-open",
-      "remaining_review": "Identical raw to JSONiq; legacy static module, source rights open. XQLint Apache and REx grant do not cover snippets.",
-      "exclusion_reason": null
+      "proposed_disposition": "excluded-reassessment-open",
+      "remaining_review": "Identical raw to JSONiq; legacy static module, source rights open. XQLint Apache and REx grant do not cover snippets. Historical evidence retained; reassess only if reinstatement is requested.",
+      "exclusion_reason": "XML query templates; low HA Configurator utility does not warrant further source rights research. Separate mode/grammar review remains open."
     },
     {
       "snippet": "yaml",
