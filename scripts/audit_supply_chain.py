@@ -63,6 +63,132 @@ TEXTMATE_COLLECTIONS = {
 }
 TEXTMATE_ACE_REV = "68d7fd1c0f5ac50cdb610bf06b86074eab3be652"
 
+# Vala historical source pins, scoped to the exact paths needed for attribution.
+VALA_REDCAR = "https://github.com/danlucraft/redcar-bundles/blob/"
+VALA_BUTCHER = "https://github.com/technosophos/Vala-TMBundle/blob/"
+VALA_REDCAR_REV = "21ff196d839c2793c83db9df08160ab1852e07fc"
+VALA_SANITIZED_REV = "594eb0c20836d563ea4d31fac06b5218c8e83d08"
+VALA_IMPORT_REV = "6ea1cc187c3e1be58ac05624b735b81c0e2dd6f2"
+VALA_ADDED_REV = "cfca3a64285c76857147947139fd31cc2691d68a"
+VALA_FIXED_REV = "af55cfc7c0b034c9e032d6a14720deee9fa70cfe"
+VALA_RENAMED_REV = "0f40b5d0da80444124ee9ac039c3b1163647f84c"
+VALA_LICENSE_BLOB = "4446030e4815a6abda7152a72dabc028ff7e042f"
+VALA_LICENSE_PATH = "third_party/licenses/embedded/redcar-vala-bundle-license.txt"
+VALA_ORIGINAL = {
+    "Console.WriteLine (writeline).plist": "d7828633f15704389c7027eff003dc88e37072de",
+    "case.plist": "818d8e9586479c0e981866c547e07664dc5261d3",
+    "class.plist": "0e1e95593a44be52975074a6acb388b779ed3916",
+    "do while.plist": "9dd440145033f6fc0a5ac2a62a4f33ddbfe4547a",
+    "else if (elseif).plist": "a637fbb794e3ae72b872bb2297ac748c3d1291e3",
+    "else.plist": "0fb763415925f90fcd870c8947ea094dc5d2eb14",
+    "for.plist": "e26a938aff3e8f48e486fd9a54b8ae86a95d6c18",
+    "foreach.plist": "5d0254b6fc3773ebf0427ec0008d44e45ea1fc42",
+    "if.plist": "fb5a269903b238fc14ddeca5807b1b658a9a328d",
+    "namespace (ns).plist": "2682216c02b2a77f892f7d0d74cca2a7f903b075",
+    "property (prop).plist": "572447dc0595f4b3c0c97e63e0405c96110711e6",
+    "read-only property (roprop).plist": "333d5fb20dee592811fd246098fd326e9a6d3a68",
+    "switch.plist": "b44baff8fc7fcec7537521b6ed03a4ee86a12846",
+    "while.plist": "eb784d1a64de35902ae8466baafe17acc7d88128",
+}
+VALA_SANITIZED = {
+    "Console_WriteLine___writeline__.plist": "d7828633f15704389c7027eff003dc88e37072de",
+    "case.plist": "818d8e9586479c0e981866c547e07664dc5261d3",
+    "class.plist": "0e1e95593a44be52975074a6acb388b779ed3916",
+    "do_while.plist": "9dd440145033f6fc0a5ac2a62a4f33ddbfe4547a",
+    "else.plist": "0fb763415925f90fcd870c8947ea094dc5d2eb14",
+    "else_if___elseif__.plist": "a637fbb794e3ae72b872bb2297ac748c3d1291e3",
+    "for.plist": "e26a938aff3e8f48e486fd9a54b8ae86a95d6c18",
+    "foreach.plist": "5d0254b6fc3773ebf0427ec0008d44e45ea1fc42",
+    "if.plist": "fb5a269903b238fc14ddeca5807b1b658a9a328d",
+    "namespace___ns__.plist": "2682216c02b2a77f892f7d0d74cca2a7f903b075",
+    "property___prop__.plist": "572447dc0595f4b3c0c97e63e0405c96110711e6",
+    "read__only_property___roprop__.plist": "333d5fb20dee592811fd246098fd326e9a6d3a68",
+    "switch.plist": "b44baff8fc7fcec7537521b6ed03a4ee86a12846",
+    "while.plist": "eb784d1a64de35902ae8466baafe17acc7d88128",
+}
+VALA_DELTA = {
+    "Comment (multiline).tmSnippet": "1f58883393206674f86d8eced7e1225876b46398",
+    "DBus annotation.tmSnippet": "e8f6e1c54bd760612a9c8fba4bad1d2bdced3f29",
+    "DocBlock.tmSnippet": "d00916a9d4fa1d7f44b947318f146655e9c24fef",
+    "Gee_ArrayList.tmSnippet": "d67415cbdc1c243d235601356145ce52e5dcf326",
+    "Gee_HashMap.tmSnippet": "e96031b7ab04d5afefd0b1467b7894cfcbf38cd7",
+    "Gee_HashSet.tmSnippet": "6b3b6806665841cd03255ddfd17a4fc9a7acfc37",
+    "Main function.tmSnippet": "bd86c7e4ca31823ce41e6fa46945911d0d2d51ca",
+    "String template (@).tmSnippet": "6e488970ee80ecdf6829d50cfc032dc063433e00",
+    "Verbatim string (\"\"\").tmSnippet": "c3afa7bfd0d7dc71abd5341cd5e620c8104e7a75",
+    "class.plist": "bafc69bdcab709bffebcb9d93f9687133363e92f",
+    "closure.tmSnippet": "e63ee79c17f2c963f3cd5791e1515b1302649ef0",
+    "delegate.tmSnippet": "7e79b111ca44585948fc1eb5be7ba9af4cb7cf23",
+    "enum.tmSnippet": "5b1f36bc90d9f31c5e427222db2749b1601897d5",
+    "error domain.tmSnippet": "730dd21376c574b72a93d0e14e2257152675c66d",
+    "interface.tmSnippet": "e7cf218c5415533d0153640e9e3841a06600770f",
+    "printf.tmSnippet": "6d5f571eec42288a6a7e572e718e498f37c5bb36",
+    "struct.tmSnippet": "3ed0b3ffff5fc71895f07c023b321e8946aeb225",
+    "try:catch.tmSnippet": "610ede504a37d18f9f9f9a9f3ac5f9524002db72",
+}
+
+
+def vala_historical_pins():
+    """Reconstruct the historical snippet sets and bind them to exact raw paths."""
+    added = {**VALA_ORIGINAL, **VALA_DELTA}
+    fixed = {**added, "printf.tmSnippet": "274ee7a3a2347aa18142590228615a595c5af679"}
+    renamed = {name.removesuffix(".plist") + ".tmSnippet" if name.endswith(".plist") else name: blob
+               for name, blob in fixed.items()}
+    stages = (
+        (VALA_REDCAR + VALA_REDCAR_REV + "/Bundles/Vala.tmbundle/Snippets/", VALA_ORIGINAL),
+        (VALA_REDCAR + VALA_SANITIZED_REV + "/Bundles/Vala.tmbundle/Snippets/", VALA_SANITIZED),
+        (VALA_BUTCHER + VALA_IMPORT_REV + "/Snippets/", VALA_ORIGINAL),
+        (VALA_BUTCHER + VALA_ADDED_REV + "/Snippets/", VALA_DELTA),
+        (VALA_BUTCHER + VALA_FIXED_REV + "/Snippets/", {"printf.tmSnippet": fixed["printf.tmSnippet"]}),
+        (VALA_BUTCHER + VALA_RENAMED_REV + "/Snippets/", renamed),
+    )
+    pins = {prefix + quote(name, safe="/"): (blob, "<key>content</key>")
+            for prefix, files in stages for name, blob in files.items()}
+    for revision in (VALA_REDCAR_REV, VALA_SANITIZED_REV):
+        pins[VALA_REDCAR + revision + "/LICENSE"] = (
+            VALA_LICENSE_BLOB, "Permission to copy, use, modify, sell and distribute")
+    return pins
+
+
+def vala_tree_identity(files):
+    """Git tree object hash for the observed flat regular-file snippet trees."""
+    data = b"".join(b"100644 " + name.encode("utf-8") + b"\0" + bytes.fromhex(blob)
+                    for name, blob in sorted(files.items()))
+    return hashlib.sha1(b"tree " + str(len(data)).encode("ascii") + b"\0" + data).hexdigest()
+
+
+def validate_vala_history(embedded):
+    record = next(c for c in embedded["components"] if c["id"] == "ace-textmate-vala-snippets")
+    expected = vala_historical_pins()
+    historical = [p for p in record["evidence"] if p["url"] in expected]
+    observed = {p["url"]: (p["git_blob"], p["marker"]) for p in historical}
+    added = {**VALA_ORIGINAL, **VALA_DELTA}
+    fixed = {**added, "printf.tmSnippet": "274ee7a3a2347aa18142590228615a595c5af679"}
+    renamed = {name.removesuffix(".plist") + ".tmSnippet" if name.endswith(".plist") else name: blob
+               for name, blob in fixed.items()}
+    final_prefix = "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/Snippets/"
+    final = {unquote(p["url"][len(final_prefix):]): p["git_blob"]
+             for p in record["evidence"] if p["url"].startswith(final_prefix)}
+    if (len(historical) != len(expected) or observed != expected
+            or len(VALA_ORIGINAL) != 14 or len(VALA_DELTA) != 18
+            or set(VALA_ORIGINAL) & set(VALA_DELTA) != {"class.plist"}
+            or set(VALA_SANITIZED.values()) != set(VALA_ORIGINAL.values())
+            or len(VALA_SANITIZED) != 14 or len(added) != 31 or renamed != final
+            or vala_tree_identity(VALA_ORIGINAL) != "b204825ca15eb75dade9a06d805f0643c03d309b"
+            or vala_tree_identity(VALA_SANITIZED) != "027dc8ce2321dd7f78bbe431968f29cacccfdf25"
+            or vala_tree_identity(added) != "67aba7ae0bcbbcdffaaf3b8e9bf1e5dbe1c403cd"
+            or vala_tree_identity(fixed) != "4d4f64ac0d43f93472416d79d20ba1177489df00"
+            or vala_tree_identity(renamed) != "2506df0b1ff0b4b3d360c1c74d829d0457e44d31"
+            or record["license"] != "LicenseRef-TextMate-Bundle AND MIT"
+            or set(record["notices"]) != {VALA_LICENSE_PATH, "third_party/licenses/embedded/vala-tmbundle-mit.txt"}
+            or embedded["notices"].get(VALA_LICENSE_PATH) != {
+                "kind": "whole-file", "sha256": "0b4781488f944d7a2479ab992f730dbae7857c43aa56682a0fcff681054ee10d",
+                "source": VALA_REDCAR + VALA_REDCAR_REV + "/LICENSE", "source_blob": VALA_LICENSE_BLOB}):
+        raise ValueError("Incomplete Vala historical provenance")
+    return {"historical_pins": len(expected), "inherited": 14, "additions": 17,
+            "changed": ["class.plist", "printf.tmSnippet"], "final": 31}
+
+
 # Exactly two official reference template paths; no general encoded-path exception.
 SQLSERVER_REFERENCE_REV = "80d5bf59f8df98a4b1bc910a9424c77647896f00"
 SQLSERVER_REFERENCE_PATHS = {
@@ -89,7 +215,8 @@ def immutable_raw_url(url):
         textmate = allowed and re.fullmatch(r'Snippets/[A-Za-z0-9_. ()"@:\-]+', decoded)
         ssms = (owner == "microsoft" and repo == "sql-server-samples"
                 and commit == SQLSERVER_REFERENCE_REV and decoded in SQLSERVER_REFERENCE_PATHS)
-        if (not (textmate or ssms) or quote(decoded, safe="/") != filename):
+        if (not (textmate or ssms or url in vala_historical_pins())
+                or quote(decoded, safe="/") != filename):
             raise ValueError("Unsafe encoded embedded evidence URL: " + url)
     path = PurePosixPath(filename)
     if (owner in {".", ".."} or repo in {".", ".."} or path.is_absolute()
@@ -517,6 +644,7 @@ def validate_embedded(root, inv, vendor, embedded, notice_paths):
                 raise ValueError("Missing source relationship marker")
     # Validate collection cardinality and endpoints even without network access.
     list(textmate_collection_records(embedded))
+    validate_vala_history(embedded)
     font = embedded["font_provenance"]
     check_git_pin(font["source"], font["source_blob"])
     if (font["file"] not in inv["legacy_assets"] or font["status"] != "partial"
@@ -585,6 +713,7 @@ def embedded_upstream_evidence(inv, fetch=None):
             raise ValueError("TextMate snippet collection mismatch: " + language)
         collection_results.append({"language": language, "count": len(inputs),
                                    "container": module["url"], "relation": "exact-plist-array-dictionaries"})
+    vala_history = validate_vala_history(embedded)
     font = embedded["font_provenance"]
     original = verified(font["source"], font["source_blob"])
     candidate = font["google_repository_candidate"]
@@ -596,6 +725,7 @@ def embedded_upstream_evidence(inv, fetch=None):
                              for url, raw in sorted(cache.items())],
             "component_records": len(embedded["components"]),
             "textmate_snippet_collections_verified": collection_results,
+            "vala_historical_provenance_verified": vala_history,
             "notices_verified": len(embedded["notices"]),
             "npm_archive_notices": npm_notices,
             "literal_source_relationships_verified": sum(row["relation"] == "literal-full-source-substring"

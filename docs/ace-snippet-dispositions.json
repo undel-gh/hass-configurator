@@ -3073,7 +3073,7 @@
       ],
       "review_priority": "elevated",
       "proposed_disposition": "retain-review-open",
-      "remaining_review": "31/31 TextMate dictionaries mapped. Original Redcar Bundles 2009 TextMate permission and all 14 initial import blobs verified; 13 unchanged, class adapted, 17 additions by Butcher. MIT PR #11 approved by maintainer. Scoped notice/provenance update and independent review pending.",
+      "remaining_review": "31/31 TextMate dictionaries mapped. Original Redcar Bundles 2009 TextMate permission preserved verbatim alongside later Butcher MIT notice. Pinned 14 inherited files, 17 additions, class/printf changes and rename closure. Independent review pending; no grammar or final clearance.",
       "exclusion_reason": null
     },
     {

@@ -174,8 +174,12 @@ is a source-specific custom identifier, not an MIT or BSD declaration.
 Vala TextMate snippets: MIT LICENSE (Copyright (C) 2014 Matt Butcher) retained
 verbatim as vala-tmbundle-mit.txt. All 31 source dictionaries match the current
 Ace Vala array and the 2014-11-13 licensed tree is identical to the pre-import
-2013 Snippets tree. The grant postdates Ace import; earlier Daniel Lucraft rights
-remain open. Both mappings are partial and limited to snippet payloads; no
+2013 Snippets tree. The grant postdates Ace import. Daniel Lucraft's original
+Redcar Bundles TextMate Bundle License is retained verbatim as
+redcar-vala-bundle-license.txt, including its file-specific exceptions. Fourteen
+inherited source files, seventeen additions and class/printf modifications are
+scoped to the historical Vala snippet collection. Both mappings are partial and
+limited to snippet payloads; no
 version, PURL, grammar rights, full clearance or risk acceptance asserted.
 
 Microsoft SSMS templates: original Microsoft Corporation MIT license retained

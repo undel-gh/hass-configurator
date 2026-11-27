@@ -2979,11 +2979,481 @@
           "git_blob": "d74231b55b3f6caa79067ddc8666aa4733b18921",
           "marker": "Daniel Lucraft",
           "url": "https://github.com/technosophos/Vala-TMBundle/blob/40ec6f4f5e1cf921d521d0589fd9e7fc6ba0b305/README.md"
+        },
+        {
+          "git_blob": "d7828633f15704389c7027eff003dc88e37072de",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/danlucraft/redcar-bundles/blob/21ff196d839c2793c83db9df08160ab1852e07fc/Bundles/Vala.tmbundle/Snippets/Console.WriteLine%20%28writeline%29.plist"
+        },
+        {
+          "git_blob": "818d8e9586479c0e981866c547e07664dc5261d3",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/danlucraft/redcar-bundles/blob/21ff196d839c2793c83db9df08160ab1852e07fc/Bundles/Vala.tmbundle/Snippets/case.plist"
+        },
+        {
+          "git_blob": "0e1e95593a44be52975074a6acb388b779ed3916",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/danlucraft/redcar-bundles/blob/21ff196d839c2793c83db9df08160ab1852e07fc/Bundles/Vala.tmbundle/Snippets/class.plist"
+        },
+        {
+          "git_blob": "9dd440145033f6fc0a5ac2a62a4f33ddbfe4547a",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/danlucraft/redcar-bundles/blob/21ff196d839c2793c83db9df08160ab1852e07fc/Bundles/Vala.tmbundle/Snippets/do%20while.plist"
+        },
+        {
+          "git_blob": "a637fbb794e3ae72b872bb2297ac748c3d1291e3",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/danlucraft/redcar-bundles/blob/21ff196d839c2793c83db9df08160ab1852e07fc/Bundles/Vala.tmbundle/Snippets/else%20if%20%28elseif%29.plist"
+        },
+        {
+          "git_blob": "0fb763415925f90fcd870c8947ea094dc5d2eb14",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/danlucraft/redcar-bundles/blob/21ff196d839c2793c83db9df08160ab1852e07fc/Bundles/Vala.tmbundle/Snippets/else.plist"
+        },
+        {
+          "git_blob": "e26a938aff3e8f48e486fd9a54b8ae86a95d6c18",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/danlucraft/redcar-bundles/blob/21ff196d839c2793c83db9df08160ab1852e07fc/Bundles/Vala.tmbundle/Snippets/for.plist"
+        },
+        {
+          "git_blob": "5d0254b6fc3773ebf0427ec0008d44e45ea1fc42",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/danlucraft/redcar-bundles/blob/21ff196d839c2793c83db9df08160ab1852e07fc/Bundles/Vala.tmbundle/Snippets/foreach.plist"
+        },
+        {
+          "git_blob": "fb5a269903b238fc14ddeca5807b1b658a9a328d",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/danlucraft/redcar-bundles/blob/21ff196d839c2793c83db9df08160ab1852e07fc/Bundles/Vala.tmbundle/Snippets/if.plist"
+        },
+        {
+          "git_blob": "2682216c02b2a77f892f7d0d74cca2a7f903b075",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/danlucraft/redcar-bundles/blob/21ff196d839c2793c83db9df08160ab1852e07fc/Bundles/Vala.tmbundle/Snippets/namespace%20%28ns%29.plist"
+        },
+        {
+          "git_blob": "572447dc0595f4b3c0c97e63e0405c96110711e6",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/danlucraft/redcar-bundles/blob/21ff196d839c2793c83db9df08160ab1852e07fc/Bundles/Vala.tmbundle/Snippets/property%20%28prop%29.plist"
+        },
+        {
+          "git_blob": "333d5fb20dee592811fd246098fd326e9a6d3a68",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/danlucraft/redcar-bundles/blob/21ff196d839c2793c83db9df08160ab1852e07fc/Bundles/Vala.tmbundle/Snippets/read-only%20property%20%28roprop%29.plist"
+        },
+        {
+          "git_blob": "b44baff8fc7fcec7537521b6ed03a4ee86a12846",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/danlucraft/redcar-bundles/blob/21ff196d839c2793c83db9df08160ab1852e07fc/Bundles/Vala.tmbundle/Snippets/switch.plist"
+        },
+        {
+          "git_blob": "eb784d1a64de35902ae8466baafe17acc7d88128",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/danlucraft/redcar-bundles/blob/21ff196d839c2793c83db9df08160ab1852e07fc/Bundles/Vala.tmbundle/Snippets/while.plist"
+        },
+        {
+          "git_blob": "d7828633f15704389c7027eff003dc88e37072de",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/danlucraft/redcar-bundles/blob/594eb0c20836d563ea4d31fac06b5218c8e83d08/Bundles/Vala.tmbundle/Snippets/Console_WriteLine___writeline__.plist"
+        },
+        {
+          "git_blob": "818d8e9586479c0e981866c547e07664dc5261d3",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/danlucraft/redcar-bundles/blob/594eb0c20836d563ea4d31fac06b5218c8e83d08/Bundles/Vala.tmbundle/Snippets/case.plist"
+        },
+        {
+          "git_blob": "0e1e95593a44be52975074a6acb388b779ed3916",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/danlucraft/redcar-bundles/blob/594eb0c20836d563ea4d31fac06b5218c8e83d08/Bundles/Vala.tmbundle/Snippets/class.plist"
+        },
+        {
+          "git_blob": "9dd440145033f6fc0a5ac2a62a4f33ddbfe4547a",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/danlucraft/redcar-bundles/blob/594eb0c20836d563ea4d31fac06b5218c8e83d08/Bundles/Vala.tmbundle/Snippets/do_while.plist"
+        },
+        {
+          "git_blob": "0fb763415925f90fcd870c8947ea094dc5d2eb14",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/danlucraft/redcar-bundles/blob/594eb0c20836d563ea4d31fac06b5218c8e83d08/Bundles/Vala.tmbundle/Snippets/else.plist"
+        },
+        {
+          "git_blob": "a637fbb794e3ae72b872bb2297ac748c3d1291e3",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/danlucraft/redcar-bundles/blob/594eb0c20836d563ea4d31fac06b5218c8e83d08/Bundles/Vala.tmbundle/Snippets/else_if___elseif__.plist"
+        },
+        {
+          "git_blob": "e26a938aff3e8f48e486fd9a54b8ae86a95d6c18",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/danlucraft/redcar-bundles/blob/594eb0c20836d563ea4d31fac06b5218c8e83d08/Bundles/Vala.tmbundle/Snippets/for.plist"
+        },
+        {
+          "git_blob": "5d0254b6fc3773ebf0427ec0008d44e45ea1fc42",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/danlucraft/redcar-bundles/blob/594eb0c20836d563ea4d31fac06b5218c8e83d08/Bundles/Vala.tmbundle/Snippets/foreach.plist"
+        },
+        {
+          "git_blob": "fb5a269903b238fc14ddeca5807b1b658a9a328d",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/danlucraft/redcar-bundles/blob/594eb0c20836d563ea4d31fac06b5218c8e83d08/Bundles/Vala.tmbundle/Snippets/if.plist"
+        },
+        {
+          "git_blob": "2682216c02b2a77f892f7d0d74cca2a7f903b075",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/danlucraft/redcar-bundles/blob/594eb0c20836d563ea4d31fac06b5218c8e83d08/Bundles/Vala.tmbundle/Snippets/namespace___ns__.plist"
+        },
+        {
+          "git_blob": "572447dc0595f4b3c0c97e63e0405c96110711e6",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/danlucraft/redcar-bundles/blob/594eb0c20836d563ea4d31fac06b5218c8e83d08/Bundles/Vala.tmbundle/Snippets/property___prop__.plist"
+        },
+        {
+          "git_blob": "333d5fb20dee592811fd246098fd326e9a6d3a68",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/danlucraft/redcar-bundles/blob/594eb0c20836d563ea4d31fac06b5218c8e83d08/Bundles/Vala.tmbundle/Snippets/read__only_property___roprop__.plist"
+        },
+        {
+          "git_blob": "b44baff8fc7fcec7537521b6ed03a4ee86a12846",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/danlucraft/redcar-bundles/blob/594eb0c20836d563ea4d31fac06b5218c8e83d08/Bundles/Vala.tmbundle/Snippets/switch.plist"
+        },
+        {
+          "git_blob": "eb784d1a64de35902ae8466baafe17acc7d88128",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/danlucraft/redcar-bundles/blob/594eb0c20836d563ea4d31fac06b5218c8e83d08/Bundles/Vala.tmbundle/Snippets/while.plist"
+        },
+        {
+          "git_blob": "d7828633f15704389c7027eff003dc88e37072de",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/6ea1cc187c3e1be58ac05624b735b81c0e2dd6f2/Snippets/Console.WriteLine%20%28writeline%29.plist"
+        },
+        {
+          "git_blob": "818d8e9586479c0e981866c547e07664dc5261d3",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/6ea1cc187c3e1be58ac05624b735b81c0e2dd6f2/Snippets/case.plist"
+        },
+        {
+          "git_blob": "0e1e95593a44be52975074a6acb388b779ed3916",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/6ea1cc187c3e1be58ac05624b735b81c0e2dd6f2/Snippets/class.plist"
+        },
+        {
+          "git_blob": "9dd440145033f6fc0a5ac2a62a4f33ddbfe4547a",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/6ea1cc187c3e1be58ac05624b735b81c0e2dd6f2/Snippets/do%20while.plist"
+        },
+        {
+          "git_blob": "a637fbb794e3ae72b872bb2297ac748c3d1291e3",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/6ea1cc187c3e1be58ac05624b735b81c0e2dd6f2/Snippets/else%20if%20%28elseif%29.plist"
+        },
+        {
+          "git_blob": "0fb763415925f90fcd870c8947ea094dc5d2eb14",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/6ea1cc187c3e1be58ac05624b735b81c0e2dd6f2/Snippets/else.plist"
+        },
+        {
+          "git_blob": "e26a938aff3e8f48e486fd9a54b8ae86a95d6c18",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/6ea1cc187c3e1be58ac05624b735b81c0e2dd6f2/Snippets/for.plist"
+        },
+        {
+          "git_blob": "5d0254b6fc3773ebf0427ec0008d44e45ea1fc42",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/6ea1cc187c3e1be58ac05624b735b81c0e2dd6f2/Snippets/foreach.plist"
+        },
+        {
+          "git_blob": "fb5a269903b238fc14ddeca5807b1b658a9a328d",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/6ea1cc187c3e1be58ac05624b735b81c0e2dd6f2/Snippets/if.plist"
+        },
+        {
+          "git_blob": "2682216c02b2a77f892f7d0d74cca2a7f903b075",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/6ea1cc187c3e1be58ac05624b735b81c0e2dd6f2/Snippets/namespace%20%28ns%29.plist"
+        },
+        {
+          "git_blob": "572447dc0595f4b3c0c97e63e0405c96110711e6",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/6ea1cc187c3e1be58ac05624b735b81c0e2dd6f2/Snippets/property%20%28prop%29.plist"
+        },
+        {
+          "git_blob": "333d5fb20dee592811fd246098fd326e9a6d3a68",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/6ea1cc187c3e1be58ac05624b735b81c0e2dd6f2/Snippets/read-only%20property%20%28roprop%29.plist"
+        },
+        {
+          "git_blob": "b44baff8fc7fcec7537521b6ed03a4ee86a12846",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/6ea1cc187c3e1be58ac05624b735b81c0e2dd6f2/Snippets/switch.plist"
+        },
+        {
+          "git_blob": "eb784d1a64de35902ae8466baafe17acc7d88128",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/6ea1cc187c3e1be58ac05624b735b81c0e2dd6f2/Snippets/while.plist"
+        },
+        {
+          "git_blob": "1f58883393206674f86d8eced7e1225876b46398",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/cfca3a64285c76857147947139fd31cc2691d68a/Snippets/Comment%20%28multiline%29.tmSnippet"
+        },
+        {
+          "git_blob": "e8f6e1c54bd760612a9c8fba4bad1d2bdced3f29",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/cfca3a64285c76857147947139fd31cc2691d68a/Snippets/DBus%20annotation.tmSnippet"
+        },
+        {
+          "git_blob": "d00916a9d4fa1d7f44b947318f146655e9c24fef",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/cfca3a64285c76857147947139fd31cc2691d68a/Snippets/DocBlock.tmSnippet"
+        },
+        {
+          "git_blob": "d67415cbdc1c243d235601356145ce52e5dcf326",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/cfca3a64285c76857147947139fd31cc2691d68a/Snippets/Gee_ArrayList.tmSnippet"
+        },
+        {
+          "git_blob": "e96031b7ab04d5afefd0b1467b7894cfcbf38cd7",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/cfca3a64285c76857147947139fd31cc2691d68a/Snippets/Gee_HashMap.tmSnippet"
+        },
+        {
+          "git_blob": "6b3b6806665841cd03255ddfd17a4fc9a7acfc37",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/cfca3a64285c76857147947139fd31cc2691d68a/Snippets/Gee_HashSet.tmSnippet"
+        },
+        {
+          "git_blob": "bd86c7e4ca31823ce41e6fa46945911d0d2d51ca",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/cfca3a64285c76857147947139fd31cc2691d68a/Snippets/Main%20function.tmSnippet"
+        },
+        {
+          "git_blob": "6e488970ee80ecdf6829d50cfc032dc063433e00",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/cfca3a64285c76857147947139fd31cc2691d68a/Snippets/String%20template%20%28%40%29.tmSnippet"
+        },
+        {
+          "git_blob": "c3afa7bfd0d7dc71abd5341cd5e620c8104e7a75",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/cfca3a64285c76857147947139fd31cc2691d68a/Snippets/Verbatim%20string%20%28%22%22%22%29.tmSnippet"
+        },
+        {
+          "git_blob": "bafc69bdcab709bffebcb9d93f9687133363e92f",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/cfca3a64285c76857147947139fd31cc2691d68a/Snippets/class.plist"
+        },
+        {
+          "git_blob": "e63ee79c17f2c963f3cd5791e1515b1302649ef0",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/cfca3a64285c76857147947139fd31cc2691d68a/Snippets/closure.tmSnippet"
+        },
+        {
+          "git_blob": "7e79b111ca44585948fc1eb5be7ba9af4cb7cf23",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/cfca3a64285c76857147947139fd31cc2691d68a/Snippets/delegate.tmSnippet"
+        },
+        {
+          "git_blob": "5b1f36bc90d9f31c5e427222db2749b1601897d5",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/cfca3a64285c76857147947139fd31cc2691d68a/Snippets/enum.tmSnippet"
+        },
+        {
+          "git_blob": "730dd21376c574b72a93d0e14e2257152675c66d",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/cfca3a64285c76857147947139fd31cc2691d68a/Snippets/error%20domain.tmSnippet"
+        },
+        {
+          "git_blob": "e7cf218c5415533d0153640e9e3841a06600770f",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/cfca3a64285c76857147947139fd31cc2691d68a/Snippets/interface.tmSnippet"
+        },
+        {
+          "git_blob": "6d5f571eec42288a6a7e572e718e498f37c5bb36",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/cfca3a64285c76857147947139fd31cc2691d68a/Snippets/printf.tmSnippet"
+        },
+        {
+          "git_blob": "3ed0b3ffff5fc71895f07c023b321e8946aeb225",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/cfca3a64285c76857147947139fd31cc2691d68a/Snippets/struct.tmSnippet"
+        },
+        {
+          "git_blob": "610ede504a37d18f9f9f9a9f3ac5f9524002db72",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/cfca3a64285c76857147947139fd31cc2691d68a/Snippets/try%3Acatch.tmSnippet"
+        },
+        {
+          "git_blob": "274ee7a3a2347aa18142590228615a595c5af679",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/af55cfc7c0b034c9e032d6a14720deee9fa70cfe/Snippets/printf.tmSnippet"
+        },
+        {
+          "git_blob": "1f58883393206674f86d8eced7e1225876b46398",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/0f40b5d0da80444124ee9ac039c3b1163647f84c/Snippets/Comment%20%28multiline%29.tmSnippet"
+        },
+        {
+          "git_blob": "d7828633f15704389c7027eff003dc88e37072de",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/0f40b5d0da80444124ee9ac039c3b1163647f84c/Snippets/Console.WriteLine%20%28writeline%29.tmSnippet"
+        },
+        {
+          "git_blob": "e8f6e1c54bd760612a9c8fba4bad1d2bdced3f29",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/0f40b5d0da80444124ee9ac039c3b1163647f84c/Snippets/DBus%20annotation.tmSnippet"
+        },
+        {
+          "git_blob": "d00916a9d4fa1d7f44b947318f146655e9c24fef",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/0f40b5d0da80444124ee9ac039c3b1163647f84c/Snippets/DocBlock.tmSnippet"
+        },
+        {
+          "git_blob": "d67415cbdc1c243d235601356145ce52e5dcf326",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/0f40b5d0da80444124ee9ac039c3b1163647f84c/Snippets/Gee_ArrayList.tmSnippet"
+        },
+        {
+          "git_blob": "e96031b7ab04d5afefd0b1467b7894cfcbf38cd7",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/0f40b5d0da80444124ee9ac039c3b1163647f84c/Snippets/Gee_HashMap.tmSnippet"
+        },
+        {
+          "git_blob": "6b3b6806665841cd03255ddfd17a4fc9a7acfc37",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/0f40b5d0da80444124ee9ac039c3b1163647f84c/Snippets/Gee_HashSet.tmSnippet"
+        },
+        {
+          "git_blob": "bd86c7e4ca31823ce41e6fa46945911d0d2d51ca",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/0f40b5d0da80444124ee9ac039c3b1163647f84c/Snippets/Main%20function.tmSnippet"
+        },
+        {
+          "git_blob": "6e488970ee80ecdf6829d50cfc032dc063433e00",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/0f40b5d0da80444124ee9ac039c3b1163647f84c/Snippets/String%20template%20%28%40%29.tmSnippet"
+        },
+        {
+          "git_blob": "c3afa7bfd0d7dc71abd5341cd5e620c8104e7a75",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/0f40b5d0da80444124ee9ac039c3b1163647f84c/Snippets/Verbatim%20string%20%28%22%22%22%29.tmSnippet"
+        },
+        {
+          "git_blob": "818d8e9586479c0e981866c547e07664dc5261d3",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/0f40b5d0da80444124ee9ac039c3b1163647f84c/Snippets/case.tmSnippet"
+        },
+        {
+          "git_blob": "bafc69bdcab709bffebcb9d93f9687133363e92f",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/0f40b5d0da80444124ee9ac039c3b1163647f84c/Snippets/class.tmSnippet"
+        },
+        {
+          "git_blob": "e63ee79c17f2c963f3cd5791e1515b1302649ef0",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/0f40b5d0da80444124ee9ac039c3b1163647f84c/Snippets/closure.tmSnippet"
+        },
+        {
+          "git_blob": "7e79b111ca44585948fc1eb5be7ba9af4cb7cf23",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/0f40b5d0da80444124ee9ac039c3b1163647f84c/Snippets/delegate.tmSnippet"
+        },
+        {
+          "git_blob": "9dd440145033f6fc0a5ac2a62a4f33ddbfe4547a",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/0f40b5d0da80444124ee9ac039c3b1163647f84c/Snippets/do%20while.tmSnippet"
+        },
+        {
+          "git_blob": "a637fbb794e3ae72b872bb2297ac748c3d1291e3",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/0f40b5d0da80444124ee9ac039c3b1163647f84c/Snippets/else%20if%20%28elseif%29.tmSnippet"
+        },
+        {
+          "git_blob": "0fb763415925f90fcd870c8947ea094dc5d2eb14",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/0f40b5d0da80444124ee9ac039c3b1163647f84c/Snippets/else.tmSnippet"
+        },
+        {
+          "git_blob": "5b1f36bc90d9f31c5e427222db2749b1601897d5",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/0f40b5d0da80444124ee9ac039c3b1163647f84c/Snippets/enum.tmSnippet"
+        },
+        {
+          "git_blob": "730dd21376c574b72a93d0e14e2257152675c66d",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/0f40b5d0da80444124ee9ac039c3b1163647f84c/Snippets/error%20domain.tmSnippet"
+        },
+        {
+          "git_blob": "e26a938aff3e8f48e486fd9a54b8ae86a95d6c18",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/0f40b5d0da80444124ee9ac039c3b1163647f84c/Snippets/for.tmSnippet"
+        },
+        {
+          "git_blob": "5d0254b6fc3773ebf0427ec0008d44e45ea1fc42",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/0f40b5d0da80444124ee9ac039c3b1163647f84c/Snippets/foreach.tmSnippet"
+        },
+        {
+          "git_blob": "fb5a269903b238fc14ddeca5807b1b658a9a328d",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/0f40b5d0da80444124ee9ac039c3b1163647f84c/Snippets/if.tmSnippet"
+        },
+        {
+          "git_blob": "e7cf218c5415533d0153640e9e3841a06600770f",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/0f40b5d0da80444124ee9ac039c3b1163647f84c/Snippets/interface.tmSnippet"
+        },
+        {
+          "git_blob": "2682216c02b2a77f892f7d0d74cca2a7f903b075",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/0f40b5d0da80444124ee9ac039c3b1163647f84c/Snippets/namespace%20%28ns%29.tmSnippet"
+        },
+        {
+          "git_blob": "274ee7a3a2347aa18142590228615a595c5af679",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/0f40b5d0da80444124ee9ac039c3b1163647f84c/Snippets/printf.tmSnippet"
+        },
+        {
+          "git_blob": "572447dc0595f4b3c0c97e63e0405c96110711e6",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/0f40b5d0da80444124ee9ac039c3b1163647f84c/Snippets/property%20%28prop%29.tmSnippet"
+        },
+        {
+          "git_blob": "333d5fb20dee592811fd246098fd326e9a6d3a68",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/0f40b5d0da80444124ee9ac039c3b1163647f84c/Snippets/read-only%20property%20%28roprop%29.tmSnippet"
+        },
+        {
+          "git_blob": "3ed0b3ffff5fc71895f07c023b321e8946aeb225",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/0f40b5d0da80444124ee9ac039c3b1163647f84c/Snippets/struct.tmSnippet"
+        },
+        {
+          "git_blob": "b44baff8fc7fcec7537521b6ed03a4ee86a12846",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/0f40b5d0da80444124ee9ac039c3b1163647f84c/Snippets/switch.tmSnippet"
+        },
+        {
+          "git_blob": "610ede504a37d18f9f9f9a9f3ac5f9524002db72",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/0f40b5d0da80444124ee9ac039c3b1163647f84c/Snippets/try%3Acatch.tmSnippet"
+        },
+        {
+          "git_blob": "eb784d1a64de35902ae8466baafe17acc7d88128",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/0f40b5d0da80444124ee9ac039c3b1163647f84c/Snippets/while.tmSnippet"
+        },
+        {
+          "git_blob": "4446030e4815a6abda7152a72dabc028ff7e042f",
+          "marker": "Permission to copy, use, modify, sell and distribute",
+          "url": "https://github.com/danlucraft/redcar-bundles/blob/21ff196d839c2793c83db9df08160ab1852e07fc/LICENSE"
+        },
+        {
+          "git_blob": "4446030e4815a6abda7152a72dabc028ff7e042f",
+          "marker": "Permission to copy, use, modify, sell and distribute",
+          "url": "https://github.com/danlucraft/redcar-bundles/blob/594eb0c20836d563ea4d31fac06b5218c8e83d08/LICENSE"
         }
       ],
       "id": "ace-textmate-vala-snippets",
       "kind": "library",
-      "license": "MIT",
+      "license": "LicenseRef-TextMate-Bundle AND MIT",
       "locations": [
         {
           "file": "vendor/ace/snippets/vala.js",
@@ -2991,9 +3461,10 @@
         }
       ],
       "name": "Vala TextMate bundle snippets",
-      "note": "All 31 XML snippet dictionaries match current Ace array after UUID omission and source. scope conversion. Original 2013 Snippets tree unchanged at later 2014 MIT grant 2fd9373f; automated collection comparison uses that licensed revision. MIT declaration is later than Ace import; earlier Daniel Lucraft contribution rights and independent review remain open. Scope only Vala snippets, not other bundle inputs/grammar. No package version or PURL asserted.",
+      "note": "All 31 XML snippet dictionaries match current Ace array after UUID omission and source. scope conversion. Original Redcar Bundles 2009 TextMate Bundle License preserved verbatim; inherited 14-file source and initial Butcher import, 17 additions and class/printf changes, filename-only rename and later MIT tree pinned. MIT declaration postdates Ace import. Partial scoped attribution only; independent review and other bundle inputs/grammar remain open. No package version or PURL asserted.",
       "notices": [
-        "third_party/licenses/embedded/vala-tmbundle-mit.txt"
+        "third_party/licenses/embedded/vala-tmbundle-mit.txt",
+        "third_party/licenses/embedded/redcar-vala-bundle-license.txt"
       ],
       "parent": "ace",
       "status": "partial",
@@ -3092,7 +3563,8 @@
     "R5.3a Wollok: 33 SnipMate locations, 35 snippet payloads with active source-specific attribution including Io/Vala. Wollok shares 15 ordered triggers and eight headings with exact parent Java import blob; 16 unique ordered literal spans compared by bounded partial relation, not a complete historical patch reconstruction. Full raw/current pins checked independently. ABC intermediate Zupfnoter match and GPL/Commercial project declaration are research leads only; no GPL assignment, new notice, or exclusion. JSONiq/XQuery snippet origin separate from XQLint/REx remains open.",
     "R5.3a LSL review-only: exact 2014 and 2015 Ace raw snapshots match historical Builders Brewery fork; 481 triggers in final raw and exact current static module relation. External root/ace grant missing; nested KWDB GPL and viewer LGPL are distinct scoped leads, no license assignment or new SBOM library. Gobstones GPL web-project relationship, SQL Server later MIT reference templates and GraphQLSchema contribution evidence remain research-open.",
     "R5.3a SQL Server: official later 2018 Microsoft MIT templates scoped partial attribution (createproc/createfn, 4+6 ordered bounded spans). No proof of original 2015 source revision or all rights; other ten triggers unresolved. 36/52 active historical-material locations, LSL review-only. Remaining ten specialized raw payloads inspected and introduction history pinned in research; no automatic clearance from Ace BSD root or grammar citations.",
-    "Maintainer-approved snippet-only exclusion: ABC, EDIFACT (product-only), Gobstones, LSL. 198 retained snippets (48 nonempty, 150 stubs); 35 active partial historical attribution locations. Prior EDIFACT and LSL records/relations moved to docs/history/ace-snippet-exclusions.json; historical counts above are not current distribution scope. Modes unchanged; no blanket license clearance."
+    "Maintainer-approved snippet-only exclusion: ABC, EDIFACT (product-only), Gobstones, LSL. 198 retained snippets (48 nonempty, 150 stubs); 35 active partial historical attribution locations. Prior EDIFACT and LSL records/relations moved to docs/history/ace-snippet-exclusions.json; historical counts above are not current distribution scope. Modes unchanged; no blanket license clearance.",
+    "Vala original Redcar Bundles TextMate license preserved as a separate whole-file notice alongside later Butcher MIT notice. Historical source pins and reconstructed snippet tree identities cover the 14 inherited files, 17 additions, class/printf changes and 2011 filename-only rename; existing 31-dictionary comparison remains. Partial attribution only; independent review, mode/grammar rights and final clearance remain open."
   ],
   "notices": {
     "third_party/licenses/embedded/ace-legacy-linters.txt": {
@@ -3256,6 +3728,12 @@
       "sha256": "bedf97319fd3fb51c22dc5a44daf603ca4b2515ae75cae8ac677fb6bd40ec34e",
       "source": "https://github.com/fstirlitz/luaparse/blob/fa4ba476841b9ca4891848dfe96e42336f54f932/LICENSE",
       "source_blob": "14f9f84f4b7951b32a766d1ccf37fc3f0d14081a"
+    },
+    "third_party/licenses/embedded/microsoft-ssms-templates-mit.txt": {
+      "kind": "whole-file",
+      "source": "https://github.com/microsoft/sql-server-samples/blob/80d5bf59f8df98a4b1bc910a9424c77647896f00/license.txt",
+      "source_blob": "9d333bb098c152c0983042ca77f16ac0c8999441",
+      "sha256": "201f3705979e932c92cd3c6ddbddf4dc3c71dcc5a82089a1e4018227cfe1cf09"
     },
     "third_party/licenses/embedded/nord-theme-mit.txt": {
       "kind": "whole-file",
@@ -3443,6 +3921,12 @@
       "source": "https://github.com/ngryman/raf.js/blob/369d243b8c93c9f60e03929d34d535b337233108/LICENSE-MIT",
       "source_blob": "a0f33ef42f7b8a6615e57b2b04c0a75329362e57"
     },
+    "third_party/licenses/embedded/redcar-vala-bundle-license.txt": {
+      "kind": "whole-file",
+      "sha256": "0b4781488f944d7a2479ab992f730dbae7857c43aa56682a0fcff681054ee10d",
+      "source": "https://github.com/danlucraft/redcar-bundles/blob/21ff196d839c2793c83db9df08160ab1852e07fc/LICENSE",
+      "source_blob": "4446030e4815a6abda7152a72dabc028ff7e042f"
+    },
     "third_party/licenses/embedded/rex-2014-jsoniq-generator-notice.txt": {
       "kind": "source-excerpt",
       "sha256": "9a3dfca25e4277fd3247e4fac0c3f51863c1383975b8155f123a8e15db083eb3",
@@ -3491,6 +3975,12 @@
       "source": "https://github.com/altercation/solarized/blob/62f656a02f93c5190a8753159e34b385588d5ff3/LICENSE",
       "source_blob": "ee08d7e44f15108ef5359550399dad55955b56ca"
     },
+    "third_party/licenses/embedded/textmate-io-bundle-license.txt": {
+      "kind": "source-excerpt",
+      "sha256": "192c2900d6b509c3f962c377e0c46b0bb39e8615c2b97170bb6607904c2f1ff5",
+      "source": "https://github.com/textmate/io.tmbundle/blob/e8f7b3773544cfc14a7ede7344ed94683f7ed602/README.mdown",
+      "source_blob": "32d8f85a4c5f41b1fd636664c7a4ca776f511b9f"
+    },
     "third_party/licenses/embedded/tomorrow-theme-mit.txt": {
       "kind": "whole-file",
       "sha256": "a9773fd575f48ea3648b54eeaf09d1512a9f0c7c20d284dc3f8295bd92123bf9",
@@ -3502,6 +3992,12 @@
       "sha256": "c45ab55d219e63e36cc9fa9aa36972230248ea9e7565ce80d1c4932d4bbba1b5",
       "source": "https://github.com/jashkenas/underscore/blob/2a932470303157072015d5ab7f26d40b9deb4634/LICENSE",
       "source_blob": "8c22362515630a62150db8189d1f1bb4a7c54362"
+    },
+    "third_party/licenses/embedded/vala-tmbundle-mit.txt": {
+      "kind": "whole-file",
+      "sha256": "bd8d484dff2f6915f512e4bd089ac89b5f9787c0946b36a70065075588f71c38",
+      "source": "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/LICENSE",
+      "source_blob": "1ee64503bcb3ae31e5b01f5cf61e9a02846cb3a3"
     },
     "third_party/licenses/embedded/velocity-shim-attribution.txt": {
       "kind": "source-excerpt",
@@ -3544,24 +4040,6 @@
       "sha256": "d03753fc0657312d42bda508aacd675e7552a9668e58db025b141b0087e2edd9",
       "source": "https://github.com/rasshofer/yaml-lint/blob/5d6c0a8a5ce540075c94e6fd09546f7415925469/LICENSE",
       "source_blob": "ede49191426f8fc0440bcfadf9f57c16ea72a6ef"
-    },
-    "third_party/licenses/embedded/textmate-io-bundle-license.txt": {
-      "kind": "source-excerpt",
-      "sha256": "192c2900d6b509c3f962c377e0c46b0bb39e8615c2b97170bb6607904c2f1ff5",
-      "source": "https://github.com/textmate/io.tmbundle/blob/e8f7b3773544cfc14a7ede7344ed94683f7ed602/README.mdown",
-      "source_blob": "32d8f85a4c5f41b1fd636664c7a4ca776f511b9f"
-    },
-    "third_party/licenses/embedded/vala-tmbundle-mit.txt": {
-      "kind": "whole-file",
-      "sha256": "bd8d484dff2f6915f512e4bd089ac89b5f9787c0946b36a70065075588f71c38",
-      "source": "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/LICENSE",
-      "source_blob": "1ee64503bcb3ae31e5b01f5cf61e9a02846cb3a3"
-    },
-    "third_party/licenses/embedded/microsoft-ssms-templates-mit.txt": {
-      "kind": "whole-file",
-      "source": "https://github.com/microsoft/sql-server-samples/blob/80d5bf59f8df98a4b1bc910a9424c77647896f00/license.txt",
-      "source_blob": "9d333bb098c152c0983042ca77f16ac0c8999441",
-      "sha256": "201f3705979e932c92cd3c6ddbddf4dc3c71dcc5a82089a1e4018227cfe1cf09"
     }
   },
   "schema": 1,

@@ -15,6 +15,7 @@ from scripts.audit_supply_chain import (
     check_npm_notice_pin, verify_npm_notice, embedded_source_relation,
     textmate_snippet_collection, textmate_collection_records, textmate_plist_entry,
     SQLSERVER_SHARED_BLOCKS, SQLSERVER_REFERENCE_PATHS, SQLSERVER_REFERENCE_REV,
+    validate_vala_history, VALA_LICENSE_PATH, VALA_REDCAR, VALA_REDCAR_REV,
 )
 
 
@@ -834,11 +835,14 @@ class SupplyChainTests(unittest.TestCase):
                          [("io", 10), ("vala", 31)])
         for n, license_id, notice in (
                 ("io", "LicenseRef-TextMate-Bundle", "textmate-io-bundle-license.txt"),
-                ("vala", "MIT", "vala-tmbundle-mit.txt")):
+                ("vala", "LicenseRef-TextMate-Bundle AND MIT", "vala-tmbundle-mit.txt")):
             cid = "ace-textmate-" + n + "-snippets"
             record = next(c for c in embedded["components"] if c["id"] == cid)
             self.assertEqual(record["license"], license_id)
-            self.assertEqual(record["notices"], ["third_party/licenses/embedded/" + notice])
+            expected = ["third_party/licenses/embedded/" + notice]
+            if n == "vala":
+                expected.append(VALA_LICENSE_PATH)
+            self.assertEqual(record["notices"], expected)
             component = next(c for c in sbom(inv, vendor)["components"] if c["bom-ref"] == "embedded:" + cid)
             self.assertNotIn("version", component)
             self.assertNotIn("purl", component)
@@ -847,6 +851,32 @@ class SupplyChainTests(unittest.TestCase):
             record = next(c for c in doc["components"] if c["id"] == "ace-textmate-io-snippets")
             record["evidence"] = [p for p in record["evidence"] if not p["url"].endswith("/Method.plist")]
         self.mutate_embedded(missing_source, "Incomplete TextMate collection pins")
+
+    def test_vala_historical_provenance(self):
+        inv, _ = source_inventory()
+        result = validate_vala_history(inv["embedded"])
+        self.assertEqual((result["inherited"], result["additions"], result["final"]), (14, 17, 31))
+        self.assertEqual(result["historical_pins"], 94)
+        url = VALA_REDCAR + VALA_REDCAR_REV + "/Bundles/Vala.tmbundle/Snippets/do%20while.plist"
+        self.assertTrue(immutable_raw_url(url).endswith("/do%20while.plist"))
+        for invalid in (url.replace("do%20while", "other%20file"),
+                        url.replace("%20", "%2520"), url.replace("%20", "%2F"),
+                        url.replace(VALA_REDCAR_REV, "0" * 40)):
+            with self.assertRaises(ValueError):
+                immutable_raw_url(invalid)
+        def record(doc):
+            return next(c for c in doc["components"] if c["id"] == "ace-textmate-vala-snippets")
+        def missing(doc):
+            record(doc)["evidence"] = [p for p in record(doc)["evidence"] if p["url"] != url]
+        def changed(doc):
+            next(p for p in record(doc)["evidence"] if p["url"] == url)["git_blob"] = "0" * 40
+        def duplicate(doc):
+            record(doc)["evidence"].append(next(p for p in record(doc)["evidence"] if p["url"] == url))
+        def wrong_license(doc):
+            record(doc)["license"] = "MIT"
+        for edit in (missing, changed, duplicate, wrong_license):
+            with self.subTest(edit=edit.__name__):
+                self.mutate_embedded(edit, "Incomplete Vala historical provenance")
 
 
 if __name__ == "__main__":
