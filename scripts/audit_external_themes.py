@@ -78,6 +78,100 @@ def compare_plist(left, right):
             "ace_settings_count": len(b["settings"])}
 
 
+
+# Historical TextMate snapshots, initial Ace imports and current Ace inputs.
+# External and initial import blobs must be byte-identical; later changes
+# are reported rather than normalized away.
+TEXTMATE = "textmate/themes.tmbundle"
+TEXTMATE_LICENSE = (TEXTMATE, "9af146748ca3f0d3935985b6c731ccc7781831d9",
+                    "README.mdown", "32d8f85a4c5f41b1fd636664c7a4ca776f511b9f")
+TEXTMATE_INPUTS = (
+    ("cobalt", "Cobalt.tmTheme", "0635502e6a3c8ca63c05cb80cdcb372a9c1340ce",
+     "cba64d86be96864665b26e109603f021e1141e67", "3c685f253c723122c55800f7ce7ee7374963c428",
+     "3c685f253c723122c55800f7ce7ee7374963c428"),
+    ("dawn", "Dawn.tmTheme", "2746dd84db7e3ba0d6a40000c42278854cb73460",
+     "242cfb76eb3eb68d3ad8806c98b1e79428eac336", "12cff9b6e2e9d6e1255678e7af2a685116c5ac32",
+     "12cff9b6e2e9d6e1255678e7af2a685116c5ac32"),
+    ("pastel_on_dark", "Pastels on Dark.tmTheme", "c2fcd871773e33529fecd77fd484f8aa9b66fe8b",
+     "cba64d86be96864665b26e109603f021e1141e67", "e3928606e60f437527a03eb5f96fda92cde95bf4",
+     "47b836318087d53ac60db65b83c29ca07afa327f"),
+    ("twilight", "Twilight.tmTheme", "c2fcd871773e33529fecd77fd484f8aa9b66fe8b",
+     "242cfb76eb3eb68d3ad8806c98b1e79428eac336", "a83f7ecbbe46792e321a1c823fb56d159bade152",
+     "a5984e82e22654f4df93363c23f882645e6df3b4"),
+)
+ADDITIONAL_ACE_INPUTS = (
+    ("kuroir", "Kuroir Theme.tmTheme", "ab6aa3be5c59b2202a737f90b78c488b419a241d",
+     "36acd588d1f636c411071c0d48fefc8c6d1f14d4"),
+    ("xcode", "Xcode_default.tmTheme", "ecfdc5fbc4691b7d3933416b65da340768111f04",
+     "c7b5072cd31169ec9582bab8de3e007adfaede01"),
+    ("kr_theme", "krTheme.tmTheme", "cba64d86be96864665b26e109603f021e1141e67",
+     "65c5c9b6aac1d42dc65c1ee537093404fe207b64"),
+)
+
+
+def verify_historical_import(external, imported):
+    if external != imported:
+        raise ValueError("Historical theme import bytes differ")
+    return compare_plist(external, imported)
+
+
+def textmate_license_relation(readme, ace_license):
+    # The source uses repository-wide scope; Ace uses directory scope.
+    # Compare only this observed wording change and whitespace.
+    marker = b"# License\n\n"
+    if readme.count(marker) != 1:
+        raise ValueError("Missing unique TextMate license section")
+    original = readme.split(marker, 1)[1]
+    if original.count(b"files in this repository") != 1:
+        raise ValueError("Unexpected TextMate license scope")
+    expected = original.replace(b"files in this repository", b"files in this directory", 1)
+    if expected.split() != ace_license.split():
+        raise ValueError("TextMate license reference terms differ")
+    return "scope-wording-and-whitespace-only"
+
+
+def historical_textmate(source, fetch, source_file):
+    readme, license_pin = reference(*TEXTMATE_LICENSE, fetch)
+    ace_license, blob = source_file(source, "tool/tmthemes/LICENSE")
+    if blob != "08f1380f3a9bce3135253bc69f5861dec3dcae17":
+        raise ValueError("Ace TextMate license pin mismatch")
+    license_relation = textmate_license_relation(readme, ace_license)
+    rows = []
+    for name, filename, external_rev, import_rev, old_blob, current_blob in TEXTMATE_INPUTS:
+        original, external_pin = reference(TEXTMATE, external_rev, "Themes/" + filename, old_blob, fetch)
+        path = "tool/tmthemes/" + filename
+        imported, import_pin = reference("ajaxorg/ace", import_rev, path, old_blob, fetch)
+        historical_comparison = verify_historical_import(original, imported)
+        current, actual = source_file(source, path)
+        if actual != current_blob:
+            raise ValueError("Current TextMate input pin mismatch: " + name)
+        rows.append({"theme": name, "external": external_pin, "initial_ace": import_pin,
+                     "current_ace": {"path": path, **verify_blob(current, current_blob)},
+                     "historical_import": historical_comparison,
+                     "current_comparison": compare_plist(original, current),
+                     "license_status": "review-open"})
+    additional = []
+    for name, filename, import_rev, blob in ADDITIONAL_ACE_INPUTS:
+        path = "tool/tmthemes/" + filename
+        imported, pin = reference("ajaxorg/ace", import_rev, path, blob, fetch)
+        current, actual = source_file(source, path)
+        if actual != blob:
+            raise ValueError("Additional theme input pin mismatch: " + name)
+        comparison = verify_historical_import(imported, current)
+        meta = plistlib.loads(current)
+        additional.append({"theme": name, "initial_ace": pin,
+                           "current_ace": {"path": path, **verify_blob(current, blob)},
+                           "comparison": comparison,
+                           "author": meta.get("author"), "comment": meta.get("comment"),
+                           "license_status": "external-lineage-open"})
+    return {"textmate_license": license_pin,
+            "ace_license": {"path": "tool/tmthemes/LICENSE", **verify_blob(ace_license, "08f1380f3a9bce3135253bc69f5861dec3dcae17")},
+            "license_relation": license_relation, "themes": rows, "additional_ace_inputs": additional,
+            "limitations": ["2011 original README license postdates the 2010 Ace import; Ace directory license dates to 2010.",
+                            "File-specific exceptions and upstream author/derivative rights remain open.",
+                            "Input identity is not generated CSS equivalence or license clearance."]}
+
+
 def research(source, work, fetch, source_file):
     licenses = {}
     for family, pin in LICENSES.items():
@@ -101,5 +195,6 @@ def research(source, work, fetch, source_file):
             dest.write_bytes(js_raw)
         rows.append(row)
     return {"licenses": licenses, "themes": rows,
+            "historical_textmate": historical_textmate(source, fetch, source_file),
             "limitations": ["Pinned reference identity and comparisons are not historical lineage or license clearance.",
                             "Differences are evidence, not failures; pin drift fails closed."]}

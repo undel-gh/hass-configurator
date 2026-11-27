@@ -1,7 +1,7 @@
 """External theme evidence must not hide changes or imply license clearance."""
 import plistlib
 import unittest
-from scripts.audit_external_themes import compare_plist, verify_blob, reference
+from scripts.audit_external_themes import compare_plist, verify_blob, reference, verify_historical_import, textmate_license_relation
 from scripts.audit_supply_chain import git_blob_sha1
 
 
@@ -42,3 +42,21 @@ class ExternalThemeTests(unittest.TestCase):
     def test_invalid_shape(self):
         with self.assertRaises(ValueError):
             compare_plist(plistlib.dumps({"name": "missing"}), plistlib.dumps({"settings": []}))
+
+    def test_historical_import_requires_exact_bytes(self):
+        a = {"settings": [{"scope": "x"}]}
+        raw = plistlib.dumps(a)
+        self.assertTrue(verify_historical_import(raw, raw)["raw_equal"])
+        with self.assertRaisesRegex(ValueError, "import bytes differ"):
+            verify_historical_import(raw, plistlib.dumps(a, fmt=plistlib.FMT_BINARY))
+
+    def test_textmate_license_scope_only(self):
+        readme = b"Intro\n\n# License\n\nfiles in this repository fall under these terms.\nException applies."
+        local = b"files in this directory fall under these terms.\n\nException applies."
+        self.assertEqual(textmate_license_relation(readme, local),
+                         "scope-wording-and-whitespace-only")
+        for changed in (local.replace(b"Exception applies.", b""), local.replace(b"directory", b"project")):
+            with self.assertRaisesRegex(ValueError, "terms differ"):
+                textmate_license_relation(readme, changed)
+        with self.assertRaisesRegex(ValueError, "unique TextMate license"):
+            textmate_license_relation(b"Missing", local)
