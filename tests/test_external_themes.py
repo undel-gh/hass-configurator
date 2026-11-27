@@ -1,7 +1,7 @@
 """External theme evidence must not hide changes or imply license clearance."""
 import plistlib
 import unittest
-from scripts.audit_external_themes import compare_plist, verify_blob, reference, verify_historical_import, textmate_license_relation
+from scripts.audit_external_themes import compare_plist, verify_blob, reference, verify_historical_import, textmate_license_relation, verify_expected_comparison
 from scripts.audit_supply_chain import git_blob_sha1
 
 
@@ -60,3 +60,13 @@ class ExternalThemeTests(unittest.TestCase):
                 textmate_license_relation(readme, changed)
         with self.assertRaisesRegex(ValueError, "unique TextMate license"):
             textmate_license_relation(b"Missing", local)
+
+    def test_external_port_expected_byte_relation(self):
+        raw = plistlib.dumps({"settings": [{"scope": "x"}]})
+        changed = plistlib.dumps({"settings": [{"scope": "y"}]})
+        self.assertTrue(verify_expected_comparison(raw, raw, True)["raw_equal"])
+        self.assertFalse(verify_expected_comparison(raw, changed, False)["raw_equal"])
+        with self.assertRaisesRegex(ValueError, "Unexpected external port byte relation"):
+            verify_expected_comparison(raw, changed, True)
+        with self.assertRaisesRegex(ValueError, "Unexpected external port byte relation"):
+            verify_expected_comparison(raw, raw, False)

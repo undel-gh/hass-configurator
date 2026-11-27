@@ -130,6 +130,63 @@ def textmate_license_relation(readme, ace_license):
     return "scope-wording-and-whitespace-only"
 
 
+
+# Exact copies are evidence of file identity, not necessarily the direction
+# of copying. Keep author archive and collection references separate.
+EXTERNAL_PORT_REFERENCES = (
+    ("kuroir", "Kuroir Theme.tmTheme", "36acd588d1f636c411071c0d48fefc8c6d1f14d4",
+     ("MarioRicalde/TextMate-Kuroir-Theme", "085bd4d4e1a9a691a47b6e1b477e6b7c0aa348b0",
+      "Kuroir Theme.tmTheme", "36acd588d1f636c411071c0d48fefc8c6d1f14d4"),
+     ("MarioRicalde/TextMate-Kuroir-Theme", "085bd4d4e1a9a691a47b6e1b477e6b7c0aa348b0",
+      "README.markdown", "605b342597b1cdeca94363625333570b2f1ac0c7"),
+     True, "exact-external-port", "explicit-license-not-established"),
+    ("xcode", "Xcode_default.tmTheme", "c7b5072cd31169ec9582bab8de3e007adfaede01",
+     ("crmne/xcode-default.tmtheme", "88df84daf46d6d5e57742f5c9e82ac0a408cbd67",
+      "Xcode default.tmTheme", "c7b5072cd31169ec9582bab8de3e007adfaede01"),
+     ("crmne/xcode-default.tmtheme", "88df84daf46d6d5e57742f5c9e82ac0a408cbd67",
+      "README.markdown", "1d7b8dc487917a7715187b12d414cc0587f80301"),
+     True, "exact-author-source", "explicit-license-not-established"),
+    ("kr_theme", "krTheme.tmTheme", "65c5c9b6aac1d42dc65c1ee537093404fe207b64",
+     ("kennethreitz-archive/krTheme.tmTheme", "ec21b6d65a3d38d699b47b76026b2746f38d1681",
+      "krTheme.tmTheme", "6b4da423a8e7a9f005ed0cd20436a74bd2d1def4"),
+     ("kennethreitz-archive/krTheme.tmTheme", "ec21b6d65a3d38d699b47b76026b2746f38d1681",
+      "Readme.md", "b9618416c8e135efd9e84520495b551415eb1bd4"),
+     False, "author-archive-different-input", "all-rights-reserved-no-permission-established"),
+    ("kr_theme", "krTheme.tmTheme", "65c5c9b6aac1d42dc65c1ee537093404fe207b64",
+     ("filmgirl/TextMate-Themes", "87743ad74d04cd59099bfda39a0552e673edbc54",
+      "krTheme.tmTheme", "65c5c9b6aac1d42dc65c1ee537093404fe207b64"),
+     ("filmgirl/TextMate-Themes", "87743ad74d04cd59099bfda39a0552e673edbc54",
+      "README.md", "822ed07e40de94be2fd73725942a57f89d85d598"),
+     True, "exact-third-party-collection-copy", "collection-not-original-grant"),
+)
+
+
+def verify_expected_comparison(external, current, expected_equal):
+    comparison = compare_plist(external, current)
+    if comparison["raw_equal"] != expected_equal:
+        raise ValueError("Unexpected external port byte relation")
+    return comparison
+
+
+def external_port_references(source, fetch, source_file):
+    rows = []
+    for name, filename, ace_blob, theme_pin, readme_pin, expected_equal, relation, status in EXTERNAL_PORT_REFERENCES:
+        original, external = reference(*theme_pin, fetch)
+        readme, readme_ref = reference(*readme_pin, fetch)
+        if status == "all-rights-reserved-no-permission-established":
+            if b"Copyright 2010 Kenneth Reitz. All Rights Reserved." not in readme:
+                raise ValueError("Missing historical krTheme copyright statement")
+        path = "tool/tmthemes/" + filename
+        current, actual = source_file(source, path)
+        if actual != ace_blob:
+            raise ValueError("External port Ace pin mismatch: " + name)
+        rows.append({"theme": name, "external": external, "readme": readme_ref,
+                     "current_ace": {"path": path, **verify_blob(current, ace_blob)},
+                     "comparison": verify_expected_comparison(original, current, expected_equal),
+                     "source_relation": relation, "license_status": status})
+    return rows
+
+
 def historical_textmate(source, fetch, source_file):
     readme, license_pin = reference(*TEXTMATE_LICENSE, fetch)
     ace_license, blob = source_file(source, "tool/tmthemes/LICENSE")
@@ -167,6 +224,7 @@ def historical_textmate(source, fetch, source_file):
     return {"textmate_license": license_pin,
             "ace_license": {"path": "tool/tmthemes/LICENSE", **verify_blob(ace_license, "08f1380f3a9bce3135253bc69f5861dec3dcae17")},
             "license_relation": license_relation, "themes": rows, "additional_ace_inputs": additional,
+            "external_port_references": external_port_references(source, fetch, source_file),
             "limitations": ["2011 original README license postdates the 2010 Ace import; Ace directory license dates to 2010.",
                             "File-specific exceptions and upstream author/derivative rights remain open.",
                             "Input identity is not generated CSS equivalence or license clearance."]}

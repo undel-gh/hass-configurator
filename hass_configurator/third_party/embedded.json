@@ -433,6 +433,11 @@
           "url": "https://github.com/textmate/themes.tmbundle/blob/9af146748ca3f0d3935985b6c731ccc7781831d9/README.mdown",
           "git_blob": "32d8f85a4c5f41b1fd636664c7a4ca776f511b9f",
           "marker": "Permission to copy, use, modify, sell and distribute"
+        },
+        {
+          "url": "https://github.com/kennethreitz-archive/krTheme.tmTheme/blob/ec21b6d65a3d38d699b47b76026b2746f38d1681/Readme.md",
+          "git_blob": "b9618416c8e135efd9e84520495b551415eb1bd4",
+          "marker": "Copyright 2010 Kenneth Reitz. All Rights Reserved."
         }
       ],
       "id": "ace-theme-snippet-attribution",
@@ -442,10 +447,22 @@
         {
           "file": "vendor/ace/theme-monokai.js",
           "marker": "ace/theme/monokai"
+        },
+        {
+          "file": "vendor/ace/theme-kr_theme.js",
+          "marker": "ace/theme/kr_theme"
+        },
+        {
+          "file": "vendor/ace/theme-kuroir.js",
+          "marker": "ace/theme/kuroir"
+        },
+        {
+          "file": "vendor/ace/theme-xcode.js",
+          "marker": "ace/theme/xcode"
         }
       ],
       "name": "Ace theme conversion and snippet attribution review",
-      "note": "Current source tool/tmthemes/LICENSE has explicit per-file exceptions, and tmtheme.js maps only a subset of themes to TextMate files. tmsnippets.js is a generic converter, not proof of individual snippet origin. Dracula MIT block separately mapped. Per-file scan and original payload comparison are required; absence of a marker is not blanket BSD clearance. Research #4 verified 47 theme and 50 snippet static payloads; remaining packaging cases investigated separately. Per-file original lineage/terms remain open. Research #9 CI completed successfully; external current-reference comparison is not historical input equality. Separate partial theme records now preserve original MIT notices for Tomorrow, Solarized and Gruvbox Hard; remaining per-file lineage/terms open. Historical TextMate bundle README (2011) contains corresponding permission and exceptions; Ace directory LICENSE introduced 2010. Research pins four exact initial TextMate imports and later Ace input changes, plus three Ace-only historical inputs. License scope and per-file exceptions remain under review. No new component or blanket license designation.",
+      "note": "Current source tool/tmthemes/LICENSE has explicit per-file exceptions, and tmtheme.js maps only a subset of themes to TextMate files. tmsnippets.js is a generic converter, not proof of individual snippet origin. Dracula MIT block separately mapped. Per-file scan and original payload comparison are required; absence of a marker is not blanket BSD clearance. Research #4 verified 47 theme and 50 snippet static payloads; remaining packaging cases investigated separately. Per-file original lineage/terms remain open. Research #9 CI completed successfully; external current-reference comparison is not historical input equality. Separate partial theme records now preserve original MIT notices for Tomorrow, Solarized and Gruvbox Hard; remaining per-file lineage/terms open. Historical TextMate bundle README (2011) contains corresponding permission and exceptions; Ace directory LICENSE introduced 2010. Research pins four exact initial TextMate imports and later Ace input changes, plus three Ace-only historical inputs. License scope and per-file exceptions remain under review. No new component or blanket license designation. External port references: exact Xcode author-source and Kuroir port input blobs; krTheme author archive has differing input and README All Rights Reserved, exact third-party collection copy is not original permission. Individual permissions OPEN; no MIT/BSD inference or clearance. Research gate pins four external source/README pairs.",
       "notices": [
         "third_party/licenses/embedded/ace-tmthemes-reference.txt"
       ],
@@ -1954,7 +1971,8 @@
     "Historical Gozalishvili wrapper notice preserved, bounded relations for three wrappers and 2017 Gruvbox CSS; does not establish original color scheme rights or CLA clearance.",
     "Supersedes earlier original Gruvbox license uncertainty: author MIT/X11 README declaration established at 317ca28 and descendant ef8864bb; exact source excerpt and separately identified SPDX MIT template retained. No original full copyright notice invented. Exact port lineage, independent contributions and CLA remain open.",
     "Nord/One Dark original MIT whole-file references and historical/current Ace CSS/wrapper pins retained. PR #4203/#4415 contribution permissions recorded; exact external revision and any intermediate port lineage remain open. Gruvbox original PR #2916 / revert #2985 discussion reviewed; CLA resolution not established.",
-    "Original TextMate bundle README license reference 9af14674 (2011), same permission and exceptions with repository vs directory scope; current research checks exact historical imports for Cobalt, Dawn, Pastels on Dark, Twilight. Source identity is not individual rights clearance. Existing ace-tmthemes reference retained; no additional notice or component asserted."
+    "Original TextMate bundle README license reference 9af14674 (2011), same permission and exceptions with repository vs directory scope; current research checks exact historical imports for Cobalt, Dawn, Pastels on Dark, Twilight. Source identity is not individual rights clearance. Existing ace-tmthemes reference retained; no additional notice or component asserted.",
+    "krTheme historical author README states All Rights Reserved; permission for Ace's exact variant is not established. Xcode and Kuroir exact external inputs established, explicit original distribution permissions remain open. No inference that copyright statement by itself forbids a separate grant."
   ],
   "notices": {
     "third_party/licenses/embedded/ace-legacy-linters.txt": {
