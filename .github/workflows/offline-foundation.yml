@@ -94,6 +94,8 @@ jobs:
             --output e2e/artifacts/supply-chain/ace-worker-attribution.json
       - name: Bounded regression probes against shipped js-yaml
         run: node e2e/yaml-migration-probe.cjs hass_configurator/js-yaml.min.js
+      - name: Validate agreed Ace worker target profile
+        run: python scripts/ace_worker_profile.py
       - name: Routing and loopback HTTP tests
         run: python -m unittest discover -s tests -p 'test_*.py' -v
       - name: Build distribution artifacts and validate vendored payloads

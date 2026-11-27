@@ -240,3 +240,81 @@ test('simulated Ingress preserves lazy Ace mode/theme/keybinding and YAML worker
   expect(publicAttempts).toEqual([]);
   expect(pageErrors).toEqual([]);
 });
+
+test('Ace worker profile blocks excluded modes and preserves preference', async ({ page }) => {
+  const forbidden = [];
+  const external = [];
+  const errors = [];
+  const workers = [];
+  const excluded = ['xml', 'php', 'lua', 'coffee', 'xquery'];
+  page.on('pageerror', error => errors.push(error.message));
+  page.on('worker', worker => workers.push(worker));
+  page.on('request', req => {
+    if (excluded.some(name => new URL(req.url()).pathname.endsWith('/worker-' + name + '.js')))
+      forbidden.push(req.url());
+  });
+  await page.route('**/*', async route => {
+    const url = new URL(route.request().url());
+    if (url.origin !== origin && url.protocol !== 'blob:' && url.protocol !== 'data:') {
+      external.push(url.href);
+      await route.abort('blockedbyclient');
+    } else {
+      await route.continue();
+    }
+  });
+  await page.goto(server + '/', { waitUntil: 'domcontentloaded' });
+  await expect.poll(() => page.evaluate(() => Boolean(window.editor))).toBe(true);
+  expect(await page.evaluate(() => editor.session.getUseWorker())).toBe(false);
+  const mode = async name => {
+    await page.evaluate(name => new Promise(resolve => editor.session.setMode('ace/mode/' + name, resolve)), name);
+    await expect.poll(() => page.evaluate(() => editor.session.getMode().$id)).toBe('ace/mode/' + name);
+  };
+  await mode('yaml');
+  await page.evaluate(() => {
+    editor.session.setUseWorker(true);
+    editor.setValue('broken: [list\n', -1);
+  });
+  await expect.poll(() => page.evaluate(() => editor.session.getAnnotations().some(a => a.type === 'error')),
+    { timeout: 12000 }).toBe(true);
+  for (const name of [...excluded, 'svg', 'scss', 'text']) {
+    await mode(name);
+    expect(await page.evaluate(() => ({
+      preference: editor.session.getUseWorker(),
+      active: Boolean(editor.session.$worker),
+      annotations: editor.session.getAnnotations().length,
+      supported: hcAceSupportsWorker(editor.session.getMode().$id)
+    }))).toEqual({ preference: true, active: false, annotations: 0, supported: false });
+    await page.evaluate(() => {
+      editor.setValue('editable content', -1);
+      editor.session.setUseWorker(false);
+      editor.session.setUseWorker(true);
+    });
+    expect(await page.evaluate(() => editor.getValue())).toBe('editable content');
+    expect(await page.evaluate(() => Boolean(editor.session.$worker))).toBe(false);
+  }
+  await mode('yaml');
+  await page.evaluate(() => editor.setValue('again: [invalid\n', -1));
+  await expect.poll(() => page.evaluate(() => editor.session.getAnnotations().some(a => a.type === 'error')),
+    { timeout: 12000 }).toBe(true);
+  await page.evaluate(() => editor.setValue('again: [valid]\n', -1));
+  await expect.poll(() => page.evaluate(() => editor.session.getAnnotations().filter(a => a.type === 'error').length),
+    { timeout: 12000 }).toBe(0);
+  // Check the lower-level worker creation guard before it allocates a Worker.
+  const rejected = await page.evaluate(() => {
+    const Client = ace.require('ace/worker/worker_client').WorkerClient;
+    const result = [];
+    for (const args of [
+      [['ace'], 'ace/mode/xml_worker', 'Worker'],
+      [['ace'], 'ace/mode/yaml_worker', 'YamlWorker', 'https://example.invalid/worker-yaml.js'],
+      [['ace'], 'ace/mode/yaml_worker', 'WrongClass']
+    ]) {
+      try { new Client(...args); result.push(false); } catch (error) { result.push(true); }
+    }
+    return result;
+  });
+  expect(rejected).toEqual([true, true, true]);
+  expect(workers.length).toBeGreaterThan(0);
+  expect(forbidden).toEqual([]);
+  expect(external).toEqual([]);
+  expect(errors).toEqual([]);
+});

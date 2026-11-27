@@ -76,7 +76,7 @@
     bind('change', 'hc-68', function (event) { editor.setOption('tabSize', parseInt(this.value)); });
     bind('change', 'hc-69', function (event) { editor.setTheme(this.value); });
     bind('click', 'hc-70', function (event) { editor.setOption('useSoftTabs', !editor.getOptions().useSoftTabs); });
-    bind('click', 'hc-71', function (event) { editor.setOption('useWorker', !editor.getOptions().useWorker); });
+    bind('click', 'hc-71', function (event) { editor.setOption('useWorker', !editor.getOptions().useWorker); update_worker_status(); });
     bind('click', 'hc-72', function (event) { editor.setOption('vScrollBarAlwaysVisible', !editor.getOptions().vScrollBarAlwaysVisible); });
     bind('click', 'hc-73', function (event) { editor.setOption('wrapBehavioursEnabled', !editor.getOptions().wrapBehavioursEnabled); });
     bind('click', 'hc-74', function (event) { editor.getSession().setUseWrapMode(!editor.getSession().getUseWrapMode());if(editor.getSession().getUseWrapMode()){document.getElementById('wrap_limit').focus();document.getElementById('wrap_limit').onchange();}; });
