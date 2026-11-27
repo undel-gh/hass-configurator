@@ -12,10 +12,12 @@ import tarfile
 from urllib.request import urlopen
 
 try:
+    from .audit_external_themes import research as external_theme_research
     from .audit_supply_chain import read_file, sha, git_blob_sha1
     from .rebuild_retained_ace import materialize
     from .attribute_ace_workers import sri, require, exact_member
 except ImportError:
+    from audit_external_themes import research as external_theme_research
     from audit_supply_chain import read_file, sha, git_blob_sha1
     from rebuild_retained_ace import materialize
     from attribute_ace_workers import sri, require, exact_member
@@ -163,6 +165,7 @@ def main():
                        "provenance": "upstream declared version, exact archive observed in research #4 and now pinned"},
         "sources": source_rows, "assets": assets, "theme_converter_inputs": theme_inputs,
         "native_sources": {key: value[0] for key, value in NATIVE.items()},
+        "external_theme_research": external_theme_research(source, work, fetch, source_file),
         "limitations": [
             "Native source comparison uses upstream transpilation and AST printer without comments; not a raw rebuild of the native minified file.",
             "Theme/snippet static data comparison and marker scans do not establish historical authorship, licensing, or absence of additional terms.",

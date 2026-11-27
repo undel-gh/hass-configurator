@@ -207,8 +207,37 @@ function asset(row) {
         info.status = "static-payload-equal";
     return info;
 }
+function externalCss(raw) {
+    const file = parse(raw), found = [];
+    // Extract only a single literal cssText declaration. Never execute JS.
+    function visit(node) {
+        if (ts.isVariableDeclaration(node) && ts.isIdentifier(node.name) &&
+            node.name.text === "cssText") found.push(node.initializer);
+        ts.forEachChild(node, visit);
+    }
+    visit(file);
+    assert.equal(found.length, 1, "Expected one external cssText declaration");
+    const value = literal(found[0]);
+    assert.equal(typeof value, "string");
+    return value;
+}
+assert.equal(externalCss('var cssText = "a{}";'), "a{}");
+assert.throws(() => externalCss('var cssText = f();'));
+assert.throws(() => externalCss('var cssText = "a"; var cssText = "b";'));
+function compareExternalCss(row) {
+    if (!row.external_ace_port) return;
+    const raw = read(path.join(work, "external-theme"), row.theme + ".js");
+    const current = read(source, "src/theme/" + row.theme + "-css.js");
+    const candidate = externalCss(raw);
+    const value = dataAssignments(current, "exports", "module")["module.exports"];
+    assert(value?.kind === "static" && typeof value.value === "string");
+    row.css = {exact_static_string_equal: candidate === value.value,
+        external_sha256: hash(candidate), ace_sha256: hash(value.value),
+        external_length: candidate.length, ace_length: value.value.length};
+}
 try {
     report.native = native();
+    for (const row of report.external_theme_research.themes) compareExternalCss(row);
     report.theme_snippet_assets = report.assets.filter(a => a.file.startsWith("theme-") || a.file.startsWith("snippets/")).map(asset);
     report.status = report.native.all_source_relations_match ? "native-source-mapped-payload-review-open" : "native-source-mismatch";
     console.log("Native module relations:", report.native.modules.filter(m => m.ast_equal).length, "/", report.native.modules.length);

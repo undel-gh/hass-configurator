@@ -389,3 +389,7 @@ identifies morhetz but has no explicit license grant. Do not infer an
 original license from the port's MIT terms. Further history, exact input
 relationships, per-file exceptions and original notices required. No
 new SBOM/PURL or license clearance asserted.
+
+## R5.2 external reference comparison gate
+
+Extend the native research job with seven pinned Tomorrow/Solarized TextMate comparisons and five pinned historical Tomorrow Ace ports. Verify each original Git blob and two original license blobs before comparison; record SHA-256. Compare complete parsed plist dictionaries and ordered settings, retaining differences (including metadata). Compare literal CSS strings via TypeScript AST, never execute external JS. Differences are reported, not treated as proof of lineage or clearance. Pin mismatch fails research. No runtime/notice/SBOM change. Gruvbox historical references, Nord/One Dark lineage and all license dispositions remain open. REx issue #80 still has no comments at check. New CI and artifacts pending.
