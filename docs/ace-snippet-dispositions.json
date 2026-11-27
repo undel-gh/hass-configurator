@@ -16,7 +16,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "abc",
@@ -71,7 +71,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "alda",
@@ -84,7 +84,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "apache_conf",
@@ -97,7 +97,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "apex",
@@ -110,7 +110,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "applescript",
@@ -123,7 +123,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "aql",
@@ -136,7 +136,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "asciidoc",
@@ -149,7 +149,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "asl",
@@ -162,7 +162,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "assembly_arm32",
@@ -175,7 +175,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "assembly_x86",
@@ -188,7 +188,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "astro",
@@ -201,7 +201,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "autohotkey",
@@ -214,7 +214,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "basic",
@@ -227,7 +227,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "batchfile",
@@ -240,7 +240,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "bibtex",
@@ -253,7 +253,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "c9search",
@@ -266,7 +266,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "c_cpp",
@@ -341,7 +341,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "clojure",
@@ -376,7 +376,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "cobol",
@@ -389,7 +389,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "coffee",
@@ -424,7 +424,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "crystal",
@@ -437,7 +437,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "csharp",
@@ -450,7 +450,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "csound_document",
@@ -503,7 +503,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "csp",
@@ -516,7 +516,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "css",
@@ -551,7 +551,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "curly",
@@ -564,7 +564,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "cuttlefish",
@@ -577,7 +577,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "d",
@@ -590,7 +590,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "dart",
@@ -669,7 +669,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "dot",
@@ -682,7 +682,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "drools",
@@ -737,7 +737,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "ejs",
@@ -750,7 +750,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "elixir",
@@ -763,7 +763,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "elm",
@@ -776,7 +776,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "erlang",
@@ -811,7 +811,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "forth",
@@ -824,7 +824,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "fortran",
@@ -837,7 +837,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "fsharp",
@@ -850,7 +850,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "fsl",
@@ -883,7 +883,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "gcode",
@@ -896,7 +896,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "gdresource",
@@ -909,7 +909,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "gdscript",
@@ -922,7 +922,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "gdshader",
@@ -935,7 +935,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "gherkin",
@@ -948,7 +948,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "gitignore",
@@ -961,7 +961,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "glsl",
@@ -974,7 +974,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "gobstones",
@@ -1007,7 +1007,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "graphqlschema",
@@ -1040,7 +1040,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "groq",
@@ -1053,7 +1053,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "haml",
@@ -1088,7 +1088,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "haskell",
@@ -1123,7 +1123,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "haxe",
@@ -1136,7 +1136,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "hjson",
@@ -1149,7 +1149,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "html",
@@ -1184,7 +1184,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "html_ruby",
@@ -1197,7 +1197,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "ini",
@@ -1210,7 +1210,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "io",
@@ -1245,7 +1245,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "jack",
@@ -1258,7 +1258,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "jade",
@@ -1271,7 +1271,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "java",
@@ -1328,7 +1328,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "json",
@@ -1341,7 +1341,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "json5",
@@ -1354,7 +1354,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "jsoniq",
@@ -1409,7 +1409,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "jsx",
@@ -1422,7 +1422,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "julia",
@@ -1435,7 +1435,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "kotlin",
@@ -1448,7 +1448,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "latex",
@@ -1461,7 +1461,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "latte",
@@ -1474,7 +1474,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "less",
@@ -1487,7 +1487,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "liquid",
@@ -1522,7 +1522,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "livescript",
@@ -1535,7 +1535,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "logiql",
@@ -1548,7 +1548,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "logtalk",
@@ -1561,7 +1561,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "lsl",
@@ -1618,7 +1618,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "lucene",
@@ -1631,7 +1631,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "makefile",
@@ -1666,7 +1666,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "markdown",
@@ -1701,7 +1701,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "matlab",
@@ -1714,7 +1714,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "maze",
@@ -1747,7 +1747,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "mel",
@@ -1760,7 +1760,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "mips",
@@ -1773,7 +1773,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "mixal",
@@ -1786,7 +1786,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "mushcode",
@@ -1799,7 +1799,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "mysql",
@@ -1812,7 +1812,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "nasal",
@@ -1825,7 +1825,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "nginx",
@@ -1838,7 +1838,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "nim",
@@ -1851,7 +1851,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "nix",
@@ -1864,7 +1864,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "nsis",
@@ -1877,7 +1877,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "nunjucks",
@@ -1890,7 +1890,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "objectivec",
@@ -1903,7 +1903,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "ocaml",
@@ -1916,7 +1916,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "odin",
@@ -1929,7 +1929,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "partiql",
@@ -1942,7 +1942,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "pascal",
@@ -1955,7 +1955,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "perl",
@@ -1990,7 +1990,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "php",
@@ -2025,7 +2025,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "pig",
@@ -2038,7 +2038,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "plain_text",
@@ -2051,7 +2051,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "plsql",
@@ -2064,7 +2064,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "powershell",
@@ -2077,7 +2077,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "praat",
@@ -2090,7 +2090,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "prisma",
@@ -2103,7 +2103,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "prolog",
@@ -2116,7 +2116,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "properties",
@@ -2129,7 +2129,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "protobuf",
@@ -2142,7 +2142,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "prql",
@@ -2155,7 +2155,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "puppet",
@@ -2168,7 +2168,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "python",
@@ -2203,7 +2203,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "r",
@@ -2238,7 +2238,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "razor",
@@ -2271,7 +2271,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "red",
@@ -2284,7 +2284,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "redshift",
@@ -2297,7 +2297,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "rhtml",
@@ -2310,7 +2310,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "robot",
@@ -2387,7 +2387,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "sac",
@@ -2400,7 +2400,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "sass",
@@ -2413,7 +2413,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "scad",
@@ -2426,7 +2426,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "scala",
@@ -2439,7 +2439,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "scheme",
@@ -2452,7 +2452,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "scrypt",
@@ -2465,7 +2465,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "scss",
@@ -2478,7 +2478,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "sh",
@@ -2513,7 +2513,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "slim",
@@ -2526,7 +2526,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "smarty",
@@ -2539,7 +2539,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "smithy",
@@ -2552,7 +2552,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "snippets",
@@ -2587,7 +2587,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "space",
@@ -2600,7 +2600,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "sparql",
@@ -2613,7 +2613,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "sql",
@@ -2670,7 +2670,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "svg",
@@ -2683,7 +2683,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "swift",
@@ -2696,7 +2696,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "tcl",
@@ -2731,7 +2731,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "tex",
@@ -2766,7 +2766,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "textile",
@@ -2801,7 +2801,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "tsv",
@@ -2814,7 +2814,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "tsx",
@@ -2827,7 +2827,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "turtle",
@@ -2840,7 +2840,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "twig",
@@ -2853,7 +2853,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "typescript",
@@ -2866,7 +2866,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "vala",
@@ -2901,7 +2901,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "velocity",
@@ -2934,7 +2934,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "vhdl",
@@ -2947,7 +2947,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "visualforce",
@@ -2960,7 +2960,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "vue",
@@ -2973,7 +2973,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "wollok",
@@ -3008,7 +3008,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "xquery",
@@ -3041,7 +3041,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "zeek",
@@ -3054,7 +3054,7 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     },
     {
       "snippet": "zig",
@@ -3067,7 +3067,42 @@
       "additional_components": [],
       "review_priority": "standard",
       "proposed_disposition": "retain-stub-review-open",
-      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+      "remaining_review": "Exact generated loader bytes mapped to Ace exportAce extModules BSD-3-Clause template; existing parent Ace notice retained. Independent review remains open."
     }
-  ]
+  ],
+  "shared_stub_loader": {
+    "status": "source-mapped-review-open",
+    "scope": "150-exact-generated-empty-stubs",
+    "parent_component": "ace",
+    "license": "BSD-3-Clause",
+    "notice": "vendor/licenses/ace.txt",
+    "license_git_blob": "4760be2a6220cf545129b233e20574f2a7bb630e",
+    "source": {
+      "commit": "68d7fd1c0f5ac50cdb610bf06b86074eab3be652",
+      "path": "Makefile.dryice.js",
+      "git_blob": "2d4596dee98c8b09333b192a8f4cd9cd09331185"
+    },
+    "history": [
+      {
+        "commit": "d63863ac0cbc2d5387cb44ef3db6cc65c46ece6e",
+        "git_blob": "8bf5456296033ef22fe15a469ad3dd9af316c5e9",
+        "variant": "require-only"
+      },
+      {
+        "commit": "eccdf0521294eca13b8b2e1df639f180753a07de",
+        "git_blob": "d799677440f3f41301d26758f201f7baf7b07d0d",
+        "variant": "module-export"
+      },
+      {
+        "commit": "3a9793cbc1a7c583f42955a09c8b0b8a73f3c42e",
+        "git_blob": "0e683d2a8b0fb32eaaf5394ac7a4c6dc093bbcae",
+        "variant": "module-export"
+      },
+      {
+        "commit": "fc284ad191a7ed0c6451a80dc2e9614eaeb39624",
+        "git_blob": "2556766137e948c70f6e1a8ccf86ab7f58b324b6",
+        "variant": "guarded-export"
+      }
+    ]
+  }
 }

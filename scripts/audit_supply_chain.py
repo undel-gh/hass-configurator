@@ -674,12 +674,16 @@ def source_inventory(root=PACKAGE):
     # Version-bound review matrix is a build-time source gate, not runtime policy.
     try:
         from .audit_ace_snippet_dispositions import (
-            load_matrix, verify_snippet_dispositions, render_document, DOCUMENT_PATH)
+            load_matrix, verify_snippet_dispositions, render_document, DOCUMENT_PATH,
+            verify_stub_parent_notice)
     except ImportError:
         from audit_ace_snippet_dispositions import (
-            load_matrix, verify_snippet_dispositions, render_document, DOCUMENT_PATH)
+            load_matrix, verify_snippet_dispositions, render_document, DOCUMENT_PATH,
+            verify_stub_parent_notice)
     matrix = load_matrix(ROOT)
     verify_snippet_dispositions(matrix, load(LOCK), vendor, embedded)
+    verify_stub_parent_notice(matrix, inv, load(LOCK),
+                              read_file(root, matrix["shared_stub_loader"]["notice"]))
     if (ROOT / DOCUMENT_PATH).read_text("utf-8") != render_document(matrix):
         raise ValueError("Snippet disposition Markdown drift")
     inv["embedded"] = embedded

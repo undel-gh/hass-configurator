@@ -98,6 +98,54 @@ class SnippetDispositionTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 verify_native_snippet_dispositions(self.matrix, changed)
 
+    def test_shared_stub_record_and_parent_notice_tamper(self):
+        from scripts.audit_ace_snippet_dispositions import verify_stub_parent_notice
+        notice = (ROOT / "hass_configurator/vendor/licenses/ace.txt").read_bytes()
+        inventory = json.loads((ROOT / "hass_configurator/third_party/inventory.json").read_text("utf-8"))
+        verify_stub_parent_notice(self.matrix, inventory, self.lock, notice)
+        for key, value in (("license", "MIT"), ("status", "accepted"), ("history", [])):
+            changed = copy.deepcopy(self.matrix)
+            changed["shared_stub_loader"][key] = value
+            with self.assertRaises(ValueError):
+                self.verify(changed)
+        with self.assertRaises(ValueError):
+            verify_stub_parent_notice(self.matrix, inventory, self.lock, notice + b"\n")
+        inventory["components"] = [x for x in inventory["components"] if x["id"] != "ace"]
+        with self.assertRaises(ValueError):
+            verify_stub_parent_notice(self.matrix, inventory, self.lock, notice)
+
+    def test_static_loader_template_extract_and_tamper(self):
+        from scripts.audit_ace_snippet_dispositions import loader_template, render_loader_template, empty_stub
+        notice = (ROOT / "hass_configurator/vendor/licenses/ace.txt").read_bytes()
+        header = (b"#!/usr/bin/env node\n/* ***** BEGIN LICENSE BLOCK *****\n"
+                  b" * Distributed under the BSD license:\n *\n"
+                  + b"".join(b" * " + line + b"\n" if line else b" *\n"
+                             for line in notice.splitlines())
+                  + b" *\n * ***** END LICENSE BLOCK ***** */\n")
+        body = (b"function() {\n"
+                b"                (function() {\n"
+                b"                    REQUIRE_NS.require(MODULES, function(m) {\n"
+                b'                        if (typeof module == "object" && typeof exports == "object" && module) {\n'
+                b"                            module.exports = m;\n"
+                b"                        }\n"
+                b"                    });\n"
+                b"                })();\n"
+                b"            }")
+        source = (header + b"function exportAce(ns, modules, requireBase, extModules) {\n"
+                  b"        if (extModules) {\n            template = " + body + b";\n        }\n"
+                  b".replace(/MODULES/g, JSON.stringify(modules))\n"
+                  b".replace(/REQUIRE_NS/g, requireBase)\n.replace(/NS/g, ns)\n.slice(13, -1)\n")
+        extracted = loader_template(source, notice, "guarded-export")
+        for row in self.matrix["rows"]:
+            if row["payload_kind"] == "empty-stub":
+                self.assertEqual(render_loader_template(extracted, row["snippet"]), empty_stub(row["snippet"]))
+        for bad in (source.replace(b"Copyright", b"copyright"), source.replace(b"module.exports = m", b"module.exports = {}"),
+                    source.replace(b".slice(13, -1)", b".slice(12, -1)"), source + source):
+            with self.assertRaises(ValueError):
+                loader_template(bad, notice, "guarded-export")
+        with self.assertRaises(ValueError):
+            render_loader_template(extracted, "../abap")
+
     def test_matrix_duplicate_json_keys_fail(self):
         from scripts.audit_ace_snippet_dispositions import unique_json
         with self.assertRaises(ValueError):

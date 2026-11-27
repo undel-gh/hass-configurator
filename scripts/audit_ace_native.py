@@ -191,12 +191,18 @@ def main():
     subprocess.run(["node", str(ROOT / "scripts/audit_ace_native_payloads.cjs"), str(source),
                     str(work), str(out)], check=True)
     try:
-        from .audit_ace_snippet_dispositions import load_matrix, verify_native_snippet_dispositions
+        from .audit_ace_snippet_dispositions import load_matrix, verify_native_snippet_dispositions, verify_stub_loader_sources, verify_stub_parent_notice
     except ImportError:
-        from audit_ace_snippet_dispositions import load_matrix, verify_native_snippet_dispositions
+        from audit_ace_snippet_dispositions import load_matrix, verify_native_snippet_dispositions, verify_stub_loader_sources, verify_stub_parent_notice
     report = json.loads(out.read_text("utf-8"))
     try:
-        report["snippet_dispositions"] = verify_native_snippet_dispositions(load_matrix(ROOT), report)
+        matrix = load_matrix(ROOT)
+        report["snippet_dispositions"] = verify_native_snippet_dispositions(matrix, report)
+        notice = read_file(ROOT / "hass_configurator", matrix["shared_stub_loader"]["notice"])
+        verify_stub_parent_notice(matrix, json.loads(read_file(ROOT / "hass_configurator",
+                                  "third_party/inventory.json")), lock, notice)
+        report["snippet_dispositions"]["shared_stub_loader"] = verify_stub_loader_sources(
+            matrix, read_file(source, "Makefile.dryice.js"), notice, fetch, work)
     except ValueError as exc:
         report["status"] = "research-blocked"
         report["error"] = str(exc)

@@ -16,8 +16,9 @@ component mappings, source pin consistency for mapped records and this rendered
 document. The native research gate separately compares all 202 row types and
 the 52 current source Git blobs against the immutable checkout and static
 payload/empty-stub evidence. It does not replay all historical transformations
-or adjudicate rights. R5.3b shared loader template license, independent artifact
-inspection and review remain open.
+or adjudicate rights. R5.3b maps the 150 generated loaders to the exact Ace
+exportAce extModules template, with a file-specific BSD-3-Clause header identical
+to the existing parent notice. Independent artifact inspection and review remain open.
 
 ## Counts
 
@@ -97,7 +98,12 @@ maintainer approval, profile/manifest changes and validation in a separate incre
 
 All rows below have identical structural loader semantics with a name-specific
 module ID, not an empty file. Exact published hashes are recorded in JSON.
-No independent per-language license grant or payload is inferred.
+The shared loader is mapped to `Makefile.dryice.js` (`exportAce`, `extModules`),
+with a file-specific BSD-3-Clause header matching `vendor/licenses/ace.txt`.
+The historical guarded-export variant matches the current template exactly.
+The native audit verifies all 150 minified and unminified archive members by
+static substitution; no separate library or notice is created. This mapping is
+review-open; no independent per-language license grant or payload is inferred.
 
 | Snippet | Proposed disposition |
 | --- | --- |

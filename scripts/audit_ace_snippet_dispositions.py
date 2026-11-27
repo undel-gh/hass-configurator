@@ -16,6 +16,42 @@ COUNTS = {
     "snipmate-modified": 8,
     "textmate-exact": 2
 }
+SHARED_STUB_LOADER = {
+    "status": "source-mapped-review-open",
+    "scope": "150-exact-generated-empty-stubs",
+    "parent_component": "ace",
+    "license": "BSD-3-Clause",
+    "notice": "vendor/licenses/ace.txt",
+    "license_git_blob": "4760be2a6220cf545129b233e20574f2a7bb630e",
+    "source": {
+        "commit": "68d7fd1c0f5ac50cdb610bf06b86074eab3be652",
+        "path": "Makefile.dryice.js",
+        "git_blob": "2d4596dee98c8b09333b192a8f4cd9cd09331185"
+    },
+    "history": [
+        {
+            "commit": "d63863ac0cbc2d5387cb44ef3db6cc65c46ece6e",
+            "git_blob": "8bf5456296033ef22fe15a469ad3dd9af316c5e9",
+            "variant": "require-only"
+        },
+        {
+            "commit": "eccdf0521294eca13b8b2e1df639f180753a07de",
+            "git_blob": "d799677440f3f41301d26758f201f7baf7b07d0d",
+            "variant": "module-export"
+        },
+        {
+            "commit": "3a9793cbc1a7c583f42955a09c8b0b8a73f3c42e",
+            "git_blob": "0e683d2a8b0fb32eaaf5394ac7a4c6dc093bbcae",
+            "variant": "module-export"
+        },
+        {
+            "commit": "fc284ad191a7ed0c6451a80dc2e9614eaeb39624",
+            "git_blob": "2556766137e948c70f6e1a8ccf86ab7f58b324b6",
+            "variant": "guarded-export"
+        }
+    ]
+}
+
 EXCLUSION_CANDIDATES = {"abc", "edifact", "gobstones", "lsl"}
 EXACT = set("actionscript c_cpp clojure coffee css diff django erlang haml haskell java jsp lua makefile perl rst ruby snippets sql tcl tex textile".split())
 MODIFIED = set("dart html javascript markdown php python r sh".split())
@@ -87,9 +123,13 @@ def expected_components(name, category):
 
 def verify_snippet_dispositions(matrix, lock, vendor, embedded):
     """Offline, version-bound closure; no claim of independent license review."""
-    require(set(matrix) == {"schema", "ace_version", "ace_source_commit", "ace_build_commit", "review_status", "rows"}
+    require(set(matrix) == {"schema", "ace_version", "ace_source_commit", "ace_build_commit", "review_status", "rows", "shared_stub_loader"}
             and type(matrix["schema"]) is int and matrix["schema"] == 1, "invalid schema")
     require(matrix["review_status"] == "independent-review-pending", "unexpected review status")
+    require(matrix["shared_stub_loader"] == SHARED_STUB_LOADER, "shared stub loader evidence drift")
+    require(matrix["shared_stub_loader"]["source"]["commit"] == lock["source_commit"]
+            and matrix["shared_stub_loader"]["license_git_blob"] == lock["license_git_blob"],
+            "shared stub loader source/license pin drift")
     require(all(matrix[key] == lock[pin] for key, pin in (
         ("ace_version", "version"), ("ace_source_commit", "source_commit"),
         ("ace_build_commit", "build_commit"))), "Ace pin drift")
@@ -171,6 +211,123 @@ def verify_snippet_dispositions(matrix, lock, vendor, embedded):
     return dict(sorted(counts.items()))
 
 
+
+def git_blob(raw):
+    return hashlib.sha1(b"blob " + str(len(raw)).encode("ascii") + b"\0" + raw).hexdigest()
+
+
+def verify_stub_parent_notice(matrix, inventory, lock, notice):
+    """Reuse the actual parent Ace notice; no new package or notice identity."""
+    record = matrix["shared_stub_loader"]
+    require(record == SHARED_STUB_LOADER, "shared stub loader evidence drift")
+    matches = [c for c in inventory["components"] if c["id"] == record["parent_component"]]
+    require(len(matches) == 1, "missing Ace notice owner")
+    parent = matches[0]
+    require(parent["license"] == record["license"] and record["notice"] in parent["notices"]
+            and "vendor/ace/" in parent["vendor_prefixes"], "shared stub parent notice mapping drift")
+    require(git_blob(notice) == record["license_git_blob"] == lock["license_git_blob"]
+            and hashlib.sha256(notice).hexdigest() == lock["license_sha256"], "shared stub notice bytes drift")
+
+
+def loader_template(builder, license_bytes, variant):
+    """Static extraction of the exact observed Ace template, never execute JS."""
+    require(variant in {"require-only", "module-export", "guarded-export"}, "unknown loader variant")
+    header = re.match(rb"#!/usr/bin/env node\n/\* \*\*\*\*\* BEGIN LICENSE BLOCK \*\*\*\*\*\n"
+                      rb" \* Distributed under the BSD license:\n \*\n([\s\S]*?)"
+                      rb" \*\n \* \*\*\*\*\* END LICENSE BLOCK \*\*\*\*\* \*/\n", builder)
+    require(header is not None, "builder BSD header missing")
+    lines = header[1].splitlines()
+    require(all(line == b" *" or line.startswith(b" * ") for line in lines),
+            "builder BSD header formatting drift")
+    text = b"\n".join(line[3:] if line.startswith(b" * ") else b"" for line in lines) + b"\n"
+    require(text == license_bytes, "builder BSD header differs from shipped notice")
+    matches = re.findall(rb"        if \(extModules\) \{\n            template = (function\(\) \{\n"
+                         rb"[\s\S]*?\n            \});\n        \}", builder)
+    require(len(matches) == 1, "expected one extModules template")
+    body = matches[0]
+    expected = (
+        b"function() {\n"
+        b"                (function() {\n"
+        b"                    REQUIRE_NS.require(MODULES, function(m) {\n"
+        b'                        if (typeof module == "object" && typeof exports == "object" && module) {\n'
+        b"                            module.exports = m;\n"
+        b"                        }\n"
+        b"                    });\n"
+        b"                })();\n"
+        b"            }")
+    if variant == "module-export":
+        expected = expected.replace(b' && typeof exports == "object" && module', b"")
+    elif variant == "require-only":
+        expected = (b"function() {\n"
+                    b"                (function() {\n"
+                    b"                    REQUIRE_NS.require(MODULES, function() {});\n"
+                    b"                })();\n"
+                    b"            }")
+    require(body == expected, "unexpected extModules template bytes")
+    require(builder.count(b"function exportAce(ns, modules, requireBase, extModules)") == 1,
+            "exportAce declaration drift")
+    require(all(builder.count(token) == 1 for token in (
+        b".replace(/MODULES/g, JSON.stringify(modules))",
+        b".replace(/REQUIRE_NS/g, requireBase)",
+        b".replace(/NS/g, ns)", b".slice(13, -1)")), "loader substitution drift")
+    return body
+
+
+def render_loader_template(template, name):
+    require(re.fullmatch("[a-z0-9_]+", name) is not None, "invalid loader name")
+    module = json.dumps(["ace/snippets/" + name], separators=(",", ":")).encode("ascii")
+    return b";" + template.replace(b"MODULES", module).replace(b"REQUIRE_NS", b"ace").replace(b"NS", b"ace")[13:-1]
+
+
+def verify_stub_loader_sources(matrix, source, notice, fetch, work):
+    """Verify pinned historical templates, current generator, and both archive forms."""
+    record = matrix["shared_stub_loader"]
+    require(record == SHARED_STUB_LOADER, "shared stub loader evidence drift")
+    require(git_blob(notice) == record["license_git_blob"], "shared stub notice blob drift")
+    pin = record["source"]
+    require(git_blob(source) == pin["git_blob"], "current loader generator blob drift")
+    current = loader_template(source, notice, "guarded-export")
+    # Check the actual current build path: per-mode snippet build, export
+    # filter after compression and namespace selection, and exact LF handling.
+    require(all(token in source for token in (
+        b'require: ["ace/snippets/" + name]',
+        b'}, "snippets/" + name, addCb());',
+        b'if (projectType !== "worker")',
+        b'opts.noconflict ? ns : "", projectType !== "main"',
+        b'code = result.codeMin;',
+        b'filters.forEach(function(f) { code = f(code); });',
+        b'text.replace(/;\\s*$/, "") + ";" + template',
+        b'filters.push(normalizeLineEndings);')), "current loader build path drift")
+    historical = []
+    for entry in record["history"]:
+        base = "https://raw.githubusercontent.com/ajaxorg/ace/" + entry["commit"] + "/"
+        builder, license_bytes = fetch(base + pin["path"]), fetch(base + "LICENSE")
+        require(git_blob(builder) == entry["git_blob"] and license_bytes == notice,
+                "historical loader source/license drift: " + entry["commit"])
+        body = loader_template(builder, license_bytes, entry["variant"])
+        if entry["variant"] == "guarded-export":
+            require(body == current, "2018/current loader template mismatch")
+        historical.append({**entry, "license_git_blob": git_blob(license_bytes)})
+    rows = []
+    for row in matrix["rows"]:
+        if row["payload_kind"] != "empty-stub":
+            continue
+        name = row["snippet"]
+        mini = render_loader_template(current, name)
+        require(mini == empty_stub(name) and hashlib.sha256(mini).hexdigest() == row["asset_sha256"],
+                "generated loader hash mismatch: " + name)
+        file = "snippets/" + name + ".js"
+        require((work / "mini" / file).read_bytes() == mini
+                and (work / "plain" / file).read_bytes() == b"\n" + mini,
+                "generated loader archive byte mismatch: " + name)
+        rows.append({"snippet": name, "sha256": row["asset_sha256"]})
+    require(len(rows) == 150, "generated loader closure mismatch")
+    return {"status": "source-mapped-review-open", "source": pin,
+            "license": record["license"], "notice": record["notice"],
+            "license_git_blob": record["license_git_blob"], "historical_sources": historical,
+            "exact_minified": len(rows), "exact_unminified": len(rows), "rows": rows}
+
+
 def verify_native_snippet_dispositions(matrix, report):
     """Cross-check actual native audit classifications and current source blobs."""
     require(report["ace_source_commit"] == matrix["ace_source_commit"]
@@ -196,7 +353,7 @@ def verify_native_snippet_dispositions(matrix, report):
 
 def render_document(matrix):
     counts = Counter(x["evidence_class"] for x in matrix["rows"])
-    result = "# Ace snippet disposition matrix (R5.3)\n\nThe [machine-readable matrix](ace-snippet-dispositions.json) is canonical.\nThis is a proposed review disposition, not legal clearance or release acceptance.\nAll 202 assets are currently retained; no exclusion is authorized or implemented.\nThe Ace root BSD-3-Clause declaration applies separately, not as proof of external\ninput rights. Additional component IDs refer to `hass_configurator/third_party/embedded.json`.\nA partial attribution is not a license for the whole payload. Review-only records\nare not libraries. Priority is proposed review order, not a risk rating.\nHistorical references record research endpoints or exact original inputs, not\nnecessarily a unique copy revision. See [research](ACE_SNIPPET_RESEARCH.md).\n\nThe offline source inventory gate checks exact row closure, hashes against\nthe lock and vendor manifest, generated stub bytes by their exact hash,\ncomponent mappings, source pin consistency for mapped records and this rendered\ndocument. The native research gate separately compares all 202 row types and\nthe 52 current source Git blobs against the immutable checkout and static\npayload/empty-stub evidence. It does not replay all historical transformations\nor adjudicate rights. R5.3b shared loader template license, independent artifact\ninspection and review remain open.\n\n## Counts\n\n| Evidence class | Count |\n| --- | ---: |\n"
+    result = "# Ace snippet disposition matrix (R5.3)\n\nThe [machine-readable matrix](ace-snippet-dispositions.json) is canonical.\nThis is a proposed review disposition, not legal clearance or release acceptance.\nAll 202 assets are currently retained; no exclusion is authorized or implemented.\nThe Ace root BSD-3-Clause declaration applies separately, not as proof of external\ninput rights. Additional component IDs refer to `hass_configurator/third_party/embedded.json`.\nA partial attribution is not a license for the whole payload. Review-only records\nare not libraries. Priority is proposed review order, not a risk rating.\nHistorical references record research endpoints or exact original inputs, not\nnecessarily a unique copy revision. See [research](ACE_SNIPPET_RESEARCH.md).\n\nThe offline source inventory gate checks exact row closure, hashes against\nthe lock and vendor manifest, generated stub bytes by their exact hash,\ncomponent mappings, source pin consistency for mapped records and this rendered\ndocument. The native research gate separately compares all 202 row types and\nthe 52 current source Git blobs against the immutable checkout and static\npayload/empty-stub evidence. It does not replay all historical transformations\nor adjudicate rights. R5.3b maps the 150 generated loaders to the exact Ace\nexportAce extModules template, with a file-specific BSD-3-Clause header identical\nto the existing parent notice. Independent artifact inspection and review remain open.\n\n## Counts\n\n| Evidence class | Count |\n| --- | ---: |\n"
     result += "".join(f"| {key} | {count} |\n" for key, count in sorted(counts.items()))
     result += "\nProposed snippet-only exclusion candidates: abc, edifact, gobstones, lsl.\nLanguage modes are outside this decision; any exclusion requires explicit\nmaintainer approval, profile/manifest changes and validation in a separate increment.\n\n## Nonempty payloads\n\n| Snippet | Evidence class | Additional components | Priority | Proposed disposition | Remaining review |\n| --- | --- | --- | --- | --- | --- |\n"
     for row in matrix["rows"]:
@@ -204,7 +361,7 @@ def render_document(matrix):
             result += "| " + " | ".join((row["snippet"], row["evidence_class"],
                 ", ".join(row["additional_components"]) or "—", row["review_priority"],
                 row["proposed_disposition"], row["remaining_review"])) + " |\n"
-    result += "\n## Empty generated stubs\n\nAll rows below have identical structural loader semantics with a name-specific\nmodule ID, not an empty file. Exact published hashes are recorded in JSON.\nNo independent per-language license grant or payload is inferred.\n\n| Snippet | Proposed disposition |\n| --- | --- |\n"
+    result += "\n## Empty generated stubs\n\nAll rows below have identical structural loader semantics with a name-specific\nmodule ID, not an empty file. Exact published hashes are recorded in JSON.\nThe shared loader is mapped to `Makefile.dryice.js` (`exportAce`, `extModules`),\nwith a file-specific BSD-3-Clause header matching `vendor/licenses/ace.txt`.\nThe historical guarded-export variant matches the current template exactly.\nThe native audit verifies all 150 minified and unminified archive members by\nstatic substitution; no separate library or notice is created. This mapping is\nreview-open; no independent per-language license grant or payload is inferred.\n\n| Snippet | Proposed disposition |\n| --- | --- |\n"
     for row in matrix["rows"]:
         if row["payload_kind"] == "empty-stub":
             result += f"| {row['snippet']} | {row['proposed_disposition']} |\n"
