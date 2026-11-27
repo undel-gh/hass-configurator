@@ -174,9 +174,11 @@ def main():
         require((meta.get("name"), meta.get("version")) == ("ace-legacy-linters", "1.0.2"),
                 "Unexpected linter package identity")
         license_bytes = exact_member(linters, "package/LICENSE")
-        require(git_blob_sha1(license_bytes) == LINTER_LICENSE_BLOB and
-                license_bytes == read_file(PKG, "third_party/licenses/embedded/ace-legacy-linters.txt"),
-                "Linter notice differs from pinned source or shipped notice")
+        # A different archive notice is a finding, not permission to use it.
+        # Collect actual bytes and worker comparisons before failing the gate.
+        shipped_license = read_file(PKG, "third_party/licenses/embedded/ace-legacy-linters.txt")
+        license_match = (git_blob_sha1(license_bytes) == LINTER_LICENSE_BLOB
+                         and license_bytes == shipped_license)
         workers = []
         for name in sorted(REPLACEMENTS | NATIVE):
             actual = read_file(PKG, "vendor/ace/" + name)
@@ -195,7 +197,14 @@ def main():
               "ace_archive_sha256": ACE_SHA256,
               "linter_archive": {"name": meta["name"], "version": meta["version"],
                   "tarball": LINTER_URL, "sha256": sha(linter_raw), "npm_integrity": sri(linter_raw),
-                  "license_sha256": sha(license_bytes), "source_lock_git_blob": LOCK_BLOB,
+                  "license_sha256": sha(license_bytes),
+                  "license_git_blob": git_blob_sha1(license_bytes),
+                  "license_base64": base64.b64encode(license_bytes).decode("ascii"),
+                  "expected_source_license_git_blob": LINTER_LICENSE_BLOB,
+                  "shipped_license_sha256": sha(shipped_license),
+                  "license_source_equal": git_blob_sha1(license_bytes) == LINTER_LICENSE_BLOB,
+                  "license_shipped_equal": license_bytes == shipped_license,
+                  "source_lock_git_blob": LOCK_BLOB,
                   "source_commit": SOURCE_COMMIT},
               "workers": workers, "candidate_notices": [],
               "limitations": ["Exact equality of the two published build forms proves worker-package attribution only.",
@@ -219,10 +228,14 @@ def main():
     queries = [{"package": {"ecosystem": "npm", "name": name}, "version": version}
                for name, version in sorted(set(candidates) | {("ace-legacy-linters", "1.0.2")})]
     report["candidate_osv"] = query_osv(queries)
-    report["status"] = "partial-attribution-evidence"
+    exact_count = sum(w["status"] == "exact-linter-build-match" for w in workers)
+    report["status"] = ("partial-attribution-evidence" if license_match and exact_count == len(REPLACEMENTS)
+                        else "attribution-blocked")
     save()
-    print("Ace worker exact linter matches:", sum(w["status"] == "exact-linter-build-match" for w in workers),
+    print("Ace worker exact linter matches:", exact_count,
           "/", len(REPLACEMENTS), "; source-lock candidate queries:", len(queries))
+    require(license_match, "Linter notice mismatch: actual bytes retained in attribution report")
+    require(exact_count == len(REPLACEMENTS), "Linter worker build mismatch: actual evidence retained")
 
 
 if __name__ == "__main__":

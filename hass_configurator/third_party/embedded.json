@@ -272,7 +272,7 @@
         }
       ],
       "name": "raf.js",
-      "note": "Tagged source credits Nicolas Gryman and Erik M\u00f6ller; candidate upstream MIT text retained; exact revision unresolved.",
+      "note": "Tagged source credits Nicolas Gryman and Erik Möller; candidate upstream MIT text retained; exact revision unresolved.",
       "notices": [
         "third_party/licenses/embedded/raf.txt"
       ],
@@ -324,6 +324,11 @@
           "git_blob": "abf00126f02b4c4ad6b57785e4a16fa83a4743f7",
           "marker": "version:\"2.2.1\"",
           "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-coffee.js"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/lib/ace/mode/coffee/coffee.js",
+          "git_blob": "69d72fcc47a453e6a180f5af97e973962994f2bd",
+          "marker": "CoffeeScript Compiler v2.2.1"
         }
       ],
       "id": "ace-coffee",
@@ -336,7 +341,7 @@
         }
       ],
       "name": "coffeescript",
-      "note": "Compiler header and shipped version match, original upstream release LICENSE included. Historical source reference; marker survives in the new build, but new embedded byte/version/license closure is not complete.",
+      "note": "Compiler header and shipped version match, original upstream release LICENSE included. Historical source reference; marker survives in the new build, but new embedded byte/version/license closure is not complete. Current Ace 1.45.2 source files at 68d7fd1c0f5ac50cdb610bf06b86074eab3be652 have identical Git blobs to the historical evidence; current source markers independently rechecked. Full nested license closure remains open.",
       "notices": [
         "third_party/licenses/embedded/coffee.txt"
       ],
@@ -413,6 +418,21 @@
           "git_blob": "ca18b43a42ca5ea827b3092c7b54cffba5e9c7c6",
           "marker": "xqlint",
           "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-xquery.js"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/lib/ace/mode/xquery_worker.js",
+          "git_blob": "b77096be3cf1289f52d1dde5c0f326fdf9b062d0",
+          "marker": "require(\"./xquery/xqlint\")"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/lib/ace/mode/xquery/xquery_lexer.js",
+          "git_blob": "14413843c3ca84366c8c25c30b4d43eee4703572",
+          "marker": "REx v5.30"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/lib/ace/mode/xquery/jsoniq_lexer.js",
+          "git_blob": "f123f46fa7bbe78459e8be0861256cab076e0c43",
+          "marker": "REx v5.30"
         }
       ],
       "id": "ace-xqlint",
@@ -433,7 +453,7 @@
         }
       ],
       "name": "XQLint and generated XQuery/JSONiq lexers",
-      "note": "Both generated XQueryTokenizer.js and JSONiqTokenizer.js at historical XQLint commit 1778846e (package 0.1.5) are literal full-source substrings of corresponding tagged Ace lexer modules. Apache-2.0 reference license retained; exact full worker version, generated output terms and other nested modules remain open; do not invent a version for the aggregate. Historical source reference; marker survives in the new build, but new embedded byte/version/license closure is not complete.",
+      "note": "Both generated XQueryTokenizer.js and JSONiqTokenizer.js at historical XQLint commit 1778846e (package 0.1.5) are literal full-source substrings of corresponding tagged Ace lexer modules. Apache-2.0 reference license retained; exact full worker version, generated output terms and other nested modules remain open; do not invent a version for the aggregate. Historical source reference; marker survives in the new build, but new embedded byte/version/license closure is not complete. Current Ace 1.45.2 source files at 68d7fd1c0f5ac50cdb610bf06b86074eab3be652 have identical Git blobs to the historical evidence; current source markers independently rechecked. Full nested license closure remains open.",
       "notices": [
         "third_party/licenses/embedded/xqlint-reference.txt"
       ],
@@ -672,7 +692,8 @@
     "Historical Ace 1.9.6 rows and literal source relationships: docs/history/ace-1.9.6-embedded.json and checkpoint b5924860ad8e27a2c47cecb71cac7905627a2819",
     "Historical retained notices are references, not proof of active libraries or current license closure.",
     "New worker imports and build markers do not establish exact dependency versions. Candidate OSV queries remain separately scoped.",
-    "Non-Ace embedded findings and font provenance remain unchanged."
+    "Non-Ace embedded findings and font provenance remain unchanged.",
+    "Current Ace 1.45.2 XQuery and JSONiq lexer source blobs are unchanged from baseline and literal tokenizer relationships independently rechecked; not proof of full minified-worker byte equivalence or generated output license."
   ],
   "notices": {
     "third_party/licenses/embedded/ace-legacy-linters.txt": {
@@ -839,15 +860,42 @@
     }
   },
   "schema": 1,
-  "source_relationships": [],
+  "source_relationships": [
+    {
+      "upstream": {
+        "url": "https://github.com/wcandillon/xqlint/blob/1778846ed8e707780d791fd3ffb41feccdf9de04/lib/lexers/XQueryTokenizer.js",
+        "git_blob": "9ebe64fcd788ffa1af3f82f1cc36596d5968b350",
+        "marker": "REx v5.30"
+      },
+      "container": {
+        "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/lib/ace/mode/xquery/xquery_lexer.js",
+        "git_blob": "14413843c3ca84366c8c25c30b4d43eee4703572",
+        "marker": "XQueryTokenizer"
+      },
+      "relation": "literal-full-source-substring"
+    },
+    {
+      "upstream": {
+        "url": "https://github.com/wcandillon/xqlint/blob/1778846ed8e707780d791fd3ffb41feccdf9de04/lib/lexers/JSONiqTokenizer.js",
+        "git_blob": "8fcd737b2ec86ccaccdecb4ba2306d18d3027016",
+        "marker": "REx v5.30"
+      },
+      "container": {
+        "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/lib/ace/mode/xquery/jsoniq_lexer.js",
+        "git_blob": "f123f46fa7bbe78459e8be0861256cab076e0c43",
+        "marker": "JSONiqTokenizer"
+      },
+      "relation": "literal-full-source-substring"
+    }
+  ],
   "worker_review": {
     "vendor/ace/worker-base.js": {
       "note": "Ace 1.45.2 exact build verified; full current worker dependencies, versions and notices not cleared.",
       "status": "open-review"
     },
     "vendor/ace/worker-coffee.js": {
-      "note": "Ace 1.45.2 exact build verified; full current worker dependencies, versions and notices not cleared.",
-      "status": "open-review"
+      "status": "component-mapping",
+      "note": "Current source and shipped markers rechecked; partial mapping only, no complete nested/license clearance."
     },
     "vendor/ace/worker-css.js": {
       "note": "Ace 1.45.2 exact build verified; full current worker dependencies, versions and notices not cleared.",
@@ -878,8 +926,8 @@
       "status": "open-review"
     },
     "vendor/ace/worker-xquery.js": {
-      "note": "Ace 1.45.2 exact build verified; full current worker dependencies, versions and notices not cleared.",
-      "status": "open-review"
+      "status": "component-mapping",
+      "note": "Current source and shipped markers rechecked; partial mapping only, no complete nested/license clearance."
     },
     "vendor/ace/worker-yaml.js": {
       "note": "Ace 1.45.2 exact build verified; full current worker dependencies, versions and notices not cleared.",

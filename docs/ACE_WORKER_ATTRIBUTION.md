@@ -63,3 +63,21 @@ review the actual attribution artifact, pin the linter archive and matched
 worker hashes, reconcile active records and notices; use reproducible build
 or stronger byte evidence where needed for exact dependency versions. Retain
 native, theme/snippet and residual risk gates. #33/#9 remain open.
+
+## Native worker re-check and first attribution finding
+
+Both XQuery and JSONiq tokenizer literal-full-source relationships were
+rechecked directly against current Ace source 68d7fd1c0f5ac50cdb610bf06b86074eab3be652. Both container Git
+blobs are identical to the historical 1.9.6 source evidence. CoffeeScript
+2.2.1 source blob is also unchanged and contains the compiler version header;
+current minified worker marker already verified. These current source pins
+are added to embedded.json, with partial component-mapping disposition.
+The native base worker remains open.
+
+First attribution run #350 / 45978322070 on 5895a9fa stopped at a real
+ace-legacy-linters npm LICENSE vs pinned source/shipped notice mismatch.
+Do not declare the linter notice accepted. The correction preserves actual
+archive notice bytes (base64), Git blob, SHA-256 and source/shipped equality
+flags in the report, still fails the attribution gate on mismatch, and
+retains evidence for worker comparisons and candidate notices/OSV first.
+No npm archive notice substituted into the runtime without review.

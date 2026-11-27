@@ -144,7 +144,7 @@ def main():
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report = {"status": "verified-rehearsal-input", "source_checkout": ace["source_checkout"],
               "candidate_only": True, "ace": ace, "js_yaml": yaml, "osv": osv,
-              "limitations": ["No committed runtime migration or nested license clearance.",
+              "limitations": ["Overlay evidence only; committed runtime and nested license clearance are separate.",
                               "js-yaml pins independently reviewed; actual runtime acceptance separate.",
                               "Not installed artifact or real Supervisor acceptance."]}
     report_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
