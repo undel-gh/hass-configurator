@@ -267,3 +267,15 @@ per-file exceptions; current converter has limited mapping, generic snippet
 converter does not establish origin. Dracula MIT header identified in exact
 minified CSS payload, separate original source excerpt shipped. Detailed
 all-file comparison and source notice scan pending.
+
+A separate research job now verifies the exact source checkout and Git blobs,
+pinned published archive and shipped minified bytes for the native base,
+all theme resources and all snippet resources. It compares the native
+bootstrap raw prefix, exact nine-module top-level closure and canonical
+AST printer output after upstream TypeScript transpilation; does not
+claim a raw minified native rebuild. For themes and snippets, parse
+static exported data from source/unminified/minified (no eval), distinguish
+empty generated stubs, record exact source and runtime hashes and scan
+source files/individual TextMate metadata for attribution indicators.
+All partial/mismatch results are retained as evidence, not cleared by a
+successful native comparison. Historical origin/terms remain per-file work.
