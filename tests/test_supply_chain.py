@@ -441,10 +441,6 @@ class SupplyChainTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     query_osv([{}], lambda batch: response)
 
-
-if __name__ == "__main__":
-    unittest.main()
-
     def test_github_light_default_primer_attribution(self):
         inv, vendor = source_inventory()
         record = next(c for c in inv["embedded"]["components"]
@@ -463,3 +459,6 @@ if __name__ == "__main__":
                          if c["bom-ref"] == "embedded:ace-theme-github-light-default")
         self.assertNotIn("purl", component)
         self.assertNotIn("version", component)
+
+if __name__ == "__main__":
+    unittest.main()

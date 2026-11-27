@@ -98,6 +98,8 @@ jobs:
         run: node e2e/yaml-migration-probe.cjs hass_configurator/js-yaml.min.js
       - name: Validate curated Ace worker profile and source closure
         run: python scripts/ace_worker_profile.py
+      - name: Explicit Primer attribution regression (test discovery guard)
+        run: PYTHONPATH=tests python -m unittest -v test_supply_chain.SupplyChainTests.test_github_light_default_primer_attribution
       - name: Routing and loopback HTTP tests
         run: python -m unittest discover -s tests -p 'test_*.py' -v
       - name: Build distribution artifacts and validate vendored payloads
