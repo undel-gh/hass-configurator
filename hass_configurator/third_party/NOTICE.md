@@ -164,3 +164,15 @@ and Liquid (historical HTML payload with a fixed additional prefix). This is not
 Ace modifications, wrappers or other snippets; additional inputs and
 contribution rights remain review-open. See docs/ACE_SNIPPET_RESEARCH.md.
 No external version, PURL, full license clearance or risk acceptance is asserted.
+
+TextMate Io snippets: repository-scope historical TextMate Bundle License
+(including its file-specific exceptions) retained as textmate-io-bundle-license.txt.
+All ten source dictionaries match the current Ace Io array. LicenseRef-TextMate-Bundle
+is a source-specific custom identifier, not an MIT or BSD declaration.
+
+Vala TextMate snippets: MIT LICENSE (Copyright (C) 2014 Matt Butcher) retained
+verbatim as vala-tmbundle-mit.txt. All 31 source dictionaries match the current
+Ace Vala array and the 2014-11-13 licensed tree is identical to the pre-import
+2013 Snippets tree. The grant postdates Ace import; earlier Daniel Lucraft rights
+remain open. Both mappings are partial and limited to snippet payloads; no
+version, PURL, grammar rights, full clearance or risk acceptance asserted.

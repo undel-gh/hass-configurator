@@ -2733,6 +2733,280 @@
       "parent": "ace",
       "status": "partial",
       "version": null
+    },
+    {
+      "ecosystem": null,
+      "evidence": [
+        {
+          "git_blob": "32d8f85a4c5f41b1fd636664c7a4ca776f511b9f",
+          "marker": "Permission to copy, use, modify, sell and distribute",
+          "url": "https://github.com/textmate/io.tmbundle/blob/e8f7b3773544cfc14a7ede7344ed94683f7ed602/README.mdown"
+        },
+        {
+          "git_blob": "500eb8b25ca88e35a0dc4ce97011c577a72ed057",
+          "marker": "exports.snippets =",
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/snippets/io.js"
+        },
+        {
+          "git_blob": "98bb36feff73383d6398ba5e03e757b154679106",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/textmate/io.tmbundle/blob/e8f7b3773544cfc14a7ede7344ed94683f7ed602/Snippets/Indented%20Bracketed%20Line.plist"
+        },
+        {
+          "git_blob": "97bfd34c245f79c304f9e3f6c2810477b1037958",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/textmate/io.tmbundle/blob/e8f7b3773544cfc14a7ede7344ed94683f7ed602/Snippets/Indented%20return.plist"
+        },
+        {
+          "git_blob": "b082f3d68bde632a4649e28408553cb3f040f4f6",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/textmate/io.tmbundle/blob/e8f7b3773544cfc14a7ede7344ed94683f7ed602/Snippets/Method.plist"
+        },
+        {
+          "git_blob": "3bbf7cc53380be415fa0c15ff2e1085e4dc43516",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/textmate/io.tmbundle/blob/e8f7b3773544cfc14a7ede7344ed94683f7ed602/Snippets/Object%20clone%20do.plist"
+        },
+        {
+          "git_blob": "e0fb79c4666d214fd4a79fca8d2a35b0b9f0dff1",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/textmate/io.tmbundle/blob/e8f7b3773544cfc14a7ede7344ed94683f7ed602/Snippets/UnitTest.plist"
+        },
+        {
+          "git_blob": "6ca41752bc0b6dfba3f94cdb1224113656805ef9",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/textmate/io.tmbundle/blob/e8f7b3773544cfc14a7ede7344ed94683f7ed602/Snippets/assertEquals.plist"
+        },
+        {
+          "git_blob": "c27be9c3bc7050aedd9ee24aa645b528384cae99",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/textmate/io.tmbundle/blob/e8f7b3773544cfc14a7ede7344ed94683f7ed602/Snippets/clone%20do.plist"
+        },
+        {
+          "git_blob": "4345e801e14beb4c63e8de998b97bd976670ea57",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/textmate/io.tmbundle/blob/e8f7b3773544cfc14a7ede7344ed94683f7ed602/Snippets/docSlot.plist"
+        },
+        {
+          "git_blob": "ec84683c68570ea0afd0d8a09078d6365e019146",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/textmate/io.tmbundle/blob/e8f7b3773544cfc14a7ede7344ed94683f7ed602/Snippets/newSlot.plist"
+        },
+        {
+          "git_blob": "7f3693713cbb0f59ef6609379dfac9618488031a",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/textmate/io.tmbundle/blob/e8f7b3773544cfc14a7ede7344ed94683f7ed602/Snippets/testMethod.plist"
+        }
+      ],
+      "id": "ace-textmate-io-snippets",
+      "kind": "library",
+      "license": "LicenseRef-TextMate-Bundle",
+      "locations": [
+        {
+          "file": "vendor/ace/snippets/io.js",
+          "marker": "ace/snippets/io"
+        }
+      ],
+      "name": "TextMate Io bundle snippets",
+      "note": "All 10 pre-import Io XML snippet dictionaries match pinned current Ace array after UUID omission and source. scope conversion. Historical repository-scope TextMate permission including exceptions retained verbatim as a source excerpt; no exception identified in checked snippet files or tree. Custom LicenseRef identifies this original text, not MIT or BSD. Scope only Io snippets; other mode/grammar rights and independent review remain open. No package version or PURL asserted.",
+      "notices": [
+        "third_party/licenses/embedded/textmate-io-bundle-license.txt"
+      ],
+      "parent": "ace",
+      "status": "partial",
+      "version": null
+    },
+    {
+      "ecosystem": null,
+      "evidence": [
+        {
+          "git_blob": "1ee64503bcb3ae31e5b01f5cf61e9a02846cb3a3",
+          "marker": "Copyright (C) 2014 Matt Butcher",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/LICENSE"
+        },
+        {
+          "git_blob": "b1230e6871d9f08406d16dd862f371c36bbabc6f",
+          "marker": "exports.snippets =",
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/snippets/vala.js"
+        },
+        {
+          "git_blob": "1f58883393206674f86d8eced7e1225876b46398",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/Snippets/Comment%20%28multiline%29.tmSnippet"
+        },
+        {
+          "git_blob": "d7828633f15704389c7027eff003dc88e37072de",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/Snippets/Console.WriteLine%20%28writeline%29.tmSnippet"
+        },
+        {
+          "git_blob": "e8f6e1c54bd760612a9c8fba4bad1d2bdced3f29",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/Snippets/DBus%20annotation.tmSnippet"
+        },
+        {
+          "git_blob": "d00916a9d4fa1d7f44b947318f146655e9c24fef",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/Snippets/DocBlock.tmSnippet"
+        },
+        {
+          "git_blob": "d67415cbdc1c243d235601356145ce52e5dcf326",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/Snippets/Gee_ArrayList.tmSnippet"
+        },
+        {
+          "git_blob": "e96031b7ab04d5afefd0b1467b7894cfcbf38cd7",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/Snippets/Gee_HashMap.tmSnippet"
+        },
+        {
+          "git_blob": "6b3b6806665841cd03255ddfd17a4fc9a7acfc37",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/Snippets/Gee_HashSet.tmSnippet"
+        },
+        {
+          "git_blob": "bd86c7e4ca31823ce41e6fa46945911d0d2d51ca",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/Snippets/Main%20function.tmSnippet"
+        },
+        {
+          "git_blob": "6e488970ee80ecdf6829d50cfc032dc063433e00",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/Snippets/String%20template%20%28%40%29.tmSnippet"
+        },
+        {
+          "git_blob": "c3afa7bfd0d7dc71abd5341cd5e620c8104e7a75",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/Snippets/Verbatim%20string%20%28%22%22%22%29.tmSnippet"
+        },
+        {
+          "git_blob": "818d8e9586479c0e981866c547e07664dc5261d3",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/Snippets/case.tmSnippet"
+        },
+        {
+          "git_blob": "bafc69bdcab709bffebcb9d93f9687133363e92f",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/Snippets/class.tmSnippet"
+        },
+        {
+          "git_blob": "e63ee79c17f2c963f3cd5791e1515b1302649ef0",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/Snippets/closure.tmSnippet"
+        },
+        {
+          "git_blob": "7e79b111ca44585948fc1eb5be7ba9af4cb7cf23",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/Snippets/delegate.tmSnippet"
+        },
+        {
+          "git_blob": "9dd440145033f6fc0a5ac2a62a4f33ddbfe4547a",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/Snippets/do%20while.tmSnippet"
+        },
+        {
+          "git_blob": "a637fbb794e3ae72b872bb2297ac748c3d1291e3",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/Snippets/else%20if%20%28elseif%29.tmSnippet"
+        },
+        {
+          "git_blob": "0fb763415925f90fcd870c8947ea094dc5d2eb14",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/Snippets/else.tmSnippet"
+        },
+        {
+          "git_blob": "5b1f36bc90d9f31c5e427222db2749b1601897d5",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/Snippets/enum.tmSnippet"
+        },
+        {
+          "git_blob": "730dd21376c574b72a93d0e14e2257152675c66d",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/Snippets/error%20domain.tmSnippet"
+        },
+        {
+          "git_blob": "e26a938aff3e8f48e486fd9a54b8ae86a95d6c18",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/Snippets/for.tmSnippet"
+        },
+        {
+          "git_blob": "5d0254b6fc3773ebf0427ec0008d44e45ea1fc42",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/Snippets/foreach.tmSnippet"
+        },
+        {
+          "git_blob": "fb5a269903b238fc14ddeca5807b1b658a9a328d",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/Snippets/if.tmSnippet"
+        },
+        {
+          "git_blob": "e7cf218c5415533d0153640e9e3841a06600770f",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/Snippets/interface.tmSnippet"
+        },
+        {
+          "git_blob": "2682216c02b2a77f892f7d0d74cca2a7f903b075",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/Snippets/namespace%20%28ns%29.tmSnippet"
+        },
+        {
+          "git_blob": "274ee7a3a2347aa18142590228615a595c5af679",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/Snippets/printf.tmSnippet"
+        },
+        {
+          "git_blob": "572447dc0595f4b3c0c97e63e0405c96110711e6",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/Snippets/property%20%28prop%29.tmSnippet"
+        },
+        {
+          "git_blob": "333d5fb20dee592811fd246098fd326e9a6d3a68",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/Snippets/read-only%20property%20%28roprop%29.tmSnippet"
+        },
+        {
+          "git_blob": "3ed0b3ffff5fc71895f07c023b321e8946aeb225",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/Snippets/struct.tmSnippet"
+        },
+        {
+          "git_blob": "b44baff8fc7fcec7537521b6ed03a4ee86a12846",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/Snippets/switch.tmSnippet"
+        },
+        {
+          "git_blob": "610ede504a37d18f9f9f9a9f3ac5f9524002db72",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/Snippets/try%3Acatch.tmSnippet"
+        },
+        {
+          "git_blob": "eb784d1a64de35902ae8466baafe17acc7d88128",
+          "marker": "<key>content</key>",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/Snippets/while.tmSnippet"
+        },
+        {
+          "git_blob": "d74231b55b3f6caa79067ddc8666aa4733b18921",
+          "marker": "Daniel Lucraft",
+          "url": "https://github.com/technosophos/Vala-TMBundle/blob/40ec6f4f5e1cf921d521d0589fd9e7fc6ba0b305/README.md"
+        }
+      ],
+      "id": "ace-textmate-vala-snippets",
+      "kind": "library",
+      "license": "MIT",
+      "locations": [
+        {
+          "file": "vendor/ace/snippets/vala.js",
+          "marker": "ace/snippets/vala"
+        }
+      ],
+      "name": "Vala TextMate bundle snippets",
+      "note": "All 31 XML snippet dictionaries match current Ace array after UUID omission and source. scope conversion. Original 2013 Snippets tree unchanged at later 2014 MIT grant 2fd9373f; automated collection comparison uses that licensed revision. MIT declaration is later than Ace import; earlier Daniel Lucraft contribution rights and independent review remain open. Scope only Vala snippets, not other bundle inputs/grammar. No package version or PURL asserted.",
+      "notices": [
+        "third_party/licenses/embedded/vala-tmbundle-mit.txt"
+      ],
+      "parent": "ace",
+      "status": "partial",
+      "version": null
     }
   ],
   "font_provenance": {
@@ -2770,7 +3044,8 @@
     "REx #80 author response confirms v5.30 generated portions of two lexer files may be redistributed (including modified/minified) under Apache-2.0 or permissive license, no additional requirements; grammar lineage remains open. No changes to generated files, shipped notices or component status.",
     "SnipMate historical MIT notice recovery: 22 exact retained payloads mapped with bounded template-literal source relations; eight modified candidates and other snippets, wrapper history, underlying contribution rights and final review remain open. No package version/PURL or full license clearance.",
     "R5.3a expanded scoped SnipMate attribution to 30 retained payloads (22 unchanged, eight modified); 18 additional path-history patch transitions checked interactively with exact snapshot equality and historical Ace root BSD license blob. Network gate verifies eight additional historical endpoint-to-current static relations and historical import evidence pins, not patch replay itself. Other 22 nonempty payloads, empty stubs, wrapper and original third-party/contribution rights remain open; no release clearance.",
-    "R5.3a remaining 22: all historical endpoint-to-current payloads matched, 19 distinct endpoint root LICENSE blobs checked. EDIFACT and Liquid proven bounded derivatives of already attributed Java and HTML, respectively; historical MIT scope expanded to 32. New named networked raw-to-raw relations and existing static wrapper relations pin both derived paths. Other 20 historical inputs and contribution rights remain open; no blanket BSD/MIT clearance, no curated exclusions."
+    "R5.3a remaining 22: all historical endpoint-to-current payloads matched, 19 distinct endpoint root LICENSE blobs checked. EDIFACT and Liquid proven bounded derivatives of already attributed Java and HTML, respectively; historical MIT scope expanded to 32. New named networked raw-to-raw relations and existing static wrapper relations pin both derived paths. Other 20 historical inputs and contribution rights remain open; no blanket BSD/MIT clearance, no curated exclusions.",
+    "Io/Vala scoped source-specific attribution: 10/10 and 31/31 TextMate dictionaries checked by exact collection closure from pinned Io pre-import and Vala later MIT-licensed revisions. Vala earlier Daniel Lucraft rights, other mode/grammar inputs and independent review remain open. No package version/PURL or blanket clearance."
   ],
   "notices": {
     "third_party/licenses/embedded/ace-legacy-linters.txt": {
@@ -3222,6 +3497,18 @@
       "sha256": "d03753fc0657312d42bda508aacd675e7552a9668e58db025b141b0087e2edd9",
       "source": "https://github.com/rasshofer/yaml-lint/blob/5d6c0a8a5ce540075c94e6fd09546f7415925469/LICENSE",
       "source_blob": "ede49191426f8fc0440bcfadf9f57c16ea72a6ef"
+    },
+    "third_party/licenses/embedded/textmate-io-bundle-license.txt": {
+      "kind": "source-excerpt",
+      "sha256": "192c2900d6b509c3f962c377e0c46b0bb39e8615c2b97170bb6607904c2f1ff5",
+      "source": "https://github.com/textmate/io.tmbundle/blob/e8f7b3773544cfc14a7ede7344ed94683f7ed602/README.mdown",
+      "source_blob": "32d8f85a4c5f41b1fd636664c7a4ca776f511b9f"
+    },
+    "third_party/licenses/embedded/vala-tmbundle-mit.txt": {
+      "kind": "whole-file",
+      "sha256": "bd8d484dff2f6915f512e4bd089ac89b5f9787c0946b36a70065075588f71c38",
+      "source": "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/LICENSE",
+      "source_blob": "1ee64503bcb3ae31e5b01f5cf61e9a02846cb3a3"
     }
   },
   "schema": 1,

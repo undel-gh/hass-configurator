@@ -13,6 +13,7 @@ from scripts.audit_supply_chain import (
     PACKAGE, NOTICE, source_inventory, sbom, query_osv, scan_queries, verify_legacy_relation,
     read_file, EMBEDDED, immutable_raw_url, git_blob_sha1, embedded_upstream_evidence,
     check_npm_notice_pin, verify_npm_notice, embedded_source_relation,
+    textmate_snippet_collection, textmate_collection_records,
 )
 
 
@@ -608,6 +609,81 @@ class SupplyChainTests(unittest.TestCase):
         self.assertNotIn("purl", component)
         self.assertFalse(any(q["package"]["name"] == record["name"]
                              for q in scan_queries(inv, [])))
+
+
+    def test_textmate_encoded_paths_are_scoped_and_canonical(self):
+        base = "https://github.com/textmate/io.tmbundle/blob/e8f7b3773544cfc14a7ede7344ed94683f7ed602/Snippets/"
+        vala = "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/Snippets/"
+        for url in (base + "Indented%20return.plist",
+                    vala + "try%3Acatch.tmSnippet",
+                    vala + "Verbatim%20string%20%28%22%22%22%29.tmSnippet"):
+            self.assertEqual(immutable_raw_url(url), url.replace("github.com/", "raw.githubusercontent.com/").replace("/blob/", "/"))
+        for url in (base + "Indented return.plist", base + "Indented%2520return.plist",
+                    base + "%2E%2E%2FLICENSE.plist", base + "a%2Fb.plist",
+                    base + "a%5Cb.plist", base + "a%00b.plist", base + "a%0Ab.plist",
+                    base + "a%3Fb.plist", base + "a%23b.plist", base + "%61.plist",
+                    base + "a%20b.plist?raw=1", vala + "try%3acatch.tmSnippet",
+                    base.replace("textmate/io.tmbundle", "other/repo") + "a%20b.plist",
+                    base.replace("e8f7b3773544cfc14a7ede7344ed94683f7ed602", "a" * 40) + "a%20b.plist"):
+            with self.subTest(url=url), self.assertRaises(ValueError):
+                immutable_raw_url(url)
+
+    def test_textmate_collection_exact_and_tamper(self):
+        def source(i):
+            return (f'<?xml version="1.0" encoding="UTF-8"?>\n'
+                    '<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" '
+                    '"http://www.apple.com/DTDs/PropertyList-1.0.dtd">\n'
+                    '<plist version="1.0"><dict>'
+                    f'<key>name</key><string>n{i}</string>'
+                    '<key>content</key><string>&lt;x&gt;\n\t</string>'
+                    '<key>scope</key><string>source.io</string>'
+                    '<key>uuid</key><string>12345678-1234-1234-1234-123456789abc</string>'
+                    '</dict></plist>\n').encode()
+        sources = [source(i) for i in range(10)]
+        rows = [{"name": f"n{i}", "content": "<x>\n\t", "scope": "io"} for i in range(10)]
+        def module(entries):
+            return ('"use strict";\n\nexports.snippets = ' + json.dumps(entries)
+                    + ';\nexports.scope = "io";\n').encode()
+        good = module(rows)
+        self.assertTrue(textmate_snippet_collection(sources, good, "io"))
+        self.assertTrue(textmate_snippet_collection(sources, module(rows[::-1]), "io"))
+        for inputs, output in (
+            (sources[:-1], good), (sources + sources[:1], good),
+            (sources[:-1] + sources[:1], good), (sources, module(rows[:-1])),
+            (sources, module(rows[:-1] + rows[:1])), (sources, module(rows + rows[:1])),
+            (sources, good.replace(b'"scope": "io"', b'"scope": "other"', 1)),
+            (sources, good.replace(b'"name": "n0"', b'"name": "n0", "name": "n0"', 1)),
+            (sources, good + b"run();"),
+            ([sources[0].replace(b"<key>name</key>", b"<key>scope</key>")] + sources[1:], good),
+            ([sources[0].replace(b"<dict>", b"<dict><!--ignored-->")] + sources[1:], good),
+            ([sources[0].replace(b"<string>n0", b"<string><x/>n0")] + sources[1:], good),
+            ([sources[0].replace(b"<dict>", b"<dict><key>other</key><string>x</string>")] + sources[1:], good),
+            ([sources[0].replace(b"<!DOCTYPE plist PUBLIC", b"<!DOCTYPE evil PUBLIC")] + sources[1:], good),
+        ):
+            self.assertFalse(textmate_snippet_collection(inputs, output, "io"))
+        self.assertFalse(textmate_snippet_collection(sources, good, "vala"))
+
+    def test_textmate_collection_inventory_and_bom(self):
+        inv, vendor = source_inventory()
+        embedded = inv["embedded"]
+        self.assertEqual([(n, len(p)) for n, p, _ in textmate_collection_records(embedded)],
+                         [("io", 10), ("vala", 31)])
+        for n, license_id, notice in (
+                ("io", "LicenseRef-TextMate-Bundle", "textmate-io-bundle-license.txt"),
+                ("vala", "MIT", "vala-tmbundle-mit.txt")):
+            cid = "ace-textmate-" + n + "-snippets"
+            record = next(c for c in embedded["components"] if c["id"] == cid)
+            self.assertEqual(record["license"], license_id)
+            self.assertEqual(record["notices"], ["third_party/licenses/embedded/" + notice])
+            component = next(c for c in sbom(inv, vendor)["components"] if c["bom-ref"] == "embedded:" + cid)
+            self.assertNotIn("version", component)
+            self.assertNotIn("purl", component)
+            self.assertFalse(any(q["package"]["name"] == record["name"] for q in scan_queries(inv, [])))
+        def missing_source(doc):
+            record = next(c for c in doc["components"] if c["id"] == "ace-textmate-io-snippets")
+            record["evidence"] = [p for p in record["evidence"] if not p["url"].endswith("/Method.plist")]
+        self.mutate_embedded(missing_source, "Incomplete TextMate collection pins")
+
 
 if __name__ == "__main__":
     unittest.main()

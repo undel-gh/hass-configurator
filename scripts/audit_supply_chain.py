@@ -12,7 +12,8 @@ import re
 import subprocess
 import sys
 import tarfile
-from urllib.parse import quote
+from urllib.parse import quote, unquote
+import xml.etree.ElementTree as ET
 from urllib.request import Request, urlopen
 
 try:
@@ -53,14 +54,34 @@ def verify_file(root, name, expected):
         raise ValueError("Inventory SHA256 mismatch: " + name)
 
 
+# Special filenames are permitted only for the two pinned source collections.
+TEXTMATE_COLLECTIONS = {
+    "io": ("textmate/io.tmbundle", "e8f7b3773544cfc14a7ede7344ed94683f7ed602", ".plist", 10,
+           "500eb8b25ca88e35a0dc4ce97011c577a72ed057"),
+    "vala": ("technosophos/Vala-TMBundle", "2fd9373f90bf74eef0b15f43c7240c28d55bebaa", ".tmSnippet", 31,
+             "b1230e6871d9f08406d16dd862f371c36bbabc6f"),
+}
+TEXTMATE_ACE_REV = "68d7fd1c0f5ac50cdb610bf06b86074eab3be652"
+
+
 def immutable_raw_url(url):
     """Only exact public GitHub commit/blob evidence, never mutable tags."""
     match = re.fullmatch(
         r"https://github\.com/([A-Za-z0-9_.-]+)/([A-Za-z0-9_.-]+)/blob/"
-        r"([0-9a-f]{40})/([A-Za-z0-9_.\-/]+)", url)
+        r"([0-9a-f]{40})/([A-Za-z0-9_.%/\-]+)", url)
     if not match:
         raise ValueError("Non-immutable embedded evidence URL: " + url)
     owner, repo, commit, filename = match.groups()
+    if "%" in filename:
+        # No encoded separators, dot aliases, double encoding, query or
+        # control characters. The exception is confined to one filename.
+        decoded = unquote(filename, encoding="ascii", errors="strict")
+        allowed = any(f"{owner}/{repo}" == project and commit == revision
+                      and decoded.endswith(extension)
+                      for project, revision, extension, _, _ in TEXTMATE_COLLECTIONS.values())
+        if (not allowed or not re.fullmatch(r'Snippets/[A-Za-z0-9_. ()"@:\-]+', decoded)
+                or quote(decoded, safe="/") != filename):
+            raise ValueError("Unsafe encoded embedded evidence URL: " + url)
     path = PurePosixPath(filename)
     if (owner in {".", ".."} or repo in {".", ".."} or path.is_absolute()
             or ".." in path.parts or path.as_posix() != filename):
@@ -226,6 +247,98 @@ def embedded_source_relation(upstream, container, relation):
     return upstream in container
 
 
+
+def textmate_collection_records(embedded):
+    """Validate fixed collection identities, exact counts and unique pins offline."""
+    for language, (project, revision, extension, count, module_blob) in TEXTMATE_COLLECTIONS.items():
+        cid = "ace-textmate-" + language + "-snippets"
+        records = [c for c in embedded["components"] if c["id"] == cid]
+        if len(records) != 1:
+            raise ValueError("Missing TextMate collection: " + cid)
+        record = records[0]
+        prefix = f"https://github.com/{project}/blob/{revision}/Snippets/"
+        module_url = f"https://github.com/ajaxorg/ace/blob/{TEXTMATE_ACE_REV}/src/snippets/{language}.js"
+        sources = [p for p in record["evidence"] if p["url"].startswith(prefix)]
+        modules = [p for p in record["evidence"] if p["url"] == module_url]
+        if (len(sources) != count or len({p["url"] for p in sources}) != count
+                or len({p["git_blob"] for p in sources}) != count
+                or any(not re.fullmatch(r"[^/]+", p["url"][len(prefix):])
+                       or not p["url"].endswith(extension)
+                       or p["marker"] != "<key>content</key>" for p in sources)
+                or len(modules) != 1 or modules[0]["git_blob"] != module_blob
+                or modules[0]["marker"] != "exports.snippets ="
+                or record["locations"] != [{"file": f"vendor/ace/snippets/{language}.js",
+                                             "marker": f"ace/snippets/{language}"}]
+                or record["parent"] != "ace" or record["kind"] != "library"
+                or record["status"] != "partial" or record["version"] is not None
+                or record["ecosystem"] is not None):
+            raise ValueError("Incomplete TextMate collection pins: " + cid)
+        yield language, sources, modules[0]
+
+
+def textmate_plist_entry(raw):
+    """Parse only observed XML string dictionaries; never resolve DTDs."""
+    text = raw.decode("utf-8")
+    text = re.sub(r'^\s*<\?xml version="1\.0" encoding="UTF-8"\?>\s*', "", text, count=1)
+    text = re.sub(
+        r'^<!DOCTYPE plist PUBLIC "-//Apple(?: Computer)?//DTD PLIST 1\.0//EN" '
+        r'"http://www\.apple\.com/DTDs/PropertyList-1\.0\.dtd">\s*',
+        "", text, count=1)
+    if "<!" in text or "<?" in text:
+        raise ValueError("Unsupported TextMate XML declaration")
+    root = ET.fromstring(text)
+    if (root.tag != "plist" or root.attrib != {"version": "1.0"} or len(root) != 1
+            or (root.text or "").strip() or (root.tail or "").strip()):
+        raise ValueError("Invalid TextMate plist wrapper")
+    dictionary = root[0]
+    if (dictionary.tag != "dict" or dictionary.attrib or (dictionary.text or "").strip()
+            or (dictionary.tail or "").strip() or len(dictionary) % 2):
+        raise ValueError("Invalid TextMate plist dictionary")
+    result = {}
+    for key, value in zip(dictionary[::2], dictionary[1::2]):
+        if (key.tag != "key" or value.tag != "string" or key.attrib or value.attrib
+                or len(key) or len(value) or (key.tail or "").strip()
+                or (value.tail or "").strip() or not key.text or key.text in result):
+            raise ValueError("Invalid or duplicate TextMate plist field")
+        result[key.text] = value.text or ""
+    if ("uuid" not in result or not re.fullmatch(r"[0-9A-Fa-f-]{36}", result.pop("uuid"))
+            or not {"name", "content", "scope"} <= result.keys()
+            or not result.keys() <= {"name", "content", "scope", "tabTrigger", "keyEquivalent"}
+            or not result["name"] or not result["scope"]):
+        raise ValueError("Unsupported TextMate plist fields")
+    result["scope"] = result["scope"].replace("source.", "")
+    return result
+
+
+def textmate_snippet_collection(sources, container, language):
+    """Exact one-to-one dictionary closure; no JS execution or fuzzy matching."""
+    if language not in TEXTMATE_COLLECTIONS:
+        return False
+    try:
+        count = TEXTMATE_COLLECTIONS[language][3]
+        prefix = '"use strict";\n\nexports.snippets = '
+        suffix = '\nexports.scope = "' + ("io" if language == "io" else "") + '";\n'
+        text = container.decode("utf-8")
+        if not text.startswith(prefix) or not text.endswith(";" + suffix):
+            return False
+        def unique_fields(pairs):
+            result = dict(pairs)
+            if len(result) != len(pairs):
+                raise ValueError("Duplicate Ace snippet field")
+            return result
+        entries = json.loads(text[len(prefix):-len(";" + suffix)], object_pairs_hook=unique_fields)
+        if (not isinstance(entries, list) or len(entries) != count or len(sources) != count
+                or any(not isinstance(row, dict) or not isinstance(row.get("name"), str)
+                       or not all(isinstance(v, str) for v in row.values()) for row in entries)):
+            return False
+        original = [textmate_plist_entry(raw) for raw in sources]
+        left = {row["name"]: row for row in original}
+        right = {row["name"]: row for row in entries}
+        return len(left) == len(right) == count and left == right
+    except (ValueError, UnicodeError, ET.ParseError):
+        return False
+
+
 def validate_embedded(root, inv, vendor, embedded, notice_paths):
     """Parent ownership remains exclusive; embedded code can share containers."""
     if embedded["schema"] != 1 or not embedded["components"]:
@@ -291,6 +404,8 @@ def validate_embedded(root, inv, vendor, embedded, notice_paths):
             check_git_pin(record["url"], record["git_blob"])
             if not record["marker"]:
                 raise ValueError("Missing source relationship marker")
+    # Validate collection cardinality and endpoints even without network access.
+    list(textmate_collection_records(embedded))
     font = embedded["font_provenance"]
     check_git_pin(font["source"], font["source_blob"])
     if (font["file"] not in inv["legacy_assets"] or font["status"] != "partial"
@@ -351,6 +466,14 @@ def embedded_upstream_evidence(inv, fetch=None):
                 or left["marker"].encode("utf-8") not in upstream
                 or right["marker"].encode("utf-8") not in container):
             raise ValueError("Embedded source relationship mismatch: " + left["url"])
+    collection_results = []
+    for language, sources, module in textmate_collection_records(embedded):
+        inputs = [verified(p["url"], p["git_blob"]) for p in sources]
+        container = verified(module["url"], module["git_blob"])
+        if not textmate_snippet_collection(inputs, container, language):
+            raise ValueError("TextMate snippet collection mismatch: " + language)
+        collection_results.append({"language": language, "count": len(inputs),
+                                   "container": module["url"], "relation": "exact-plist-array-dictionaries"})
     font = embedded["font_provenance"]
     original = verified(font["source"], font["source_blob"])
     candidate = font["google_repository_candidate"]
@@ -361,6 +484,7 @@ def embedded_upstream_evidence(inv, fetch=None):
                               "sha256": sha(raw)}
                              for url, raw in sorted(cache.items())],
             "component_records": len(embedded["components"]),
+            "textmate_snippet_collections_verified": collection_results,
             "notices_verified": len(embedded["notices"]),
             "npm_archive_notices": npm_notices,
             "literal_source_relationships_verified": sum(row["relation"] == "literal-full-source-substring"
