@@ -119,7 +119,13 @@ def main():
     converter = read_file(source, "tool/tmtheme.js").decode("utf-8")
     mapping_block = converter.split("var themes = {", 1)[1].split("\n};", 1)[0]
     theme_inputs = {}
-    for name, title in re.findall(r'^\s*"([a-z_]+)": "([^"]+)"\s*,?\s*
+    for name, title in re.findall(r'^\s*"([a-z_]+)": "([^"]+)"\s*,?\s*$', mapping_block, re.M):
+        filename = "tool/tmthemes/" + title + ".tmTheme"
+        theme_inputs[name] = {"source": filename, "present": filename in source_rows,
+                              "evidence": source_rows.get(filename),
+                              "relation": "converter-input-reference-not-license-clearance"}
+    selected = sorted(name for name in lock["files_sha256"] if
+                      name in {"worker-base.js", "ace.js"} or name.startswith(("theme-", "snippets/")))
     assets = []
     with tarfile.open(fileobj=io.BytesIO(raw), mode="r:gz") as archive:
         for name in selected:
