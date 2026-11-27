@@ -321,6 +321,35 @@ class SupplyChainTests(unittest.TestCase):
             embedded_source_relation(prelude + b"return newRequire;", container,
                                      "browser-pack-standalone-prelude")
 
+    def test_historical_theme_wrapper_relation(self):
+        original = (b"/* ***** BEGIN LICENSE BLOCK *****\n"
+                    b"Copyright 2011 Irakli Gozalishvili.\n"
+                    b"***** END LICENSE BLOCK ***** */\n\n"
+                    b"define(function(require, exports, module) {\n\n"
+                    b'exports.isDark = true;\nexports.cssClass = "ace-gruvbox";\n'
+                    b'exports.cssText = require("../requirejs/text!./gruvbox.css");\n\n'
+                    b'var dom = require("../lib/dom");\n'
+                    b"dom.importCssString(exports.cssText, exports.cssClass);\n\n});\n")
+        current = (b'exports.isDark = true;\nexports.cssClass = "ace-gruvbox";\n'
+                   b'exports.cssText = require("./gruvbox-css");\n\n'
+                   b'var dom = require("../lib/dom");\n'
+                   b"dom.importCssString(exports.cssText, exports.cssClass, false);\n")
+        relation = "ace-theme-wrapper-amd-to-commonjs"
+        self.assertTrue(embedded_source_relation(original, current, relation))
+        for changed in (current + b"evil();", current.replace(b"true", b"false"),
+                        current.replace(b"gruvbox-css", b"chaos-css")):
+            self.assertFalse(embedded_source_relation(original, changed, relation))
+        self.assertFalse(embedded_source_relation(original + b"evil();", current, relation))
+
+    def test_historical_gruvbox_css_relation(self):
+        old = b".ace-gruvbox { color: red; }"
+        suffix = "\n\n.ace-gruvbox .ace_indent-guide-active {\n  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAEklEQVQIW2PQ1dX9zzBz5sz/ABCcBFFentLlAAAAAElFTkSuQmCC) right repeat-y;\n}\n`;\n"
+        current = b"module.exports = `" + old + suffix.encode("ascii")
+        relation = "ace-gruvbox-css-indent-guide"
+        self.assertTrue(embedded_source_relation(old, current, relation))
+        self.assertFalse(embedded_source_relation(old, current + b"extra", relation))
+        self.assertFalse(embedded_source_relation(old.replace(b"red", b"blue"), current, relation))
+
     def test_legacy_relationship_is_exact(self):
         verify_legacy_relation(b"a\n", b"a", "missing-final-lf")
         verify_legacy_relation(b"a\xc2\xa0b\n", b"a b", "one-nbsp-to-space-and-missing-final-lf")

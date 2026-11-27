@@ -122,13 +122,37 @@ def verify_npm_notice(info, raw, local):
 
 
 SOURCE_RELATIONS = {"literal-full-source-substring", "xqlint-two-require-renames",
-                    "browser-pack-standalone-prelude"}
+                    "browser-pack-standalone-prelude", "ace-theme-wrapper-amd-to-commonjs",
+                    "ace-gruvbox-css-indent-guide"}
 
 
 def embedded_source_relation(upstream, container, relation):
     """Apply only named, bounded source transformations to immutable blobs."""
     if not upstream or relation not in SOURCE_RELATIONS:
         raise ValueError("Invalid embedded source relation")
+    if relation == "ace-theme-wrapper-amd-to-commonjs":
+        # Only the three observed wrappers, exact syntax and bounded edits.
+        header, sep, body = upstream.partition(b"***** END LICENSE BLOCK ***** */")
+        if (not sep or not header.startswith(b"/* ***** BEGIN LICENSE BLOCK *****")
+                or b"Copyright 2011 Irakli Gozalishvili." not in header):
+            return False
+        for name in (b"ambiance", b"chaos", b"gruvbox"):
+            old = (b'define(function(require, exports, module) {\n\n'
+                   b'exports.isDark = true;\nexports.cssClass = "ace-' + name + b'";\n'
+                   b'exports.cssText = require("../requirejs/text!./' + name + b'.css");\n\n'
+                   b'var dom = require("../lib/dom");\n'
+                   b'dom.importCssString(exports.cssText, exports.cssClass);\n\n});')
+            if body not in (b"\n\n" + old, b"\n\n" + old + b"\n"):
+                continue
+            expected = old[len(b"define(function(require, exports, module) {\n\n"):-len(b"\n});")]
+            expected = expected.replace(b"../requirejs/text!./" + name + b".css", b"./" + name + b"-css")
+            expected = expected.replace(b"exports.cssClass);", b"exports.cssClass, false);")
+            return container == expected
+        return False
+    if relation == "ace-gruvbox-css-indent-guide":
+        # Preserve the entire 2017 CSS, with exactly one added known rule.
+        suffix = "\n\n.ace-gruvbox .ace_indent-guide-active {\n  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAEklEQVQIW2PQ1dX9zzBz5sz/ABCcBFFentLlAAAAAElFTkSuQmCC) right repeat-y;\n}\n`;\n"
+        return container == b"module.exports = `" + upstream.removesuffix(b"\n") + suffix.encode("ascii")
     if relation == "xqlint-two-require-renames":
         # Browserify derequire changed exactly the two import calls.
         if upstream.count(b"require(") != 2:

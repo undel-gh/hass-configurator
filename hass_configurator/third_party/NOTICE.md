@@ -124,3 +124,8 @@ whole-file notices. Nine historical TextMate inputs match current Ace Git
 blobs. Original Gruvbox rights, ordinary Gruvbox CLA/reintroduction and
 historical wrapper copyright remain OPEN. No external package version or
 full historical license clearance asserted. See embedded.json.
+
+Historical Gozalishvili 2011 theme wrapper notice retained for Ambiance,
+Chaos and Gruvbox (MIT permission text labelled BSD in original header).
+Bounded source relations recorded; original color scheme rights and Gruvbox
+CLA history remain open.

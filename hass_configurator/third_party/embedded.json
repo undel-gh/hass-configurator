@@ -1688,6 +1688,76 @@
         "third_party/licenses/embedded/gruvbox-hard-theme-mit.txt"
       ],
       "note": "PR #3673 explicitly imports Briles/gruvbox. MIT applies to identified port contribution only; original Pavel Pertsev terms and exact historical port version OPEN. Ordinary Gruvbox is not covered by this record. No risk acceptance."
+    },
+    {
+      "id": "ace-theme-gozalishvili-wrappers",
+      "parent": "ace",
+      "kind": "library",
+      "name": "Gozalishvili historical Ace theme wrappers",
+      "version": null,
+      "ecosystem": null,
+      "status": "partial",
+      "license": "MIT",
+      "locations": [
+        {
+          "file": "vendor/ace/theme-ambiance.js",
+          "marker": "ace/theme/ambiance"
+        },
+        {
+          "file": "vendor/ace/theme-chaos.js",
+          "marker": "ace/theme/chaos"
+        },
+        {
+          "file": "vendor/ace/theme-gruvbox.js",
+          "marker": "ace/theme/gruvbox"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/d9199ac2d8efb42f2781126ee125cff5f00ceef9/lib/ace/theme/ambiance.js",
+          "git_blob": "475c2e87d9cb9ccd38cb1b786942fcad206fd3c3",
+          "marker": "Copyright 2011 Irakli Gozalishvili"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/theme/ambiance.js",
+          "git_blob": "4677a0b094126cae8d986cfb0c94043ab13fe4a5",
+          "marker": "ace-ambiance"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/d9199ac2d8efb42f2781126ee125cff5f00ceef9/lib/ace/theme/chaos.js",
+          "git_blob": "9ee83720c367e8f435307755b51716dc153e25cd",
+          "marker": "Copyright 2011 Irakli Gozalishvili"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/theme/chaos.js",
+          "git_blob": "e856358c0600d2b48f9fe19a2110f2ec5c788868",
+          "marker": "ace-chaos"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/d9199ac2d8efb42f2781126ee125cff5f00ceef9/lib/ace/theme/gruvbox.js",
+          "git_blob": "67d90430a208226366874409852af3b748f502d3",
+          "marker": "Copyright 2011 Irakli Gozalishvili"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/theme/gruvbox.js",
+          "git_blob": "226e9193a97124dfee85128f1ee790c7068f4815",
+          "marker": "ace-gruvbox"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/d9199ac2d8efb42f2781126ee125cff5f00ceef9/lib/ace/theme/gruvbox.css",
+          "git_blob": "48a4161e6866f562d091fccf506d83f4559c447f",
+          "marker": ".ace-gruvbox"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/theme/gruvbox-css.js",
+          "git_blob": "1ecc918c22cabd6e6c7143ef94f3a6515616fc95",
+          "marker": ".ace_indent-guide-active"
+        }
+      ],
+      "notices": [
+        "third_party/licenses/embedded/gozalishvili-theme-wrapper-reference.txt"
+      ],
+      "note": "Full 2017 historical scan: 36 wrappers, three Gozalishvili 2011 headers (Ambiance, Chaos, Gruvbox); substantive MIT permission text labelled BSD. Preserve original Gruvbox header verbatim; other two differ only in one whitespace line. Exact bounded AMD-to-CommonJS transformations; current Gruvbox CSS retains 2017 payload plus active indent guide. License attribution scoped to wrapper, not color schemes. Original Gruvbox rights, 2016 CLA revert and 2017 contribution independence remain OPEN."
     }
   ],
   "font_provenance": {
@@ -1715,7 +1785,8 @@
     "Retained native/theme/snippet evidence being collected; REx v5.30 original output grant, Browserify loader and grammar lineage remain unresolved. Historical libc++ license/credits reference added for estraverse MIT-adapted fragment; exact revision not asserted. Dracula MIT source copyright notice separately retained.",
     "XQLint retained source closure expanded to both shared lexer and two language wrappers; browser-pack prelude bounded adaptation verified, MIT notice retained. REx historical output/grammar licensing remains unresolved. No runtime version asserted for browser-pack.",
     "Research #4 native base source mapping verified; review record is not a new SBOM component. Browser-pack loader attribution recovered; exact package version and REx historical output/grammar grant remain open. Theme/snippet source equality is not historical license clearance.",
-    "Historical Ace contributions establish nine exact TextMate input blobs for Tomorrow, Solarized and Gruvbox Hard; original-project MIT notices retained as pinned whole files. No exact external release, signed CLA, complete historical license clearance or original Gruvbox rights inferred."
+    "Historical Ace contributions establish nine exact TextMate input blobs for Tomorrow, Solarized and Gruvbox Hard; original-project MIT notices retained as pinned whole files. No exact external release, signed CLA, complete historical license clearance or original Gruvbox rights inferred.",
+    "Historical Gozalishvili wrapper notice preserved, bounded relations for three wrappers and 2017 Gruvbox CSS; does not establish original color scheme rights or CLA clearance."
   ],
   "notices": {
     "third_party/licenses/embedded/ace-legacy-linters.txt": {
@@ -2119,6 +2190,12 @@
       "sha256": "8e61f5850485a8323fd9145a95aca7571b608fffb28c9b0698b04164b30e4264",
       "source": "https://github.com/Briles/gruvbox/blob/75407cc80c51814d61beb1df07e380d6f58ad767/LICENSE",
       "source_blob": "1d533cf6dcb3dd57aba8c955001f89d4ed03db81"
+    },
+    "third_party/licenses/embedded/gozalishvili-theme-wrapper-reference.txt": {
+      "kind": "source-excerpt",
+      "sha256": "e518ce7f3215efc9760322190c75f696b0257e2cd3439259b7dd47b0a76b5fe5",
+      "source": "https://github.com/ajaxorg/ace/blob/d9199ac2d8efb42f2781126ee125cff5f00ceef9/lib/ace/theme/gruvbox.js",
+      "source_blob": "67d90430a208226366874409852af3b748f502d3"
     }
   },
   "schema": 1,
@@ -2226,6 +2303,58 @@
         "marker": "MODULE_NOT_FOUND"
       },
       "relation": "browser-pack-standalone-prelude"
+    },
+    {
+      "upstream": {
+        "url": "https://github.com/ajaxorg/ace/blob/d9199ac2d8efb42f2781126ee125cff5f00ceef9/lib/ace/theme/ambiance.js",
+        "git_blob": "475c2e87d9cb9ccd38cb1b786942fcad206fd3c3",
+        "marker": "Copyright 2011 Irakli Gozalishvili"
+      },
+      "container": {
+        "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/theme/ambiance.js",
+        "git_blob": "4677a0b094126cae8d986cfb0c94043ab13fe4a5",
+        "marker": "ace-ambiance"
+      },
+      "relation": "ace-theme-wrapper-amd-to-commonjs"
+    },
+    {
+      "upstream": {
+        "url": "https://github.com/ajaxorg/ace/blob/d9199ac2d8efb42f2781126ee125cff5f00ceef9/lib/ace/theme/chaos.js",
+        "git_blob": "9ee83720c367e8f435307755b51716dc153e25cd",
+        "marker": "Copyright 2011 Irakli Gozalishvili"
+      },
+      "container": {
+        "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/theme/chaos.js",
+        "git_blob": "e856358c0600d2b48f9fe19a2110f2ec5c788868",
+        "marker": "ace-chaos"
+      },
+      "relation": "ace-theme-wrapper-amd-to-commonjs"
+    },
+    {
+      "upstream": {
+        "url": "https://github.com/ajaxorg/ace/blob/d9199ac2d8efb42f2781126ee125cff5f00ceef9/lib/ace/theme/gruvbox.js",
+        "git_blob": "67d90430a208226366874409852af3b748f502d3",
+        "marker": "Copyright 2011 Irakli Gozalishvili"
+      },
+      "container": {
+        "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/theme/gruvbox.js",
+        "git_blob": "226e9193a97124dfee85128f1ee790c7068f4815",
+        "marker": "ace-gruvbox"
+      },
+      "relation": "ace-theme-wrapper-amd-to-commonjs"
+    },
+    {
+      "upstream": {
+        "url": "https://github.com/ajaxorg/ace/blob/d9199ac2d8efb42f2781126ee125cff5f00ceef9/lib/ace/theme/gruvbox.css",
+        "git_blob": "48a4161e6866f562d091fccf506d83f4559c447f",
+        "marker": ".ace-gruvbox"
+      },
+      "container": {
+        "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/theme/gruvbox-css.js",
+        "git_blob": "1ecc918c22cabd6e6c7143ef94f3a6515616fc95",
+        "marker": ".ace_indent-guide-active"
+      },
+      "relation": "ace-gruvbox-css-indent-guide"
     }
   ],
   "worker_review": {
