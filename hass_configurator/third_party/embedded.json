@@ -2589,6 +2589,16 @@
           "git_blob": "b3e3c982cfa70d04544b74652bbe85e702f5ebf2",
           "marker": "snippet",
           "url": "https://github.com/ajaxorg/ace/blob/58fcde32061df7d7f6ef38a6bfcf306b0f800f92/lib/ace/snippets/liquid.snippets"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/4f9cd17910cfe36dc504b456ea5ef62c15189f2d/lib/ace/snippets/java.snippets",
+          "git_blob": "854f14ac22f148309d4f9ec450fda38244ede6ec",
+          "marker": "## Basic Java packages and import"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/1693305c8974a5dd4f350bb0b9d48b134fca113c/lib/ace/snippets/wollok.snippets",
+          "git_blob": "f98f8587908fefe10bc9dc3a9fa02443a60bb1aa",
+          "marker": "## Basic Java packages and import"
         }
       ],
       "id": "ace-snipmate-snippets",
@@ -2722,10 +2732,14 @@
         {
           "file": "vendor/ace/snippets/textile.js",
           "marker": "ace/snippets/textile"
+        },
+        {
+          "file": "vendor/ace/snippets/wollok.js",
+          "marker": "ace/snippets/wollok"
         }
       ],
       "name": "SnipMate snippets collection (historical material in retained Ace payloads)",
-      "note": "Historical honza/vim-snippets January 2013 MIT collection, 31 relevant import blob matches. Scoped attribution covers historical MIT material in 32 retained payloads: 22 exact decoded matches (cpp to c_cpp, make to makefile included) and eight modified descendants with exact historical endpoint-to-current relations. Four have prior exact net-delta replay (dart, markdown, python, sh); four have 18 exact path-history patch transitions (html, javascript, php, r). Two further derived payloads are mapped only for historical MIT material: EDIFACT (two trigger replacements from Java) and Liquid (exact 26-line prefix plus 2017 HTML endpoint). Both have separate bounded raw-to-raw and raw-to-current relations; HTML 2017 delta already reconstructed. Original LICENSE references AUTHORS; both whole files retained. MIT applies to the historical collection material, not a blanket license for Ace modifications, wrappers or other snippets. Ace root BSD declaration is separate; individual contribution rights and additional inputs remain review-open. No exact collection version/PURL or legal clearance asserted.",
+      "note": "Historical honza/vim-snippets January 2013 MIT collection, 31 relevant import blob matches. Scoped attribution covers historical MIT material in 33 retained payloads: 22 exact decoded matches (cpp to c_cpp, make to makefile included) and eight modified descendants with exact historical endpoint-to-current relations. Four have prior exact net-delta replay (dart, markdown, python, sh); four have 18 exact path-history patch transitions (html, javascript, php, r). Two further derived payloads are mapped only for historical MIT material: EDIFACT (two trigger replacements from Java) and Liquid (exact 26-line prefix plus 2017 HTML endpoint). Both have separate bounded raw-to-raw and raw-to-current relations; HTML 2017 delta already reconstructed. Wollok is additionally mapped for retained Java material only: its introduction parent has the exact imported Java blob; 16 unique ordered literal spans (510 bytes, including eight section headings and retained bodies) occur in both pinned raw inputs. Partial shared-block relationship plus exact raw-to-current relation, not a whole-file derivation or rights clearance for adapted/new content. Original LICENSE references AUTHORS; both whole files retained. MIT applies to the historical collection material, not a blanket license for Ace modifications, wrappers or other snippets. Ace root BSD declaration is separate; individual contribution rights and additional inputs remain review-open. No exact collection version/PURL or legal clearance asserted.",
       "notices": [
         "third_party/licenses/embedded/snipmate-snippets-mit.txt",
         "third_party/licenses/embedded/snipmate-snippets-authors.txt"
@@ -3045,7 +3059,8 @@
     "SnipMate historical MIT notice recovery: 22 exact retained payloads mapped with bounded template-literal source relations; eight modified candidates and other snippets, wrapper history, underlying contribution rights and final review remain open. No package version/PURL or full license clearance.",
     "R5.3a expanded scoped SnipMate attribution to 30 retained payloads (22 unchanged, eight modified); 18 additional path-history patch transitions checked interactively with exact snapshot equality and historical Ace root BSD license blob. Network gate verifies eight additional historical endpoint-to-current static relations and historical import evidence pins, not patch replay itself. Other 22 nonempty payloads, empty stubs, wrapper and original third-party/contribution rights remain open; no release clearance.",
     "R5.3a remaining 22: all historical endpoint-to-current payloads matched, 19 distinct endpoint root LICENSE blobs checked. EDIFACT and Liquid proven bounded derivatives of already attributed Java and HTML, respectively; historical MIT scope expanded to 32. New named networked raw-to-raw relations and existing static wrapper relations pin both derived paths. Other 20 historical inputs and contribution rights remain open; no blanket BSD/MIT clearance, no curated exclusions.",
-    "Io/Vala scoped source-specific attribution: 10/10 and 31/31 TextMate dictionaries checked by exact collection closure from pinned Io pre-import and Vala later MIT-licensed revisions. Vala earlier Daniel Lucraft rights, other mode/grammar inputs and independent review remain open. No package version/PURL or blanket clearance."
+    "Io/Vala scoped source-specific attribution: 10/10 and 31/31 TextMate dictionaries checked by exact collection closure from pinned Io pre-import and Vala later MIT-licensed revisions. Vala earlier Daniel Lucraft rights, other mode/grammar inputs and independent review remain open. No package version/PURL or blanket clearance.",
+    "R5.3a Wollok: 33 SnipMate locations, 35 snippet payloads with active source-specific attribution including Io/Vala. Wollok shares 15 ordered triggers and eight headings with exact parent Java import blob; 16 unique ordered literal spans compared by bounded partial relation, not a complete historical patch reconstruction. Full raw/current pins checked independently. ABC intermediate Zupfnoter match and GPL/Commercial project declaration are research leads only; no GPL assignment, new notice, or exclusion. JSONiq/XQuery snippet origin separate from XQLint/REx remains open."
   ],
   "notices": {
     "third_party/licenses/embedded/ace-legacy-linters.txt": {
@@ -4108,6 +4123,32 @@
         "git_blob": "7c72fe03a9fce8c65f6b486d83fbc88f618a97b5",
         "marker": "module.exports",
         "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/snippets/liquid.snippets.js"
+      },
+      "relation": "ace-snippet-template-literal"
+    },
+    {
+      "upstream": {
+        "url": "https://github.com/ajaxorg/ace/blob/4f9cd17910cfe36dc504b456ea5ef62c15189f2d/lib/ace/snippets/java.snippets",
+        "git_blob": "854f14ac22f148309d4f9ec450fda38244ede6ec",
+        "marker": "## Basic Java packages and import"
+      },
+      "container": {
+        "url": "https://github.com/ajaxorg/ace/blob/1693305c8974a5dd4f350bb0b9d48b134fca113c/lib/ace/snippets/wollok.snippets",
+        "git_blob": "f98f8587908fefe10bc9dc3a9fa02443a60bb1aa",
+        "marker": "## Basic Java packages and import"
+      },
+      "relation": "ace-wollok-java-retained-blocks"
+    },
+    {
+      "upstream": {
+        "url": "https://github.com/ajaxorg/ace/blob/1693305c8974a5dd4f350bb0b9d48b134fca113c/lib/ace/snippets/wollok.snippets",
+        "git_blob": "f98f8587908fefe10bc9dc3a9fa02443a60bb1aa",
+        "marker": "## Basic Java packages and import"
+      },
+      "container": {
+        "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/snippets/wollok.snippets.js",
+        "git_blob": "04d3c58efa7c958cb98aa84e76bcbdcc0bb6dd8b",
+        "marker": "module.exports"
       },
       "relation": "ace-snippet-template-literal"
     }

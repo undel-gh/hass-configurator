@@ -501,6 +501,39 @@ class SupplyChainTests(unittest.TestCase):
             self.assertFalse(embedded_source_relation(html, changed, relation))
         self.assertFalse(embedded_source_relation(b"x" + html, prefix + b"x" + html, relation))
 
+    def test_wollok_java_shared_material_is_bounded_and_ordered(self):
+        # Synthetic distinct gaps: only the named retained fragments are compared.
+        blocks = (
+            b"##\n## Basic Java packages and import\nsnippet im\n\timport\n",
+            b"snippet cl\n\tclass ${1:`Filename(\"\", \"untitled\")`} ${2}\n",
+            b"##\n## Comments\nsnippet /*\n\t/*\n\t * ${1}\n\t */\n",
+            b"##\n## Control Statements\n",
+            b"snippet el\n\telse\n",
+            b"snippet if\n\tif (${1}) ${2}\n",
+            b"##\n## Create a Method\nsnippet m\n",
+            b"snippet as\n",
+            b"snippet ca\n",
+            b"snippet thr\n\tthrow\n",
+            b"snippet try\n\ttry {\n\t\t${3}\n",
+            b"##\n## Javadocs\nsnippet /**\n\t/**\n\t * ${1}\n\t */\n",
+            b"##\n## Print Methods\nsnippet print\n",
+            b"##\n## Setter and Getter Methods\nsnippet set\n",
+            b"snippet get\n",
+            b"##\n## Terminate Methods or Loops\nsnippet re\n\treturn",
+        )
+        upstream = b"java-only\n".join(blocks) + b"\nmore Java\n"
+        container = b"wollok-only\n".join(blocks)
+        relation = "ace-wollok-java-retained-blocks"
+        self.assertTrue(embedded_source_relation(upstream, container, relation))
+        for changed in (container.replace(b"Basic Java packages", b"Other packages"),
+                        container.replace(b"untitled", b"changed"),
+                        b"wollok-only\n".join(blocks[:2][::-1] + blocks[2:]),
+                        blocks[0] + container, container + b"\n",
+                        container.replace(b"snippet get\n", b"snippet different\n")):
+            self.assertFalse(embedded_source_relation(upstream, changed, relation))
+        self.assertFalse(embedded_source_relation(upstream.replace(b"snippet thr\n", b"snippet other\n"),
+                                                  container, relation))
+
     def test_snipmate_exact_and_modified_payload_attribution(self):
         inv, vendor = source_inventory()
         record = next(c for c in inv["embedded"]["components"]
@@ -513,7 +546,7 @@ class SupplyChainTests(unittest.TestCase):
         exact_names = names.copy()
         modified = {"dart", "html", "javascript", "markdown", "php", "python", "r", "sh"}
         self.assertTrue(exact_names.isdisjoint(modified))
-        derived = {"edifact", "liquid"}
+        derived = {"edifact", "liquid", "wollok"}
         self.assertTrue(derived.isdisjoint(exact_names | modified))
         names |= modified | derived
         self.assertEqual({loc["file"] for loc in record["locations"]},
@@ -587,6 +620,9 @@ class SupplyChainTests(unittest.TestCase):
             "liquid": ("ace-liquid-html-prefix",
                 "https://github.com/ajaxorg/ace/blob/d9b38ac378d0dea6e1ca820c0e8294f04c46010a/lib/ace/snippets/html.snippets", "20a73d72e339c352216ce4803e6c5b842f7d7212",
                 "58fcde32061df7d7f6ef38a6bfcf306b0f800f92", "b3e3c982cfa70d04544b74652bbe85e702f5ebf2", "7c72fe03a9fce8c65f6b486d83fbc88f618a97b5"),
+            "wollok": ("ace-wollok-java-retained-blocks",
+                "https://github.com/ajaxorg/ace/blob/4f9cd17910cfe36dc504b456ea5ef62c15189f2d/lib/ace/snippets/java.snippets", "854f14ac22f148309d4f9ec450fda38244ede6ec",
+                "1693305c8974a5dd4f350bb0b9d48b134fca113c", "f98f8587908fefe10bc9dc3a9fa02443a60bb1aa", "04d3c58efa7c958cb98aa84e76bcbdcc0bb6dd8b"),
         }
         self.assertEqual(set(derived_pins), derived)
         for n, (kind, original_url, original_blob, revision, endpoint, current) in derived_pins.items():

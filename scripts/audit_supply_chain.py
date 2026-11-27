@@ -145,13 +145,46 @@ def verify_npm_notice(info, raw, local):
 SOURCE_RELATIONS = {"literal-full-source-substring", "xqlint-two-require-renames",
                     "browser-pack-standalone-prelude", "ace-theme-wrapper-amd-to-commonjs",
                     "ace-gruvbox-css-indent-guide", "ace-snippet-template-literal",
-                    "ace-edifact-java-two-triggers", "ace-liquid-html-prefix"}
+                    "ace-edifact-java-two-triggers", "ace-liquid-html-prefix",
+                    "ace-wollok-java-retained-blocks"}
 
 
 def embedded_source_relation(upstream, container, relation):
     """Apply only named, bounded source transformations to immutable blobs."""
     if not upstream or relation not in SOURCE_RELATIONS:
         raise ValueError("Invalid embedded source relation")
+    if relation == "ace-wollok-java-retained-blocks":
+        # Partial shared-material relation only. Whole input bytes are separately
+        # pinned by the network gate and the endpoint-to-current relation.
+        # Each distinctive fragment must occur once, in the observed order.
+        blocks = (
+            b"##\n## Basic Java packages and import\nsnippet im\n\timport\n",
+            b"snippet cl\n\tclass ${1:`Filename(\"\", \"untitled\")`} ${2}\n",
+            b"##\n## Comments\nsnippet /*\n\t/*\n\t * ${1}\n\t */\n",
+            b"##\n## Control Statements\n",
+            b"snippet el\n\telse\n",
+            b"snippet if\n\tif (${1}) ${2}\n",
+            b"##\n## Create a Method\nsnippet m\n",
+            b"snippet as\n",
+            b"snippet ca\n",
+            b"snippet thr\n\tthrow\n",
+            b"snippet try\n\ttry {\n\t\t${3}\n",
+            b"##\n## Javadocs\nsnippet /**\n\t/**\n\t * ${1}\n\t */\n",
+            b"##\n## Print Methods\nsnippet print\n",
+            b"##\n## Setter and Getter Methods\nsnippet set\n",
+            b"snippet get\n",
+            b"##\n## Terminate Methods or Loops\nsnippet re\n\treturn",
+        )
+        for raw in (upstream, container):
+            end = 0
+            for block in blocks:
+                start = raw.find(block, end)
+                if start < 0 or raw.count(block) != 1:
+                    return False
+                end = start + len(block)
+        # The source ends this trigger with LF; Wollok truncates after return.
+        return (blocks[-1] + b"\n" in upstream
+                and container.endswith(blocks[-1]))
     if relation == "ace-edifact-java-two-triggers":
         # Exactly the two observed access-modifier trigger replacements.
         old = b"snippet po\n\tprotected\nsnippet pu\n\tpublic\n"
