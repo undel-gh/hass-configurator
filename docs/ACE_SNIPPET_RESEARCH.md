@@ -230,3 +230,54 @@ rehearsal 46061855442, retained/native research 46061855452. Job logs,
 ZIP content and independent review were not checked in this increment.
 Results do not transfer to the follow-up commit; 684ffe9 artifact
 content review remains separately OPEN.
+
+
+## R5.3a follow-up — modified snapshots and scoped notice promotion
+
+Baseline `355327e62b5e785ff2b26207059d839cbb77497d`: all three CI workflows completed SUCCESS (46062801461,
+46062801378, 46062801390); metadata only, no archive inspection or
+independent review in this increment.
+
+All eight modified SnipMate candidates now have immutable Ace historical
+raw payloads exactly matching the current decoded template literals.
+Each snapshot root LICENSE was fetched and had the same BSD-3-Clause blob
+`4760be2a6220cf545129b233e20574f2a7bb630e`.
+GitHub commit patches were inspected; bounded line-position/context
+checked patch replay reproduced the exact historical endpoint from the
+import for four assets (Dart, Markdown, Python, Shell). This is a
+net-delta proof, not exhaustive path history, individual grants, or
+third-party license clearance. The other four have intermediate changes
+not completely reconstructed.
+
+| Asset | Ace snapshot | Historical raw payload blob | Patch evidence |
+| --- | --- | --- | --- |
+| dart | [93673bbe](https://github.com/ajaxorg/ace/blob/93673bbe8b0a1e90a773aa3dd94fe8fa112f7af5/lib/ace/snippets/dart.snippets) | `14a1c3e5939d691de25aa390ff7f17c4e5b42a70` | 5746c2001ced240c4e827eb51aef6a63176777a6 patch exact from import |
+| html | [96850288](https://github.com/ajaxorg/ace/blob/96850288dca9b632aaa79b4f9bdf1305ae5d9694/lib/ace/snippets/html.snippets) | `5f0e46b476083398e70a53e7d9630383bfb4fe99` | d9b38ac adds HTML5 variants; final video fix; complete intervening delta open |
+| javascript | [2d0b980c](https://github.com/ajaxorg/ace/blob/2d0b980c65966e45260ba341e176b9cde0c57399/lib/ace/snippets/javascript.snippets) | `83b15aab6f41fdf08692dd8e9167a5b95fc266c5` | 3d43f42, f87f542, 202ecaac earlier changes; complete intervening delta open; 5d7b65c hex escapes preserve decoded text |
+| markdown | [3c6cd4d1](https://github.com/ajaxorg/ace/blob/3c6cd4d16f89de0531d7e8f06c5e791839ab9eb6/lib/ace/snippets/markdown.snippets) | `a5110fc9a3d79f0aa98796237773393e4a836e97` | patch exact from import; original Octopress mention needs separate review |
+| php | [f36ade16](https://github.com/ajaxorg/ace/blob/f36ade1647e90d20480d93ac6da6169fc55e65e5/lib/ace/snippets/php.snippets) | `12b6c358d6927bd245ac3a8e1f9a5fe47f8f4b2a` | 62c5141 filename changes; final context changes; direct patch from import differs, remaining chain open |
+| python | [eac48f51](https://github.com/ajaxorg/ace/blob/eac48f519040e8e2d17dd1a5b76c2818ecf58cd1/lib/ace/snippets/python.snippets) | `347bbdebfd9d13e17cdd0131523eef30db186a26` | patch exact from import |
+| r | [f17c67cd](https://github.com/ajaxorg/ace/blob/f17c67cd01316d4fdbbd5625594d81e28c894083/lib/ace/snippets/r.snippets) | `948542f5bbacc0de657e65d95dc2d54c52c0f13e` | sapply fix; direct patch from import differs, remaining chain open |
+| sh | [b6463844](https://github.com/ajaxorg/ace/blob/b6463844b04758745f99b1553416f4cf4b8ad013/lib/ace/snippets/sh.snippets) | `305fb661ed25a75093d8e168f46deb012f662c07` | patch exact from import |
+
+Retain original MIT attribution for historical material; root BSD does
+not supersede the original MIT license. The historical HTML change
+contains CDN URL examples in snippet content; no external runtime
+requests or bundled CDN library identity are inferred from this alone.
+Review generated snippet behavior separately if needed.
+
+Promote only the 22 exact payload matches to a partial library record
+`ace-snipmate-snippets` in embedded.json, with null version/ecosystem
+(no PURL), original whole LICENSE and AUTHORS as separately pinned
+notices. Preserve the eight modified candidates as review-open;
+the original notice is retained, but their additional rights and
+full scope remain unresolved. No blanket MIT claim for wrappers or
+other snippets. A new named source relation
+`ace-snippet-template-literal` compares the complete decoded source
+text against historical raw input in the existing networked evidence
+gate. All 22 raw/source Git pins and imported blob evidence are bound;
+unit regressions cover exact scope, notices, SBOM and adverse literal
+forms. This is not a new automated historical patch replay gate.
+No vendor/curated runtime bytes changed. Final R5.3 disposition matrix,
+empty stubs, remaining 22 payloads, exact-HEAD CI/artifacts and independent
+review remain open. No issue or merge/release gate closed.

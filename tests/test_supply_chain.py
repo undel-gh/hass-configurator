@@ -460,5 +460,61 @@ class SupplyChainTests(unittest.TestCase):
         self.assertNotIn("purl", component)
         self.assertNotIn("version", component)
 
+    def test_snipmate_template_literal_exact_and_fail_closed(self):
+        relation = "ace-snippet-template-literal"
+        raw = b"snippet test\n\t\x24{1}\n"
+        wrapped = b"module.exports = \x60snippet test\n\t\\\x24{1}\n\x60;\n"
+        self.assertTrue(embedded_source_relation(raw, wrapped, relation))
+        self.assertTrue(embedded_source_relation(
+            b"require", b"module.exports = \x60requir\\x65\x60;\n", relation))
+        self.assertTrue(embedded_source_relation(
+            b"\x60\\", b"module.exports = \x60\\\x60\\\\\x60;\n", relation))
+        for changed in (
+            wrapped.replace(b"\\\x24{1}", b"\x24{1}"),
+            wrapped.replace(b"test", b"other"),
+            wrapped.replace(b"\\\x24{1}", b"\\u0024{1}"),
+            wrapped.replace(b"\n", b"\r\n"),
+            wrapped + b"run();",
+            b"other();\n" + wrapped,
+            wrapped.replace(b"\\\x24{1}", b"\\xZZ"),
+        ):
+            with self.subTest(changed=changed):
+                self.assertFalse(embedded_source_relation(raw, changed, relation))
+        self.assertFalse(embedded_source_relation(b"unrelated", wrapped, relation))
+
+    def test_snipmate_exact_payload_attribution(self):
+        inv, vendor = source_inventory()
+        record = next(c for c in inv["embedded"]["components"]
+                      if c["id"] == "ace-snipmate-snippets")
+        self.assertEqual(record["status"], "partial")
+        self.assertEqual(record["license"], "MIT")
+        self.assertIsNone(record["version"])
+        self.assertIsNone(record["ecosystem"])
+        names = {"actionscript", "c_cpp", "clojure", "coffee", "css", "diff", "django", "erlang", "haml", "haskell", "java", "jsp", "lua", "makefile", "perl", "rst", "ruby", "snippets", "sql", "tcl", "tex", "textile"}
+        self.assertEqual({loc["file"] for loc in record["locations"]},
+                         {"vendor/ace/snippets/" + n + ".js" for n in names})
+        self.assertEqual(len(record["locations"]), len(names))
+        self.assertEqual(record["notices"], [
+            "third_party/licenses/embedded/snipmate-snippets-mit.txt",
+            "third_party/licenses/embedded/snipmate-snippets-authors.txt",
+        ])
+        for path, blob in zip(record["notices"], [
+                "495ced27810b679dad1c75375e48db9ae9c9c9aa",
+                "1261dc82ddfea218e2a61077fb4ed0d64b42c2bb"]):
+            with self.subTest(path=path):
+                self.assertEqual(inv["embedded"]["notices"][path]["kind"], "whole-file")
+                self.assertEqual(git_blob_sha1(read_file(PACKAGE, path)), blob)
+        relations = [r for r in inv["embedded"]["source_relationships"]
+                     if r["relation"] == "ace-snippet-template-literal"]
+        self.assertEqual(len(relations), len(names))
+        self.assertEqual({r["container"]["url"].rsplit("/", 1)[1] for r in relations},
+                         {n + ".snippets.js" for n in names})
+        component = next(c for c in sbom(inv, vendor)["components"]
+                         if c["bom-ref"] == "embedded:ace-snipmate-snippets")
+        self.assertNotIn("version", component)
+        self.assertNotIn("purl", component)
+        self.assertFalse(any(q["package"]["name"] == record["name"]
+                             for q in scan_queries(inv, [])))
+
 if __name__ == "__main__":
     unittest.main()

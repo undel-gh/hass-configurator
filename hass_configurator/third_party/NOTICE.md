@@ -153,3 +153,11 @@ GitHub Light Default: PR #5597 identifies official GitHub VS Code theme.
 Historical Primer MIT LICENSE (Copyright (c) 2020 Primer) retained verbatim
 as github-vscode-theme-mit.txt. Exact variant/version open. Applies only to
 this theme, not legacy GitHub or GitHub Dark. See docs/ace-theme-dispositions.json.
+
+SnipMate snippets collection (honza/vim-snippets): historical January 2013 MIT
+LICENSE and its referenced AUTHORS file retained verbatim. The embedded
+record maps 22 exact decoded Ace payloads, including cpp -> c_cpp and
+make -> makefile, not all Ace wrappers or snippets. Eight modified
+payloads retain historical SnipMate material but full delta attribution
+remains open. See docs/ACE_SNIPPET_RESEARCH.md. No external version,
+PURL, full license clearance or risk acceptance is asserted.

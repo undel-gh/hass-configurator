@@ -123,13 +123,54 @@ def verify_npm_notice(info, raw, local):
 
 SOURCE_RELATIONS = {"literal-full-source-substring", "xqlint-two-require-renames",
                     "browser-pack-standalone-prelude", "ace-theme-wrapper-amd-to-commonjs",
-                    "ace-gruvbox-css-indent-guide"}
+                    "ace-gruvbox-css-indent-guide", "ace-snippet-template-literal"}
 
 
 def embedded_source_relation(upstream, container, relation):
     """Apply only named, bounded source transformations to immutable blobs."""
     if not upstream or relation not in SOURCE_RELATIONS:
         raise ValueError("Invalid embedded source relation")
+    if relation == "ace-snippet-template-literal":
+        # Exact static payload only: never execute JS or normalize whitespace.
+        try:
+            text = container.decode("utf-8")
+        except UnicodeDecodeError:
+            return False
+        if "\r" in text:
+            return False
+        match = re.fullmatch(
+            r"[ \t\n]*module\.exports[ \t]*=[ \t]*\x60((?:\\[\s\S]|[^\x60\\])*)\x60;[ \t\n]*",
+            text,
+        )
+        if not match:
+            return False
+        body = match.group(1)
+        decoded = []
+        pos = 0
+        escapes = {"\\": "\\", chr(96): chr(96), "$": "$",
+                   "n": "\n", "r": "\r", "t": "\t"}
+        while pos < len(body):
+            char = body[pos]
+            pos += 1
+            if char == "$" and body[pos:pos + 1] == "{":
+                return False  # unescaped JS interpolation
+            if char == "\\":
+                if pos == len(body):
+                    return False
+                char = body[pos]
+                pos += 1
+                if char == "x":
+                    digits = body[pos:pos + 2]
+                    if not re.fullmatch(r"[0-9a-fA-F]{2}", digits):
+                        return False
+                    char = chr(int(digits, 16))
+                    pos += 2
+                elif char in escapes:
+                    char = escapes[char]
+                else:
+                    return False
+            decoded.append(char)
+        return "".join(decoded).encode("utf-8") == upstream
     if relation == "ace-theme-wrapper-amd-to-commonjs":
         # Only the three observed wrappers, exact syntax and bounded edits.
         header, sep, body = upstream.partition(b"***** END LICENSE BLOCK ***** */")
