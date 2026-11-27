@@ -108,10 +108,27 @@ class MigrationRehearsalTests(unittest.TestCase):
 
     @contextmanager
     def main_fixture(self, parent, family_files=495, missing=None, advisories=None):
+        bootstrap = (migration.ROOT / "hass_configurator/ace-bootstrap.js").read_bytes()
+        profile = migration.read_profile(migration.ROOT / "hass_configurator/ace-bootstrap.js")
         root = parent / "repo"
         (root / "docs").mkdir(parents=True)
+        workers = profile["infrastructure"] + profile["excluded"] + [
+            row["file"] for row in profile["languages"].values()]
+        family = {name: ("fixture:" + name).encode() for name in workers}
+        family.update({"mode-fixture-%d.js" % i: str(i).encode()
+                       for i in range(495 - len(workers))})
+        runtime_lock = {"version": profile["ace_version"], "worker_files": workers,
+                        "files_sha256": {n: migration.sha(b) for n, b in family.items()}}
+        pkg = root / "hass_configurator"
+        (pkg / "vendor/ace").mkdir(parents=True)
+        (pkg / "vendor/licenses").mkdir()
+        (pkg / "third_party/licenses").mkdir(parents=True)
+        (pkg / "ace-bootstrap.js").write_bytes(bootstrap)
+        (pkg / "vendor/manifest.json").write_text(json.dumps({
+            "schema": 1, "resources": {}, "provenance": {}}), encoding="utf-8")
         for name, value in (
-            ("ace-candidate-1.45.2.json", {}),
+            ("ace-candidate-1.45.2.json", {"tarball": "fixture"}),
+            ("ace-builds-1.45.2-lock.json", runtime_lock),
             ("ace-builds-1.9.6-lock.json", {"files_sha256": {}}),
             ("runtime-dependencies.json", {"ace": {}}),
         ):
@@ -138,9 +155,10 @@ class MigrationRehearsalTests(unittest.TestCase):
                 ACE_SRI=migration.sri(archive.read_bytes()),
                 ACE_LICENSE_SHA256=migration.sha(license_bytes)))
             stack.enter_context(patch("sys.argv", argv))
-            stack.enter_context(patch.object(migration, "inspect_candidate", return_value=(ace, {})))
+            stack.enter_context(patch.object(migration, "inspect_candidate", return_value=(ace, family)))
             yaml = stack.enter_context(patch.object(migration, "inspect_yaml",
-                return_value=({}, b"yaml", b"license")))
+                return_value=({"member_sha256": migration.sha(b"yaml"),
+                               "license_sha256": migration.sha(b"license")}, b"yaml", b"license")))
             osv = stack.enter_context(patch.object(migration, "query_osv",
                 return_value=[{"advisories": advisories or []}, {"advisories": []}]))
             yield dest, report, yaml, osv
@@ -203,3 +221,35 @@ class MigrationRehearsalTests(unittest.TestCase):
             manifest.write_text("{}")
             with self.assertRaisesRegex(ValueError, "manifest differs"):
                 migration.verify_overlay(pkg, expected, yaml)
+
+    def test_main_calls_overlay_verification_and_records_result(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            with self.main_fixture(Path(tmp)) as (dest, report, _, __):
+                with patch.object(migration, "verify_overlay", wraps=migration.verify_overlay) as verify:
+                    migration.main()
+                verify.assert_called_once()
+                self.assertEqual(verify.call_args.args[0], dest / "hass_configurator")
+                result = json.loads(report.read_text("utf-8"))
+                self.assertEqual(result["curated_family_files"], 490)
+                self.assertEqual(result["overlay_verification"], {
+                    "vendor_resources_verified": 491, "js_yaml_files_verified": 2})
+                self.assertEqual(len(result["excluded_workers"]), 5)
+                for name in result["excluded_workers"]:
+                    self.assertFalse((dest / "hass_configurator/vendor/ace" / name).exists())
+
+    def test_main_propagates_overlay_verification_failure(self):
+        # Simulate an actual post-write extra file, not a mocked success.
+        real_verify = migration.verify_overlay
+
+        def tamper_and_verify(pkg, manifest, yaml):
+            (pkg / "vendor/ace/worker-xml.js").write_bytes(b"unexpected worker")
+            return real_verify(pkg, manifest, yaml)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            with self.main_fixture(Path(tmp)) as (dest, report, _, __):
+                with patch.object(migration, "verify_overlay", side_effect=tamper_and_verify) as verify:
+                    with self.assertRaisesRegex(ValueError, "Overlay vendor inventory mismatch"):
+                        migration.main()
+                verify.assert_called_once()
+                self.assertTrue(dest.exists())
+                self.assertNotIn("overlay_verification", json.loads(report.read_text("utf-8")))

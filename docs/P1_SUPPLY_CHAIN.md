@@ -365,16 +365,48 @@ current runtime scan and explicitly mark source-minimum-version hypotheses.
 No auto-promotion; require actual report, independent review, exact bundled
 licenses/versions, #33/#24 regression and real HAOS before migration.
 
-## #33 current XML worker finding
+## #33 historical XML worker finding (pre-curation)
 
-The #351 attribution artifact 15187533994 returned candidate OSV matches
+The #351 attribution artifact 15187533994 at full-family HEAD
+`5c25067e2e1311fc70714e0e928ca527fe4b03db` returned candidate OSV matches
 for lodash 4.17.21: [GHSA-r5fr-rjxr-66jc](https://github.com/advisories/GHSA-r5fr-rjxr-66jc)
-and [GHSA-xxjr-mmjv-4gpg](https://github.com/advisories/GHSA-xxjr-mmjv-4gpg).
-Current shipped XML worker has the exact version and module path markers;
-license archive and immutable Git release bytes match. Now included in
-active embedded inventory and main OSV query. **OPEN / release gate**:
-review actual vulnerable functions, XML worker reachability and fixed
-compatible upstream replacement. No waiver, no inference of server RCE.
-Chevrotain 7.1.1 similarly has an exact version/module marker and verified
-notice; candidate OSV had no matches. Remaining source-lock candidates
-are not exact runtime version claims. See ACE_WORKER_ATTRIBUTION.md.
+(CVE-2026-4800) and [GHSA-xxjr-mmjv-4gpg](https://github.com/advisories/GHSA-xxjr-mmjv-4gpg)
+(CVE-2025-13465). Version/module markers and exact npm/Git notice evidence
+were recorded in active inventory at full-family HEAD
+`5ad73badb58b113fc240618215000a8eaa45c568`. Chevrotain 7.1.1 was also
+identified; candidate OSV had no matches for it. The historical reachability
+assessment in #33 did not grant a VEX or risk waiver.
+
+## #37 curated runtime disposition — pending final review
+
+Reviewed HEAD `1bc74142ee11db2f4fd283776f4825ed90e90ee5` physically excludes
+worker-xml.js and four other workers. The active inventory no longer maps
+Lodash or Chevrotain to an XML worker. The old mappings are preserved in
+docs/history/ace-1.45.2-full-embedded.json; their license texts remain as
+historical reference notices pending retained license review. XQuery/JSONiq
+mode tokenizer evidence is retained.
+
+Exact-HEAD baseline #355 (45988758552) and rehearsal #12 (45988758652)
+completed successfully. Source artifact 15192606781: 490 retained Ace
+files, 510 vendor resources, 506 package executable/source files and all
+490 unminified counterparts scanned, no searched Lodash/Chevrotain markers.
+Installed/E2E artifact 15192952501 was downloaded and inspected; ZIP
+SHA-256 467065a44c3bf92f583054be95c41b3b251dff357c5b303c014698f87e59da4c,
+CRC clean. Wheel, sdist and Docker each verify 551 application resources
+and exact curated vendor closure; 5 first-party resources additionally
+verified. Docker layer report: 10 layers, 498 JS members hashed, zero
+excluded filename/identical JS digest hits. Equal no-cache image IDs
+sha256:9052e6bac658fd6e760ac0abe8db515ad363f3d27b7e29237fc0cb4e799c677f.
+Main OSV completed on the exact reviewed SHA: 219 queries / 77 matched;
+the historical removed-container mappings are no longer in active query
+scope. Candidate OSV 16/0 remains separate. Round 3 independent reviewers
+confirmed source/wheel closure and upstream equality; Docker layer results
+are CI evidence, not their independent Docker reproduction.
+
+Both Lodash advisories remain historical findings with removal evidence
+and **final disposition pending**. Do not describe them as an active
+shipped XML worker or as an accepted risk. Marker and exact-digest scans
+are not proof against all transformed copies. Retained component identity
+and notice review, independent final disposition, current correction HEAD
+CI/artifacts and real HAOS upgrade/rollback remain open. No VEX or
+release signoff implied. See ACE_WORKER_PROFILE.md and ACE_WORKER_ATTRIBUTION.md.

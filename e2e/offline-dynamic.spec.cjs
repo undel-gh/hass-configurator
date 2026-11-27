@@ -285,13 +285,15 @@ test('Ace worker profile blocks excluded modes and preserves preference via ' + 
     await expect.poll(() => page.evaluate(() => editor.session.getMode().$id)).toBe('ace/mode/' + name);
   };
   await mode('yaml');
+  const beforeYaml = workers.length;
   await page.evaluate(() => {
     editor.session.setUseWorker(true);
     editor.setValue('broken: [list\n', -1);
   });
   await expect.poll(() => page.evaluate(() => editor.session.getAnnotations().some(a => a.type === 'error')),
     { timeout: 12000 }).toBe(true);
-  for (const name of [...excluded, 'svg', 'scss', 'text']) {
+  await expect.poll(() => workers.length).toBeGreaterThan(beforeYaml);
+  for (const name of [...excluded, 'svg', 'scss', 'jsoniq', 'text']) {
     await mode(name);
     expect(await page.evaluate(() => ({
       preference: editor.session.getUseWorker(),
@@ -319,10 +321,11 @@ test('Ace worker profile blocks excluded modes and preserves preference via ' + 
     ['json', '{"valid":true}'], ['javascript', 'var value = 1;'],
     ['css', 'body { color: red; }'], ['html', '<div>valid</div>']
   ]) {
+    const before = workers.length;
     await mode(name);
     expect(await page.evaluate(() => Boolean(editor.session.$worker))).toBe(true);
     await page.evaluate(value => editor.setValue(value, -1), sample);
-    await expect.poll(() => workers.length).toBeGreaterThan(0);
+    await expect.poll(() => workers.length, { message: 'New worker for ' + name }).toBeGreaterThan(before);
   }
   // Check the lower-level worker creation guard before it allocates a Worker.
   const rejected = await page.evaluate(() => {
@@ -338,6 +341,29 @@ test('Ace worker profile blocks excluded modes and preserves preference via ' + 
     return result;
   });
   expect(rejected).toEqual([true, true, true]);
+  const beforeDenied = workers.length;
+  const denied = await page.evaluate(async names => {
+    const { UIWorkerClient } = ace.require('ace/worker/worker_client');
+    const result = [];
+    function rejects(action) {
+      try { action(); return false; } catch (error) {
+        return /Unsupported Ace worker/.test(error.message);
+      }
+    }
+    for (const name of names) {
+      const modeId = 'ace/mode/' + name;
+      const mod = modeId + '_worker';
+      const Mode = await new Promise(resolve => ace.config.loadModule(modeId, resolve));
+      result.push({ name,
+        ui: rejects(() => new UIWorkerClient(['ace'], mod, 'Worker')),
+        loader: rejects(() => ace.config.loadModule(['worker', mod], () => {})),
+        direct: rejects(() => new Mode.Mode().createWorker(editor.session))
+      });
+    }
+    return result;
+  }, excluded);
+  expect(denied).toEqual(excluded.map(name => ({ name, ui: true, loader: true, direct: true })));
+  expect(workers.length).toBe(beforeDenied);
   expect(workers.length).toBeGreaterThan(0);
   expect(forbidden).toEqual([]);
   expect(external).toEqual([]);
@@ -352,4 +378,43 @@ test('Ace worker profile blocks excluded modes and preserves preference via ' + 
   }, excluded);
   expect(statuses).toEqual(excluded.map(() => 404));
 });
+}
+
+for (const savedMode of ['xml', 'yaml']) {
+  test('Ace worker profile restored settings remain default-off: ' + savedMode, async ({ page }) => {
+    const workers = [];
+    const requests = [];
+    const errors = [];
+    page.on('worker', worker => workers.push(worker));
+    page.on('request', req => {
+      if (/\/worker-[^/]+\.js$/.test(new URL(req.url()).pathname)) requests.push(req.url());
+    });
+    page.on('pageerror', error => errors.push(error.message));
+    await page.addInitScript(name => {
+      localStorage.setItem('pochass', JSON.stringify({
+        mode: 'ace/mode/' + name, useWorker: true
+      }));
+      // Record calls with the original native constructor, including workers
+      // terminated before the editor's final settings become observable.
+      window.hcStartupWorkerCalls = [];
+      const NativeWorker = window.Worker;
+      window.Worker = new Proxy(NativeWorker, {
+        construct(target, args, newTarget) {
+          window.hcStartupWorkerCalls.push(String(args[0]));
+          return Reflect.construct(target, args, newTarget);
+        }
+      });
+    }, savedMode);
+    await page.goto(server + '/', { waitUntil: 'domcontentloaded' });
+    await expect.poll(() => page.evaluate(() => window.editor && editor.session.getMode().$id))
+      .toBe('ace/mode/' + savedMode);
+    expect(await page.evaluate(() => ({
+      preference: editor.session.getUseWorker(),
+      active: Boolean(editor.session.$worker),
+      startupCalls: hcStartupWorkerCalls
+    }))).toEqual({ preference: false, active: false, startupCalls: [] });
+    expect(workers).toEqual([]);
+    expect(requests).toEqual([]);
+    expect(errors).toEqual([]);
+  });
 }

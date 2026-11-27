@@ -39,3 +39,10 @@ no-automatic-request assertion. File browser round-trips cover each excluded
 language; the real installed image layers are checked by filename and exact
 JS digest, not by looking only at the final filesystem. Full HAOS cache
 upgrade/rollback remains a separate gate.
+
+Round 3 review corrections: explicit regression for UIWorkerClient and worker
+module loading, direct excluded Mode.createWorker calls, restored settings
+startup (XML and YAML), per-language worker creation count, JSONiq alias,
+and main() overlay verification wiring with a successful and a tampered
+synthetic overlay. See P1_SUPPLY_CHAIN.md for the historical XML finding
+and exact reviewed installed evidence. No upstream runtime change.
