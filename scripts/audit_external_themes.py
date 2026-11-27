@@ -281,34 +281,7 @@ def input_rights_indicators(raw, filename, directory_names):
 
 def converter_input_status(converter, name, filename):
     block = converter.split("var themes = {", 1)[1].split("\n};", 1)[0]
-    expression = (r'^\s*(//\s*)?"' + re.escape(name) + r'":\s*"([^"]+)"\s*,?\s*
-    licenses = {}
-    for family, pin in LICENSES.items():
-        _, licenses[family] = reference(*pin, fetch)
-    rows = []
-    for name, family, path, blob, ace_path, ace_blob, js_path, js_blob in THEMES:
-        repo, commit = LICENSES[family][:2]
-        raw, external = reference(repo, commit, path, blob, fetch)
-        ace_path = "tool/tmthemes/" + ace_path
-        ace_raw, actual = source_file(source, ace_path)
-        if actual != ace_blob:
-            raise ValueError("Ace theme reference pin mismatch: " + name)
-        row = {"theme": name, "family": family, "external": external,
-               "ace": {"path": ace_path, **verify_blob(ace_raw, ace_blob)},
-               "plist": compare_plist(raw, ace_raw),
-               "license_reference": family, "license_status": "review-open"}
-        if js_path is not None:
-            js_raw, row["external_ace_port"] = reference(repo, commit, js_path, js_blob, fetch)
-            dest = work / "external-theme" / (name + ".js")
-            dest.parent.mkdir(parents=True, exist_ok=True)
-            dest.write_bytes(js_raw)
-        rows.append(row)
-    return {"licenses": licenses, "themes": rows,
-            "historical_textmate": historical_textmate(source, fetch, source_file),
-            "grouped_textmate": grouped_textmate(source, fetch, source_file),
-            "limitations": ["Pinned reference identity and comparisons are not historical lineage or license clearance.",
-                            "Differences are evidence, not failures; pin drift fails closed."]}
-)
+    expression = (r'^\s*(//\s*)?"' + re.escape(name) + r'":\s*"([^"]+)"\s*,?\s*$')
     matches = re.findall(expression, block, re.M)
     if not matches:
         return "unmapped"
@@ -380,5 +353,6 @@ def research(source, work, fetch, source_file):
         rows.append(row)
     return {"licenses": licenses, "themes": rows,
             "historical_textmate": historical_textmate(source, fetch, source_file),
+            "grouped_textmate": grouped_textmate(source, fetch, source_file),
             "limitations": ["Pinned reference identity and comparisons are not historical lineage or license clearance.",
                             "Differences are evidence, not failures; pin drift fails closed."]}
