@@ -12,7 +12,7 @@ import unittest
 from scripts.audit_supply_chain import (
     PACKAGE, NOTICE, source_inventory, sbom, query_osv, scan_queries, verify_legacy_relation,
     read_file, EMBEDDED, immutable_raw_url, git_blob_sha1, embedded_upstream_evidence,
-    check_npm_notice_pin, verify_npm_notice,
+    check_npm_notice_pin, verify_npm_notice, embedded_source_relation,
 )
 
 
@@ -292,6 +292,26 @@ class SupplyChainTests(unittest.TestCase):
             data["components"] = [c for c in data["components"] if c["id"] != "roboto"]
             path.write_text(json.dumps(data))
         self.mutate(action, "Incomplete third-party ownership")
+
+    def test_bounded_xqlint_and_browser_pack_relations(self):
+        original = b"var A = require('./a');\nvar B = require('./b');"
+        renamed = original.replace(b"require(", b"_dereq_(")
+        self.assertTrue(embedded_source_relation(original, b"head\n" + renamed + b"\ntail",
+                                                  "xqlint-two-require-renames"))
+        self.assertFalse(embedded_source_relation(original, renamed.replace(b"./b", b"./c"),
+                                                   "xqlint-two-require-renames"))
+        with self.assertRaisesRegex(ValueError, "require count"):
+            embedded_source_relation(original + b"\nrequire('c');", renamed, "xqlint-two-require-renames")
+        prelude = b"// comment\n(function outer () {\n\n    return newRequire;\n})\n"
+        adapted = b"(function outer () {\n    return newRequire(entry[0]);\n})"
+        prefix = b"define(function(require, exports, module) {\nmodule.exports = "
+        container = prefix + adapted + b"\n({})\n});"
+        self.assertTrue(embedded_source_relation(prelude, container, "browser-pack-standalone-prelude"))
+        for wrong in (b"prefix" + container, container.replace(b"entry[0]", b"entry[1]")):
+            self.assertFalse(embedded_source_relation(prelude, wrong, "browser-pack-standalone-prelude"))
+        with self.assertRaisesRegex(ValueError, "return count"):
+            embedded_source_relation(prelude + b"return newRequire;", container,
+                                     "browser-pack-standalone-prelude")
 
     def test_legacy_relationship_is_exact(self):
         verify_legacy_relation(b"a\n", b"a", "missing-final-lf")

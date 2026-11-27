@@ -279,3 +279,20 @@ empty generated stubs, record exact source and runtime hashes and scan
 source files/individual TextMate metadata for attribution indicators.
 All partial/mismatch results are retained as evidence, not cleared by a
 successful native comparison. Historical origin/terms remain per-file work.
+
+XQuery/JSONiq further source checks: common lexer.js blob a6b3cddc is a
+literal full-source substring in both current source containers. Language
+wrappers xquery_lexer.js (95ceb595) and jsoniq_lexer.js (461cebd4) match
+after exactly two require( -> _dereq_( renames, no other changes. The
+browser-pack prelude at historical tag 3.1.0 commit 9d4039e5, blob
+3cbac8e6, matches both container prefixes after removing comment-only and
+blank lines and changing return newRequire; to return newRequire(entry[0]);.
+Identical prelude blobs in 3.1.1/3.2.0/4.0.0; no exact package version.
+Full original MIT notice added; verification now explicitly checks these
+two bounded transformations and reports them separately from literal source
+relations. REx output/grammar licensing remains OPEN.
+
+Research #3 failed because one historic TextMate plist is malformed XML
+(ExpatError). Preserve error in per-file report rather than stop scanning
+or infer no notice; raw source hashes and textual evidence still checked.
+No native/theme result claimed from the failed job.

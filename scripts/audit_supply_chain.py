@@ -121,6 +121,32 @@ def verify_npm_notice(info, raw, local):
             "member_sha256": sha(upstream), "relation": "exact-archive-reference-member"}
 
 
+SOURCE_RELATIONS = {"literal-full-source-substring", "xqlint-two-require-renames",
+                    "browser-pack-standalone-prelude"}
+
+
+def embedded_source_relation(upstream, container, relation):
+    """Apply only named, bounded source transformations to immutable blobs."""
+    if not upstream or relation not in SOURCE_RELATIONS:
+        raise ValueError("Invalid embedded source relation")
+    if relation == "xqlint-two-require-renames":
+        # Browserify derequire changed exactly the two import calls.
+        if upstream.count(b"require(") != 2:
+            raise ValueError("Unexpected XQLint require count")
+        upstream = upstream.replace(b"require(", b"_dereq_(")
+    elif relation == "browser-pack-standalone-prelude":
+        # Historical prelude is identical apart from comment-only/empty
+        # lines and the single standalone entry-export return expression.
+        if upstream.count(b"return newRequire;") != 1:
+            raise ValueError("Unexpected browser-pack return count")
+        upstream = b"\n".join(line for line in upstream.split(b"\n")
+                               if line.strip() and not line.lstrip().startswith(b"//"))
+        upstream = upstream.replace(b"return newRequire;", b"return newRequire(entry[0]);")
+        return container.startswith(b"define(function(require, exports, module) {\nmodule.exports = " +
+                                    upstream + b"\n(")
+    return upstream in container
+
+
 def validate_embedded(root, inv, vendor, embedded, notice_paths):
     """Parent ownership remains exclusive; embedded code can share containers."""
     if embedded["schema"] != 1 or not embedded["components"]:
@@ -179,7 +205,7 @@ def validate_embedded(root, inv, vendor, embedded, notice_paths):
         else:
             raise ValueError("Invalid embedded notice source kind: " + name)
     for relationship in embedded["source_relationships"]:
-        if relationship["relation"] != "literal-full-source-substring":
+        if relationship["relation"] not in SOURCE_RELATIONS:
             raise ValueError("Unknown embedded source relationship")
         for role in ("upstream", "container"):
             record = relationship[role]
@@ -242,7 +268,7 @@ def embedded_upstream_evidence(inv, fetch=None):
         left, right = (relationship[key] for key in ("upstream", "container"))
         upstream = verified(left["url"], left["git_blob"])
         container = verified(right["url"], right["git_blob"])
-        if (not upstream or upstream not in container
+        if (not embedded_source_relation(upstream, container, relationship["relation"])
                 or left["marker"].encode("utf-8") not in upstream
                 or right["marker"].encode("utf-8") not in container):
             raise ValueError("Embedded source relationship mismatch: " + left["url"])
@@ -258,7 +284,13 @@ def embedded_upstream_evidence(inv, fetch=None):
             "component_records": len(embedded["components"]),
             "notices_verified": len(embedded["notices"]),
             "npm_archive_notices": npm_notices,
-            "literal_source_relationships_verified": len(embedded["source_relationships"]),
+            "literal_source_relationships_verified": sum(row["relation"] == "literal-full-source-substring"
+                for row in embedded["source_relationships"]),
+            "transformed_source_relationships_verified": [
+                {"relation": row["relation"], "upstream": row["upstream"]["url"],
+                 "container": row["container"]["url"]}
+                for row in embedded["source_relationships"]
+                if row["relation"] != "literal-full-source-substring"],
             "font_lineage": "repository-byte-match; original CDN archive unresolved",
             "limitations": embedded["limitations"]}
 

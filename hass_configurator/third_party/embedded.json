@@ -390,7 +390,7 @@
         }
       ],
       "name": "XQLint and generated XQuery/JSONiq lexers",
-      "note": "Two retained lexer modes contain generated XQLint tokenizer code, not the removed xquery worker. Source relationships verify exact tokenizer bytes from XQLint 0.1.5 source commit; no full npm package identity asserted. Both exact 2014 REx v5.30 generator copyright/command headers now shipped as separate notices; modern REx Apache-2.0 license at 52f3bcc3 is a source reference only, not proof of 2014 output rights. XQLint source is Apache-2.0, grammar provenance and historical REx output permissions require confirmation. Browserify-style embedded loader also needs attribution. No risk acceptance.",
+      "note": "Two retained lexer modes contain generated XQLint tokenizer code, not the removed xquery worker. Source relationships verify exact tokenizer bytes from XQLint 0.1.5 source commit; no full npm package identity asserted. Both exact 2014 REx v5.30 generator copyright/command headers now shipped as separate notices; modern REx Apache-2.0 license at 52f3bcc3 is a source reference only, not proof of 2014 output rights. XQLint source is Apache-2.0, grammar provenance and historical REx output permissions require confirmation. All three XQLint modules per lexer have exact source relations (tokenizer and shared lexer literal; language wrapper two require renames). Browser-pack loader separately mapped with MIT notice and bounded standalone adaptation; exact package version remains unspecified. No risk acceptance.",
       "notices": [
         "third_party/licenses/embedded/xqlint-reference.txt",
         "third_party/licenses/embedded/rex-2014-xquery-generator-notice.txt",
@@ -1397,6 +1397,72 @@
         "third_party/licenses/embedded/dracula-theme-mit.txt"
       ],
       "note": "MIT permission/copyright/warranty block survives in the CSS string of the exact published theme. Original source block also distributed verbatim. No asserted external package version; other themes remain subject to per-file review."
+    },
+    {
+      "id": "ace-browser-pack-prelude",
+      "parent": "ace",
+      "kind": "library",
+      "name": "browser-pack standalone loader fragment",
+      "version": null,
+      "ecosystem": null,
+      "status": "identified",
+      "license": "MIT",
+      "locations": [
+        {
+          "file": "vendor/ace/mode-xquery.js",
+          "marker": "MODULE_NOT_FOUND"
+        },
+        {
+          "file": "vendor/ace/mode-jsoniq.js",
+          "marker": "MODULE_NOT_FOUND"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/browserify/browser-pack/blob/9d4039e508488cd3b7cb49019985e97630a9339b/prelude.js",
+          "git_blob": "3cbac8e6f25d79daad46e021c8570116662c01f5",
+          "marker": "return newRequire;"
+        },
+        {
+          "url": "https://github.com/browserify/browser-pack/blob/6ab4ed606f3ad070fb0096fd5e9de5afba565ef3/prelude.js",
+          "git_blob": "3cbac8e6f25d79daad46e021c8570116662c01f5",
+          "marker": "err.code = 'MODULE_NOT_FOUND'"
+        },
+        {
+          "url": "https://github.com/browserify/browser-pack/blob/15c9d1b580150902b123761a1657722e1afd4ace/prelude.js",
+          "git_blob": "3cbac8e6f25d79daad46e021c8570116662c01f5",
+          "marker": "return newRequire;"
+        },
+        {
+          "url": "https://github.com/browserify/browser-pack/blob/977dc08d0a00f73c163807c1616849b8e5591ce0/prelude.js",
+          "git_blob": "3cbac8e6f25d79daad46e021c8570116662c01f5",
+          "marker": "return newRequire;"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/lib/ace/mode/xquery/xquery_lexer.js",
+          "git_blob": "14413843c3ca84366c8c25c30b4d43eee4703572",
+          "marker": "MODULE_NOT_FOUND"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/mode-xquery.js",
+          "git_blob": "4d2b8f6870eab5e565d059a78c3758b97124f5c2",
+          "marker": "MODULE_NOT_FOUND"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/lib/ace/mode/xquery/jsoniq_lexer.js",
+          "git_blob": "f123f46fa7bbe78459e8be0861256cab076e0c43",
+          "marker": "MODULE_NOT_FOUND"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/mode-jsoniq.js",
+          "git_blob": "afb8381588080c01ba4566cbaf7427075447bed8",
+          "marker": "MODULE_NOT_FOUND"
+        }
+      ],
+      "notices": [
+        "third_party/licenses/embedded/browser-pack-prelude-reference.txt"
+      ],
+      "note": "Exact browser-pack prelude code matches both Ace lexer prefixes after removing comment-only/empty lines and changing one return to standalone entry export. Same blob in tags 3.1.0, 3.1.1, 3.2.0 and 4.0.0; exact package version not asserted. Original MIT notice retained from 3.1.0 reference. Only loader fragment shipped, no npm PURL or version query."
     }
   ],
   "font_provenance": {
@@ -1421,7 +1487,8 @@
     "Current Ace 1.45.2 XQuery and JSONiq lexer source blobs are unchanged from baseline and literal tokenizer relationships independently rechecked; not proof of full minified-worker byte equivalence or generated output license.",
     "Curated #37 runtime has six workers. Retired worker containers and previous mappings preserved in docs/history/ace-1.45.2-full-embedded.json. Removed XML Lodash/Chevrotain, CoffeeScript and Lua mappings no longer describe a shipped container; retained-assets scan and installed closure review required before final component absence or risk disposition. Historical notice texts retained conservatively.",
     "All 15 retained replacement-worker source-lock candidate versions now have exact reconstructed minified runtime evidence from 16 original package paths, plus pinned CRLF-to-LF relation for published unminified forms. All 15 original candidate archives revalidated; native base, theme/snippets, XQuery lexer/generator terms, nested source-level notices and independent final review remain open. No public-release approval.",
-    "Retained native/theme/snippet evidence being collected; REx v5.30 original output grant, Browserify loader and grammar lineage remain unresolved. Historical libc++ license/credits reference added for estraverse MIT-adapted fragment; exact revision not asserted. Dracula MIT source copyright notice separately retained."
+    "Retained native/theme/snippet evidence being collected; REx v5.30 original output grant, Browserify loader and grammar lineage remain unresolved. Historical libc++ license/credits reference added for estraverse MIT-adapted fragment; exact revision not asserted. Dracula MIT source copyright notice separately retained.",
+    "XQLint retained source closure expanded to both shared lexer and two language wrappers; browser-pack prelude bounded adaptation verified, MIT notice retained. REx historical output/grammar licensing remains unresolved. No runtime version asserted for browser-pack."
   ],
   "notices": {
     "third_party/licenses/embedded/ace-legacy-linters.txt": {
@@ -1801,6 +1868,12 @@
       "sha256": "fa954228e5772fd56b7de83e168982929b19a68efe6868ba7efde99b5235c465",
       "source": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/theme/dracula-css.js",
       "source_blob": "ff467e926e173a3be791988a081dc27a0d3da9ce"
+    },
+    "third_party/licenses/embedded/browser-pack-prelude-reference.txt": {
+      "kind": "whole-file",
+      "sha256": "435a6722c786b0a56fbe7387028f1d9d3f3a2d0fb615bb8fee118727c3f59b7b",
+      "source": "https://github.com/browserify/browser-pack/blob/9d4039e508488cd3b7cb49019985e97630a9339b/LICENSE",
+      "source_blob": "ee27ba4b4412b0e4a05af5e3d8a005bc6681fdf3"
     }
   },
   "schema": 1,
@@ -1830,6 +1903,84 @@
         "marker": "JSONiqTokenizer"
       },
       "relation": "literal-full-source-substring"
+    },
+    {
+      "upstream": {
+        "url": "https://github.com/wcandillon/xqlint/blob/1778846ed8e707780d791fd3ffb41feccdf9de04/lib/lexers/lexer.js",
+        "git_blob": "a6b3cddc554ad740da9b19150881f701237b0b45",
+        "marker": "exports.Lexer"
+      },
+      "container": {
+        "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/lib/ace/mode/xquery/xquery_lexer.js",
+        "git_blob": "14413843c3ca84366c8c25c30b4d43eee4703572",
+        "marker": "MODULE_NOT_FOUND"
+      },
+      "relation": "literal-full-source-substring"
+    },
+    {
+      "upstream": {
+        "url": "https://github.com/wcandillon/xqlint/blob/1778846ed8e707780d791fd3ffb41feccdf9de04/lib/lexers/xquery_lexer.js",
+        "git_blob": "95ceb595b4c43591d4e8fdcd72b832300685c0e0",
+        "marker": "require('./lexer')"
+      },
+      "container": {
+        "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/lib/ace/mode/xquery/xquery_lexer.js",
+        "git_blob": "14413843c3ca84366c8c25c30b4d43eee4703572",
+        "marker": "MODULE_NOT_FOUND"
+      },
+      "relation": "xqlint-two-require-renames"
+    },
+    {
+      "upstream": {
+        "url": "https://github.com/browserify/browser-pack/blob/9d4039e508488cd3b7cb49019985e97630a9339b/prelude.js",
+        "git_blob": "3cbac8e6f25d79daad46e021c8570116662c01f5",
+        "marker": "return newRequire;"
+      },
+      "container": {
+        "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/lib/ace/mode/xquery/xquery_lexer.js",
+        "git_blob": "14413843c3ca84366c8c25c30b4d43eee4703572",
+        "marker": "MODULE_NOT_FOUND"
+      },
+      "relation": "browser-pack-standalone-prelude"
+    },
+    {
+      "upstream": {
+        "url": "https://github.com/wcandillon/xqlint/blob/1778846ed8e707780d791fd3ffb41feccdf9de04/lib/lexers/lexer.js",
+        "git_blob": "a6b3cddc554ad740da9b19150881f701237b0b45",
+        "marker": "exports.Lexer"
+      },
+      "container": {
+        "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/lib/ace/mode/xquery/jsoniq_lexer.js",
+        "git_blob": "f123f46fa7bbe78459e8be0861256cab076e0c43",
+        "marker": "MODULE_NOT_FOUND"
+      },
+      "relation": "literal-full-source-substring"
+    },
+    {
+      "upstream": {
+        "url": "https://github.com/wcandillon/xqlint/blob/1778846ed8e707780d791fd3ffb41feccdf9de04/lib/lexers/jsoniq_lexer.js",
+        "git_blob": "461cebd4695ecbdfa6f1f62907b1ad79f494aaf2",
+        "marker": "require('./lexer')"
+      },
+      "container": {
+        "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/lib/ace/mode/xquery/jsoniq_lexer.js",
+        "git_blob": "f123f46fa7bbe78459e8be0861256cab076e0c43",
+        "marker": "MODULE_NOT_FOUND"
+      },
+      "relation": "xqlint-two-require-renames"
+    },
+    {
+      "upstream": {
+        "url": "https://github.com/browserify/browser-pack/blob/9d4039e508488cd3b7cb49019985e97630a9339b/prelude.js",
+        "git_blob": "3cbac8e6f25d79daad46e021c8570116662c01f5",
+        "marker": "return newRequire;"
+      },
+      "container": {
+        "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/lib/ace/mode/xquery/jsoniq_lexer.js",
+        "git_blob": "f123f46fa7bbe78459e8be0861256cab076e0c43",
+        "marker": "MODULE_NOT_FOUND"
+      },
+      "relation": "browser-pack-standalone-prelude"
     }
   ],
   "worker_review": {

@@ -109,3 +109,9 @@ version claim). Both 2014 REx v5.30 generator headers and modern Apache-2.0
 reference retained for XQuery/JSONiq lexer modes. Historical generated
 output rights, grammar provenance and Browserify loader remain open.
 Dracula theme carries its own MIT notice, now also distributed verbatim.
+
+XQuery/JSONiq loader: browser-pack MIT prelude fragment separately mapped,
+with original notice; exact package version unspecified (shared blob across
+multiple tags). XQLint common lexer and both language wrappers verified
+against pinned source with two exact require renames. Historic REx output
+rights and grammar provenance remain open.

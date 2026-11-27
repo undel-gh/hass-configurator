@@ -5,6 +5,7 @@ import io
 import json
 from pathlib import Path
 import plistlib
+from xml.parsers.expat import ExpatError
 import re
 import subprocess
 import tarfile
@@ -110,7 +111,7 @@ def main():
                     parsed = plistlib.loads(data)
                     row["plist_metadata"] = {k: v for k, v in parsed.items()
                                              if isinstance(v, str) and k != "uuid"}
-                except (ValueError, plistlib.InvalidFileException, TypeError) as exc:
+                except (ValueError, plistlib.InvalidFileException, TypeError, ExpatError) as exc:
                     row["plist_parse_error"] = str(exc)
             source_rows[name] = row
     selected = sorted(name for name in lock["files_sha256"] if
