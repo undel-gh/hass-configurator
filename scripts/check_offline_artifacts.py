@@ -39,6 +39,11 @@ def verify(files, label):
     if missing or different:
         raise RuntimeError("%s incomplete/corrupted packaged resources: missing=%s changed=%s" %
                            (label, missing[:5], different[:5]))
+    vendor_paths = {name for name in files if name.startswith("hass_configurator/vendor/")}
+    expected_vendor = {"hass_configurator/" + name for name in MANIFEST["resources"]} | {
+        "hass_configurator/vendor/manifest.json"}
+    if vendor_paths != expected_vendor:
+        raise RuntimeError("%s unexpected packaged vendor inventory" % label)
     version_file = "hass_configurator/_version.py"
     if files.get(version_file) != (ROOT / version_file).read_bytes():
         raise RuntimeError("%s missing or stale shared runtime version file" % label)

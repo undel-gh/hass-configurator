@@ -2,8 +2,10 @@
 import copy
 import json
 import unittest
+from pathlib import Path
+import tempfile
 
-from scripts.ace_worker_profile import LOCK, read_profile, selected_family
+from scripts.ace_worker_profile import LOCK, read_profile, selected_family, validate_manifest, verify_vendor_tree
 
 
 class AceWorkerProfileTests(unittest.TestCase):
@@ -39,3 +41,31 @@ class AceWorkerProfileTests(unittest.TestCase):
         profile["ace_version"] = "1.9.6"
         with self.assertRaisesRegex(ValueError, "version"):
             selected_family(profile, self.lock)
+
+    def test_manifest_rejects_reintroduced_worker_and_drift(self):
+        expected = {"vendor/ace/" + n: h for n, h in selected_family(self.profile, self.lock).items()}
+        validate_manifest(self.profile, self.lock, {"resources": expected})
+        for change in ({**expected, "vendor/ace/worker-xml.js": self.lock["files_sha256"]["worker-xml.js"]},
+                       {**expected, "vendor/ace/ace.js": "0" * 64}):
+            with self.assertRaisesRegex(ValueError, "Curated Ace manifest"):
+                validate_manifest(self.profile, self.lock, {"resources": change})
+
+    def test_tree_rejects_reintroduction_and_symlink(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "vendor/ace").mkdir(parents=True)
+            (root / "vendor/manifest.json").touch()
+            (root / "vendor/ace/ace.js").touch()
+            resources = {"vendor/ace/ace.js": "unused"}
+            verify_vendor_tree(root, resources)
+            extra = root / "vendor/ace/worker-xml.js"
+            extra.touch()
+            with self.assertRaisesRegex(ValueError, "Untracked or absent"):
+                verify_vendor_tree(root, resources)
+            extra.unlink()
+            try:
+                extra.symlink_to(root / "not-present")
+            except (OSError, NotImplementedError):
+                self.skipTest("Symlinks unavailable")
+            with self.assertRaisesRegex(ValueError, "Unsafe vendor entry"):
+                verify_vendor_tree(root, resources)

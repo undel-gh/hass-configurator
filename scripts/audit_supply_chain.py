@@ -215,7 +215,13 @@ def source_inventory(root=PACKAGE):
     vendor = load(root / MANIFEST)
     if vendor["schema"] != 1:
         raise ValueError("Unknown vendor manifest schema")
+    try:
+        from .ace_worker_profile import read_profile, validate_manifest, verify_vendor_tree, LOCK
+    except ImportError:
+        from ace_worker_profile import read_profile, validate_manifest, verify_vendor_tree, LOCK
+    validate_manifest(read_profile(root / "ace-bootstrap.js"), load(LOCK), vendor)
     resources = vendor["resources"]
+    verify_vendor_tree(root, resources)
     legacy = inv["legacy_assets"]
     embedded = json.loads(read_file(root, EMBEDDED))
     if set(inv["license_notices"]) & set(embedded["notices"]):
@@ -468,6 +474,13 @@ def installed_evidence(label, locked=False, os_packages=False):
     paths |= {MANIFEST, NOTICE, EMBEDDED, "third_party/NOTICE.md"}
     for name in sorted(paths):
         verify_file(installed, name, sha(read_file(PACKAGE, name)))
+    try:
+        from .ace_worker_profile import verify_vendor_tree
+    except ImportError:
+        from ace_worker_profile import verify_vendor_tree
+    verify_vendor_tree(installed, vendor["resources"])
+    for name in inv["first_party_assets"] + ["dev.html"]:
+        verify_file(installed, name, sha(read_file(PACKAGE, name)))
     distributions = []
     seen = {}
     for d in sorted(metadata.distributions(), key=lambda d: normalize(d.metadata["Name"])):
@@ -499,6 +512,8 @@ def installed_evidence(label, locked=False, os_packages=False):
         raise ValueError("Installed versions differ from reviewed lock")
     result = {"label": label, "python": sys.version.split()[0],
               "application_resources_verified": len(paths),
+              "curated_vendor_closure_verified": True,
+              "first_party_resources_verified": len(inv["first_party_assets"]) + 1,
               "distributions": distributions,
               "lock_matches": all(seen[name] == value[0] for name, value in pins.items())}
     if os_packages:

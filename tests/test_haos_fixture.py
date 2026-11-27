@@ -91,7 +91,7 @@ class HAOSIngressFixtureTests(unittest.TestCase):
             self.assertTrue(result["fixture_only"])
             self.assertFalse(result["home_assistant_api"])
             self.assertFalse(result["external_host_ports"])
-            self.assertEqual(result["vendor_resource_count"], 515)
+            self.assertEqual(result["vendor_resource_count"], 510)
 
             config = (target / "config.yaml").read_text(encoding="utf8")
             nginx = (target / "nginx.conf").read_text(encoding="utf8")

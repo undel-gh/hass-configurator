@@ -17,8 +17,8 @@ class VendoredAssetsTests(unittest.TestCase):
     def test_hash_manifest_is_complete_and_matches_every_file(self):
         self.assertEqual(MANIFEST["schema"], 1)
         resources = MANIFEST["resources"]
-        self.assertEqual(len([p for p in resources if p.startswith("vendor/ace/")]), 495)
-        self.assertEqual(len(resources), 515)
+        self.assertEqual(len([p for p in resources if p.startswith("vendor/ace/")]), 490)
+        self.assertEqual(len(resources), 510)
         for name, checksum in resources.items():
             with self.subTest(name=name):
                 source = PACKAGE / name
@@ -36,8 +36,10 @@ class VendoredAssetsTests(unittest.TestCase):
         self.assertEqual(ace["version"], "1.45.2")
         self.assertEqual(ace["npm_integrity"], original["npm_integrity"])
         self.assertEqual(ace["sha256"], original["sha256"])
-        for filename, value in original["files_sha256"].items():
-            self.assertEqual(MANIFEST["resources"]["vendor/ace/" + filename], value)
+        from scripts.ace_worker_profile import read_profile, selected_family
+        selected = selected_family(read_profile(), original)
+        self.assertEqual({n: h for n, h in MANIFEST["resources"].items() if n.startswith("vendor/ace/")},
+                         {"vendor/ace/" + n: h for n, h in selected.items()})
 
     def test_css_urls_resolve_to_exact_allowlisted_local_files(self):
         for css in ("vendor/materialize/css/materialize.min.css",

@@ -84,13 +84,8 @@ class P0CloseoutTests(unittest.TestCase):
         ):
             for name in names:
                 self.assertIn("%s-%s.js" % (kind, name), lock["files_sha256"])
-        for name in lock["worker_files"]:
-            with self.subTest(worker=name):
-                self.assertIn(name, lock["files_sha256"])
-                self.assertEqual(
-                    vendor["resources"]["vendor/ace/" + name],
-                    lock["files_sha256"][name],
-                )
+        from scripts.ace_worker_profile import read_profile, validate_manifest
+        validate_manifest(read_profile(), lock, vendor)
 
     def test_all_legacy_api_paths_remain_behind_exact_p0_router(self):
         router = Router(Assets())

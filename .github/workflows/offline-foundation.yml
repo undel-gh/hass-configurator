@@ -92,9 +92,11 @@ jobs:
             --linters /tmp/ace-legacy-linters-1.0.2.tgz --registry /tmp/ace-linters-registry.json \
             --source-lock /tmp/ace-linters-source-lock.json \
             --output e2e/artifacts/supply-chain/ace-worker-attribution.json
+      - name: Inventory retained runtime markers and upstream counterparts
+        run: python scripts/scan_retained_ace.py --ace /tmp/ace-builds-1.45.2.tgz --output e2e/artifacts/supply-chain/ace-retained-markers.json
       - name: Bounded regression probes against shipped js-yaml
         run: node e2e/yaml-migration-probe.cjs hass_configurator/js-yaml.min.js
-      - name: Validate agreed Ace worker target profile
+      - name: Validate curated Ace worker profile and source closure
         run: python scripts/ace_worker_profile.py
       - name: Routing and loopback HTTP tests
         run: python -m unittest discover -s tests -p 'test_*.py' -v

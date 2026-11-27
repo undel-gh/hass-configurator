@@ -73,7 +73,7 @@ class SupplyChainTests(unittest.TestCase):
     def test_source_inventory_and_bom(self):
         inv, vendor = source_inventory()
         self.assertEqual(len(inv["components"]), 7)
-        self.assertEqual(len(vendor["resources"]), 515)
+        self.assertEqual(len(vendor["resources"]), 510)
         bom = sbom(inv, vendor)
         self.assertEqual(bom["bomFormat"], "CycloneDX")
         self.assertEqual(next(c for c in bom["components"] if c["bom-ref"] == "asset:ace")["version"], "1.45.2")
@@ -87,9 +87,12 @@ class SupplyChainTests(unittest.TestCase):
         self.assertNotIn("version", yaml)
         self.assertNotIn("purl", yaml)
         self.assertEqual(inv["legacy_archive_locks"]["js-yaml.min.js"]["relation"], "exact")
-        self.assertEqual(len(inv["embedded"]["worker_review"]), 11)
+        self.assertEqual(len(inv["embedded"]["worker_review"]), 6)
         historical = json.loads((PACKAGE.parent / "docs/history/ace-1.9.6-embedded.json").read_text("utf-8"))
         self.assertIn("ace-jshint", {c["id"] for c in historical["components"]})
+        for retired in ("ace-coffee", "ace-luaparse", "ace-xml-lodash", "ace-xml-chevrotain"):
+            self.assertNotIn("embedded:" + retired, {c["bom-ref"] for c in embedded})
+        self.assertIn("embedded:ace-xqlint", {c["bom-ref"] for c in embedded})
         refs = [c["bom-ref"] for c in bom["components"]]
         self.assertEqual(len(refs), len(set(refs)))
         self.assertEqual("2.136", next(c for c in bom["components"]
