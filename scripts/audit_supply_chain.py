@@ -671,6 +671,17 @@ def source_inventory(root=PACKAGE):
     used_notices.update(validate_embedded(root, inv, vendor, embedded, notice_paths))
     if used_notices != notice_paths:
         raise ValueError("Incomplete third-party ownership/notice coverage")
+    # Version-bound review matrix is a build-time source gate, not runtime policy.
+    try:
+        from .audit_ace_snippet_dispositions import (
+            load_matrix, verify_snippet_dispositions, render_document, DOCUMENT_PATH)
+    except ImportError:
+        from audit_ace_snippet_dispositions import (
+            load_matrix, verify_snippet_dispositions, render_document, DOCUMENT_PATH)
+    matrix = load_matrix(ROOT)
+    verify_snippet_dispositions(matrix, load(LOCK), vendor, embedded)
+    if (ROOT / DOCUMENT_PATH).read_text("utf-8") != render_document(matrix):
+        raise ValueError("Snippet disposition Markdown drift")
     inv["embedded"] = embedded
     inv["license_notices"] = notices
     # Router's explicit first-party boundary must remain synchronized.

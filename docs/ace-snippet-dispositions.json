@@ -1,0 +1,3073 @@
+{
+  "schema": 1,
+  "ace_version": "1.45.2",
+  "ace_source_commit": "68d7fd1c0f5ac50cdb610bf06b86074eab3be652",
+  "ace_build_commit": "c9ea63c0a0a436fbb477c918d6736644f77cab9f",
+  "review_status": "independent-review-pending",
+  "rows": [
+    {
+      "snippet": "abap",
+      "distribution": "retained",
+      "asset_sha256": "43a31568752273b0a4296b7485f180a4d176a601300eab923b73e5f073b4ec89",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "abc",
+      "distribution": "retained",
+      "asset_sha256": "6781a2ac594fce1d6d19177c6a3458d4fbccf102cd0eadd43e0cd0d948a50d18",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/abc.snippets.js",
+        "git_blob": "41035c73a79246055c9593ae4baaf27b87bc3e6d"
+      },
+      "historical_reference": {
+        "first_contribution": "8019a21475618b03127459e43b4825660208c3ac",
+        "url": "https://github.com/ajaxorg/ace/blob/07d01fda44ffb7d26e522ced7a8ab06a950e1096/lib/ace/snippets/abc.snippets",
+        "git_blob": "5c3cd677cb9c1c053638501a39b0ee896c942f31"
+      },
+      "evidence_class": "historical-endpoint-review-open",
+      "additional_components": [],
+      "review_priority": "elevated",
+      "proposed_disposition": "consider-snippet-only-exclusion",
+      "remaining_review": "Zupfnoter vendored intermediate exact match; historical GPL/Commercial project declaration is not a snippet grant. Seek explicit grant or approve snippet-only exclusion."
+    },
+    {
+      "snippet": "actionscript",
+      "distribution": "retained",
+      "asset_sha256": "2b78f54d32243a3102a9fbd0f61fe9c1db2f1ba556cf97ae351640245d4a7668",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/actionscript.snippets.js",
+        "git_blob": "b10121bd8310024585ed5d9c56349828616dce76"
+      },
+      "historical_reference": {
+        "first_contribution": "d16daddc5ea91e578fafde6c9c17b41cdb036579",
+        "url": "https://github.com/honza/vim-snippets/blob/02593f7d57b4944bd857e0aeacfcd5410c0e81f2/snippets/actionscript.snippets",
+        "git_blob": "af9611c3f6deb8a640817b1739822c52b32aff9b"
+      },
+      "evidence_class": "snipmate-exact",
+      "additional_components": [
+        "ace-snipmate-snippets"
+      ],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open."
+    },
+    {
+      "snippet": "ada",
+      "distribution": "retained",
+      "asset_sha256": "f32cef83bc7027b2324a27ef6abb916f560bb9733b6a7ad75fdd26e2c799f4c6",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "alda",
+      "distribution": "retained",
+      "asset_sha256": "aa2f702ce72d26bc4331f84be330cf090afd93504c96c91ca02b53d1ee4f0e13",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "apache_conf",
+      "distribution": "retained",
+      "asset_sha256": "71d4debbc41150a882f79c40a5edf0ee874d50382738c7a7f569e6831b8a3f07",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "apex",
+      "distribution": "retained",
+      "asset_sha256": "e7f1e1286ff6dd5569f2b9d04c60596179462fab8148988d2d8552c6e5db41a1",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "applescript",
+      "distribution": "retained",
+      "asset_sha256": "c3b336762e6c6638132add663809d981f64b1e045907b15d9a39325aa7a0a04f",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "aql",
+      "distribution": "retained",
+      "asset_sha256": "f97970dbee8e477028f5c5ae3d7e84eb1ab2b525e51342984d21786fc901a3f3",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "asciidoc",
+      "distribution": "retained",
+      "asset_sha256": "d7b913e713518a4fbc9d4123b233e3eea92b815d6ffc9065cd167087ad2eef71",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "asl",
+      "distribution": "retained",
+      "asset_sha256": "d1e1320f29617bfc9a6bd4c8c9867e67f6ba20b36c45143f382e8111c0ac1cd6",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "assembly_arm32",
+      "distribution": "retained",
+      "asset_sha256": "f8fd0e82419bf57057e2e29ccaf4b2ee41ae0d3c1d431a856dab7edbf1e7cf9c",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "assembly_x86",
+      "distribution": "retained",
+      "asset_sha256": "38d10b960c6336ba2edb95603825b96799e31b3a59838c0c19cd4ad937efdf2c",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "astro",
+      "distribution": "retained",
+      "asset_sha256": "2bca587c8e0b61a51b840301625540fdf28c21825a5278747a062260557e3238",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "autohotkey",
+      "distribution": "retained",
+      "asset_sha256": "de624d54895ee8fa3ddbc46442b98fcb8a625f22ece29823cdf71cfb64823179",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "basic",
+      "distribution": "retained",
+      "asset_sha256": "ebaea95d86ee68cdcc2e0f80a3ad8d9ddbdac6e9288ac7e03d5bbdc868e3598f",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "batchfile",
+      "distribution": "retained",
+      "asset_sha256": "d51b1eee1ad8d0ba45a085f37a41192b4adefc17324a29e9d271a33846eb284f",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "bibtex",
+      "distribution": "retained",
+      "asset_sha256": "2e967868eb34a6a7ca05fa666e8ec4c87ce5974062598904635d7d52259b03c3",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "c9search",
+      "distribution": "retained",
+      "asset_sha256": "0390b161868a36b6afa443e4f788ad5196a71eb14615041f625062617d9af05a",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "c_cpp",
+      "distribution": "retained",
+      "asset_sha256": "6f867a45ad0ddfca92354f55168d5c401284fffc4dc825764452a594eeb54fed",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/c_cpp.snippets.js",
+        "git_blob": "e1eac56f12283df6ad2cbfa0155f977f48e377ac"
+      },
+      "historical_reference": {
+        "first_contribution": "d16daddc5ea91e578fafde6c9c17b41cdb036579",
+        "url": "https://github.com/honza/vim-snippets/blob/02593f7d57b4944bd857e0aeacfcd5410c0e81f2/snippets/cpp.snippets",
+        "git_blob": "c3e19fe9370f0d0f80f89a5334719d4664225b59"
+      },
+      "evidence_class": "snipmate-exact",
+      "additional_components": [
+        "ace-snipmate-snippets"
+      ],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open."
+    },
+    {
+      "snippet": "cedar",
+      "distribution": "retained",
+      "asset_sha256": "2acdc876063b478337e6ac521dc58c520255ec642219fb876551d1d0b0f587c2",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/cedar.snippets.js",
+        "git_blob": "ca5eb44499acbf392db9df314818a607db4c2878"
+      },
+      "historical_reference": {
+        "first_contribution": "c5c19dc4c0c87b0f1e727def6b69f00943c1f5a3",
+        "url": "https://github.com/ajaxorg/ace/blob/c5c19dc4c0c87b0f1e727def6b69f00943c1f5a3/src/snippets/cedar.snippets.js",
+        "git_blob": "ca5eb44499acbf392db9df314818a607db4c2878"
+      },
+      "evidence_class": "historical-endpoint-review-open",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "PR #5944 policy scaffolds; no named snippets in examined vscode-cedar tree. Individual contribution/source rights open."
+    },
+    {
+      "snippet": "cedarschema",
+      "distribution": "retained",
+      "asset_sha256": "f0aaef8bb458d819e5a61c7aa23b41a01a54538df2c201694b95dd9f99eba6f9",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/cedarschema.snippets.js",
+        "git_blob": "ba70be9b386bf7bbac399e3ac3a1eca84cc1b5c9"
+      },
+      "historical_reference": {
+        "first_contribution": "c5c19dc4c0c87b0f1e727def6b69f00943c1f5a3",
+        "url": "https://github.com/ajaxorg/ace/blob/c5c19dc4c0c87b0f1e727def6b69f00943c1f5a3/src/snippets/cedarschema.snippets.js",
+        "git_blob": "ba70be9b386bf7bbac399e3ac3a1eca84cc1b5c9"
+      },
+      "evidence_class": "historical-endpoint-review-open",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "PR #5944 schema scaffolds; cited vscode-cedar TextMate grammar is not snippet provenance. Individual contribution/source rights open."
+    },
+    {
+      "snippet": "cirru",
+      "distribution": "retained",
+      "asset_sha256": "dc0de753d149f3ef87d54a6bfb3640e8cb7ba4254a79a228d4aa354c0b790190",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "clojure",
+      "distribution": "retained",
+      "asset_sha256": "a2c79282ee46726f64d0102a11a56be797b322dcf91fc335fb9896b00ff5ac9e",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/clojure.snippets.js",
+        "git_blob": "94ad67acbb52e0a52bdc73cb28f289cfd866e363"
+      },
+      "historical_reference": {
+        "first_contribution": "d16daddc5ea91e578fafde6c9c17b41cdb036579",
+        "url": "https://github.com/honza/vim-snippets/blob/02593f7d57b4944bd857e0aeacfcd5410c0e81f2/snippets/clojure.snippets",
+        "git_blob": "e247debf68403a3adbb7258033123ac04363c278"
+      },
+      "evidence_class": "snipmate-exact",
+      "additional_components": [
+        "ace-snipmate-snippets"
+      ],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open."
+    },
+    {
+      "snippet": "clue",
+      "distribution": "retained",
+      "asset_sha256": "e4631b1fdaf32cb78fdf17a556d4e58d32feaeff8d9f99e9fb9817b40cd6de62",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "cobol",
+      "distribution": "retained",
+      "asset_sha256": "46146ad7ae36bf2357633090152dfdb63f4210c63ccc49b6d619b3ab424c072e",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "coffee",
+      "distribution": "retained",
+      "asset_sha256": "07a9a77821c7a50d467aa4fae6e4fb9322ee7765350d08eac20e5a5ba5a8fe98",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/coffee.snippets.js",
+        "git_blob": "bae3b1f30e39ba19b24fa8d0572fa9a12d481bad"
+      },
+      "historical_reference": {
+        "first_contribution": "d16daddc5ea91e578fafde6c9c17b41cdb036579",
+        "url": "https://github.com/honza/vim-snippets/blob/02593f7d57b4944bd857e0aeacfcd5410c0e81f2/snippets/coffee.snippets",
+        "git_blob": "83b77ebab2e56351e9d5581f741a21734aaed3ec"
+      },
+      "evidence_class": "snipmate-exact",
+      "additional_components": [
+        "ace-snipmate-snippets"
+      ],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open."
+    },
+    {
+      "snippet": "coldfusion",
+      "distribution": "retained",
+      "asset_sha256": "9a37187fab5a4b118d10456e639735e9f65754fefcc4122986995f09b4ab974c",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "crystal",
+      "distribution": "retained",
+      "asset_sha256": "a6102e4706ca0d4a7177ed8e7761f24d452f21b4b2ca235b154d11332c466209",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "csharp",
+      "distribution": "retained",
+      "asset_sha256": "b308f434a40a7534eb9b434582ffd6a433d5f9cda1b1a9e201e172f05a95c08f",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "csound_document",
+      "distribution": "retained",
+      "asset_sha256": "c53c63a0ed7815efa87b3a90f7e9bbd8d326187e35904accb6bb357ed053b3e5",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/csound_document.snippets.js",
+        "git_blob": "ba8c191728befe34749e3f6c9a137f67387d9eab"
+      },
+      "historical_reference": {
+        "first_contribution": "c583c816f44fbc1f24e79977e21fe722b4f1d7df",
+        "url": "https://github.com/ajaxorg/ace/blob/c583c816f44fbc1f24e79977e21fe722b4f1d7df/lib/ace/snippets/csound_document.snippets",
+        "git_blob": "5f6ef467d2a1bbe365e93fb2420c9645fa4b9f7c"
+      },
+      "evidence_class": "historical-endpoint-review-open",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "One XML scaffold; mode Pygments/Csound references do not establish snippet provenance. Original contribution review."
+    },
+    {
+      "snippet": "csound_orchestra",
+      "distribution": "retained",
+      "asset_sha256": "77b3b802be45d61d73c744a2a6661d599356a3609053425d41c4077a62cfbd57",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/csound_orchestra.snippets.js",
+        "git_blob": "569378661e1221e3372c5f70ab5f402ec67d9ea1"
+      },
+      "historical_reference": {
+        "first_contribution": "c583c816f44fbc1f24e79977e21fe722b4f1d7df",
+        "url": "https://github.com/ajaxorg/ace/blob/c583c816f44fbc1f24e79977e21fe722b4f1d7df/lib/ace/snippets/csound_orchestra.snippets",
+        "git_blob": "a73bcc1bebab3e21af09417a4882d895be9ba239"
+      },
+      "evidence_class": "historical-endpoint-review-open",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Nine language scaffolds; mode references do not establish snippet provenance. Original contribution review."
+    },
+    {
+      "snippet": "csound_score",
+      "distribution": "retained",
+      "asset_sha256": "8544e239a3138173c147d8238de5d4824bb0dabf3484f91b00b6702d5816f948",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "csp",
+      "distribution": "retained",
+      "asset_sha256": "fd9330e84435ec01c76e360a52b7a5c2c242b7fe50b6d3d1e552aae2222d0938",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "css",
+      "distribution": "retained",
+      "asset_sha256": "d51fbeffd9458214ca960ba16c34eadd21526fdff226adb27f1a1412377ce55f",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/css.snippets.js",
+        "git_blob": "773b7d5bcb873f30a3a5c13cf6fdfe49c14ae7d5"
+      },
+      "historical_reference": {
+        "first_contribution": "d16daddc5ea91e578fafde6c9c17b41cdb036579",
+        "url": "https://github.com/honza/vim-snippets/blob/02593f7d57b4944bd857e0aeacfcd5410c0e81f2/snippets/css.snippets",
+        "git_blob": "72212d2d8dde088fda8e6ec2f75373e9cba11259"
+      },
+      "evidence_class": "snipmate-exact",
+      "additional_components": [
+        "ace-snipmate-snippets"
+      ],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open."
+    },
+    {
+      "snippet": "csv",
+      "distribution": "retained",
+      "asset_sha256": "6b19404ae46107100ad89f83bfc1a910035f724fee20d05e3627d2ea55e5b019",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "curly",
+      "distribution": "retained",
+      "asset_sha256": "9a211a8d88d2781100fc0144220124bd2e6fd9b2d5101538aaa8075eddc1b64b",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "cuttlefish",
+      "distribution": "retained",
+      "asset_sha256": "4782bdcb47f0745b00312286297ade1e9a685d32d5947910637356db19475297",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "d",
+      "distribution": "retained",
+      "asset_sha256": "41a1fe60aa9034e967d4401d778b9f37a417e461ad55d4047daa503a773d3a0d",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "dart",
+      "distribution": "retained",
+      "asset_sha256": "73bca15f017354c36bd680db87195774e5aa6d57c14a1b361bbb24d626081076",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/dart.snippets.js",
+        "git_blob": "fa6a8452fcd7faec4f7aa1a70d0a93fc47059f55"
+      },
+      "historical_reference": {
+        "first_contribution": "d16daddc5ea91e578fafde6c9c17b41cdb036579",
+        "url": "https://github.com/ajaxorg/ace/blob/93673bbe8b0a1e90a773aa3dd94fe8fa112f7af5/lib/ace/snippets/dart.snippets",
+        "git_blob": "14a1c3e5939d691de25aa390ff7f17c4e5b42a70"
+      },
+      "evidence_class": "snipmate-modified",
+      "additional_components": [
+        "ace-snipmate-snippets"
+      ],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Historical SnipMate MIT and AUTHORS retained; reconstructed Ace delta and later contribution/external rights review remain open."
+    },
+    {
+      "snippet": "diff",
+      "distribution": "retained",
+      "asset_sha256": "6fd6f381acaf1dd8457d800e28e817d8f4a4c4c8f6ce43812135ded089239067",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/diff.snippets.js",
+        "git_blob": "ed377fe0effec9f945d3ab406b4e0e35ef3f6af3"
+      },
+      "historical_reference": {
+        "first_contribution": "d16daddc5ea91e578fafde6c9c17b41cdb036579",
+        "url": "https://github.com/honza/vim-snippets/blob/02593f7d57b4944bd857e0aeacfcd5410c0e81f2/snippets/diff.snippets",
+        "git_blob": "7ba288ded0c8e8aefb16d73560ec7da102c7486b"
+      },
+      "evidence_class": "snipmate-exact",
+      "additional_components": [
+        "ace-snipmate-snippets"
+      ],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open."
+    },
+    {
+      "snippet": "django",
+      "distribution": "retained",
+      "asset_sha256": "9e7273e206d513c7a7686dac1fca0a5a019c49171af187d6ee8e4ea186eed890",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/django.snippets.js",
+        "git_blob": "a8ddfe0fdee63b598b46829eb6034b971ceceb8d"
+      },
+      "historical_reference": {
+        "first_contribution": "d16daddc5ea91e578fafde6c9c17b41cdb036579",
+        "url": "https://github.com/honza/vim-snippets/blob/02593f7d57b4944bd857e0aeacfcd5410c0e81f2/snippets/django.snippets",
+        "git_blob": "8296cce25dfd071313a1b5bd8a76d7293be867b8"
+      },
+      "evidence_class": "snipmate-exact",
+      "additional_components": [
+        "ace-snipmate-snippets"
+      ],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open."
+    },
+    {
+      "snippet": "dockerfile",
+      "distribution": "retained",
+      "asset_sha256": "6ddf90ad30aa5127136441394703aa0b213a60e94657c5e70fa282cc60efed0f",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "dot",
+      "distribution": "retained",
+      "asset_sha256": "bf2df16544bec0b2b77563ecc6502942b7df56b9ed455dfc5bfe4965ec94a6a9",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "drools",
+      "distribution": "retained",
+      "asset_sha256": "6f854346cbd04321c5a56fb13aee1bc3a977cf4c3d918e5f4d9bd60acdfcbae8",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/drools.snippets.js",
+        "git_blob": "a4fe36f71d5850ffb061dcab8c4dab3097d457bf"
+      },
+      "historical_reference": {
+        "first_contribution": "68f9b22df35451a9cdda62144cae825fe42e8ecf",
+        "url": "https://github.com/ajaxorg/ace/blob/68f9b22df35451a9cdda62144cae825fe42e8ecf/lib/ace/snippets/drools.snippets",
+        "git_blob": "3687bec18dadd5d26b76a927e94ff618aa6769fe"
+      },
+      "evidence_class": "historical-endpoint-review-open",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Three rule/query/declare scaffolds; mode BSD header and drools.org reference do not establish separate snippet rights."
+    },
+    {
+      "snippet": "edifact",
+      "distribution": "retained",
+      "asset_sha256": "821b92e84f6ed74aab9d7ec36f213709341b899f3f3f9f6868366316900a9cc4",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/edifact.snippets.js",
+        "git_blob": "afe85e064b4594d344b7b101d82cefc42460565f"
+      },
+      "historical_reference": {
+        "first_contribution": "f884c8fd6394d60311782c50e6d233dbc6da4ecc",
+        "url": "https://github.com/ajaxorg/ace/blob/f884c8fd6394d60311782c50e6d233dbc6da4ecc/lib/ace/snippets/edifact.snippets",
+        "git_blob": "624b87ad3d9e135050ba3415237fff3e38241bbc"
+      },
+      "evidence_class": "snipmate-derived",
+      "additional_components": [
+        "ace-snipmate-snippets"
+      ],
+      "review_priority": "elevated",
+      "proposed_disposition": "consider-snippet-only-exclusion",
+      "remaining_review": "Exact Java raw with two trigger substitutions; historical MIT material retained, but mostly Java templates. Review usefulness and approve or reject snippet-only exclusion."
+    },
+    {
+      "snippet": "eiffel",
+      "distribution": "retained",
+      "asset_sha256": "a5b85d26b003eee05646732d5aa1d425a53ae69de6f949d1df370a6b04475970",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "ejs",
+      "distribution": "retained",
+      "asset_sha256": "4364c58f22b339e8165ab45b7eaf4df19f4d40eebe4bf0a74ae30c8d7ee67407",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "elixir",
+      "distribution": "retained",
+      "asset_sha256": "4209dbe198095881f1ba7fa6f8375ee6a33a79a939898d38e5c84269aaeba99d",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "elm",
+      "distribution": "retained",
+      "asset_sha256": "c4305d36e02e0db2dd6d26b04784f279f276e1b26bb89e73aac99966b0a892f8",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "erlang",
+      "distribution": "retained",
+      "asset_sha256": "8c2e60f1e9f04362f40bffe3463fd57125a9d9e6f51299d19faeed1858d4e0f8",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/erlang.snippets.js",
+        "git_blob": "a42e85530b6763cf0703125dcdecb024fac32a1a"
+      },
+      "historical_reference": {
+        "first_contribution": "d16daddc5ea91e578fafde6c9c17b41cdb036579",
+        "url": "https://github.com/honza/vim-snippets/blob/02593f7d57b4944bd857e0aeacfcd5410c0e81f2/snippets/erlang.snippets",
+        "git_blob": "acc6fd195eebf7ab6d99fe3ff7a23bfeb461e4b0"
+      },
+      "evidence_class": "snipmate-exact",
+      "additional_components": [
+        "ace-snipmate-snippets"
+      ],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open."
+    },
+    {
+      "snippet": "flix",
+      "distribution": "retained",
+      "asset_sha256": "ead6cb48c0f2b33bd86311884cb5d1eaea9703c8296a80b38ddfeb64a828396f",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "forth",
+      "distribution": "retained",
+      "asset_sha256": "73e7dccd35e0123939d97b363b3a63815dff73514930536fac9d86e9dd9edd73",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "fortran",
+      "distribution": "retained",
+      "asset_sha256": "1850808b21e84bf17931b1f06ec871a4403cce9a0f81b2271a6ec6e8d6dbd0d6",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "fsharp",
+      "distribution": "retained",
+      "asset_sha256": "3a081c5912f7be8da83e556652e267019f80cb3318e021effefd8c61ddddef69",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "fsl",
+      "distribution": "retained",
+      "asset_sha256": "707a497d5351ddc67d4279f8a5eb0482367ca0927719cc22bb9ddb721c3b6a11",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/fsl.snippets.js",
+        "git_blob": "099f8e1004b4c55ffbef1c9a2c47675aec6841b1"
+      },
+      "historical_reference": {
+        "first_contribution": "5c8d7513beb4f1230e24768e7b9336debb6e97b1",
+        "url": "https://github.com/ajaxorg/ace/blob/5c8d7513beb4f1230e24768e7b9336debb6e97b1/lib/ace/snippets/fsl.snippets",
+        "git_blob": "2158da5c9123c0a1db058d47aaa9d2c8647901dd"
+      },
+      "evidence_class": "historical-endpoint-review-open",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Same-author JSSM MIT examples share metadata conventions, not exact header. machine_license is template content, not a grant."
+    },
+    {
+      "snippet": "ftl",
+      "distribution": "retained",
+      "asset_sha256": "32a596fb9c9133006676032e0610a2ca21e14149fc86434714470af68f12a8ca",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "gcode",
+      "distribution": "retained",
+      "asset_sha256": "50c878fec73175928926e68786cd57888b34324bd21eae81b916068cf33a30ba",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "gdresource",
+      "distribution": "retained",
+      "asset_sha256": "3ef797c74aba7bca42e0fc2278ce6927318c5cd864545967827ad521699ccb39",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "gdscript",
+      "distribution": "retained",
+      "asset_sha256": "7e0d93a502e2bfd99402b0c42314c97e08ff2a7b00f4805defb4e947f9ea462a",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "gdshader",
+      "distribution": "retained",
+      "asset_sha256": "7f301003051b470045a34a94997f286812f99a371a81f2b1f35d9ea31c0842af",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "gherkin",
+      "distribution": "retained",
+      "asset_sha256": "a07cfe0effd939d3210f220b9d8826a0f79d9ef0b50f9f8171e03685a5190598",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "gitignore",
+      "distribution": "retained",
+      "asset_sha256": "2bbdf7c13470dcc5d5ac22fdd7c4527a76434c721cab204fa8ede63f4c7ca4ce",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "glsl",
+      "distribution": "retained",
+      "asset_sha256": "89a47127aa29f8d1ef2bcfaae0151cf55b736c8d57dbb3491bd37815a861fad0",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "gobstones",
+      "distribution": "retained",
+      "asset_sha256": "6833d7d676e0be87104802b6cdcc5a60684a5b12bbfd2d90962c277a684a64bb",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/gobstones.snippets.js",
+        "git_blob": "4bf2fa6b6ce71bc6ad4e0215984426ccd5f8798d"
+      },
+      "historical_reference": {
+        "first_contribution": "92b97ba82bc924aa6861801d17567c083bdc8f45",
+        "url": "https://github.com/ajaxorg/ace/blob/e740aa81444974866c28f4722ebd5feb7008fa5c/lib/ace/snippets/gobstones.snippets",
+        "git_blob": "c50e8d5b6fdb73bb4e97fa34853d25b720b080db"
+      },
+      "evidence_class": "historical-endpoint-review-open",
+      "additional_components": [],
+      "review_priority": "elevated",
+      "proposed_disposition": "consider-snippet-only-exclusion",
+      "remaining_review": "Expanded 479-trigger collection not established in examined pre-import Gobstones-web GPL v3 sources. Seek source-specific grant or approve snippet-only exclusion."
+    },
+    {
+      "snippet": "golang",
+      "distribution": "retained",
+      "asset_sha256": "155e7adddb57ab4f9007b9a5cfbf0816605dceccd41c0334184ab3f36873a32c",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "graphqlschema",
+      "distribution": "retained",
+      "asset_sha256": "ee7e6e5cb56e4a17edf30655a5f53d0c442870aa2f7c49f8c60b537158ce7a42",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/graphqlschema.snippets.js",
+        "git_blob": "5fa4ce4f53dd90c0cd4c9f01cacc45cca1e91739"
+      },
+      "historical_reference": {
+        "first_contribution": "f5a98d4f87751e77eb0ac27bcfdd6dae2bf985b6",
+        "url": "https://github.com/ajaxorg/ace/blob/4cfeb90e96b0fedb5e5b345b33e6f92830685dd5/lib/ace/snippets/graphqlschema.snippets",
+        "git_blob": "32c6286c42d1b728bbd50840b177d8d9d7e73030"
+      },
+      "evidence_class": "historical-endpoint-review-open",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Five scaffolds; historical rename preserves raw blob. Original contribution and external input review."
+    },
+    {
+      "snippet": "groovy",
+      "distribution": "retained",
+      "asset_sha256": "aad6daf379bbab898cd626f9af11adb09b492e2db68c1fd8bc21c5289ee3d9e7",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "groq",
+      "distribution": "retained",
+      "asset_sha256": "df5f509e8c074b308eec84f5f1cccb9039c24d5308a14043aad07a931a1f9d16",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "haml",
+      "distribution": "retained",
+      "asset_sha256": "23af532f6cc24a07278f9d3d93f8f91ed514f5c630a8a5f60f19c1af3757f4ef",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/haml.snippets.js",
+        "git_blob": "53dcc1e812e53bbb6bee3fee4fa88876f75c5787"
+      },
+      "historical_reference": {
+        "first_contribution": "d16daddc5ea91e578fafde6c9c17b41cdb036579",
+        "url": "https://github.com/honza/vim-snippets/blob/02593f7d57b4944bd857e0aeacfcd5410c0e81f2/snippets/haml.snippets",
+        "git_blob": "61e9cf28779936f1acb9acdd0dabae6d07ce6042"
+      },
+      "evidence_class": "snipmate-exact",
+      "additional_components": [
+        "ace-snipmate-snippets"
+      ],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open."
+    },
+    {
+      "snippet": "handlebars",
+      "distribution": "retained",
+      "asset_sha256": "438717f7cc56f3f8a9c7d017c08995e433c1696e952e8acf4ea935d34f512be1",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "haskell",
+      "distribution": "retained",
+      "asset_sha256": "21919c52638e3628811088017fc3379b35a246145fa0e543de754f6c5fd7abf5",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/haskell.snippets.js",
+        "git_blob": "4816ad347223dfaad96d1144d973219ec2d043f6"
+      },
+      "historical_reference": {
+        "first_contribution": "d16daddc5ea91e578fafde6c9c17b41cdb036579",
+        "url": "https://github.com/honza/vim-snippets/blob/02593f7d57b4944bd857e0aeacfcd5410c0e81f2/snippets/haskell.snippets",
+        "git_blob": "bcda8a5b4974c2de4037ddb18ad05ef04a5340a0"
+      },
+      "evidence_class": "snipmate-exact",
+      "additional_components": [
+        "ace-snipmate-snippets"
+      ],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open."
+    },
+    {
+      "snippet": "haskell_cabal",
+      "distribution": "retained",
+      "asset_sha256": "64dca4b49faa58c1981b1241e3217a6f2c9cd052af227580200141881270f692",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "haxe",
+      "distribution": "retained",
+      "asset_sha256": "618bbb635c28040ede7c613e0240fd36f1255b225d5a665e0102e86e69d6d34b",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "hjson",
+      "distribution": "retained",
+      "asset_sha256": "6684d72b4b0e9a9b5ee99a6793579fffbcf68b981bfb7ee8c6c6bd37c226f243",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "html",
+      "distribution": "retained",
+      "asset_sha256": "159b7192459d73d92761dab8c4d48e138e94e4d8e7bf99004bac257e403a0c3b",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/html.snippets.js",
+        "git_blob": "8fd5affd801799b79f14f645c7ddd3c95dc1a1da"
+      },
+      "historical_reference": {
+        "first_contribution": "d16daddc5ea91e578fafde6c9c17b41cdb036579",
+        "url": "https://github.com/ajaxorg/ace/blob/96850288dca9b632aaa79b4f9bdf1305ae5d9694/lib/ace/snippets/html.snippets",
+        "git_blob": "5f0e46b476083398e70a53e7d9630383bfb4fe99"
+      },
+      "evidence_class": "snipmate-modified",
+      "additional_components": [
+        "ace-snipmate-snippets"
+      ],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Historical SnipMate MIT and AUTHORS retained; reconstructed Ace delta and later contribution/external rights review remain open."
+    },
+    {
+      "snippet": "html_elixir",
+      "distribution": "retained",
+      "asset_sha256": "b0273c2243dec5bf271a11384f86e1b0ae1605ce2ccf8aab1cf7ffeade13b9a3",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "html_ruby",
+      "distribution": "retained",
+      "asset_sha256": "131f656f1e40ec94b943e26c031bfaea425dfa9dece7c87396d86ee3c082eebb",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "ini",
+      "distribution": "retained",
+      "asset_sha256": "38db67b92bdc11915bc18fbf99b1ef97b881a4438c1a26dd9c3bafbdc7c89bce",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "io",
+      "distribution": "retained",
+      "asset_sha256": "6cd60ab95eb1e51c171a1d3a806a9efbc845b3a57ac6a314aafbfbef646e42c6",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/io.js",
+        "git_blob": "500eb8b25ca88e35a0dc4ce97011c577a72ed057"
+      },
+      "historical_reference": {
+        "first_contribution": "09ddbeb3417d668cdb47a46225d3f46a68f42d80",
+        "url": "https://github.com/ajaxorg/ace/blob/f2f6bd7ebe91fed147bc8f13b7e70b48300b0c2b/lib/ace/snippets/io.js",
+        "git_blob": "500eb8b25ca88e35a0dc4ce97011c577a72ed057"
+      },
+      "evidence_class": "textmate-exact",
+      "additional_components": [
+        "ace-textmate-io-snippets"
+      ],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "All 10 original TextMate plist entries exactly mapped; original bundle permission retained. Review exceptions and source-specific scope, not other Io grammar."
+    },
+    {
+      "snippet": "ion",
+      "distribution": "retained",
+      "asset_sha256": "d519d7e45919d86ad7102e4b13951cab4a0fa3d3d67ee0c8b2a5fbece4e66890",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "jack",
+      "distribution": "retained",
+      "asset_sha256": "a81fbf0257299275067d103750124a7ada6433d260fad0ef388a3606af8716f3",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "jade",
+      "distribution": "retained",
+      "asset_sha256": "3f084c445aa57b18b4da2f193e1da5a2492bf2cc58d37e31cc867e716903ece6",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "java",
+      "distribution": "retained",
+      "asset_sha256": "0c0945785dbdf89eafe4c9133e387fcab2b8b4d1b370eb6316eae5b4d0623605",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/java.snippets.js",
+        "git_blob": "3bec07b58d5aec26436d4e4a5ddf0e3597ed830f"
+      },
+      "historical_reference": {
+        "first_contribution": "d16daddc5ea91e578fafde6c9c17b41cdb036579",
+        "url": "https://github.com/honza/vim-snippets/blob/02593f7d57b4944bd857e0aeacfcd5410c0e81f2/snippets/java.snippets",
+        "git_blob": "854f14ac22f148309d4f9ec450fda38244ede6ec"
+      },
+      "evidence_class": "snipmate-exact",
+      "additional_components": [
+        "ace-snipmate-snippets"
+      ],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open."
+    },
+    {
+      "snippet": "javascript",
+      "distribution": "retained",
+      "asset_sha256": "6287a6b820c8707a0cd7b9e4545bcb023a8b9228569cfd21be6635d1409aabf4",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/javascript.snippets.js",
+        "git_blob": "6e4d29a4dbab301680f762d7bd0838059ebe0d55"
+      },
+      "historical_reference": {
+        "first_contribution": "d16daddc5ea91e578fafde6c9c17b41cdb036579",
+        "url": "https://github.com/ajaxorg/ace/blob/2d0b980c65966e45260ba341e176b9cde0c57399/lib/ace/snippets/javascript.snippets",
+        "git_blob": "83b15aab6f41fdf08692dd8e9167a5b95fc266c5"
+      },
+      "evidence_class": "snipmate-modified",
+      "additional_components": [
+        "ace-snipmate-snippets"
+      ],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Historical SnipMate MIT and AUTHORS retained; reconstructed Ace delta and later contribution/external rights review remain open."
+    },
+    {
+      "snippet": "jexl",
+      "distribution": "retained",
+      "asset_sha256": "476fb4962c5546585cd662d687b2e8eaccf41369a7c689b875416e5b7e963534",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "json",
+      "distribution": "retained",
+      "asset_sha256": "238a0bd54eb1b4c1a0801bdedd2ea4eb0c28b6987bf4311b9eccaaba3bd776d1",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "json5",
+      "distribution": "retained",
+      "asset_sha256": "14b374d748fccbc6c6210b257c74d53b5f1ed62ed8be0e04b7b69b8958cd259a",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "jsoniq",
+      "distribution": "retained",
+      "asset_sha256": "9b60dfaf46f84262d3e4865157cd0a150b347139359552518cf8b38109a10d11",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "lib/ace/snippets/jsoniq.snippets.js",
+        "git_blob": "c0ba6047ab9b247931c5eb9bf3c09e5052effbfe"
+      },
+      "historical_reference": {
+        "first_contribution": "f6faeb3547d66cfc095ec2f9ca3a39454208de52",
+        "url": "https://github.com/ajaxorg/ace/blob/431facf08b397bf6517893efccf17d2cdb32d12e/lib/ace/snippets/jsoniq.snippets",
+        "git_blob": "965034b7e9dc611fa959c2dba04bdc8f55d74c36"
+      },
+      "evidence_class": "historical-endpoint-review-open",
+      "additional_components": [],
+      "review_priority": "elevated",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Identical raw to XQuery; legacy static module, source rights open. XQLint Apache and REx grant do not cover snippets."
+    },
+    {
+      "snippet": "jsp",
+      "distribution": "retained",
+      "asset_sha256": "be61258b8fffa71aa1b62d87e335a7a3e408088ac5d3577a898d34cf967cf105",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/jsp.snippets.js",
+        "git_blob": "deeb529b6b7d7287c58e050bbb14dec076ee94d2"
+      },
+      "historical_reference": {
+        "first_contribution": "d16daddc5ea91e578fafde6c9c17b41cdb036579",
+        "url": "https://github.com/honza/vim-snippets/blob/02593f7d57b4944bd857e0aeacfcd5410c0e81f2/snippets/jsp.snippets",
+        "git_blob": "a5239f5eb13c3bd7fa0c7b6b9c4873ab6a539399"
+      },
+      "evidence_class": "snipmate-exact",
+      "additional_components": [
+        "ace-snipmate-snippets"
+      ],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open."
+    },
+    {
+      "snippet": "jssm",
+      "distribution": "retained",
+      "asset_sha256": "b596fefa983043602832d35105d95abb39bdb6ac69732eed6b54145e49031506",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "jsx",
+      "distribution": "retained",
+      "asset_sha256": "a3c0bd1bd26865981e40565d1b4180a778ac6f56a0264b9c46f3be0221d2005b",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "julia",
+      "distribution": "retained",
+      "asset_sha256": "9a09cb18a44cfd1dd8421dc2c90ddc8de2ac7b5c5f2ea53b98294918a46002b8",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "kotlin",
+      "distribution": "retained",
+      "asset_sha256": "44fbaddee7fe97c6260f2f0a550846e3f89cbc0329d76dcbbb4418aa70911e9b",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "latex",
+      "distribution": "retained",
+      "asset_sha256": "bcd4ceddf13fc24946555b950ec1452283a66231ec3640f4960eee2512a8f3a8",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "latte",
+      "distribution": "retained",
+      "asset_sha256": "67729662e3c0ee988a9604a2d0db71cd4e491f6c9f1f0a42580b2143a89948d1",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "less",
+      "distribution": "retained",
+      "asset_sha256": "d7c09d39f8df08ca90dd9ce34ff7bd274fa43ff285ad58cf93f89d681c954a0e",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "liquid",
+      "distribution": "retained",
+      "asset_sha256": "4e02095b15b6d66d44358ce7a66d37faaa939c10b2bd4e95b04656c05d57c950",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/liquid.snippets.js",
+        "git_blob": "7c72fe03a9fce8c65f6b486d83fbc88f618a97b5"
+      },
+      "historical_reference": {
+        "first_contribution": "58fcde32061df7d7f6ef38a6bfcf306b0f800f92",
+        "url": "https://github.com/ajaxorg/ace/blob/58fcde32061df7d7f6ef38a6bfcf306b0f800f92/lib/ace/snippets/liquid.snippets",
+        "git_blob": "b3e3c982cfa70d04544b74652bbe85e702f5ebf2"
+      },
+      "evidence_class": "snipmate-derived",
+      "additional_components": [
+        "ace-snipmate-snippets"
+      ],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Exact historical HTML plus fixed 26-line prefix. MIT covers historical SnipMate material only; prefix/HTML changes and individual contributions open."
+    },
+    {
+      "snippet": "lisp",
+      "distribution": "retained",
+      "asset_sha256": "aa6be0a7a8cf7b1092a3bae4907abb0670d1530376c4f0b45cb8cbb5026dc183",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "livescript",
+      "distribution": "retained",
+      "asset_sha256": "857fc1bedb68e62693ab38c0646e073990eecef6f8329f99f4c1745405c0d931",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "logiql",
+      "distribution": "retained",
+      "asset_sha256": "f967d6a413ea7d53e8483b2e55a73473e053dc1f76e9567ccb817c3dc46a974c",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "logtalk",
+      "distribution": "retained",
+      "asset_sha256": "5a7931e9da330d4e59b8416aca0496f8f3eefb38c2ddc4ed768f63c7324179d8",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "lsl",
+      "distribution": "retained",
+      "asset_sha256": "c06a485f3b674de952d5ee003a4333a4eee6fd64b0499460cae4a840d990902e",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/lsl.snippets.js",
+        "git_blob": "7e33bdc2855b5f7e3ff0cb5d4f5f546dc809ccf5"
+      },
+      "historical_reference": {
+        "first_contribution": "78ca93fb16eee011b3b4eca3cc74b0e6a26b0111",
+        "url": "https://github.com/ajaxorg/ace/blob/fb0384329602f0ea99aa1fd983f094f7b0c31797/lib/ace/snippets/lsl.snippets",
+        "git_blob": "352d26e7b4ed7389ddefb8365b4e2d985e63d037"
+      },
+      "evidence_class": "exact-source-license-open",
+      "additional_components": [
+        "ace-lsl-snippet-source-review"
+      ],
+      "review_priority": "elevated",
+      "proposed_disposition": "consider-snippet-only-exclusion",
+      "remaining_review": "Two exact Builders Brewery common-source snapshots; no root/Ace grant established. KWDB GPL and viewer LGPL scope/derivation open. Seek grant or approve snippet-only exclusion."
+    },
+    {
+      "snippet": "lua",
+      "distribution": "retained",
+      "asset_sha256": "1b004acd45edcd4e5f9f31de681c5c44009c2ef7866a4be25e49068d2ba47374",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/lua.snippets.js",
+        "git_blob": "92a188db337d7a01d404eb456286a89c3c00664f"
+      },
+      "historical_reference": {
+        "first_contribution": "d16daddc5ea91e578fafde6c9c17b41cdb036579",
+        "url": "https://github.com/honza/vim-snippets/blob/02593f7d57b4944bd857e0aeacfcd5410c0e81f2/snippets/lua.snippets",
+        "git_blob": "34ae25eb6ae64b914b8ce0b3bce3c82c08d65ef2"
+      },
+      "evidence_class": "snipmate-exact",
+      "additional_components": [
+        "ace-snipmate-snippets"
+      ],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open."
+    },
+    {
+      "snippet": "luapage",
+      "distribution": "retained",
+      "asset_sha256": "5d647de7e3214c0d31ee210be1465da6ecfa94b500ce595c52e826d65de37960",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "lucene",
+      "distribution": "retained",
+      "asset_sha256": "44fcc5c37e456cf1ad44e33f0ef71edf034c3ad19d3b8ec34f0ccbd88c418cf7",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "makefile",
+      "distribution": "retained",
+      "asset_sha256": "14b2d0867d47a41b1ec27d30a5fcd42d7d0cdd64c3ff0f7b7888c79a0641027e",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/makefile.snippets.js",
+        "git_blob": "a7c9cfeb7843eba2cfce8f573506facd8aa98aab"
+      },
+      "historical_reference": {
+        "first_contribution": "d16daddc5ea91e578fafde6c9c17b41cdb036579",
+        "url": "https://github.com/honza/vim-snippets/blob/02593f7d57b4944bd857e0aeacfcd5410c0e81f2/snippets/make.snippets",
+        "git_blob": "43648136382429fc97d61964c9dceaf63fd7d1ea"
+      },
+      "evidence_class": "snipmate-exact",
+      "additional_components": [
+        "ace-snipmate-snippets"
+      ],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open."
+    },
+    {
+      "snippet": "mariadb",
+      "distribution": "retained",
+      "asset_sha256": "4f27d71de0a6b1ed180cec166c5096b8a34e38a5719b369d1dc9758a5002eadb",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "markdown",
+      "distribution": "retained",
+      "asset_sha256": "3998076cc9d52343643675072f9357b084cf3976d5529d071250419d54f0ffa8",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/markdown.snippets.js",
+        "git_blob": "26ad61345a037c5197d28ef1798a252f585ae149"
+      },
+      "historical_reference": {
+        "first_contribution": "d16daddc5ea91e578fafde6c9c17b41cdb036579",
+        "url": "https://github.com/ajaxorg/ace/blob/3c6cd4d16f89de0531d7e8f06c5e791839ab9eb6/lib/ace/snippets/markdown.snippets",
+        "git_blob": "a5110fc9a3d79f0aa98796237773393e4a836e97"
+      },
+      "evidence_class": "snipmate-modified",
+      "additional_components": [
+        "ace-snipmate-snippets"
+      ],
+      "review_priority": "elevated",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Exact historical endpoint after reconstructed delta; MIT original material only. Octopress input and separate contribution rights open."
+    },
+    {
+      "snippet": "mask",
+      "distribution": "retained",
+      "asset_sha256": "b21bd78c0180f02d23f3a298f2cef8ba6f7009c982467fba9e1dd3f7a028d5f9",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "matlab",
+      "distribution": "retained",
+      "asset_sha256": "2122561911f2854a911ef1f14fb6461af1600bd23a7ca62f5999899ce0f6eb58",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "maze",
+      "distribution": "retained",
+      "asset_sha256": "648223d356b330d54fd98b6e6a404188a333ac730666171ec613f889ef360917",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/maze.snippets.js",
+        "git_blob": "beb0a00d4bf6e60605b658140f4089d64f7fc216"
+      },
+      "historical_reference": {
+        "first_contribution": "5de512c1d37efadb1d16c965ba931ecd58abca9b",
+        "url": "https://github.com/ajaxorg/ace/blob/5de512c1d37efadb1d16c965ba931ecd58abca9b/lib/ace/snippets/maze.snippets",
+        "git_blob": "76e52884b2bc3a52553d0b2fcb80680651798515"
+      },
+      "evidence_class": "historical-endpoint-review-open",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Two entries with duplicate trigger and distinct descriptions. Preserve both; original contribution review."
+    },
+    {
+      "snippet": "mediawiki",
+      "distribution": "retained",
+      "asset_sha256": "0d916e8da33210f3a971cfd342581be135ccc477546d6f439c16db9e8125967f",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "mel",
+      "distribution": "retained",
+      "asset_sha256": "68200dfd8fd34a0b98d327fe833b401015ac746cd912513d4ba8b145893a9ee8",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "mips",
+      "distribution": "retained",
+      "asset_sha256": "7bd12a84cd734beeb3cd771160d5e7c33b61e9a1e37b5f8396e1532598065c57",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "mixal",
+      "distribution": "retained",
+      "asset_sha256": "44aa304b1c3214def79a69978dd6caaed37e481fd0d604f6cf761b406f172a77",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "mushcode",
+      "distribution": "retained",
+      "asset_sha256": "994edce57e28d5bfdff9ee07f8be8ed99245b76053f903614741fbe42223bc92",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "mysql",
+      "distribution": "retained",
+      "asset_sha256": "b3499609ce4d142a3429c06693e8bea64f19d7d887e98e4d38fb2620e01e38ff",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "nasal",
+      "distribution": "retained",
+      "asset_sha256": "c17345bf4343c71a0b6da928f6d0831088b2550309b7ec0d4f06c1db75a53707",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "nginx",
+      "distribution": "retained",
+      "asset_sha256": "4a03a08a8397a6186287ec8b3d5e45011e2e384e15530607b388a9cbbf339df3",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "nim",
+      "distribution": "retained",
+      "asset_sha256": "a2f9e66a5cc1cd71bbd8fd982203496bb5a2366dac36e907ad8b7df7a3d1643e",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "nix",
+      "distribution": "retained",
+      "asset_sha256": "2324cbbb0be393a8065d47073622040902e08ea743dcc61a9642a51b1f710ed9",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "nsis",
+      "distribution": "retained",
+      "asset_sha256": "2036ffec461fd4d007f94ac685eb6fc4ab1c7cdb933ef61809a9a820c3cf983d",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "nunjucks",
+      "distribution": "retained",
+      "asset_sha256": "b0d0b769503e02389b5208aae0612fe8cf99426bb9c427959f4f1cbbc250a49d",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "objectivec",
+      "distribution": "retained",
+      "asset_sha256": "b9395286bfa030667f2156321ee1cd7968a5b70449f991b74dab109fc0c2f313",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "ocaml",
+      "distribution": "retained",
+      "asset_sha256": "a57fbd3e18f0315d0edbd52d56748b34f7c621bcdb2b4fa13893f781e5f40934",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "odin",
+      "distribution": "retained",
+      "asset_sha256": "7e6556a8f5129a7212e31a64d72ad56accc764e3a1cd7c1f3deb006bc48c8ba2",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "partiql",
+      "distribution": "retained",
+      "asset_sha256": "92d6bdca47f0be21b64e47b261ae09240a5e90cc16f415fbdc56424a6dcb0f58",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "pascal",
+      "distribution": "retained",
+      "asset_sha256": "94d508eca0b04ce34cd3bd62f43e9be65f3dd8dd71ca6454ce990989538e789e",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "perl",
+      "distribution": "retained",
+      "asset_sha256": "adda4fca7c9e286ced5a6ad998073924ab09696af91008d65845fd493ecb400b",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/perl.snippets.js",
+        "git_blob": "1b3bf183786e41160a1d4f9a7d815b77461e76da"
+      },
+      "historical_reference": {
+        "first_contribution": "d16daddc5ea91e578fafde6c9c17b41cdb036579",
+        "url": "https://github.com/honza/vim-snippets/blob/02593f7d57b4944bd857e0aeacfcd5410c0e81f2/snippets/perl.snippets",
+        "git_blob": "9cebedeacf033a78d8b3fab3ee4e16033b4efc7d"
+      },
+      "evidence_class": "snipmate-exact",
+      "additional_components": [
+        "ace-snipmate-snippets"
+      ],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open."
+    },
+    {
+      "snippet": "pgsql",
+      "distribution": "retained",
+      "asset_sha256": "38283fad463f9d5b0909d3a48a496cc454e98edf49168f110a08d32d0752cf45",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "php",
+      "distribution": "retained",
+      "asset_sha256": "c220c249e2a69633a0d3e8fe7736140c278cb36c19419a1a934f05ae3c1dd31f",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/php.snippets.js",
+        "git_blob": "987e34d04474aa6cb5ffa64a7bb31731f60d0f8d"
+      },
+      "historical_reference": {
+        "first_contribution": "d16daddc5ea91e578fafde6c9c17b41cdb036579",
+        "url": "https://github.com/ajaxorg/ace/blob/f36ade1647e90d20480d93ac6da6169fc55e65e5/lib/ace/snippets/php.snippets",
+        "git_blob": "12b6c358d6927bd245ac3a8e1f9a5fe47f8f4b2a"
+      },
+      "evidence_class": "snipmate-modified",
+      "additional_components": [
+        "ace-snipmate-snippets"
+      ],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Historical SnipMate MIT and AUTHORS retained; reconstructed Ace delta and later contribution/external rights review remain open."
+    },
+    {
+      "snippet": "php_laravel_blade",
+      "distribution": "retained",
+      "asset_sha256": "f7847033e234376e255515b1d029f2ce44907a04fe821eda0b1b95065f5ef701",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "pig",
+      "distribution": "retained",
+      "asset_sha256": "6e6e3ce2e96d91eb749affdf23ca60e329dbf2c6e5c09b8e36e03459471657ae",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "plain_text",
+      "distribution": "retained",
+      "asset_sha256": "6791a53bff37f807ec24953014e1a1c7140ba2e293111457a3b8f8f2a04e6c42",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "plsql",
+      "distribution": "retained",
+      "asset_sha256": "0e369d71f861842e37229dd074c5e45a9c0f9f9ee1159018beb6a3086fb2ffd3",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "powershell",
+      "distribution": "retained",
+      "asset_sha256": "e2f7f3ecaab9696d6744a144057c05e3e867767e87fbc6d5b552132616efc590",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "praat",
+      "distribution": "retained",
+      "asset_sha256": "3ca5efaf0fcce83eee2beb780911e9f4e0a673e48c374e88aa0b3f38f0181f9a",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "prisma",
+      "distribution": "retained",
+      "asset_sha256": "ccdcdd9d4b1f45f4faadaaff35ddb8f8c46fe345860c64e0a5e056f1c11fd0dd",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "prolog",
+      "distribution": "retained",
+      "asset_sha256": "778fbae9de6d7573e13bcce9c3007e816ad5061083e76cb4990e4a190b6b9acc",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "properties",
+      "distribution": "retained",
+      "asset_sha256": "d05d23026060ef635da437aef510646ca432bad7d3bc0c0d4c9a9335c8906820",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "protobuf",
+      "distribution": "retained",
+      "asset_sha256": "f90332608f2ceb444264240cb48c021f78d0c9c1dfa32f254730e758d96ff6cb",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "prql",
+      "distribution": "retained",
+      "asset_sha256": "270263b82c69a81e9aed1da82463efaf16c16a37d4d2efbd780ff0fe9d9c3ea2",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "puppet",
+      "distribution": "retained",
+      "asset_sha256": "3131f107840428f8135d20bb4c8339d2c34f63d3eaf09ea1d83bb26dbb772247",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "python",
+      "distribution": "retained",
+      "asset_sha256": "07f473b2d6a73dbba689c42aa3c9a85f6c58ad4b3cf11f95b079867ef64c314b",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/python.snippets.js",
+        "git_blob": "5d556cf6f7d6f54eb41d815b1b9862e9e80397e7"
+      },
+      "historical_reference": {
+        "first_contribution": "d16daddc5ea91e578fafde6c9c17b41cdb036579",
+        "url": "https://github.com/ajaxorg/ace/blob/eac48f519040e8e2d17dd1a5b76c2818ecf58cd1/lib/ace/snippets/python.snippets",
+        "git_blob": "347bbdebfd9d13e17cdd0131523eef30db186a26"
+      },
+      "evidence_class": "snipmate-modified",
+      "additional_components": [
+        "ace-snipmate-snippets"
+      ],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Historical SnipMate MIT and AUTHORS retained; reconstructed Ace delta and later contribution/external rights review remain open."
+    },
+    {
+      "snippet": "qml",
+      "distribution": "retained",
+      "asset_sha256": "a2d161c989942fa62a53683a00bd4d2b350bb47e585667c4a05f7ed328e77233",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "r",
+      "distribution": "retained",
+      "asset_sha256": "a4d5f9645ae6b3f2751b19a1c4a076350d603a2ac279d8d3b1e88b6364d8343e",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/r.snippets.js",
+        "git_blob": "dbac55301a26b64aedf8342d4b883a81ee44a4c9"
+      },
+      "historical_reference": {
+        "first_contribution": "d16daddc5ea91e578fafde6c9c17b41cdb036579",
+        "url": "https://github.com/ajaxorg/ace/blob/f17c67cd01316d4fdbbd5625594d81e28c894083/lib/ace/snippets/r.snippets",
+        "git_blob": "948542f5bbacc0de657e65d95dc2d54c52c0f13e"
+      },
+      "evidence_class": "snipmate-modified",
+      "additional_components": [
+        "ace-snipmate-snippets"
+      ],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Historical SnipMate MIT and AUTHORS retained; reconstructed Ace delta and later contribution/external rights review remain open."
+    },
+    {
+      "snippet": "raku",
+      "distribution": "retained",
+      "asset_sha256": "66cc8e627a8505177a68c3f1bdc058c4d519073ba5318b2518aa153e20861e71",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "razor",
+      "distribution": "retained",
+      "asset_sha256": "aa845a481fd97fdcab549579734ad816aa6c556afc0bb8d66fc0defd4cd350d9",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/razor.snippets.js",
+        "git_blob": "f8172f131c853ec4ffd11a305efac355f0b30d8f"
+      },
+      "historical_reference": {
+        "first_contribution": "cb6dd5514da2b5dda41d10b117ff26e515e711b6",
+        "url": "https://github.com/ajaxorg/ace/blob/cb6dd5514da2b5dda41d10b117ff26e515e711b6/lib/ace/snippets/razor.snippets",
+        "git_blob": "f851b0547b3a27b0ae09a22cd8a0443d521b6438"
+      },
+      "evidence_class": "historical-endpoint-review-open",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Single 35-byte conditional scaffold; original contribution review."
+    },
+    {
+      "snippet": "rdoc",
+      "distribution": "retained",
+      "asset_sha256": "8560eb02718ba8ea569d0a24341cd436d605044e2c9d4887fda56fd9d0a9a402",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "red",
+      "distribution": "retained",
+      "asset_sha256": "56667584f394c3f388fce790bc1d0157027d15dd853dcf13e2a454ee79be6d3b",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "redshift",
+      "distribution": "retained",
+      "asset_sha256": "eade8aa6dff7ba622b1674a122a6205887f4418e4246faa5e74b5f4e43c19757",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "rhtml",
+      "distribution": "retained",
+      "asset_sha256": "fa42b9239e6310eadded29060a0b794fa6a35adaa7cab7c09c072b7235ac1bf0",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "robot",
+      "distribution": "retained",
+      "asset_sha256": "7b79e2b6e3390c0c2bbe720fe1c9ed79465998366f48c29e40442bd823f5a8a3",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/robot.snippets.js",
+        "git_blob": "41d3316b49a64bbb812a5c63e5f0bb7b86bf8956"
+      },
+      "historical_reference": {
+        "first_contribution": "5d7cf10916e671bd7f81427be622c641c01fc36e",
+        "url": "https://github.com/ajaxorg/ace/blob/e91705e41cb32deab6d827386b1c3905d4e007c2/lib/ace/snippets/robot.snippets",
+        "git_blob": "2cb13946ec15c85866c414dcb9b53119d3a56ee9"
+      },
+      "evidence_class": "historical-endpoint-review-open",
+      "additional_components": [],
+      "review_priority": "elevated",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Eleven triggers across two contributions. Review original template sources and intervening modifications."
+    },
+    {
+      "snippet": "rst",
+      "distribution": "retained",
+      "asset_sha256": "72ed3bc86b5669cb29074cc99eb9cffcbc5f789f4f39042651ecd806e88fd3d8",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/rst.snippets.js",
+        "git_blob": "25e8f1690021aae84ee99aa466801ef03b7ced23"
+      },
+      "historical_reference": {
+        "first_contribution": "d16daddc5ea91e578fafde6c9c17b41cdb036579",
+        "url": "https://github.com/honza/vim-snippets/blob/02593f7d57b4944bd857e0aeacfcd5410c0e81f2/snippets/rst.snippets",
+        "git_blob": "97845de3f0f6d140b670e606e9cbea20901ff2d2"
+      },
+      "evidence_class": "snipmate-exact",
+      "additional_components": [
+        "ace-snipmate-snippets"
+      ],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open."
+    },
+    {
+      "snippet": "ruby",
+      "distribution": "retained",
+      "asset_sha256": "295a9bf5308a33fc06a1b4705c21003c268bee426053be448b5a9368a8b5a319",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/ruby.snippets.js",
+        "git_blob": "405d8224c39827f5ae8f51db1fdd4de9a8d842dd"
+      },
+      "historical_reference": {
+        "first_contribution": "d16daddc5ea91e578fafde6c9c17b41cdb036579",
+        "url": "https://github.com/honza/vim-snippets/blob/02593f7d57b4944bd857e0aeacfcd5410c0e81f2/snippets/ruby.snippets",
+        "git_blob": "0500aaa13d52594f671f85eba5765eccd1c7d0a9"
+      },
+      "evidence_class": "snipmate-exact",
+      "additional_components": [
+        "ace-snipmate-snippets"
+      ],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open."
+    },
+    {
+      "snippet": "rust",
+      "distribution": "retained",
+      "asset_sha256": "244f82f368e65149abd0cc143ce4137c93d8bb5ca497db004d5326683df9ead5",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "sac",
+      "distribution": "retained",
+      "asset_sha256": "c50e0074f1a8ae5e0c212d339f5591b1bf4362c66d3e2a29dd6bed61af0fbe69",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "sass",
+      "distribution": "retained",
+      "asset_sha256": "c7f74d1f5cb94e0ce14a468b46a066c4962d76ba38aae2615044d358bb111678",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "scad",
+      "distribution": "retained",
+      "asset_sha256": "a87477eae63401ae30d75bb32e107817971b79d0b5bf7916bb3bc3dafe4a20bb",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "scala",
+      "distribution": "retained",
+      "asset_sha256": "b7b8fb4fafe934c2ee0c34b315bcf542d4e5ca0d3275c46eb0c61baf4a0976af",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "scheme",
+      "distribution": "retained",
+      "asset_sha256": "ba8a6b14144bec37a094dd37664cbe2cb7647be66e98e61e676baccfb635b938",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "scrypt",
+      "distribution": "retained",
+      "asset_sha256": "bddfedff7740e15137176d0a4f7e738bf0d3c945b8618a95d31e893ca803795b",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "scss",
+      "distribution": "retained",
+      "asset_sha256": "bd4bdce6a6153959d11d677b4ed941a403817a494dc4bcc77d510e46a833178d",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "sh",
+      "distribution": "retained",
+      "asset_sha256": "b604a5bf3e3c89e3b43908348eaa5fddc85bbfebf6236491b107910f0fb5a8d1",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/sh.snippets.js",
+        "git_blob": "8c5e7f6c288d2078e4d4dfe9bc481ab536b3a7fe"
+      },
+      "historical_reference": {
+        "first_contribution": "d16daddc5ea91e578fafde6c9c17b41cdb036579",
+        "url": "https://github.com/ajaxorg/ace/blob/b6463844b04758745f99b1553416f4cf4b8ad013/lib/ace/snippets/sh.snippets",
+        "git_blob": "305fb661ed25a75093d8e168f46deb012f662c07"
+      },
+      "evidence_class": "snipmate-modified",
+      "additional_components": [
+        "ace-snipmate-snippets"
+      ],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Historical SnipMate MIT and AUTHORS retained; reconstructed Ace delta and later contribution/external rights review remain open."
+    },
+    {
+      "snippet": "sjs",
+      "distribution": "retained",
+      "asset_sha256": "3ad35fac35a8a4ebcebd2e0a6cb37f61936d3d89bbb6cf53ad89575e2e8deba1",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "slim",
+      "distribution": "retained",
+      "asset_sha256": "eb810343579c5d1a111a0fa433125a0484342109c76848634d4cc62a8bda8947",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "smarty",
+      "distribution": "retained",
+      "asset_sha256": "645b0fd232d270d692f294e10b227f679bd12b2629cedfcd9aae65abb12dba8f",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "smithy",
+      "distribution": "retained",
+      "asset_sha256": "75a9f7a463d20b985c32ffa5cf1d8eda96e9b9b7945508d62c6c2332f60dc111",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "snippets",
+      "distribution": "retained",
+      "asset_sha256": "2ed518c2b0651dd2edc14a1a89d53f68379b2e1584108aad3260866b9ea5efa1",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/snippets.snippets.js",
+        "git_blob": "c87a3ddf3405495c12ef422533301a634d7fd4df"
+      },
+      "historical_reference": {
+        "first_contribution": "d16daddc5ea91e578fafde6c9c17b41cdb036579",
+        "url": "https://github.com/honza/vim-snippets/blob/02593f7d57b4944bd857e0aeacfcd5410c0e81f2/snippets/snippets.snippets",
+        "git_blob": "4223fa3943bc1438622fbd28b94cb3dcc1eab520"
+      },
+      "evidence_class": "snipmate-exact",
+      "additional_components": [
+        "ace-snipmate-snippets"
+      ],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open."
+    },
+    {
+      "snippet": "soy_template",
+      "distribution": "retained",
+      "asset_sha256": "0f74c2c953a6bb988236c95fecb7faa937b8dfd4dffec1cc1822cc9b0f8ac9b4",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "space",
+      "distribution": "retained",
+      "asset_sha256": "ebfe73f2da97525ae7c8ee8fa8f957ff0491b8c19130852d6689ad14c987104c",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "sparql",
+      "distribution": "retained",
+      "asset_sha256": "d6058a2a6e072cf34ead0769235da5f3c63b98bd9f8a410b1f83ffb29c1dfbd1",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "sql",
+      "distribution": "retained",
+      "asset_sha256": "8da18a7f8cdc18a237ff2ad9cde5fa80b0d2c0ebf5d918f31a2654b163de610d",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/sql.snippets.js",
+        "git_blob": "8ad44a2fe7bf05540c20f7838dfe329b6c39d837"
+      },
+      "historical_reference": {
+        "first_contribution": "d16daddc5ea91e578fafde6c9c17b41cdb036579",
+        "url": "https://github.com/honza/vim-snippets/blob/02593f7d57b4944bd857e0aeacfcd5410c0e81f2/snippets/sql.snippets",
+        "git_blob": "eb4b37caf1cd65c7218c05f22fac3b6063244d94"
+      },
+      "evidence_class": "snipmate-exact",
+      "additional_components": [
+        "ace-snipmate-snippets"
+      ],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open."
+    },
+    {
+      "snippet": "sqlserver",
+      "distribution": "retained",
+      "asset_sha256": "abaa9eb4a506e5cd287815f9786b8a0a9c9392c46f2c5d9d548ed16805651102",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/sqlserver.snippets.js",
+        "git_blob": "18328505dc5a94e2c112e61e2413fbc2d3fda1c9"
+      },
+      "historical_reference": {
+        "first_contribution": "f0b3aa0a6f697898fb07a36a92019b0db5902b4e",
+        "url": "https://github.com/ajaxorg/ace/blob/cf0c81a25fa5373409b086d824e4405698622f64/lib/ace/snippets/sqlserver.snippets",
+        "git_blob": "403bd6bc551a0fcb224e84fd5c996a0ca6c26984"
+      },
+      "evidence_class": "microsoft-partial",
+      "additional_components": [
+        "ace-sqlserver-microsoft-template-material"
+      ],
+      "review_priority": "elevated",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Official 2018 MIT SSMS source, 4+6 scoped shared blocks; original 2015 copy revision, adaptations and other ten triggers open."
+    },
+    {
+      "snippet": "stylus",
+      "distribution": "retained",
+      "asset_sha256": "23e4cb2bc707950e2ff879434c7a8defee7b33bf0e7d66de11d8a0d65dc91042",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "svg",
+      "distribution": "retained",
+      "asset_sha256": "57d7560990da29dd93197aae402606bda619e3a53b13d922002ea74d00cecf3a",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "swift",
+      "distribution": "retained",
+      "asset_sha256": "e34c3689ff1b1c5b3ec6d2586055891088335a5581aa66a3323a5c31b6ba7814",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "tcl",
+      "distribution": "retained",
+      "asset_sha256": "6cad592cf0e04b8c047d83e7e30118a38ad234eb99aed45a5edd9e49d59b0cb6",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/tcl.snippets.js",
+        "git_blob": "ecfb33b3e89b297c5520a5945c0ea0b51f25277a"
+      },
+      "historical_reference": {
+        "first_contribution": "d16daddc5ea91e578fafde6c9c17b41cdb036579",
+        "url": "https://github.com/honza/vim-snippets/blob/02593f7d57b4944bd857e0aeacfcd5410c0e81f2/snippets/tcl.snippets",
+        "git_blob": "1fe1cb960eb2f2c83c879bd24d5eada9b8c6501c"
+      },
+      "evidence_class": "snipmate-exact",
+      "additional_components": [
+        "ace-snipmate-snippets"
+      ],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open."
+    },
+    {
+      "snippet": "terraform",
+      "distribution": "retained",
+      "asset_sha256": "b88fbbc82196c019122b0d1d2cb5e021b00f1a07646bc5eaf8a674469b146639",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "tex",
+      "distribution": "retained",
+      "asset_sha256": "d698a4e28a795be31225059ee9a78f350b73d669f720768278a0bba1ee61d802",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/tex.snippets.js",
+        "git_blob": "551abde4957b0b3d81e64b18e93b8fe0d1507c51"
+      },
+      "historical_reference": {
+        "first_contribution": "d16daddc5ea91e578fafde6c9c17b41cdb036579",
+        "url": "https://github.com/honza/vim-snippets/blob/02593f7d57b4944bd857e0aeacfcd5410c0e81f2/snippets/tex.snippets",
+        "git_blob": "10fa82eff7ac04fb9114ecfd4319f0e6ea8f3037"
+      },
+      "evidence_class": "snipmate-exact",
+      "additional_components": [
+        "ace-snipmate-snippets"
+      ],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open."
+    },
+    {
+      "snippet": "text",
+      "distribution": "retained",
+      "asset_sha256": "129e041636e78250edc68e351c2e0f9e2288bcbf737c5f7f0d11bde982d8fe71",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "textile",
+      "distribution": "retained",
+      "asset_sha256": "8f7ddfad2e63b2cd0da2a8c7c1c021fee810526f615fd8d17e5818ee3120ff5b",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/textile.snippets.js",
+        "git_blob": "396439e19c2729f91addc113ccbd0ba97e8ff9f6"
+      },
+      "historical_reference": {
+        "first_contribution": "d16daddc5ea91e578fafde6c9c17b41cdb036579",
+        "url": "https://github.com/honza/vim-snippets/blob/02593f7d57b4944bd857e0aeacfcd5410c0e81f2/snippets/textile.snippets",
+        "git_blob": "c78d6ec81b5252c92c3646f3d563cea702ccf953"
+      },
+      "evidence_class": "snipmate-exact",
+      "additional_components": [
+        "ace-snipmate-snippets"
+      ],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open."
+    },
+    {
+      "snippet": "toml",
+      "distribution": "retained",
+      "asset_sha256": "30f4553f47998c662b817711fcbe936c962264eb1410bcd70465c1deb29b566a",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "tsv",
+      "distribution": "retained",
+      "asset_sha256": "19a95940ad0b851f7acab0c793cfdec3cbade89eeb4006ccbfa79a92b6a58df0",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "tsx",
+      "distribution": "retained",
+      "asset_sha256": "1fc4bad25e4e16a3d84080d4dec05c1304ec458c0eaaff1f47e2620ff9e11d54",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "turtle",
+      "distribution": "retained",
+      "asset_sha256": "9380e1441f6348b7ff4b51a7faf7751728ef4399d5dab898ad5917318dbd8ec1",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "twig",
+      "distribution": "retained",
+      "asset_sha256": "96dc018ec6658ca96377eae6cc0849a1239d7741afacfdc2f4654266c0d5ede6",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "typescript",
+      "distribution": "retained",
+      "asset_sha256": "ff23466921c4ddb59aea3662e2107189257c7ffd4e958c39187a47cc7601c3c2",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "vala",
+      "distribution": "retained",
+      "asset_sha256": "139ae029f4acbb766e9b518f466b466ebfc87848e9182e0ad209f97a90d16be2",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/vala.js",
+        "git_blob": "b1230e6871d9f08406d16dd862f371c36bbabc6f"
+      },
+      "historical_reference": {
+        "first_contribution": "a7cac9466d563ed31bad9e0fa8d13b463ee5f6d9",
+        "url": "https://github.com/ajaxorg/ace/blob/ed5c3198f3fbe4698fbec8359c1725e5f5c88a65/lib/ace/snippets/vala.js",
+        "git_blob": "b1230e6871d9f08406d16dd862f371c36bbabc6f"
+      },
+      "evidence_class": "textmate-exact",
+      "additional_components": [
+        "ace-textmate-vala-snippets"
+      ],
+      "review_priority": "elevated",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "All 31 TextMate entries exactly mapped; later MIT grant on identical subtree. Earlier Daniel Lucraft rights and pre-import grant remain open."
+    },
+    {
+      "snippet": "vbscript",
+      "distribution": "retained",
+      "asset_sha256": "7d90235f58ca6bcf99b1aa614610bfef0a8fed1cae0f0932d45bd9ae1536652b",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "velocity",
+      "distribution": "retained",
+      "asset_sha256": "59f031f5cd92e4dfa73cd84a96761ccf1f1e6e0cdf783c16b87680687bd39372",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/velocity.snippets.js",
+        "git_blob": "b91238f3a298fa5d64439579c2e535de0f63c933"
+      },
+      "historical_reference": {
+        "first_contribution": "69b144686a9d7946a89bbcdeb3a83ce9ae248c04",
+        "url": "https://github.com/ajaxorg/ace/blob/69b144686a9d7946a89bbcdeb3a83ce9ae248c04/lib/ace/snippets/velocity.snippets",
+        "git_blob": "dedca58934a99cc5073e326ede9bd974f0d0f03c"
+      },
+      "evidence_class": "historical-endpoint-review-open",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Six common directive templates. Original contribution and external input review."
+    },
+    {
+      "snippet": "verilog",
+      "distribution": "retained",
+      "asset_sha256": "1dcbf796cfc75f0e0a6fde1701362da41859d0657c458779da127c8f5d11ebcb",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "vhdl",
+      "distribution": "retained",
+      "asset_sha256": "16fc60dfdffe97aaf1fb816c043666ecf6c89d9a169a46c4078d96f3048b33e8",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "visualforce",
+      "distribution": "retained",
+      "asset_sha256": "051d8f250950e498935409a33b8e5ddfac0b129a927768d87bea7a21cc4f6f17",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "vue",
+      "distribution": "retained",
+      "asset_sha256": "94ffc47421ed16732559ee4da159e91a36eb111a2fb2e4773db8aa6865bda254",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "wollok",
+      "distribution": "retained",
+      "asset_sha256": "0013a6e56d004b76dee613a404ff356e7389ed25d1ca70d03b6209709bdf6cec",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "src/snippets/wollok.snippets.js",
+        "git_blob": "04d3c58efa7c958cb98aa84e76bcbdcc0bb6dd8b"
+      },
+      "historical_reference": {
+        "first_contribution": "1693305c8974a5dd4f350bb0b9d48b134fca113c",
+        "url": "https://github.com/ajaxorg/ace/blob/1693305c8974a5dd4f350bb0b9d48b134fca113c/lib/ace/snippets/wollok.snippets",
+        "git_blob": "f98f8587908fefe10bc9dc3a9fa02443a60bb1aa"
+      },
+      "evidence_class": "snipmate-derived",
+      "additional_components": [
+        "ace-snipmate-snippets"
+      ],
+      "review_priority": "elevated",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "16 ordered shared Java spans; MIT covers retained Java material only; adaptations/new triggers and original contribution rights open."
+    },
+    {
+      "snippet": "xml",
+      "distribution": "retained",
+      "asset_sha256": "e28ce2af9861ad6b4c74c18c469d778fc5217adcb3bfa6c44e82d123af151db0",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "xquery",
+      "distribution": "retained",
+      "asset_sha256": "0d4eb8d83d3a439a4c1f4311c5eeeeb6dc18cf72db27f4a0fa1ee115b0f8f023",
+      "payload_kind": "nonempty",
+      "source_payload": {
+        "path": "lib/ace/snippets/xquery.snippets.js",
+        "git_blob": "c0ba6047ab9b247931c5eb9bf3c09e5052effbfe"
+      },
+      "historical_reference": {
+        "first_contribution": "f6faeb3547d66cfc095ec2f9ca3a39454208de52",
+        "url": "https://github.com/ajaxorg/ace/blob/431facf08b397bf6517893efccf17d2cdb32d12e/lib/ace/snippets/xquery.snippets",
+        "git_blob": "965034b7e9dc611fa959c2dba04bdc8f55d74c36"
+      },
+      "evidence_class": "historical-endpoint-review-open",
+      "additional_components": [],
+      "review_priority": "elevated",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Identical raw to JSONiq; legacy static module, source rights open. XQLint Apache and REx grant do not cover snippets."
+    },
+    {
+      "snippet": "yaml",
+      "distribution": "retained",
+      "asset_sha256": "11494b350637708e6702b1dc58540679ba22f46d1ec1b5e7b9d7b0658b67d2e4",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "zeek",
+      "distribution": "retained",
+      "asset_sha256": "17ca9ce76ab050a2569dca69f15df03b726a33d709df0967ee33754b6beb21a7",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    },
+    {
+      "snippet": "zig",
+      "distribution": "retained",
+      "asset_sha256": "b69809d25e0a2f038303f406ea8fc13033b00fb27a1c744128664edb268330fc",
+      "payload_kind": "empty-stub",
+      "source_payload": null,
+      "historical_reference": null,
+      "evidence_class": "exact-generated-empty-stub",
+      "additional_components": [],
+      "review_priority": "standard",
+      "proposed_disposition": "retain-stub-review-open",
+      "remaining_review": "Exact generated loader bytes; native audit checks absence of source module and payload. Shared stub template lineage and independent review remain open."
+    }
+  ]
+}

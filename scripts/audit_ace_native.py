@@ -190,6 +190,19 @@ def main():
     out.write_text(json.dumps(report, indent=2, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8")
     subprocess.run(["node", str(ROOT / "scripts/audit_ace_native_payloads.cjs"), str(source),
                     str(work), str(out)], check=True)
+    try:
+        from .audit_ace_snippet_dispositions import load_matrix, verify_native_snippet_dispositions
+    except ImportError:
+        from audit_ace_snippet_dispositions import load_matrix, verify_native_snippet_dispositions
+    report = json.loads(out.read_text("utf-8"))
+    try:
+        report["snippet_dispositions"] = verify_native_snippet_dispositions(load_matrix(ROOT), report)
+    except ValueError as exc:
+        report["status"] = "research-blocked"
+        report["error"] = str(exc)
+        raise
+    finally:
+        out.write_text(json.dumps(report, indent=2, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
 if __name__ == "__main__":
