@@ -22,8 +22,9 @@ def inspect(path, excluded_hashes):
         for index, name in enumerate(manifest[0]["Layers"]):
             with tarfile.open(fileobj=outer.extractfile(name), mode="r|*") as layer:
                 for member in layer:
-                    basename = PurePosixPath(member.name).name
-                    if basename in excluded_hashes:
+                    member_path = PurePosixPath(member.name)
+                    if any(member_path.parts[-len(PurePosixPath(name).parts):] == PurePosixPath(name).parts
+                           for name in excluded_hashes):
                         hits.append({"layer": index, "path": member.name, "reason": "excluded filename"})
                     # Look for byte-identical renamed JS payloads by digest as
                     # well. No raw content is emitted, and no extraction occurs.
@@ -46,7 +47,7 @@ def main():
     lock = json.loads(LOCK.read_text("utf-8"))
     profile = read_profile()
     excluded = {name: lock["files_sha256"][name]
-                for name in profile["excluded"] + profile["excluded_themes"]}
+                for name in profile["excluded"] + profile["excluded_themes"] + profile["excluded_snippets"]}
     report = inspect(args.image, excluded)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")

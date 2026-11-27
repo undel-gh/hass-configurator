@@ -131,20 +131,27 @@ def main():
     profile = read_profile()
     selected = sorted(name for name in selected_family(profile, lock) if
                       name in {"worker-base.js", "ace.js"} or name.startswith(("theme-", "snippets/")))
+    excluded_snippets = set(profile["excluded_snippets"])
     assets = []
     with tarfile.open(fileobj=io.BytesIO(raw), mode="r:gz") as archive:
-        for name in selected:
+        for name in sorted(set(selected) | excluded_snippets):
             plain = exact_member(archive, "package/src-noconflict/" + name)
             mini = exact_member(archive, "package/src-min-noconflict/" + name)
-            require(sha(mini) == lock["files_sha256"][name] and
-                    mini == read_file(ROOT / "hass_configurator", "vendor/ace/" + name),
-                    "Shipped resource mismatch: " + name)
+            require(sha(mini) == lock["files_sha256"][name], "Archive resource mismatch: " + name)
+            removed = name in excluded_snippets
+            target = ROOT / "hass_configurator/vendor/ace" / name
+            if removed:
+                require(not target.exists() and not target.is_symlink(), "Excluded snippet present: " + name)
+            else:
+                require(mini == read_file(ROOT / "hass_configurator", "vendor/ace/" + name),
+                        "Shipped resource mismatch: " + name)
             for folder, data in (("plain", plain), ("mini", mini)):
                 path = work / folder / name
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_bytes(data)
             assets.append({"file": name, "published_unminified_sha256": sha(plain),
-                           "shipped_minified_sha256": sha(mini)})
+                           "distribution": "excluded" if removed else "retained",
+                           ("upstream_minified_sha256" if removed else "shipped_minified_sha256"): sha(mini)})
     # Upstream builder pins this TypeScript version. Record the observed
     # registry integrity and archive hash; not a historical toolchain lock.
     package = json.loads(read_file(source, "package.json"))

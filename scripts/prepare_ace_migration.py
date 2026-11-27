@@ -162,6 +162,7 @@ def main():
     removed = set(runtime_lock["files_sha256"]) - set(family)
     report["excluded_workers"] = sorted(name for name in removed if name.startswith("worker-"))
     report["excluded_themes"] = sorted(name for name in removed if name.startswith("theme-"))
+    report["excluded_snippets"] = sorted(name for name in removed if name.startswith("snippets/"))
     dest.mkdir()
     pkg = dest / "hass_configurator"
     shutil.copytree(ROOT / "hass_configurator", pkg)

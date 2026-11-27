@@ -459,3 +459,84 @@ for (const variant of ['direct', 'ingress']) {
       (await fetch(new URL('theme-kr_theme.js', ace.config.get('themePath')))).status)).toBe(404);
   });
 }
+
+
+for (const variant of ['direct', 'ingress']) {
+  test('Ace curated snippet excludes payloads but preserves modes via ' + variant, async ({ page }) => {
+    test.setTimeout(60000);
+    const names = ['abc', 'edifact', 'gobstones', 'lsl'];
+    const forbidden = [], external = [], errors = [], responses = [];
+    page.on('pageerror', e => errors.push(e.message));
+    page.on('request', req => {
+      const url = new URL(req.url());
+      if (names.some(name => url.pathname.endsWith('/vendor/ace/snippets/' + name + '.js')))
+        forbidden.push(url.href);
+    });
+    page.on('response', res => {
+      responses.push({path: new URL(res.url()).pathname, status: res.status()});
+    });
+    await page.route('**/*', async route => {
+      const url = new URL(route.request().url());
+      if (url.origin !== origin && url.protocol !== 'blob:' && url.protocol !== 'data:') {
+        external.push(url.href);
+        return route.abort('blockedbyclient');
+      }
+      if (variant === 'ingress' && url.pathname.startsWith('/ingress/test/')) {
+        url.pathname = url.pathname.replace(/^\/ingress\/test\//, '/');
+        return route.fulfill({response: await route.fetch({url: url.href})});
+      }
+      return route.continue();
+    });
+    await page.addInitScript(() => {
+      window.hcSnippetCspViolations = [];
+      document.addEventListener('securitypolicyviolation', e => {
+        if (e.disposition === 'enforce') hcSnippetCspViolations.push(e.violatedDirective);
+      });
+    });
+    await page.goto(server + (variant === 'ingress' ? '/ingress/test/' : '/'), {waitUntil: 'domcontentloaded'});
+    await expect.poll(() => page.evaluate(() => Boolean(window.editor))).toBe(true);
+    await page.evaluate(() => editor.setOptions({enableSnippets: true, enableBasicAutocompletion: true}));
+    const samples = [['abc', 'X:1'], ['edifact', "UNH+1+ORDERS:D:96A:UN'"],
+                     ['gobstones', 'program { Skip }'], ['lsl', 'default { state_entry() {} }']];
+    for (const [name, sample] of [...samples, ...samples]) {
+      const actual = await page.evaluate(async ({name, sample}) => {
+        await new Promise(resolve => editor.session.setMode('ace/mode/' + name, resolve));
+        editor.setValue(sample, -1);
+        const mode = editor.session.getMode();
+        const tokens = mode.getTokenizer().getLineTokens(sample, 'start').tokens;
+        const manager = ace.require('ace/snippets').snippetManager;
+        const lang = ace.require('ace/ext/language_tools');
+        const callbacks = [];
+        const id = 'ace/snippets/' + name;
+        ace.config.loadModule(id, m => callbacks.push(m === undefined));
+        ace.config.loadModule(['snippets', id], m => callbacks.push(m === undefined));
+        ace.config.loadModule(id);
+        return {mode: mode.$id, text: tokens.map(t => t.value).join(''),
+                value: editor.getValue(), callbacks,
+                fileEmpty: Object.keys(manager.files[mode.$id] || {}).length === 0,
+                snippets: (manager.snippetMap[name] || []).length,
+                enabled: editor.getOption('enableSnippets'),
+                basic: editor.getOption('enableBasicAutocompletion'),
+                ordinary: editor.completers.includes(lang.textCompleter) &&
+                          editor.completers.includes(lang.keyWordCompleter)};
+      }, {name, sample});
+      expect(actual).toEqual({mode: 'ace/mode/' + name, text: sample, value: sample,
+        callbacks: [true, true], fileEmpty: true, snippets: 0, enabled: true, basic: true, ordinary: true});
+      expect(responses.some(r => r.path.endsWith('/vendor/ace/mode-' + name + '.js') && r.status === 200)).toBe(true);
+    }
+    // Exercise a retained, nonempty snippet collection after repeated exclusions.
+    await page.evaluate(() => new Promise(resolve => editor.session.setMode('ace/mode/java', resolve)));
+    await expect.poll(() => page.evaluate(() =>
+      (ace.require('ace/snippets').snippetManager.snippetMap.java || []).length)).toBeGreaterThan(0);
+    expect(responses.some(r => r.path.endsWith('/vendor/ace/snippets/java.js') && r.status === 200)).toBe(true);
+    expect(forbidden).toEqual([]);
+    expect(external).toEqual([]);
+    expect(errors).toEqual([]);
+    expect(await page.evaluate(() => hcSnippetCspViolations)).toEqual([]);
+    // Separate deliberate requests from the preceding no-automatic-request test.
+    const statuses = await page.evaluate(async names =>
+      Promise.all(names.map(async name =>
+        (await fetch(new URL('snippets/' + name + '.js', ace.config.get('basePath')))).status)), names);
+    expect(statuses).toEqual(names.map(() => 404));
+  });
+}

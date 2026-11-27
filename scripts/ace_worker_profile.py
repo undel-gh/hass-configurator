@@ -30,9 +30,9 @@ def read_profile(path=BOOTSTRAP):
 
 def selected_family(profile, lock):
     """Check upstream worker partition and explicit theme exclusions."""
-    if set(profile) != {"schema", "ace_version", "infrastructure", "languages", "excluded", "excluded_themes"}:
+    if set(profile) != {"schema", "ace_version", "infrastructure", "languages", "excluded", "excluded_themes", "excluded_snippets"}:
         raise ValueError("Unexpected worker profile fields")
-    if profile["schema"] != 2 or profile["ace_version"] != lock["version"]:
+    if profile["schema"] != 3 or profile["ace_version"] != lock["version"]:
         raise ValueError("Worker profile version mismatch")
     if profile["infrastructure"] != ["worker-base.js"]:
         raise ValueError("Unexpected worker infrastructure")
@@ -58,7 +58,11 @@ def selected_family(profile, lock):
                 or name in {"theme-monokai.js", "theme-chrome.js", "theme-textmate.js"}
                 for name in themes) or len(set(themes)) != len(themes)):
         raise ValueError("Invalid curated theme exclusions")
-    removed = set(excluded) | set(themes)
+    snippets = profile["excluded_snippets"]
+    approved = ["snippets/abc.js","snippets/edifact.js","snippets/gobstones.js","snippets/lsl.js"]
+    if snippets != approved or any(name not in lock["files_sha256"] for name in approved):
+        raise ValueError("Invalid curated snippet exclusions")
+    removed = set(excluded) | set(themes) | set(snippets)
     return {name: digest for name, digest in lock["files_sha256"].items()
             if name not in removed}
 
@@ -98,6 +102,7 @@ def main():
     print(json.dumps({"status": "curated-profile-verified", "upstream_family": len(lock["files_sha256"]),
                       "target_family": len(selected), "excluded": profile["excluded"],
                       "excluded_themes": profile["excluded_themes"],
+                      "excluded_snippets": profile["excluded_snippets"],
                       "target_workers": sorted(name for name in selected if name.startswith("worker-"))},
                      indent=2))
 

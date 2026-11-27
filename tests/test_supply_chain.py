@@ -120,7 +120,7 @@ class SupplyChainTests(unittest.TestCase):
     def test_source_inventory_and_bom(self):
         inv, vendor = source_inventory()
         self.assertEqual(len(inv["components"]), 7)
-        self.assertEqual(len(vendor["resources"]), 509)
+        self.assertEqual(len(vendor["resources"]), 505)
         bom = sbom(inv, vendor)
         self.assertEqual(bom["bomFormat"], "CycloneDX")
         self.assertEqual(next(c for c in bom["components"] if c["bom-ref"] == "asset:ace")["version"], "1.45.2")
@@ -588,8 +588,10 @@ class SupplyChainTests(unittest.TestCase):
 
     def test_lsl_historical_source_review_is_exact_not_a_library(self):
         inv, vendor = source_inventory()
-        record = next(c for c in inv["embedded"]["components"]
-                      if c["id"] == "ace-lsl-snippet-source-review")
+        archive = json.loads((PACKAGE.parent / "docs/history/ace-snippet-exclusions.json").read_text("utf-8"))
+        self.assertNotIn("vendor/ace/snippets/lsl.js", vendor["resources"])
+        self.assertFalse(any(c["id"] == "ace-lsl-snippet-source-review" for c in inv["embedded"]["components"]))
+        record = next(c for c in archive["components"] if c["id"] == "ace-lsl-snippet-source-review")
         self.assertEqual(record["kind"], "review")
         self.assertEqual(record["status"], "partial")
         self.assertIsNone(record["license"])
@@ -598,7 +600,7 @@ class SupplyChainTests(unittest.TestCase):
         self.assertEqual(record["notices"], [])
         self.assertEqual(record["locations"], [{"file": "vendor/ace/snippets/lsl.js",
                                                "marker": "ace/snippets/lsl"}])
-        rels = inv["embedded"]["source_relationships"]
+        rels = archive["source_relationships"]
         matches = [r for r in rels if r["relation"] == "ace-lsl-identical-raw"]
         self.assertEqual(len(matches), 2)
         self.assertEqual({r["upstream"]["git_blob"] for r in matches}, {
@@ -629,7 +631,7 @@ class SupplyChainTests(unittest.TestCase):
         exact_names = names.copy()
         modified = {"dart", "html", "javascript", "markdown", "php", "python", "r", "sh"}
         self.assertTrue(exact_names.isdisjoint(modified))
-        derived = {"edifact", "liquid", "wollok"}
+        derived = {"liquid", "wollok"}
         self.assertTrue(derived.isdisjoint(exact_names | modified))
         names |= modified | derived
         self.assertEqual({loc["file"] for loc in record["locations"]},
@@ -698,9 +700,6 @@ class SupplyChainTests(unittest.TestCase):
                 self.assertEqual(relation["container"]["git_blob"], current)
                 self.assertNotEqual(original, endpoint)
         derived_pins = {
-            "edifact": ("ace-edifact-java-two-triggers",
-                "https://github.com/ajaxorg/ace/blob/d16daddc5ea91e578fafde6c9c17b41cdb036579/lib/ace/snippets/java.snippets", "854f14ac22f148309d4f9ec450fda38244ede6ec",
-                "f884c8fd6394d60311782c50e6d233dbc6da4ecc", "624b87ad3d9e135050ba3415237fff3e38241bbc", "afe85e064b4594d344b7b101d82cefc42460565f"),
             "liquid": ("ace-liquid-html-prefix",
                 "https://github.com/ajaxorg/ace/blob/d9b38ac378d0dea6e1ca820c0e8294f04c46010a/lib/ace/snippets/html.snippets", "20a73d72e339c352216ce4803e6c5b842f7d7212",
                 "58fcde32061df7d7f6ef38a6bfcf306b0f800f92", "b3e3c982cfa70d04544b74652bbe85e702f5ebf2", "7c72fe03a9fce8c65f6b486d83fbc88f618a97b5"),
@@ -723,6 +722,13 @@ class SupplyChainTests(unittest.TestCase):
                 self.assertEqual(matches[0]["upstream"]["git_blob"], original_blob)
                 self.assertEqual(matches[0]["container"]["url"], historical)
                 self.assertEqual(matches[0]["container"]["git_blob"], endpoint)
+        archive = json.loads((PACKAGE.parent / "docs/history/ace-snippet-exclusions.json").read_text("utf-8"))
+        self.assertNotIn("vendor/ace/snippets/edifact.js", vendor["resources"])
+        self.assertEqual(archive["former_snipmate_location"]["file"], "vendor/ace/snippets/edifact.js")
+        edifact = [r for r in archive["source_relationships"] if r["relation"] == "ace-edifact-java-two-triggers"]
+        self.assertEqual(len(edifact), 1)
+        self.assertEqual(edifact[0]["upstream"]["git_blob"], "854f14ac22f148309d4f9ec450fda38244ede6ec")
+        self.assertEqual(edifact[0]["container"]["git_blob"], "624b87ad3d9e135050ba3415237fff3e38241bbc")
         component = next(c for c in sbom(inv, vendor)["components"]
                          if c["bom-ref"] == "embedded:ace-snipmate-snippets")
         self.assertNotIn("version", component)

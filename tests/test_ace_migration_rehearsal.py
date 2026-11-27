@@ -115,7 +115,7 @@ class MigrationRehearsalTests(unittest.TestCase):
         workers = profile["infrastructure"] + profile["excluded"] + [
             row["file"] for row in profile["languages"].values()]
         family = {name: ("fixture:" + name).encode()
-                  for name in workers + profile["excluded_themes"]}
+                  for name in workers + profile["excluded_themes"] + profile["excluded_snippets"]}
         family.update({"mode-fixture-%d.js" % i: str(i).encode()
                        for i in range(495 - len(family))})
         runtime_lock = {"version": profile["ace_version"], "worker_files": workers,
@@ -231,12 +231,12 @@ class MigrationRehearsalTests(unittest.TestCase):
                 verify.assert_called_once()
                 self.assertEqual(verify.call_args.args[0], dest / "hass_configurator")
                 result = json.loads(report.read_text("utf-8"))
-                self.assertEqual(result["curated_family_files"], 489)
+                self.assertEqual(result["curated_family_files"], 485)
                 self.assertEqual(result["overlay_verification"], {
-                    "vendor_resources_verified": 490, "js_yaml_files_verified": 2})
+                    "vendor_resources_verified": 486, "js_yaml_files_verified": 2})
                 self.assertEqual(len(result["excluded_workers"]), 5)
                 self.assertEqual(result["excluded_themes"], ["theme-kr_theme.js"])
-                for name in result["excluded_workers"] + result["excluded_themes"]:
+                for name in result["excluded_workers"] + result["excluded_themes"] + result["excluded_snippets"]:
                     self.assertFalse((dest / "hass_configurator/vendor/ace" / name).exists())
 
     def test_main_propagates_overlay_verification_failure(self):

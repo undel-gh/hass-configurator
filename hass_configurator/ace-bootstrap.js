@@ -1,11 +1,11 @@
 /* First-party Ace policy. The JSON literal is also read by build tooling.
- * #37: enforce the curated worker and theme policy for the shipped archive subset.
+ * #37: enforce the curated worker, theme and snippet policy for the shipped archive subset.
  * The complete upstream lock remains separate; no retained Ace bytes change.
  */
 (function () {
     'use strict';
     var profile = /* HC_WORKER_PROFILE_BEGIN */ {
-        "schema": 2,
+        "schema": 3,
         "ace_version": "1.45.2",
         "infrastructure": ["worker-base.js"],
         "languages": {
@@ -16,7 +16,8 @@
             "ace/mode/yaml": {"module": "ace/mode/yaml_worker", "file": "worker-yaml.js", "class": "YamlWorker"}
         },
         "excluded": ["worker-coffee.js", "worker-lua.js", "worker-php.js", "worker-xml.js", "worker-xquery.js"],
-        "excluded_themes": ["theme-kr_theme.js"]
+        "excluded_themes": ["theme-kr_theme.js"],
+        "excluded_snippets": ["snippets/abc.js","snippets/edifact.js","snippets/gobstones.js","snippets/lsl.js"]
     } /* HC_WORKER_PROFILE_END */;
     var aceBase = new URL('vendor/ace/', document.currentScript.src).href;
     ['basePath', 'modePath', 'themePath', 'workerPath'].forEach(function (key) {
@@ -71,10 +72,21 @@
 
     // UIWorkerClient uses config.loadModule(["worker", ...]) instead of
     // native Worker. Deny unknown worker modules in that path as well.
+    // A missing snippet is an optional feature, not a failed script load.
+    // Deny the exact module ID for both string and typed-array calls.
+    var excludedSnippetModules = Object.create(null);
+    profile.excluded_snippets.forEach(function (file) {
+        excludedSnippetModules['ace/' + file.slice(0, -3)] = true;
+    });
     var loadModule = ace.config.loadModule;
     ace.config.loadModule = function (name, callback) {
         if (Array.isArray(name) && name[0] === 'worker') {
             checkedWorker(name[1]);
+        }
+        var moduleId = Array.isArray(name) ? name[1] : name;
+        if (typeof moduleId === 'string' && excludedSnippetModules[moduleId]) {
+            if (typeof callback === 'function') callback(undefined);
+            return;
         }
         return loadModule.apply(this, arguments);
     };

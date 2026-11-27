@@ -2576,11 +2576,6 @@
           "url": "https://github.com/ajaxorg/ace/blob/b6463844b04758745f99b1553416f4cf4b8ad013/lib/ace/snippets/sh.snippets"
         },
         {
-          "git_blob": "624b87ad3d9e135050ba3415237fff3e38241bbc",
-          "marker": "snippet",
-          "url": "https://github.com/ajaxorg/ace/blob/f884c8fd6394d60311782c50e6d233dbc6da4ecc/lib/ace/snippets/edifact.snippets"
-        },
-        {
           "git_blob": "20a73d72e339c352216ce4803e6c5b842f7d7212",
           "marker": "snippet",
           "url": "https://github.com/ajaxorg/ace/blob/d9b38ac378d0dea6e1ca820c0e8294f04c46010a/lib/ace/snippets/html.snippets"
@@ -2636,10 +2631,6 @@
         {
           "file": "vendor/ace/snippets/django.js",
           "marker": "ace/snippets/django"
-        },
-        {
-          "file": "vendor/ace/snippets/edifact.js",
-          "marker": "ace/snippets/edifact"
         },
         {
           "file": "vendor/ace/snippets/erlang.js",
@@ -2739,7 +2730,7 @@
         }
       ],
       "name": "SnipMate snippets collection (historical material in retained Ace payloads)",
-      "note": "Historical honza/vim-snippets January 2013 MIT collection, 31 relevant import blob matches. Scoped attribution covers historical MIT material in 33 retained payloads: 22 exact decoded matches (cpp to c_cpp, make to makefile included) and eight modified descendants with exact historical endpoint-to-current relations. Four have prior exact net-delta replay (dart, markdown, python, sh); four have 18 exact path-history patch transitions (html, javascript, php, r). Two further derived payloads are mapped only for historical MIT material: EDIFACT (two trigger replacements from Java) and Liquid (exact 26-line prefix plus 2017 HTML endpoint). Both have separate bounded raw-to-raw and raw-to-current relations; HTML 2017 delta already reconstructed. Wollok is additionally mapped for retained Java material only: its introduction parent has the exact imported Java blob; 16 unique ordered literal spans (510 bytes, including eight section headings and retained bodies) occur in both pinned raw inputs. Partial shared-block relationship plus exact raw-to-current relation, not a whole-file derivation or rights clearance for adapted/new content. Original LICENSE references AUTHORS; both whole files retained. MIT applies to the historical collection material, not a blanket license for Ace modifications, wrappers or other snippets. Ace root BSD declaration is separate; individual contribution rights and additional inputs remain review-open. No exact collection version/PURL or legal clearance asserted.",
+      "note": "Historical honza/vim-snippets January 2013 MIT collection, 31 relevant import blob matches. Scoped attribution covers historical MIT material in 32 retained payloads: 22 exact decoded matches (cpp to c_cpp, make to makefile included) and eight modified descendants with exact historical endpoint-to-current relations. Four have prior exact net-delta replay (dart, markdown, python, sh); four have 18 exact path-history patch transitions (html, javascript, php, r). Liquid is mapped only for historical MIT material (exact 26-line prefix plus 2017 HTML endpoint), with bounded raw-to-raw and raw-to-current relations; HTML 2017 delta already reconstructed. EDIFACT was excluded for product relevance only; its historical MIT/BSD evidence is archived in docs/history/ace-snippet-exclusions.json. Wollok is additionally mapped for retained Java material only: its introduction parent has the exact imported Java blob; 16 unique ordered literal spans (510 bytes, including eight section headings and retained bodies) occur in both pinned raw inputs. Partial shared-block relationship plus exact raw-to-current relation, not a whole-file derivation or rights clearance for adapted/new content. Original LICENSE references AUTHORS; both whole files retained. MIT applies to the historical collection material, not a blanket license for Ace modifications, wrappers or other snippets. Ace root BSD declaration is separate; individual contribution rights and additional inputs remain review-open. No exact collection version/PURL or legal clearance asserted.",
       "notices": [
         "third_party/licenses/embedded/snipmate-snippets-mit.txt",
         "third_party/licenses/embedded/snipmate-snippets-authors.txt"
@@ -3023,71 +3014,6 @@
       "version": null
     },
     {
-      "id": "ace-lsl-snippet-source-review",
-      "name": "LSL historical Builders Brewery snippet source review",
-      "parent": "ace",
-      "kind": "review",
-      "status": "partial",
-      "version": null,
-      "ecosystem": null,
-      "license": null,
-      "locations": [
-        {
-          "file": "vendor/ace/snippets/lsl.js",
-          "marker": "ace/snippets/lsl"
-        }
-      ],
-      "evidence": [
-        {
-          "url": "https://github.com/ajaxorg/ace/blob/36198a50f4bdef76c5044ba83df09d3298e90b6a/lib/ace/snippets/lsl.snippets",
-          "git_blob": "bc0d2eb9d0286050bbb56efa09cc02aaec500dba",
-          "marker": "snippet CAMERA_ACTIVE"
-        },
-        {
-          "url": "https://github.com/dazzle-lsl/linden-scripting-language/blob/d777b7ad20cfa223a368d8bdf379edfc58130f4f/ace/lib/ace/snippets/lsl.snippets",
-          "git_blob": "bc0d2eb9d0286050bbb56efa09cc02aaec500dba",
-          "marker": "snippet CAMERA_ACTIVE"
-        },
-        {
-          "url": "https://github.com/dazzle-lsl/linden-scripting-language/blob/54ef136c1eb3cb2703fb0b6b6e610918e03c217d/ace/lib/ace/snippets/lsl.snippets",
-          "git_blob": "352d26e7b4ed7389ddefb8365b4e2d985e63d037",
-          "marker": "snippet CAMERA_ACTIVE"
-        },
-        {
-          "url": "https://github.com/ajaxorg/ace/blob/fb0384329602f0ea99aa1fd983f094f7b0c31797/lib/ace/snippets/lsl.snippets",
-          "git_blob": "352d26e7b4ed7389ddefb8365b4e2d985e63d037",
-          "marker": "snippet CAMERA_ACTIVE"
-        },
-        {
-          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/snippets/lsl.snippets.js",
-          "git_blob": "7e33bdc2855b5f7e3ff0cb5d4f5f546dc809ccf5",
-          "marker": "module.exports"
-        },
-        {
-          "url": "https://github.com/dazzle-lsl/linden-scripting-language/blob/54ef136c1eb3cb2703fb0b6b6e610918e03c217d/README.md",
-          "git_blob": "276b2a807b8991a1a0be3bb2b6e818e6012350c8",
-          "marker": "snippet files"
-        },
-        {
-          "url": "https://github.com/dazzle-lsl/linden-scripting-language/blob/54ef136c1eb3cb2703fb0b6b6e610918e03c217d/ace/README.md",
-          "git_blob": "978ba7615b0608435bdd30845597aa4aaf72cb43",
-          "marker": "Ace Editor"
-        },
-        {
-          "url": "https://github.com/dazzle-lsl/linden-scripting-language/blob/54ef136c1eb3cb2703fb0b6b6e610918e03c217d/sublimetext/LSL/other/kwdb/LICENSE.md",
-          "git_blob": "8cb9f32f550b7ca8ecf725066c437ee4b356bc18",
-          "marker": "GNU GENERAL PUBLIC LICENSE"
-        },
-        {
-          "url": "https://github.com/dazzle-lsl/linden-scripting-language/blob/54ef136c1eb3cb2703fb0b6b6e610918e03c217d/sublimetext/LSL/other/lindenlab-viewer/LICENSE.md",
-          "git_blob": "723f008e956b5c9b045d7139c444ecc222b7ef07",
-          "marker": "GNU LESSER GENERAL PUBLIC LICENSE"
-        }
-      ],
-      "notices": [],
-      "note": "Historical Builders Brewery repository preserved in dazzle-lsl fork: initial 2015 snapshot exactly matches 2014 Ace raw and 2015-09-18 21:42:30 UTC source exactly matches Ace 21:49:57 UTC endpoint; both histories have same contributor. Full raw equality and current static template relation checked by gate. No root or Ace-directory license found at that external snapshot; nested KWDB GPL-3.0 and viewer LGPL-2.1 texts are separate scope references, not proof of generated payload derivation or a license assignment. Original upstream direction for earliest import, API data source and rights remain open; no new library identity, notice or clearance."
-    },
-    {
       "id": "ace-sqlserver-microsoft-template-material",
       "name": "Microsoft SSMS template material in Ace SQL Server snippets",
       "parent": "ace",
@@ -3179,7 +3105,8 @@
     "Io/Vala scoped source-specific attribution: 10/10 and 31/31 TextMate dictionaries checked by exact collection closure from pinned Io pre-import and Vala later MIT-licensed revisions. Vala earlier Daniel Lucraft rights, other mode/grammar inputs and independent review remain open. No package version/PURL or blanket clearance.",
     "R5.3a Wollok: 33 SnipMate locations, 35 snippet payloads with active source-specific attribution including Io/Vala. Wollok shares 15 ordered triggers and eight headings with exact parent Java import blob; 16 unique ordered literal spans compared by bounded partial relation, not a complete historical patch reconstruction. Full raw/current pins checked independently. ABC intermediate Zupfnoter match and GPL/Commercial project declaration are research leads only; no GPL assignment, new notice, or exclusion. JSONiq/XQuery snippet origin separate from XQLint/REx remains open.",
     "R5.3a LSL review-only: exact 2014 and 2015 Ace raw snapshots match historical Builders Brewery fork; 481 triggers in final raw and exact current static module relation. External root/ace grant missing; nested KWDB GPL and viewer LGPL are distinct scoped leads, no license assignment or new SBOM library. Gobstones GPL web-project relationship, SQL Server later MIT reference templates and GraphQLSchema contribution evidence remain research-open.",
-    "R5.3a SQL Server: official later 2018 Microsoft MIT templates scoped partial attribution (createproc/createfn, 4+6 ordered bounded spans). No proof of original 2015 source revision or all rights; other ten triggers unresolved. 36/52 active historical-material locations, LSL review-only. Remaining ten specialized raw payloads inspected and introduction history pinned in research; no automatic clearance from Ace BSD root or grammar citations."
+    "R5.3a SQL Server: official later 2018 Microsoft MIT templates scoped partial attribution (createproc/createfn, 4+6 ordered bounded spans). No proof of original 2015 source revision or all rights; other ten triggers unresolved. 36/52 active historical-material locations, LSL review-only. Remaining ten specialized raw payloads inspected and introduction history pinned in research; no automatic clearance from Ace BSD root or grammar citations.",
+    "Maintainer-approved snippet-only exclusion: ABC, EDIFACT (product-only), Gobstones, LSL. 198 retained snippets (48 nonempty, 150 stubs); 35 active partial historical attribution locations. Prior EDIFACT and LSL records/relations moved to docs/history/ace-snippet-exclusions.json; historical counts above are not current distribution scope. Modes unchanged; no blanket license clearance."
   ],
   "notices": {
     "third_party/licenses/embedded/ace-legacy-linters.txt": {
@@ -4201,32 +4128,6 @@
     },
     {
       "upstream": {
-        "git_blob": "854f14ac22f148309d4f9ec450fda38244ede6ec",
-        "marker": "snippet",
-        "url": "https://github.com/ajaxorg/ace/blob/d16daddc5ea91e578fafde6c9c17b41cdb036579/lib/ace/snippets/java.snippets"
-      },
-      "container": {
-        "git_blob": "624b87ad3d9e135050ba3415237fff3e38241bbc",
-        "marker": "snippet",
-        "url": "https://github.com/ajaxorg/ace/blob/f884c8fd6394d60311782c50e6d233dbc6da4ecc/lib/ace/snippets/edifact.snippets"
-      },
-      "relation": "ace-edifact-java-two-triggers"
-    },
-    {
-      "upstream": {
-        "git_blob": "624b87ad3d9e135050ba3415237fff3e38241bbc",
-        "marker": "snippet",
-        "url": "https://github.com/ajaxorg/ace/blob/f884c8fd6394d60311782c50e6d233dbc6da4ecc/lib/ace/snippets/edifact.snippets"
-      },
-      "container": {
-        "git_blob": "afe85e064b4594d344b7b101d82cefc42460565f",
-        "marker": "module.exports",
-        "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/snippets/edifact.snippets.js"
-      },
-      "relation": "ace-snippet-template-literal"
-    },
-    {
-      "upstream": {
         "git_blob": "20a73d72e339c352216ce4803e6c5b842f7d7212",
         "marker": "snippet",
         "url": "https://github.com/ajaxorg/ace/blob/d9b38ac378d0dea6e1ca820c0e8294f04c46010a/lib/ace/snippets/html.snippets"
@@ -4276,45 +4177,6 @@
         "marker": "module.exports"
       },
       "relation": "ace-snippet-template-literal"
-    },
-    {
-      "relation": "ace-lsl-identical-raw",
-      "upstream": {
-        "url": "https://github.com/ajaxorg/ace/blob/36198a50f4bdef76c5044ba83df09d3298e90b6a/lib/ace/snippets/lsl.snippets",
-        "git_blob": "bc0d2eb9d0286050bbb56efa09cc02aaec500dba",
-        "marker": "snippet CAMERA_ACTIVE"
-      },
-      "container": {
-        "url": "https://github.com/dazzle-lsl/linden-scripting-language/blob/d777b7ad20cfa223a368d8bdf379edfc58130f4f/ace/lib/ace/snippets/lsl.snippets",
-        "git_blob": "bc0d2eb9d0286050bbb56efa09cc02aaec500dba",
-        "marker": "snippet CAMERA_ACTIVE"
-      }
-    },
-    {
-      "relation": "ace-lsl-identical-raw",
-      "upstream": {
-        "url": "https://github.com/dazzle-lsl/linden-scripting-language/blob/54ef136c1eb3cb2703fb0b6b6e610918e03c217d/ace/lib/ace/snippets/lsl.snippets",
-        "git_blob": "352d26e7b4ed7389ddefb8365b4e2d985e63d037",
-        "marker": "snippet CAMERA_ACTIVE"
-      },
-      "container": {
-        "url": "https://github.com/ajaxorg/ace/blob/fb0384329602f0ea99aa1fd983f094f7b0c31797/lib/ace/snippets/lsl.snippets",
-        "git_blob": "352d26e7b4ed7389ddefb8365b4e2d985e63d037",
-        "marker": "snippet CAMERA_ACTIVE"
-      }
-    },
-    {
-      "relation": "ace-snippet-template-literal",
-      "upstream": {
-        "url": "https://github.com/ajaxorg/ace/blob/fb0384329602f0ea99aa1fd983f094f7b0c31797/lib/ace/snippets/lsl.snippets",
-        "git_blob": "352d26e7b4ed7389ddefb8365b4e2d985e63d037",
-        "marker": "snippet CAMERA_ACTIVE"
-      },
-      "container": {
-        "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/snippets/lsl.snippets.js",
-        "git_blob": "7e33bdc2855b5f7e3ff0cb5d4f5f546dc809ccf5",
-        "marker": "module.exports"
-      }
     },
     {
       "relation": "ace-sqlserver-ms-procedure-shared",

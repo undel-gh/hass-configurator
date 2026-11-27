@@ -56,6 +56,13 @@ def main():
         if name in manifest["resources"] and hashlib.sha256(raw).hexdigest() != manifest["resources"][name]:
             raise ValueError("Retained resource hash mismatch: " + name)
         hits = scan(raw)
+        if name.startswith("vendor/ace/") and name.endswith(".js"):
+            for excluded_name in profile["excluded_snippets"]:
+                module_id = ("ace/" + excluded_name[:-3]).encode("ascii")
+                # Mode metadata may mention the ID; only a module definition is forbidden.
+                if any(prefix + module_id + quote in raw for prefix, quote in (
+                        (b'ace.define("', b'"'), (b"ace.define('", b"'"))):
+                    raise ValueError("Excluded snippet definition in retained Ace: " + name)
         if ("theme-kr_theme.js" in profile["excluded_themes"] and
                 "kr-theme-payload" in hits and name.startswith("vendor/ace/")):
             raise ValueError("Excluded krTheme payload marker in retained Ace: " + name)
@@ -84,6 +91,7 @@ def main():
     report = {"source_checkout": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
               "status": "marker-evidence-review-required", "excluded_workers": profile["excluded"],
               "excluded_themes": profile["excluded_themes"],
+              "excluded_snippets": profile["excluded_snippets"],
                "retained_family": len(selected), "runtime_files": rows,
               "upstream_unminified_counterparts": upstream,
               "limitations": ["Literal indicators may be false positives or miss renamed/minified code.",

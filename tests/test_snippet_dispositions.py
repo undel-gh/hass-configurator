@@ -30,11 +30,13 @@ class SnippetDispositionTests(unittest.TestCase):
         self.assertEqual(sum(r["payload_kind"] == "nonempty" for r in self.matrix["rows"]), 52)
         self.assertEqual(sum(r["payload_kind"] == "empty-stub" for r in self.matrix["rows"]), 150)
         self.assertEqual({r["snippet"] for r in self.matrix["rows"]
-                          if r["proposed_disposition"] == "consider-snippet-only-exclusion"},
-                         {"abc", "gobstones", "lsl"})
+                          if r["proposed_disposition"] == "excluded-reassessment-open"},
+                         {"abc", "edifact", "gobstones", "lsl"})
+        self.assertEqual(sum(r["distribution"] == "retained" for r in self.matrix["rows"]), 198)
         edifact = next(r for r in self.matrix["rows"] if r["snippet"] == "edifact")
-        self.assertEqual(edifact["proposed_disposition"], "retain-review-open")
-        self.assertEqual(edifact["additional_components"], ["ace-snipmate-snippets"])
+        self.assertEqual(edifact["distribution"], "excluded")
+        self.assertEqual(edifact["additional_components"], [])
+        self.assertIn("Product-only", edifact["exclusion_reason"])
         self.assertIn("The [machine-readable matrix](ace-snippet-dispositions.json) is canonical.",
                       render_document(self.matrix))
 
@@ -71,8 +73,15 @@ class SnippetDispositionTests(unittest.TestCase):
         vendor["resources"].pop("vendor/ace/snippets/abap.js")
         with self.assertRaises(ValueError):
             self.verify(self.matrix, vendor=vendor)
+        for name in ("abc", "edifact", "gobstones", "lsl"):
+            changed = copy.deepcopy(self.vendor)
+            row = next(r for r in self.matrix["rows"] if r["snippet"] == name)
+            changed["resources"]["vendor/ace/snippets/" + name + ".js"] = row["asset_sha256"]
+            with self.assertRaises(ValueError):
+                self.verify(self.matrix, vendor=changed)
         embedded = copy.deepcopy(self.embedded)
-        next(c for c in embedded["components"] if c["id"] == "ace-lsl-snippet-source-review")["kind"] = "library"
+        archive = json.loads((ROOT / "docs/history/ace-snippet-exclusions.json").read_text("utf-8"))
+        embedded["components"].extend(archive["components"])
         with self.assertRaises(ValueError):
             self.verify(self.matrix, embedded=embedded)
 
@@ -85,14 +94,18 @@ class SnippetDispositionTests(unittest.TestCase):
             src = row["source_payload"]
             asset = {"file": "snippets/" + row["snippet"] + ".js",
                      "status": "static-payload-equal" if src else "exact-generated-empty-stub",
+                     "distribution": row["distribution"],
+                     ("upstream_minified_sha256" if row["distribution"] == "excluded" else "shipped_minified_sha256"): row["asset_sha256"],
                      "source_files": []}
             if src:
                 report["sources"][src["path"]] = {"git_blob": src["git_blob"]}
                 asset["source_files"].append({"source": src["path"], "source_present": True})
             report["theme_snippet_assets"].append(asset)
-        self.assertEqual(verify_native_snippet_dispositions(self.matrix, report)["nonempty"], 52)
+        self.assertEqual(verify_native_snippet_dispositions(self.matrix, report)["nonempty"], 48)
         for mutation in (
             lambda r: r["theme_snippet_assets"].pop(),
+            lambda r: next(a for a in r["theme_snippet_assets"] if a["file"] == "snippets/abc.js").update(distribution="retained"),
+            lambda r: next(a for a in r["theme_snippet_assets"] if a["file"] == "snippets/abc.js").update(shipped_minified_sha256="0" * 64),
             lambda r: r["theme_snippet_assets"].append(copy.deepcopy(r["theme_snippet_assets"][0])),
             lambda r: r["theme_snippet_assets"][0].update(status="static-payload-equal"),
             lambda r: r["sources"]["src/snippets/java.snippets.js"].update(git_blob="0" * 40),

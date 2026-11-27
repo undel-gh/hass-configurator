@@ -1,8 +1,9 @@
 # Ace snippet disposition matrix (R5.3)
 
 The [machine-readable matrix](ace-snippet-dispositions.json) is canonical.
-This is a proposed review disposition, not legal clearance or release acceptance.
-All 202 assets are currently retained; no exclusion is authorized or implemented.
+This records the approved distribution and review dispositions, not legal clearance or release acceptance.
+198 assets retained, four physically excluded by maintainer decision. The matrix
+tracks all 202 upstream names; historical hashes are not shipped hashes.
 The Ace root BSD-3-Clause declaration applies separately, not as proof of external
 input rights. Additional component IDs refer to `hass_configurator/third_party/embedded.json`.
 A partial attribution is not a license for the whole payload. Review-only records
@@ -13,8 +14,9 @@ necessarily a unique copy revision. See [research](ACE_SNIPPET_RESEARCH.md).
 The offline source inventory gate checks exact row closure, hashes against
 the lock and vendor manifest, generated stub bytes by their exact hash,
 component mappings, source pin consistency for mapped records and this rendered
-document. The native research gate separately compares all 202 row types and
-the 52 current source Git blobs against the immutable checkout and static
+document. The native research gate separately compares all 202 upstream row types and
+the 52 current source Git blobs (48 retained nonempty, 4 archive-only) against
+the immutable checkout and static
 payload/empty-stub evidence. It does not replay all historical transformations
 or adjudicate rights. R5.3b maps the 150 generated loaders to the exact Ace
 exportAce extModules template, with a file-specific BSD-3-Clause header identical
@@ -33,67 +35,66 @@ to the existing parent notice. Independent artifact inspection and review remain
 | snipmate-modified | 8 |
 | textmate-exact | 2 |
 
-Optional license-risk exclusion candidates: abc, gobstones, lsl.
-EDIFACT: retain under scoped attribution; product-only removal is a separate decision.
-Language modes are outside this decision; any exclusion requires explicit
-maintainer approval, profile/manifest changes and validation in a separate increment.
+Maintainer-approved exclusions: abc, edifact, gobstones, lsl.
+EDIFACT removal is product-only; historical MIT/BSD evidence retained.
+Language modes are unchanged. Reinstatement requires explicit approval and renewed review.
 
 ## Nonempty payloads
 
-| Snippet | Evidence class | Additional components | Priority | Proposed disposition | Remaining review |
-| --- | --- | --- | --- | --- | --- |
-| abc | historical-endpoint-review-open | — | elevated | consider-snippet-only-exclusion | PR #2273: CLA requested, contributor promised submission, later merge; signed CLA and scope unconfirmed. Exact Zupfnoter intermediate match, GPL/Commercial not a snippet grant; spreadsheet negative per Round 7 reviewer. Seek CLA confirmation or exact permissive grant; app-specific exclusion alternative. |
-| actionscript | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
-| c_cpp | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
-| cedar | historical-endpoint-review-open | — | standard | retain-review-open | PR #5944 policy scaffolds; no named snippets in examined vscode-cedar tree. Individual contribution/source rights open. |
-| cedarschema | historical-endpoint-review-open | — | standard | retain-review-open | PR #5944 schema scaffolds; cited vscode-cedar TextMate grammar is not snippet provenance. Individual contribution/source rights open. |
-| clojure | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
-| coffee | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
-| csound_document | historical-endpoint-review-open | — | standard | retain-review-open | One XML scaffold; mode Pygments/Csound references do not establish snippet provenance. Original contribution review. |
-| csound_orchestra | historical-endpoint-review-open | — | standard | retain-review-open | Nine language scaffolds; mode references do not establish snippet provenance. Original contribution review. |
-| css | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
-| dart | snipmate-modified | ace-snipmate-snippets | standard | retain-review-open | Historical SnipMate MIT and AUTHORS retained; reconstructed Ace delta and later contribution/external rights review remain open. |
-| diff | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
-| django | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
-| drools | historical-endpoint-review-open | — | standard | retain-review-open | Three rule/query/declare scaffolds; mode BSD header and drools.org reference do not establish separate snippet rights. |
-| edifact | snipmate-derived | ace-snipmate-snippets | standard | retain-review-open | Exact Java raw with two trigger substitutions; SnipMate MIT and AUTHORS retained. PR #3514 contributor expressly confirmed BSD contribution headers (mode/rules, not raw). Retain under scoped MIT plus Ace/BSD modifications; product-only removal may be considered separately. |
-| erlang | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
-| fsl | historical-endpoint-review-open | — | standard | retain-review-open | Same-author JSSM MIT examples share metadata conventions, not exact header. machine_license is template content, not a grant. |
-| gobstones | historical-endpoint-review-open | — | elevated | consider-snippet-only-exclusion | PR #3988 cites IDE behavior, not licensed source. Expanded 479-trigger collection origin open; seek grants covering original and expanded material or licensed replacement; optional risk-based exclusion. GPL association is not a grant. |
-| graphqlschema | historical-endpoint-review-open | — | standard | retain-review-open | Five scaffolds; historical rename preserves raw blob. Original contribution and external input review. |
-| haml | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
-| haskell | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
-| html | snipmate-modified | ace-snipmate-snippets | standard | retain-review-open | Historical SnipMate MIT and AUTHORS retained; reconstructed Ace delta and later contribution/external rights review remain open. |
-| io | textmate-exact | ace-textmate-io-snippets | standard | retain-review-open | All 10 original TextMate plist entries exactly mapped; original bundle permission retained. Review exceptions and source-specific scope, not other Io grammar. |
-| java | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
-| javascript | snipmate-modified | ace-snipmate-snippets | standard | retain-review-open | Historical SnipMate MIT and AUTHORS retained; reconstructed Ace delta and later contribution/external rights review remain open. |
-| jsoniq | historical-endpoint-review-open | — | elevated | retain-review-open | Identical raw to XQuery; legacy static module, source rights open. XQLint Apache and REx grant do not cover snippets. |
-| jsp | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
-| liquid | snipmate-derived | ace-snipmate-snippets | standard | retain-review-open | Exact historical HTML plus fixed 26-line prefix. MIT covers historical SnipMate material only; prefix/HTML changes and individual contributions open. |
-| lsl | exact-source-license-open | ace-lsl-snippet-source-review | elevated | consider-snippet-only-exclusion | Two exact Builders Brewery common-source snapshots; no historical grant established. Active ISC lsl-tools successor lacks Ace collection; request source-specific grant on both blobs, or independently licensed replacement/exclusion. KWDB GPL and viewer LGPL derivation open. |
-| lua | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
-| makefile | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
-| markdown | snipmate-modified | ace-snipmate-snippets | elevated | retain-review-open | Octopress-tag templates introduced by two exact 2012 SnipMate patches under existing MIT; 12-template suffix retained exactly. External documentation/example origin and individual contributor attribution review remain open. |
-| maze | historical-endpoint-review-open | — | standard | retain-review-open | Two entries with duplicate trigger and distinct descriptions. Preserve both; original contribution review. |
-| perl | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
-| php | snipmate-modified | ace-snipmate-snippets | standard | retain-review-open | Historical SnipMate MIT and AUTHORS retained; reconstructed Ace delta and later contribution/external rights review remain open. |
-| python | snipmate-modified | ace-snipmate-snippets | standard | retain-review-open | Historical SnipMate MIT and AUTHORS retained; reconstructed Ace delta and later contribution/external rights review remain open. |
-| r | snipmate-modified | ace-snipmate-snippets | standard | retain-review-open | Historical SnipMate MIT and AUTHORS retained; reconstructed Ace delta and later contribution/external rights review remain open. |
-| razor | historical-endpoint-review-open | — | standard | retain-review-open | Single 35-byte conditional scaffold; original contribution review. |
-| robot | historical-endpoint-review-open | — | elevated | retain-review-open | Eleven triggers across two contributions. Review original template sources and intervening modifications. |
-| rst | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
-| ruby | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
-| sh | snipmate-modified | ace-snipmate-snippets | standard | retain-review-open | Historical SnipMate MIT and AUTHORS retained; reconstructed Ace delta and later contribution/external rights review remain open. |
-| snippets | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
-| sql | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
-| sqlserver | microsoft-partial | ace-sqlserver-microsoft-template-material | elevated | retain-review-open | Official 2018 MIT SSMS source, 4+6 scoped shared blocks; original 2015 copy revision, adaptations and other ten triggers open. |
-| tcl | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
-| tex | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
-| textile | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
-| vala | textmate-exact | ace-textmate-vala-snippets | elevated | retain-review-open | All 31 TextMate entries exactly mapped; later MIT grant on identical subtree. Earlier Daniel Lucraft rights and pre-import grant remain open. |
-| velocity | historical-endpoint-review-open | — | standard | retain-review-open | Six common directive templates. Original contribution and external input review. |
-| wollok | snipmate-derived | ace-snipmate-snippets | elevated | retain-review-open | 16 ordered shared Java spans; MIT covers retained Java material only; adaptations/new triggers and original contribution rights open. |
-| xquery | historical-endpoint-review-open | — | elevated | retain-review-open | Identical raw to JSONiq; legacy static module, source rights open. XQLint Apache and REx grant do not cover snippets. |
+| Snippet | Distribution | Evidence class | Additional components | Priority | Proposed disposition | Exclusion reason | Remaining review |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| abc | excluded | historical-endpoint-review-open | — | elevated | excluded-reassessment-open | Zupfnoter-specific templates; low HA Configurator utility and unresolved CLA/grant. | PR #2273 CLA receipt/signature and applicable grant unconfirmed; historical Zupfnoter match is not a GPL assignment. No outreach; reassess if reinstatement requested. |
+| actionscript | retained | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | — | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
+| c_cpp | retained | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | — | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
+| cedar | retained | historical-endpoint-review-open | — | standard | retain-review-open | — | PR #5944 policy scaffolds; no named snippets in examined vscode-cedar tree. Individual contribution/source rights open. |
+| cedarschema | retained | historical-endpoint-review-open | — | standard | retain-review-open | — | PR #5944 schema scaffolds; cited vscode-cedar TextMate grammar is not snippet provenance. Individual contribution/source rights open. |
+| clojure | retained | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | — | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
+| coffee | retained | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | — | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
+| csound_document | retained | historical-endpoint-review-open | — | standard | retain-review-open | — | One XML scaffold; mode Pygments/Csound references do not establish snippet provenance. Original contribution review. |
+| csound_orchestra | retained | historical-endpoint-review-open | — | standard | retain-review-open | — | Nine language scaffolds; mode references do not establish snippet provenance. Original contribution review. |
+| css | retained | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | — | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
+| dart | retained | snipmate-modified | ace-snipmate-snippets | standard | retain-review-open | — | Historical SnipMate MIT and AUTHORS retained; reconstructed Ace delta and later contribution/external rights review remain open. |
+| diff | retained | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | — | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
+| django | retained | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | — | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
+| drools | retained | historical-endpoint-review-open | — | standard | retain-review-open | — | Three rule/query/declare scaffolds; mode BSD header and drools.org reference do not establish separate snippet rights. |
+| edifact | excluded | snipmate-derived | — | standard | excluded-reassessment-open | Product-only: mostly Java templates are irrelevant to EDIFACT. Scoped MIT/BSD evidence retained historically; no licensing-driven exclusion. | Historical Java two-trigger transformation, SnipMate MIT and AUTHORS, and PR #3514 BSD contribution confirmation preserved. Product-only exclusion; reassess if reinstatement requested. |
+| erlang | retained | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | — | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
+| fsl | retained | historical-endpoint-review-open | — | standard | retain-review-open | — | Same-author JSSM MIT examples share metadata conventions, not exact header. machine_license is template content, not a grant. |
+| gobstones | excluded | historical-endpoint-review-open | — | elevated | excluded-reassessment-open | Educational language; low HA Configurator utility does not justify additional rights research or contributor outreach. | Initial/expanded contribution history remains open; PR #3988 cites behavior, not source rights. No outreach; reassess if reinstatement requested. |
+| graphqlschema | retained | historical-endpoint-review-open | — | standard | retain-review-open | — | Five scaffolds; historical rename preserves raw blob. Original contribution and external input review. |
+| haml | retained | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | — | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
+| haskell | retained | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | — | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
+| html | retained | snipmate-modified | ace-snipmate-snippets | standard | retain-review-open | — | Historical SnipMate MIT and AUTHORS retained; reconstructed Ace delta and later contribution/external rights review remain open. |
+| io | retained | textmate-exact | ace-textmate-io-snippets | standard | retain-review-open | — | All 10 original TextMate plist entries exactly mapped; original bundle permission retained. Review exceptions and source-specific scope, not other Io grammar. |
+| java | retained | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | — | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
+| javascript | retained | snipmate-modified | ace-snipmate-snippets | standard | retain-review-open | — | Historical SnipMate MIT and AUTHORS retained; reconstructed Ace delta and later contribution/external rights review remain open. |
+| jsoniq | retained | historical-endpoint-review-open | — | elevated | retain-review-open | — | Identical raw to XQuery; legacy static module, source rights open. XQLint Apache and REx grant do not cover snippets. |
+| jsp | retained | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | — | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
+| liquid | retained | snipmate-derived | ace-snipmate-snippets | standard | retain-review-open | — | Exact historical HTML plus fixed 26-line prefix. MIT covers historical SnipMate material only; prefix/HTML changes and individual contributions open. |
+| lsl | excluded | exact-source-license-open | — | elevated | excluded-reassessment-open | Second Life scripting; low HA Configurator utility does not justify historical grant outreach. | Exact Builders Brewery historical blobs and missing historical grant preserved; ISC successor not retroactive, KWDB/viewer derivation open. No outreach; reassess if reinstatement requested. |
+| lua | retained | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | — | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
+| makefile | retained | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | — | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
+| markdown | retained | snipmate-modified | ace-snipmate-snippets | elevated | retain-review-open | — | Octopress-tag templates introduced by two exact 2012 SnipMate patches under existing MIT; 12-template suffix retained exactly. External documentation/example origin and individual contributor attribution review remain open. |
+| maze | retained | historical-endpoint-review-open | — | standard | retain-review-open | — | Two entries with duplicate trigger and distinct descriptions. Preserve both; original contribution review. |
+| perl | retained | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | — | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
+| php | retained | snipmate-modified | ace-snipmate-snippets | standard | retain-review-open | — | Historical SnipMate MIT and AUTHORS retained; reconstructed Ace delta and later contribution/external rights review remain open. |
+| python | retained | snipmate-modified | ace-snipmate-snippets | standard | retain-review-open | — | Historical SnipMate MIT and AUTHORS retained; reconstructed Ace delta and later contribution/external rights review remain open. |
+| r | retained | snipmate-modified | ace-snipmate-snippets | standard | retain-review-open | — | Historical SnipMate MIT and AUTHORS retained; reconstructed Ace delta and later contribution/external rights review remain open. |
+| razor | retained | historical-endpoint-review-open | — | standard | retain-review-open | — | Single 35-byte conditional scaffold; original contribution review. |
+| robot | retained | historical-endpoint-review-open | — | elevated | retain-review-open | — | Eleven triggers across two contributions. Review original template sources and intervening modifications. |
+| rst | retained | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | — | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
+| ruby | retained | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | — | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
+| sh | retained | snipmate-modified | ace-snipmate-snippets | standard | retain-review-open | — | Historical SnipMate MIT and AUTHORS retained; reconstructed Ace delta and later contribution/external rights review remain open. |
+| snippets | retained | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | — | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
+| sql | retained | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | — | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
+| sqlserver | retained | microsoft-partial | ace-sqlserver-microsoft-template-material | elevated | retain-review-open | — | Official 2018 MIT SSMS source, 4+6 scoped shared blocks; original 2015 copy revision, adaptations and other ten triggers open. |
+| tcl | retained | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | — | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
+| tex | retained | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | — | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
+| textile | retained | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | — | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
+| vala | retained | textmate-exact | ace-textmate-vala-snippets | elevated | retain-review-open | — | All 31 TextMate entries exactly mapped; later MIT grant on identical subtree. Earlier Daniel Lucraft rights and pre-import grant remain open. |
+| velocity | retained | historical-endpoint-review-open | — | standard | retain-review-open | — | Six common directive templates. Original contribution and external input review. |
+| wollok | retained | snipmate-derived | ace-snipmate-snippets | elevated | retain-review-open | — | 16 ordered shared Java spans; MIT covers retained Java material only; adaptations/new triggers and original contribution rights open. |
+| xquery | retained | historical-endpoint-review-open | — | elevated | retain-review-open | — | Identical raw to JSONiq; legacy static module, source rights open. XQLint Apache and REx grant do not cover snippets. |
 
 ## Empty generated stubs
 

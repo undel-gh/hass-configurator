@@ -1,6 +1,6 @@
-# R5.3c — snippet-only exclusion decision proposal
+# R5.3c — snippet-only exclusion decision record
 
-Status: **maintainer decision pending**. No exclusion authorized or implemented by this document.
+Status: **maintainer approved; implementation committed, exact-HEAD verification pending**. On 2026-11-28 the maintainer approved all four snippet-only exclusions on product relevance/cost grounds. No rights outreach; no mode removal or merge authorization. Historical proposals below are superseded by the approved decision.
 Baseline `c32d0f12ed6522b28f9a3b0dedf7e3a00de96e2d` (R5.3b): exact-head workflows 46071297199, 46071297176, 46071297249 SUCCESS; 219 Python tests, 7 jobs. Source artifact 15233385149 and native artifact 15232204358 metadata observed; content inspection and independent review not completed.
 
 ## Revised scope after Round 7
@@ -30,3 +30,15 @@ Tree sizes from exact baseline; not a gzip/container-size estimate. Optional thr
 4. Require exact-HEAD CI, offline browser smoke for each mode, tamper/reintroduction tests, artifact content inspection and independent review. No issue closure, no merge or public-release signoff. #9/#33/#37 open; #36/#32 Draft/HOLD.
 
 Decision requested: prioritize grant/CLA requests for ABC, Gobstones and LSL, or explicitly approve a named subset for snippet-only removal. EDIFACT is a separate product-only question; default recommendation retain. Retaining any license-open candidate keeps its review-open status; restoration after exclusion requires explicit decision and renewed source review. See research Round 7 addendum for precise grant targets. No authority inferred to send outreach, remove assets or merge.
+
+## Approved decision (2026-11-28)
+
+| Payload | Bytes | Decision rationale |
+| --- | ---: | --- |
+| ABC | 1421 | Zupfnoter-specific notation; low utility and unresolved CLA/grant |
+| EDIFACT | 4807 | Product-only: irrelevant Java-derived templates; existing scoped MIT/BSD evidence remains valid within its scope |
+| Gobstones | 39606 | Educational language; low utility does not warrant further rights research |
+| LSL | 35897 | Second Life scripting; low utility does not warrant historical grant outreach |
+| **Total** | **81731** | All four snippet-only, not a license violation finding |
+
+Approved profile schema 3: four exact excluded_snippets; full upstream lock unchanged. 198 retained snippets (48 nonempty, 150 stubs), 485 Ace assets, 505 vendor resources. Matrix 202 upstream rows; four excluded-reassessment-open records with explicit reasons and original pins. Move five historical EDIFACT/LSL relationships and LSL review record to docs/history/ace-snippet-exclusions.json; 32 active SnipMate locations, all original notices retained. Native research compares four excluded archive members with upstream-only hash fields, never claims shipment. First-party loader returns undefined for excluded canonical string/array IDs without requests; ordinary mode/worker/theme behavior unchanged. Direct and simulated Ingress browser regression and installed selection added. Exact-HEAD CI, artifact inspection, independent review and real HAOS acceptance pending. Restoration requires separate explicit approval and renewed license review. Historical grant routes retained as evidence, not prerequisites for removing these assets. PR #36/#32 Draft/HOLD; #9/#33/#37 open.

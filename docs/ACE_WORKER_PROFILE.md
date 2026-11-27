@@ -78,3 +78,8 @@ with old saved settings, absence from the first-party selector, retained
 theme loading and an explicit 404 after checking no automatic request.
 Select these tests for installed wheel/sdist and Docker. New exact-HEAD
 CI, artifact contents, independent review and real HAOS remain pending.
+
+
+## Curated snippet extension (maintainer-approved 2026-11-28)
+
+Profile schema 3 adds the exact excluded_snippets list: snippets/abc.js, snippets/edifact.js, snippets/gobstones.js and snippets/lsl.js. See ACE_SNIPPET_EXCLUSION_PROPOSAL.md decision record. Physical removal only; all language modes and remaining upstream bytes unchanged. 485 Ace files, 505 vendor resources. The config.loadModule hook returns absent module to a provided callback for excluded canonical string and array IDs; no load attempt or synthetic vendor stub. Retained calls delegate unchanged. This is application policy, not a sandbox. Full upstream lock remains 495 files. Direct/simulated-Ingress tests check tokenization, editing, repeated mode transitions, retained snippet registration and completion options, no automatic excluded request, explicit 404. Layer inspection checks nested path suffix and exact digest. Independent acceptance, CI artifacts and real HAOS remain open.

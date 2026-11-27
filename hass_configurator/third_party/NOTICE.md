@@ -156,11 +156,10 @@ this theme, not legacy GitHub or GitHub Dark. See docs/ace-theme-dispositions.js
 
 SnipMate snippets collection (honza/vim-snippets): historical January 2013 MIT
 LICENSE and its referenced AUTHORS file retained verbatim. The embedded
-record maps historical MIT material in 33 retained Ace payloads: 22 exact
+record maps historical MIT material in 32 retained Ace payloads: 22 exact
 decoded matches (including cpp -> c_cpp and make -> makefile) and eight
 modified descendants with reconstructed deltas and exact historical
-endpoint-to-current relations, plus EDIFACT (two Java trigger replacements)
-and Liquid (historical HTML payload with a fixed additional prefix), plus
+endpoint-to-current relations, plus Liquid (historical HTML payload with a fixed additional prefix), plus
 retained Java material in Wollok (16 unique ordered shared spans). This is not a blanket MIT license for
 Ace modifications, wrappers or other snippets; additional inputs and
 contribution rights remain review-open. See docs/ACE_SNIPPET_RESEARCH.md.
@@ -184,3 +183,8 @@ bounded shared blocks in Ace SQL Server createproc/createfn only (4+6 spans).
 The grant is later than the 2015 Ace contribution; original revision, modified
 content and remaining ten triggers are review-open. No blanket SQL Server MIT,
 package version or PURL asserted. See docs/ACE_SNIPPET_RESEARCH.md.
+
+ABC, EDIFACT, Gobstones and LSL snippet collections are excluded from the
+curated distribution. EDIFACT removal is product-only; its historical MIT/BSD
+evidence and LSL review evidence remain in docs/history/ace-snippet-exclusions.json.
+All four language modes remain; this decision does not clear mode licensing.

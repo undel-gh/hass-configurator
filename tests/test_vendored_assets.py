@@ -17,8 +17,8 @@ class VendoredAssetsTests(unittest.TestCase):
     def test_hash_manifest_is_complete_and_matches_every_file(self):
         self.assertEqual(MANIFEST["schema"], 1)
         resources = MANIFEST["resources"]
-        self.assertEqual(len([p for p in resources if p.startswith("vendor/ace/")]), 489)
-        self.assertEqual(len(resources), 509)
+        self.assertEqual(len([p for p in resources if p.startswith("vendor/ace/")]), 485)
+        self.assertEqual(len(resources), 505)
         for name, checksum in resources.items():
             with self.subTest(name=name):
                 source = PACKAGE / name
@@ -89,10 +89,21 @@ class VendoredAssetsTests(unittest.TestCase):
         assets = Assets()
         router = Router(assets)
         profile = read_profile()
-        for name in profile["excluded"] + profile["excluded_themes"]:
+        for name in profile["excluded"] + profile["excluded_themes"] + profile["excluded_snippets"]:
             for version in (assets.version, "0" * 16):
                 route = "/assets/v%s/vendor/ace/%s" % (version, name)
                 self.assertEqual(router.match("GET", route).kind, "not_found")
+
+    def test_excluded_snippet_definitions_and_retained_modes(self):
+        from scripts.ace_worker_profile import read_profile
+        for filename in read_profile()["excluded_snippets"]:
+            name = filename.split("/")[-1][:-3]
+            self.assertTrue((PACKAGE / ("vendor/ace/mode-" + name + ".js")).is_file())
+            self.assertFalse((PACKAGE / ("vendor/ace/" + filename)).exists())
+            for path in (PACKAGE / "vendor/ace").rglob("*.js"):
+                raw = path.read_bytes()
+                for quote in (b'"', b"'"):
+                    self.assertNotIn(b"ace.define(" + quote + ("ace/snippets/" + name).encode() + quote, raw, str(path))
 
     def test_removed_theme_payload_markers_absent_from_retained_ace(self):
         # A label in the unmodified upstream theme list is metadata, not CSS.

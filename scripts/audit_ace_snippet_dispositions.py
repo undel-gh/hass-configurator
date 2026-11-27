@@ -52,14 +52,19 @@ SHARED_STUB_LOADER = {
     ]
 }
 
-EXCLUSION_CANDIDATES = {"abc", "gobstones", "lsl"}
+EXCLUSION_REASONS = {
+    "abc": "Zupfnoter-specific templates; low HA Configurator utility and unresolved CLA/grant.",
+    "edifact": "Product-only: mostly Java templates are irrelevant to EDIFACT. Scoped MIT/BSD evidence retained historically; no licensing-driven exclusion.",
+    "gobstones": "Educational language; low HA Configurator utility does not justify additional rights research or contributor outreach.",
+    "lsl": "Second Life scripting; low HA Configurator utility does not justify historical grant outreach."
+}
 EXACT = set("actionscript c_cpp clojure coffee css diff django erlang haml haskell java jsp lua makefile perl rst ruby snippets sql tcl tex textile".split())
 MODIFIED = set("dart html javascript markdown php python r sh".split())
 DERIVED = {"edifact", "liquid", "wollok"}
 ROW_FIELDS = {"snippet", "distribution", "asset_sha256", "payload_kind",
               "source_payload", "historical_reference", "evidence_class",
               "additional_components", "review_priority", "proposed_disposition",
-              "remaining_review"}
+              "remaining_review", "exclusion_reason"}
 
 
 def require(condition, message):
@@ -124,7 +129,7 @@ def expected_components(name, category):
 def verify_snippet_dispositions(matrix, lock, vendor, embedded):
     """Offline, version-bound closure; no claim of independent license review."""
     require(set(matrix) == {"schema", "ace_version", "ace_source_commit", "ace_build_commit", "review_status", "rows", "shared_stub_loader"}
-            and type(matrix["schema"]) is int and matrix["schema"] == 1, "invalid schema")
+            and type(matrix["schema"]) is int and matrix["schema"] == 2, "invalid schema")
     require(matrix["review_status"] == "independent-review-pending", "unexpected review status")
     require(matrix["shared_stub_loader"] == SHARED_STUB_LOADER, "shared stub loader evidence drift")
     require(matrix["shared_stub_loader"]["source"]["commit"] == lock["source_commit"]
@@ -137,7 +142,10 @@ def verify_snippet_dispositions(matrix, lock, vendor, embedded):
     require(all(re.fullmatch(r"snippets/[a-z0-9_]+\.js", k) for k in files), "unexpected locked filename")
     resources = {k.removeprefix("vendor/ace/"): v for k, v in vendor["resources"].items()
                  if k.startswith("vendor/ace/snippets/")}
-    require(files == resources and len(files) == 202, "lock/vendor snippet closure mismatch")
+    excluded = {"snippets/" + n + ".js" for n in EXCLUSION_REASONS}
+    require(excluded <= set(files) and len(files) == 202
+            and resources == {k: v for k, v in files.items() if k not in excluded},
+            "lock/vendor snippet closure mismatch")
     rows = matrix["rows"]
     require(isinstance(rows, list) and all(isinstance(row, dict) and set(row) == ROW_FIELDS
                                           for row in rows), "invalid row fields")
@@ -152,7 +160,10 @@ def verify_snippet_dispositions(matrix, lock, vendor, embedded):
         file = "snippets/" + name + ".js"
         loc = "vendor/ace/" + file
         digest = files[file]
-        require(row["distribution"] == "retained" and row["asset_sha256"] == digest,
+        removed = name in EXCLUSION_REASONS
+        require(row["distribution"] == ("excluded" if removed else "retained")
+                and row["exclusion_reason"] == EXCLUSION_REASONS.get(name)
+                and row["asset_sha256"] == digest,
                 "distribution/hash drift: " + name)
         stub = hashlib.sha256(empty_stub(name)).hexdigest() == digest
         category = evidence_class(name, stub)
@@ -160,7 +171,7 @@ def verify_snippet_dispositions(matrix, lock, vendor, embedded):
         require(row["payload_kind"] == ("empty-stub" if stub else "nonempty")
                 and row["evidence_class"] == category, "payload/evidence class drift: " + name)
         proposal = ("retain-stub-review-open" if stub else
-                    "consider-snippet-only-exclusion" if name in EXCLUSION_CANDIDATES else "retain-review-open")
+                    "excluded-reassessment-open" if removed else "retain-review-open")
         require(row["proposed_disposition"] == proposal
                 and row["review_priority"] in {"standard", "elevated"}
                 and isinstance(row["remaining_review"], str) and row["remaining_review"].strip()
@@ -168,7 +179,7 @@ def verify_snippet_dispositions(matrix, lock, vendor, embedded):
                 "unexpected proposal/review fields: " + name)
         mapped = sorted(c["id"] for c in embedded["components"]
                         if any(x["file"] == loc for x in c["locations"]))
-        require(row["additional_components"] == mapped == expected_components(name, category),
+        require(row["additional_components"] == mapped == ([] if removed else expected_components(name, category)),
                 "component mapping drift: " + name)
         for cid in mapped:
             c = by_component[cid]
@@ -207,6 +218,10 @@ def verify_snippet_dispositions(matrix, lock, vendor, embedded):
                     and relations[0]["upstream"]["url"] == hist["url"]
                     and relations[0]["upstream"]["git_blob"] == hist["git_blob"],
                     "mapped source relation drift: " + name)
+    require("ace-lsl-snippet-source-review" not in by_component, "excluded LSL active component")
+    require(not any(re.search(r"/(?:edifact|lsl)\.snippets(?:\.js)?$", r[key]["url"])
+                    for r in embedded["source_relationships"] for key in ("upstream", "container")),
+            "excluded snippet active source relationship")
     require(dict(counts) == COUNTS, "evidence class totals drift")
     return dict(sorted(counts.items()))
 
@@ -339,6 +354,12 @@ def verify_native_snippet_dispositions(matrix, report):
     for asset in assets:
         row = expected[asset["file"]]
         stub = row["payload_kind"] == "empty-stub"
+        require(asset["distribution"] == row["distribution"], "native distribution drift: " + asset["file"])
+        if row["distribution"] == "excluded":
+            require("shipped_minified_sha256" not in asset and asset["upstream_minified_sha256"] == row["asset_sha256"],
+                    "excluded native archive scope drift: " + asset["file"])
+        else:
+            require(asset["shipped_minified_sha256"] == row["asset_sha256"], "retained native digest drift")
         require(asset["status"] == ("exact-generated-empty-stub" if stub else "static-payload-equal"),
                 "native payload status mismatch: " + asset["file"])
         if not stub:
@@ -347,20 +368,22 @@ def verify_native_snippet_dispositions(matrix, report):
                     and any(x.get("source") == pin["path"] and x.get("source_present")
                             for x in asset["source_files"]), "native source blob mismatch: " + asset["file"])
     return {"status": "matrix-closure-verified-review-open", "rows": len(assets),
-            "nonempty": sum(x["payload_kind"] == "nonempty" for x in matrix["rows"]),
+            "retained": sum(x["distribution"] == "retained" for x in matrix["rows"]),
+            "excluded": sum(x["distribution"] == "excluded" for x in matrix["rows"]),
+            "nonempty": sum(x["payload_kind"] == "nonempty" and x["distribution"] == "retained" for x in matrix["rows"]),
             "empty_stubs": sum(x["payload_kind"] == "empty-stub" for x in matrix["rows"])}
 
 
 def render_document(matrix):
     counts = Counter(x["evidence_class"] for x in matrix["rows"])
-    result = "# Ace snippet disposition matrix (R5.3)\n\nThe [machine-readable matrix](ace-snippet-dispositions.json) is canonical.\nThis is a proposed review disposition, not legal clearance or release acceptance.\nAll 202 assets are currently retained; no exclusion is authorized or implemented.\nThe Ace root BSD-3-Clause declaration applies separately, not as proof of external\ninput rights. Additional component IDs refer to `hass_configurator/third_party/embedded.json`.\nA partial attribution is not a license for the whole payload. Review-only records\nare not libraries. Priority is proposed review order, not a risk rating.\nHistorical references record research endpoints or exact original inputs, not\nnecessarily a unique copy revision. See [research](ACE_SNIPPET_RESEARCH.md).\n\nThe offline source inventory gate checks exact row closure, hashes against\nthe lock and vendor manifest, generated stub bytes by their exact hash,\ncomponent mappings, source pin consistency for mapped records and this rendered\ndocument. The native research gate separately compares all 202 row types and\nthe 52 current source Git blobs against the immutable checkout and static\npayload/empty-stub evidence. It does not replay all historical transformations\nor adjudicate rights. R5.3b maps the 150 generated loaders to the exact Ace\nexportAce extModules template, with a file-specific BSD-3-Clause header identical\nto the existing parent notice. Independent artifact inspection and review remain open.\n\n## Counts\n\n| Evidence class | Count |\n| --- | ---: |\n"
+    result = "# Ace snippet disposition matrix (R5.3)\n\nThe [machine-readable matrix](ace-snippet-dispositions.json) is canonical.\nThis records the approved distribution and review dispositions, not legal clearance or release acceptance.\n198 assets retained, four physically excluded by maintainer decision. The matrix\ntracks all 202 upstream names; historical hashes are not shipped hashes.\nThe Ace root BSD-3-Clause declaration applies separately, not as proof of external\ninput rights. Additional component IDs refer to `hass_configurator/third_party/embedded.json`.\nA partial attribution is not a license for the whole payload. Review-only records\nare not libraries. Priority is proposed review order, not a risk rating.\nHistorical references record research endpoints or exact original inputs, not\nnecessarily a unique copy revision. See [research](ACE_SNIPPET_RESEARCH.md).\n\nThe offline source inventory gate checks exact row closure, hashes against\nthe lock and vendor manifest, generated stub bytes by their exact hash,\ncomponent mappings, source pin consistency for mapped records and this rendered\ndocument. The native research gate separately compares all 202 upstream row types and\nthe 52 current source Git blobs (48 retained nonempty, 4 archive-only) against\nthe immutable checkout and static\npayload/empty-stub evidence. It does not replay all historical transformations\nor adjudicate rights. R5.3b maps the 150 generated loaders to the exact Ace\nexportAce extModules template, with a file-specific BSD-3-Clause header identical\nto the existing parent notice. Independent artifact inspection and review remain open.\n\n## Counts\n\n| Evidence class | Count |\n| --- | ---: |\n"
     result += "".join(f"| {key} | {count} |\n" for key, count in sorted(counts.items()))
-    result += "\nOptional license-risk exclusion candidates: abc, gobstones, lsl.\nEDIFACT: retain under scoped attribution; product-only removal is a separate decision.\nLanguage modes are outside this decision; any exclusion requires explicit\nmaintainer approval, profile/manifest changes and validation in a separate increment.\n\n## Nonempty payloads\n\n| Snippet | Evidence class | Additional components | Priority | Proposed disposition | Remaining review |\n| --- | --- | --- | --- | --- | --- |\n"
+    result += "\nMaintainer-approved exclusions: abc, edifact, gobstones, lsl.\nEDIFACT removal is product-only; historical MIT/BSD evidence retained.\nLanguage modes are unchanged. Reinstatement requires explicit approval and renewed review.\n\n## Nonempty payloads\n\n| Snippet | Distribution | Evidence class | Additional components | Priority | Proposed disposition | Exclusion reason | Remaining review |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n"
     for row in matrix["rows"]:
         if row["payload_kind"] == "nonempty":
-            result += "| " + " | ".join((row["snippet"], row["evidence_class"],
+            result += "| " + " | ".join((row["snippet"], row["distribution"], row["evidence_class"],
                 ", ".join(row["additional_components"]) or "—", row["review_priority"],
-                row["proposed_disposition"], row["remaining_review"])) + " |\n"
+                row["proposed_disposition"], row["exclusion_reason"] or "—", row["remaining_review"])) + " |\n"
     result += "\n## Empty generated stubs\n\nAll rows below have identical structural loader semantics with a name-specific\nmodule ID, not an empty file. Exact published hashes are recorded in JSON.\nThe shared loader is mapped to `Makefile.dryice.js` (`exportAce`, `extModules`),\nwith a file-specific BSD-3-Clause header matching `vendor/licenses/ace.txt`.\nThe historical guarded-export variant matches the current template exactly.\nThe native audit verifies all 150 minified and unminified archive members by\nstatic substitution; no separate library or notice is created. This mapping is\nreview-open; no independent per-language license grant or payload is inferred.\n\n| Snippet | Proposed disposition |\n| --- | --- |\n"
     for row in matrix["rows"]:
         if row["payload_kind"] == "empty-stub":
