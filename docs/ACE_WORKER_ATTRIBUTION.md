@@ -668,3 +668,55 @@ Compare the actual original input and its derivatives, identify whether
 material requiring separate permission is present, and seek independent
 review before changing disposition. No new shipped notices, SBOM
 components or runtime changes; original input lineage remains open.
+
+## R5.2h additional historical wrapper declarations and krTheme reassessment
+
+85cad1f research run 46044521005 failed: split_css_source counted quote
+semicolon tokens in the whole suffix rather than the actual CSS literal.
+Five-worker research and migration succeeded; Offline foundation still
+running at initial check. Correct literal recognition to the bounded
+observed continuation grammar and add a regression test with later JS
+statements. No relaxation of source equality or blob checks.
+
+Non-truncated tree of 16b2f1c9 (2012 BSD merge) has 26 theme JS files.
+In addition to prior eleven, inspected all 15 other wrappers: Chrome,
+Crimson Editor, Dreamweaver, GitHub, Merbivore pair, Pastels on Dark,
+Solarized pair, Tomorrow five, Vibrant Ink. All explicitly carry
+Ajax.org B.V. BSD-3-Clause header and reference separate CSS. New
+research pins these 15. This is wrapper-level evidence, not a finding
+that CSS and external rights are cleared; no new notice assigned.
+Remaining later themes are outside this batch.
+
+krTheme: author archive ec21b6d65a3d38d699b47b76026b2746f38d1681
+blob 6b4da423a8e7a9f005ed0cd20436a74bd2d1def4 and Ace 2010
+cba64d86 input blob 65c5c9b6aac1d42dc65c1ee537093404fe207b64 both
+12317 characters, 552 split lines. EXACT after replacing only
+background #000000 with #0B0A09 and invisibles #E97A5459 with #FFB16F52.
+Same creator comment, UUID 87F051F7-B6FB-408C-96F9-467B66C14E9F,
+all 43 scope entries. 47 of 49 distinct six/eight-digit hex colors shared.
+15 of the author input hex colors also occur in current Ace CSS
+source blob 3f7d001d2ab54d56e56f9f69835964b931bde849.
+This establishes near-identical input content, not direction of copying,
+copyrightability of individual colors, or proof of independent creation.
+Historical Ace implementation license remains meaningful, but no
+original separate grant established. Keep excluded-reassessment-open;
+recommend retaining physical exclusion unless new rights evidence
+or independent assessment justifies restoration. No runtime change.
+
+## REx #80 historical generated-output permission — author response
+
+On 2026-11-27, verified public response by GuntherRademacher on
+https://github.com/GuntherRademacher/rex-parser-generator/issues/80#issuecomment-7224280132
+(comment ID 7224280132, author account ID 24464731).
+Asked whether REx v5.30 users could redistribute generated JavaScript
+parsers/tokenizers including modified and minified versions: yes.
+Asked whether REx-generated parts of the two specific files may be
+redistributed under Apache-2.0 or another permissive license: yes.
+Asked whether additional copyright, attribution or redistribution
+requirements apply: no. This resolves the historical generator-output
+permission question for the stated scope; independent review pending.
+It is a public issue response, not a Git blob, so record the stable
+comment URL here and in inventory prose, not as a fabricated immutable
+file pin. Preserve existing generator notices. Grammar origin and
+permissions remain separate; no blanket XQLint clearance or full
+component identity claim. No runtime or SBOM status change.

@@ -1,7 +1,7 @@
 """External theme evidence must not hide changes or imply license clearance."""
 import plistlib
 import unittest
-from scripts.audit_external_themes import compare_plist, verify_blob, reference, verify_historical_import, textmate_license_relation, verify_expected_comparison, input_rights_indicators, converter_input_status, historic_header, split_css_source
+from scripts.audit_external_themes import compare_plist, verify_blob, reference, verify_historical_import, textmate_license_relation, verify_expected_comparison, input_rights_indicators, converter_input_status, historic_header, split_css_source, krtheme_input_relation
 from scripts.audit_supply_chain import git_blob_sha1
 
 
@@ -110,3 +110,16 @@ class ExternalThemeTests(unittest.TestCase):
                     b'exports.cssText = "a"; extra";'):
             with self.assertRaises(ValueError):
                 split_css_source(bad)
+
+    def test_historical_css_literal_ignores_later_statement_terminators(self):
+        raw = b'exports.cssText = "\\\n.a {}";\nvar name = "other";\n'
+        self.assertEqual(split_css_source(raw), b"\n.a {}")
+
+    def test_krtheme_relation_rejects_unrelated_edits(self):
+        original = plistlib.dumps({"settings": [{"settings": {
+            "background": "#000000", "invisibles": "#E97A5459", "foreground": "#FCFFE0"}}]})
+        imported = original.replace(b"#000000", b"#0B0A09").replace(b"#E97A5459", b"#FFB16F52")
+        self.assertEqual(krtheme_input_relation(original, imported)["exact_except"],
+                         ["background", "invisibles"])
+        with self.assertRaisesRegex(ValueError, "Unexpected krTheme input relation"):
+            krtheme_input_relation(original, imported.replace(b"#FCFFE0", b"#FFFFFF"))

@@ -106,15 +106,17 @@ Additional retained attribution: estraverse includes an MIT-attributed LLVM
 libc++ algorithm adaptation; historical full dual MIT/UIUC notice and
 CREDITS.TXT retained, MIT elected for that fragment (no exact libc++ package
 version claim). Both 2014 REx v5.30 generator headers and modern Apache-2.0
-reference retained for XQuery/JSONiq lexer modes. Historical generated
-output rights, grammar provenance and Browserify loader remain open.
+reference retained for XQuery/JSONiq lexer modes. Historical generated output redistribution confirmed by the REx author
+in issue #80; grammar provenance and exact browser-pack version remain open.
 Dracula theme carries its own MIT notice, now also distributed verbatim.
 
 XQuery/JSONiq loader: browser-pack MIT prelude fragment separately mapped,
 with original notice; exact package version unspecified (shared blob across
 multiple tags). XQLint common lexer and both language wrappers verified
-against pinned source with two exact require renames. Historic REx output
-rights and grammar provenance remain open.
+against pinned source with two exact require renames. Historic REx output redistribution confirmed for the two generated
+files, including modified/minified copies under Apache-2.0, with no
+additional requirements (author response: https://github.com/GuntherRademacher/rex-parser-generator/issues/80#issuecomment-7224280132).
+Existing notices retained; grammar provenance remains open.
 
 Historical theme attribution: Tomorrow (Chris Kempson, MIT, five themes,
 Ace PR #432), Solarized (Ethan Schoonover, MIT, two themes, initial import

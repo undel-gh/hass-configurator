@@ -371,9 +371,12 @@ def split_css_source(raw):
     if raw.count(prefix) != 1:
         raise ValueError("Expected unique historical CSS assignment")
     tail = raw.split(prefix, 1)[1]
-    if tail.count(b'";') != 1:
+    # Match only the literal and its own terminator. Later JS statements
+    # may independently end in a quote and semicolon.
+    match = re.match(rb'((?:\\\n|[^"\\\r\n])*)";(?=\n|$)', tail)
+    if match is None:
         raise ValueError("Unexpected historical CSS literal terminator")
-    literal = tail.split(b'";', 1)[0]
+    literal = match.group(1)
     restored = literal.replace(b"\\\n", b"\n")
     if b"\\" in restored or b'"' in restored or b"\r" in restored:
         raise ValueError("Unexpected historical CSS escape")
@@ -428,6 +431,85 @@ def historic_license_research(fetch, source, source_file):
                             "krTheme remains physically excluded; reassessment is not restoration."]}
 
 
+
+# Remaining wrappers in the September 2012 relicensing merge tree.
+# These pins establish a wrapper declaration, not an inline CSS grant.
+ADDITIONAL_BSD_THEME_WRAPPERS = (
+    ("chrome", "4f26b06c45ebd09b24b9238ace0fd1705f4ff70f"),
+    ("crimson_editor", "943930d9ec067b2d08c7c803685638bfbdd1a2c7"),
+    ("dreamweaver", "25a7fcba3157c7004746b1d128d9077b3523b48e"),
+    ("github", "b5839dd40a0c70a3eed3158bcce67bd0a013572f"),
+    ("merbivore", "254fdad0827be303d323331f9f0115a1e4ecb783"),
+    ("merbivore_soft", "d5e7dbbd0333c3f2e33161e0b26b7dfbbf88a226"),
+    ("pastel_on_dark", "2867215093c3388a777910d06ed8cdcfd10f3933"),
+    ("solarized_dark", "2b09b3378bada7b233c822fa5c32e4a99cd9028c"),
+    ("solarized_light", "e4095c1e4f274b8b0b3552f93e96517f10b755b3"),
+    ("tomorrow", "e740a080243df08ea074d3b1fc6e47fcc989579f"),
+    ("tomorrow_night", "b943b414ef5f9e2fdad5e6c9182d46ba40e5cdef"),
+    ("tomorrow_night_blue", "e3874f09029f430cbf61112be1cac46fab744ee1"),
+    ("tomorrow_night_bright", "5f18ee4496108add8797f9b740a7fd1057b6fb25"),
+    ("tomorrow_night_eighties", "fff11892a272cb6eef01c4fe895c711066b7484f"),
+    ("vibrant_ink", "28bd0496a30b9adbb47f1c8a68959623204e7b56"),
+)
+
+
+def additional_bsd_wrappers(fetch):
+    rows = []
+    for name, blob in ADDITIONAL_BSD_THEME_WRAPPERS:
+        raw, pin = reference("ajaxorg/ace", BSD_COMMIT,
+                             "lib/ace/theme/" + name + ".js", blob, fetch)
+        header, body = historic_header(raw, b"Distributed under the BSD license:")
+        if (b"Copyright (c) 2010, Ajax.org B.V." not in header or
+                ("./" + name + ".css").encode() not in body):
+            raise ValueError("Unexpected historical BSD wrapper: " + name)
+        rows.append({"theme": name, "wrapper": pin,
+                     "declaration": "BSD-3-Clause", "css_scope": "separate-file",
+                     "license_status": "review-open"})
+    return rows
+
+
+def krtheme_input_relation(original, imported):
+    # Only these two exact value substitutions are permitted. Do not
+    # collapse metadata, scopes, whitespace or unrelated settings.
+    changes = ((b"<string>#000000</string>", b"<string>#0B0A09</string>"),
+               (b"<string>#E97A5459</string>", b"<string>#FFB16F52</string>"))
+    expected = original
+    for old, new in changes:
+        if expected.count(old) != 1:
+            raise ValueError("Unexpected krTheme original color multiplicity")
+        expected = expected.replace(old, new, 1)
+    if expected != imported:
+        raise ValueError("Unexpected krTheme input relation")
+    return {"exact_except": ["background", "invisibles"],
+            "plist": compare_plist(original, imported),
+            "disposition": "excluded-reassessment-open"}
+
+
+def krtheme_reassessment(fetch, source, source_file):
+    original, origin_pin = reference("kennethreitz-archive/krTheme.tmTheme",
+        "ec21b6d65a3d38d699b47b76026b2746f38d1681", "krTheme.tmTheme",
+        "6b4da423a8e7a9f005ed0cd20436a74bd2d1def4", fetch)
+    imported, import_pin = reference("ajaxorg/ace",
+        "cba64d86be96864665b26e109603f021e1141e67", "tool/tmthemes/krTheme.tmTheme",
+        "65c5c9b6aac1d42dc65c1ee537093404fe207b64", fetch)
+    current, blob = source_file(source, "tool/tmthemes/krTheme.tmTheme")
+    if current != imported or blob != "65c5c9b6aac1d42dc65c1ee537093404fe207b64":
+        raise ValueError("Current krTheme input drift")
+    css, _ = source_file(source, "src/theme/kr_theme-css.js")
+    css_pin = verify_blob(css, "3f7d001d2ab54d56e56f9f69835964b931bde849")
+    readme, readme_pin = reference("kennethreitz-archive/krTheme.tmTheme",
+        "ec21b6d65a3d38d699b47b76026b2746f38d1681", "Readme.md",
+        "b9618416c8e135efd9e84520495b551415eb1bd4", fetch)
+    if b"Copyright 2010 Kenneth Reitz. All Rights Reserved." not in readme:
+        raise ValueError("Historical krTheme author notice drift")
+    return {"author_input": origin_pin, "ace_import": import_pin,
+            "current_css_source": css_pin, "author_readme": readme_pin,
+            "relation": krtheme_input_relation(original, imported),
+            "limitations": ["Near-identical plist is evidence of close lineage, not copying direction.",
+                            "Ace historical declarations do not establish upstream author permission.",
+                            "Research only; excluded runtime payload is not restored."]}
+
+
 def research(source, work, fetch, source_file):
     licenses = {}
     for family, pin in LICENSES.items():
@@ -454,5 +536,7 @@ def research(source, work, fetch, source_file):
             "historical_textmate": historical_textmate(source, fetch, source_file),
             "grouped_textmate": grouped_textmate(source, fetch, source_file),
             "historical_ace_theme_licenses": historic_license_research(fetch, source, source_file),
+            "additional_bsd_theme_wrappers": additional_bsd_wrappers(fetch),
+            "krtheme_reassessment": krtheme_reassessment(fetch, source, source_file),
             "limitations": ["Pinned reference identity and comparisons are not historical lineage or license clearance.",
                             "Differences are evidence, not failures; pin drift fails closed."]}
