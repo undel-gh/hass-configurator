@@ -1,7 +1,7 @@
 """External theme evidence must not hide changes or imply license clearance."""
 import plistlib
 import unittest
-from scripts.audit_external_themes import compare_plist, verify_blob, reference, verify_historical_import, textmate_license_relation, verify_expected_comparison, input_rights_indicators, converter_input_status, historic_header, split_css_source, krtheme_input_relation
+from scripts.audit_external_themes import compare_plist, verify_blob, reference, verify_historical_import, textmate_license_relation, verify_expected_comparison, input_rights_indicators, converter_input_status, historic_header, split_css_source, krtheme_input_relation, later_wrapper_declaration, verify_theme_history_coverage
 from scripts.audit_supply_chain import git_blob_sha1
 
 
@@ -123,3 +123,23 @@ class ExternalThemeTests(unittest.TestCase):
                          ["background", "invisibles"])
         with self.assertRaisesRegex(ValueError, "Unexpected krTheme input relation"):
             krtheme_input_relation(original, imported.replace(b"#FCFFE0", b"#FFFFFF"))
+
+    def test_later_wrapper_declaration_does_not_infer_bsd_from_label(self):
+        mit = (b"Distributed under the BSD license:\n"
+               b"Copyright 2011 Irakli Gozalishvili.\nPermission is hereby granted")
+        bsd = (b"Distributed under the BSD license:\nCopyright (c) 2010, Ajax.org B.V.\n"
+               b"Redistribution and use in source and binary forms\nNeither the name of Ajax.org")
+        self.assertEqual(later_wrapper_declaration(mit), "mit-labelled-bsd")
+        self.assertEqual(later_wrapper_declaration(bsd), "ajax-bsd")
+        self.assertEqual(later_wrapper_declaration(b"exports.isDark = true;"), "root-only")
+        with self.assertRaisesRegex(ValueError, "Unclassified"):
+            later_wrapper_declaration(b"Distributed under the BSD license:")
+
+    def test_theme_history_coverage_rejects_missing_and_duplicate_rows(self):
+        early = [{"theme": "kr_theme"}, {"theme": "a"}]
+        additional = [{"theme": "b"}]
+        later = [{"theme": "c"}]
+        self.assertEqual(verify_theme_history_coverage({"a", "b", "c"}, early, additional, later)["retained_count"], 3)
+        for retained, extra in (({"a", "b"}, later), ({"a", "b", "c"}, later + later)):
+            with self.assertRaises(ValueError):
+                verify_theme_history_coverage(retained, early, additional, extra)

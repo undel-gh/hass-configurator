@@ -510,6 +510,102 @@ def krtheme_reassessment(fetch, source, source_file):
                             "Research only; excluded runtime payload is not restored."]}
 
 
+
+# Earliest located wrapper under its current name (or re-addition for
+# Gruvbox). iPlastic is a rename; a snapshot is not proof of first creation.
+# name, revision, wrapper path/blob, separate CSS path/blob, declaration.
+POST_BSD_THEMES = (
+    ("ambiance", "df4816a769c0ddc5a8453b27054a550862a41f0e", "lib/ace/theme/ambiance.js", "4c74d6f8ae8718cd5f209b04c571887951352e7a", "lib/ace/theme/ambiance.css", "fba5dcc35a08302984c7b43278d2099c51e7109c", "mit-labelled-bsd"),
+    ("chaos", "ba4c463ba9f7190c53d7455cead138a4ddea6bff", "lib/ace/theme/chaos.js", "9ee83720c367e8f435307755b51716dc153e25cd", "lib/ace/theme/chaos.css", "a2b6c9eb8a3528188e3a7a6a97e540f6e14dc174", "mit-labelled-bsd"),
+    ("cloud9_day", "87ad55daf243bdc619e15fbf220dc5ded235ed4c", "lib/ace/theme/cloud9_day.js", "7e999aec70b0a2cbf49d6a27458c29412aaa3475", "lib/ace/theme/cloud9_day.css", "8df0dbe5ddaaddb6495193073b95a2ca49607081", "ajax-bsd"),
+    ("cloud9_night", "87ad55daf243bdc619e15fbf220dc5ded235ed4c", "lib/ace/theme/cloud9_night.js", "b88197f631631ef79af09226b74b5761313d05de", "lib/ace/theme/cloud9_night.css", "5577fd2d454b1ee3f063ac33b20e20f9ab75c2ef", "ajax-bsd"),
+    ("cloud9_night_low_color", "87ad55daf243bdc619e15fbf220dc5ded235ed4c", "lib/ace/theme/cloud9_night_low_color.js", "7d24cc55ce3b2b67f54512bc357fa2c59385036b", "lib/ace/theme/cloud9_night_low_color.css", "bbeaf2690914b336d5dfbe5087c40a17ea245225", "ajax-bsd"),
+    ("cloud_editor", "b0ee067fadaf9593ed2207f363a402eb9ab8d57a", "src/theme/cloud_editor.js", "23a5eb5a835ebf0d87fb4ad621f97ac261bea157", "src/theme/cloud_editor-css.js", "4ec44de04bda12403d959bbc60839f9038b65d42", "root-only"),
+    ("cloud_editor_dark", "b0ee067fadaf9593ed2207f363a402eb9ab8d57a", "src/theme/cloud_editor_dark.js", "9aa93b85cd3fe1fb8dff8e4ca3f705ebea80eabf", "src/theme/cloud_editor_dark-css.js", "14df54d84370abb16788bdaeee50d3f15cdcf29c", "root-only"),
+    ("dracula", "3f3faa50800f19f395de95b64be6789cc7665a64", "lib/ace/theme/dracula.js", "24b0e5dc57fcd1ec6eba070642a366058eb6b08b", "lib/ace/theme/dracula.css", "17d7df82f626314e7ffafecb96f61e61d61c6373", "ajax-bsd"),
+    ("github_dark", "3f29428f1d9e6c1c16d1d37be8e54e6b435a6a05", "src/theme/github_dark.js", "cb66c090ed5e9139180ea9099f837ec0619207f2", "src/theme/github_dark.css.js", "116ab49a9449e6b59f46b868ed7a5050a6467a1a", "root-only"),
+    ("github_light_default", "e78b1acabe5f599b3c5da31a7839a3e9274fc86e", "src/theme/github_light_default.js", "434e31677f54e553c16d38039d5cd3ccdac577e5", "src/theme/github_light_default-css.js", "a44571416044088b456a27ed4edc4e8789fb652e", "root-only"),
+    ("gob", "75c000988ba29a7ed447d7dc7ebf9857cb5a664b", "lib/ace/theme/gob.js", "4b8e487d230fcfab530e0abc0f56cebfcb7c772e", "lib/ace/theme/gob.css", "2c2b50de80de07cebedca07767f313456782fa75", "ajax-bsd"),
+    ("gruvbox", "d9199ac2d8efb42f2781126ee125cff5f00ceef9", "lib/ace/theme/gruvbox.js", "67d90430a208226366874409852af3b748f502d3", "lib/ace/theme/gruvbox.css", "48a4161e6866f562d091fccf506d83f4559c447f", "mit-labelled-bsd"),
+    ("gruvbox_dark_hard", "f03ae9d3f5a76e12d3fbbdff41cbb1c070530c27", "lib/ace/theme/gruvbox_dark_hard.js", "2cd402ab9b96b080709fd2962cf0444d4b089b0e", "lib/ace/theme/gruvbox_dark_hard.css", "a0f30186b1a5fbee3e765b2b35bc7295165ec521", "ajax-bsd"),
+    ("gruvbox_light_hard", "f03ae9d3f5a76e12d3fbbdff41cbb1c070530c27", "lib/ace/theme/gruvbox_light_hard.js", "e33217c61b4e9aa1f0a5d68da0dfb21b55e8bf90", "lib/ace/theme/gruvbox_light_hard.css", "8a106cadd7713c986ae14671cc12d05e1300fc80", "ajax-bsd"),
+    ("iplastic", "fb5f272f815d4ea44eb0e1279cf858137624f37a", "lib/ace/theme/iplastic.js", "ff784196953be3797d3db8dbf6617edd78aa72fb", "lib/ace/theme/iplastic.css", "b07dc8f926c47006c1e8d16eb11493170f3dcdff", "ajax-bsd"),
+    ("katzenmilch", "4d88770435f1700b8de66630d97fef8b3d82b890", "lib/ace/theme/katzenmilch.js", "4787483dac3b41518a56a8d1f016f5de9cdb88bc", "lib/ace/theme/katzenmilch.css", "e2526b93e20ea1bcd9d8673928d62951a9bdb33c", "ajax-bsd"),
+    ("kuroir", "4d88770435f1700b8de66630d97fef8b3d82b890", "lib/ace/theme/kuroir.js", "cef6a50b5741eba87d688ef1ddb285c91a8c3a5b", "lib/ace/theme/kuroir.css", "fe2ba3027bbb64f0e59b0d6812f5ba227b993934", "ajax-bsd"),
+    ("nord_dark", "1f20fd2c15bb8acd1178cf92d5438ca3acd894ac", "lib/ace/theme/nord_dark.js", "70af5da870c8c2d3a0af70a1e0a21d0b4ccb2747", "lib/ace/theme/nord_dark.css", "f1b8efa13e5ca5436faef70be0984e5ed1033f9f", "ajax-bsd"),
+    ("one_dark", "87b220585c5ae0af7b9c3ddb7889aa1fb0715bf2", "lib/ace/theme/one_dark.js", "a088df130a0d35645ffa2fb8d2bcfc52a81c99da", "lib/ace/theme/one_dark.css", "897f45a49de86f85f0e7c1963247bd58a46966ab", "ajax-bsd"),
+    ("sqlserver", "ede82e7137516dcc0f4e6afa155fa4e93f8d35c4", "lib/ace/theme/sqlserver.js", "ab657483aa140c8b38aed5fb7f992e34492c8660", "lib/ace/theme/sqlserver.css", "a752280d25d1e8953a0e3ad471baa83330e48d72", "ajax-bsd"),
+    ("terminal", "6f6ec76f7b84f02789297128882d8b89475fcbb6", "lib/ace/theme/terminal.js", "d7ff36ae392e2bb38a89e5335fbdf8ecc85b9aaa", "lib/ace/theme/terminal.css", "911ef755fcf881033c76b1e4f4954197809e5faf", "ajax-bsd"),
+    ("xcode", "ecfdc5fbc4691b7d3933416b65da340768111f04", "lib/ace/theme/xcode.js", "c6cba5b9cd68e24700684410ce20bf5118636ffa", "lib/ace/theme/xcode.css", "c457d2f7a0c60f726d35a3b8dbe1bff0158c4247", "ajax-bsd"),
+)
+
+
+def later_wrapper_declaration(raw):
+    if (b"Copyright 2011 Irakli Gozalishvili." in raw
+            and b"Permission is hereby granted" in raw
+            and b"Distributed under the BSD license:" in raw):
+        return "mit-labelled-bsd"
+    if (b"Copyright (c) 2010, Ajax.org B.V." in raw
+            and b"Distributed under the BSD license:" in raw
+            and b"Redistribution and use in source and binary forms" in raw
+            and b"Neither the name of Ajax.org" in raw):
+        return "ajax-bsd"
+    if re.search(rb"copyright|licen[cs]e|permission is hereby", raw, re.I):
+        raise ValueError("Unclassified historical theme wrapper declaration")
+    return "root-only"
+
+
+def post_bsd_theme_research(fetch, source, source_file):
+    rows = []
+    roots = {}
+    current_license, _ = source_file(source, "LICENSE")
+    for name, revision, js_path, js_blob, css_path, css_blob, expected in POST_BSD_THEMES:
+        js, js_pin = reference("ajaxorg/ace", revision, js_path, js_blob, fetch)
+        css, css_pin = reference("ajaxorg/ace", revision, css_path, css_blob, fetch)
+        declaration = later_wrapper_declaration(js)
+        if declaration != expected:
+            raise ValueError("Historical wrapper declaration drift: " + name)
+        css_name = css_path.rsplit("/", 1)[-1]
+        if not any(candidate.encode() in js for candidate in
+                   (css_name, css_name.removesuffix(".js"))):
+            raise ValueError("Historical CSS reference drift: " + name)
+        markers = re.compile(rb"copyright|licen[cs]e|permission is hereby|based on|adapted from|ported from", re.I)
+        css_hits = [{"line": i, "text": line.decode("utf-8", errors="replace")}
+                    for i, line in enumerate(css.splitlines(), 1) if markers.search(line)]
+        if bool(css_hits) != (name == "dracula"):
+            raise ValueError("Historical CSS marker scope drift: " + name)
+        if expected == "root-only" and revision not in roots:
+            license_raw, roots[revision] = reference("ajaxorg/ace", revision, "LICENSE",
+                "4760be2a6220cf545129b233e20574f2a7bb630e", fetch)
+            if license_raw != current_license:
+                raise ValueError("Historical root license differs: " + name)
+        rows.append({"theme": name, "wrapper": js_pin, "css": css_pin,
+                     "wrapper_declaration": declaration, "css_marker_hits": css_hits,
+                     "root_license": roots.get(revision) if expected == "root-only" else None,
+                     "license_status": "review-open"})
+    # PR #5597 identifies the official VS Code theme, not a precise release.
+    # This pre-port repository snapshot supplies a historical license lead.
+    _, primer = reference("primer/github-vscode-theme",
+        "38b50d41bdc6b190b7351e220956af043221d763", "LICENSE",
+        "fcc8ec1341626589ac053947aea5279928966bc3", fetch)
+    return {"themes": rows, "github_light_default_license_reference": primer,
+            "limitations": ["Snapshot under current name, not necessarily first creation.",
+                            "Wrapper declarations do not establish separate CSS or external rights.",
+                            "Root-only means no individual declaration found in pinned wrapper.",
+                            "Primer reference is not exact port source/version or completed notice recovery."]}
+
+
+def verify_theme_history_coverage(retained, early, additional, later):
+    names = [row["theme"] for group in (early, additional, later) for row in group]
+    if len(names) != len(set(names)) or set(names) != set(retained) | {"kr_theme"}:
+        raise ValueError("Historical theme coverage differs from retained family")
+    if "kr_theme" in retained:
+        raise ValueError("krTheme remains excluded during reassessment")
+    return {"retained_count": len(retained), "historical_count": len(names),
+            "excluded": ["kr_theme"], "retained": sorted(retained),
+            "status": "historical-snapshot-coverage-not-license-clearance"}
+
+
 def research(source, work, fetch, source_file):
     licenses = {}
     for family, pin in LICENSES.items():
@@ -538,5 +634,6 @@ def research(source, work, fetch, source_file):
             "historical_ace_theme_licenses": historic_license_research(fetch, source, source_file),
             "additional_bsd_theme_wrappers": additional_bsd_wrappers(fetch),
             "krtheme_reassessment": krtheme_reassessment(fetch, source, source_file),
+            "post_bsd_themes": post_bsd_theme_research(fetch, source, source_file),
             "limitations": ["Pinned reference identity and comparisons are not historical lineage or license clearance.",
                             "Differences are evidence, not failures; pin drift fails closed."]}

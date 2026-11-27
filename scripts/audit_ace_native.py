@@ -13,13 +13,13 @@ from urllib.request import urlopen
 
 try:
     from .ace_worker_profile import read_profile, selected_family
-    from .audit_external_themes import research as external_theme_research
+    from .audit_external_themes import research as external_theme_research, verify_theme_history_coverage
     from .audit_supply_chain import read_file, sha, git_blob_sha1
     from .rebuild_retained_ace import materialize
     from .attribute_ace_workers import sri, require, exact_member
 except ImportError:
     from ace_worker_profile import read_profile, selected_family
-    from audit_external_themes import research as external_theme_research
+    from audit_external_themes import research as external_theme_research, verify_theme_history_coverage
     from audit_supply_chain import read_file, sha, git_blob_sha1
     from rebuild_retained_ace import materialize
     from attribute_ace_workers import sri, require, exact_member
@@ -176,6 +176,13 @@ def main():
             "No generated or transformed runtime files are promoted; no upstream JS is executed.",
         ],
     }
+    historical = report["external_theme_research"]
+    historical["theme_history_coverage"] = verify_theme_history_coverage(
+        {name[len("theme-"):-len(".js")] for name in selected
+         if name.startswith("theme-") and name.endswith(".js")},
+        historical["historical_ace_theme_licenses"]["themes"],
+        historical["additional_bsd_theme_wrappers"],
+        historical["post_bsd_themes"]["themes"])
     out.write_text(json.dumps(report, indent=2, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8")
     subprocess.run(["node", str(ROOT / "scripts/audit_ace_native_payloads.cjs"), str(source),
                     str(work), str(out)], check=True)

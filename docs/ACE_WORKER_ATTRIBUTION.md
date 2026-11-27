@@ -720,3 +720,60 @@ comment URL here and in inventory prose, not as a fabricated immutable
 file pin. Preserve existing generator notices. Grammar origin and
 permissions remain separate; no blanket XQLint clearance or full
 component identity claim. No runtime or SBOM status change.
+
+## R5.2i later theme historical declarations
+
+4383b39 all three workflows SUCCESS (46045105501, 46045105319,
+46045105317). Downloaded native artifact 15222415336; SHA-256
+573164ee48bb3b6daafd63b9ca69a17e3f908de6c0af61f086e341717f9ece58
+matches published digest, CRC OK, exact source_checkout. Historical
+11/11 header-only, source transfer and BSD wrapper body checks true,
+nine inline in 2010; 15 additional BSD wrappers; krTheme exact except
+background and invisibles, 44/44 settings, still excluded.
+Other artifacts not reviewed in this iteration.
+
+Remaining 22 theme names compared to 2012 merge tree. Pins are earliest
+located under current name, not necessarily first creation: iPlastic is
+rename of Sublime (fb5f272f, 2015), Gruvbox uses re-addition 2017,
+Gruvbox Hard uses 2018 contribution later merged in 2022. All 22
+historical wrappers and separate CSS files inspected and pinned.
+
+* Ajax.org BSD declaration (15): Cloud9 Day/Night/Night Low Color,
+  Dracula, GOB, Gruvbox Hard dark/light, iPlastic, Katzenmilch, Kuroir,
+  Nord Dark, One Dark, SQL Server, Terminal, Xcode.
+* MIT permission text with BSD label (3): Ambiance, Chaos, Gruvbox.
+  Existing Gozalishvili wrapper notice remains applicable to prior
+  bounded evidence, no new license label from the BSD heading.
+* No individual declaration in wrapper (4): Cloud Editor light/dark,
+  GitHub Dark, GitHub Light Default. Root LICENSE at all three
+  relevant commits is the current pinned BSD blob
+  4760be2a6220cf545129b233e20574f2a7bb630e.
+  PR #4715 Cloud9 brought from c9 branch, explicit contributor grant;
+  PR #5154 GitHub Dark explicit contributor grant; PR #5404 CloudEditor
+  describes new accessible modern theme, no explicit grant in body;
+  PR #5597 GitHub Light Default explicit grant for contribution and
+  identifies official GitHub VS Code port. Contributor grant is not
+  a grant for unrelated third-party code.
+
+CSS marker scan: Dracula original 2017 CSS has Zeno Rocha MIT notice,
+already retained separately. Other 21 historical CSS sources have no
+matches to scoped rights marker scan; this does not prove absence of
+additional rights. Xcode and Kuroir generated comments preserve source
+UUID; Katzenmilch generated comment UUID empty. Historical separate
+CSS is not automatically covered by wrapper header.
+PR #5597 (https://github.com/ajaxorg/ace/pull/5597) explicitly names
+official VS Code port. Primer repository historical pre-port snapshot
+38b50d41bdc6b190b7351e220956af043221d763 LICENSE blob
+fcc8ec1341626589ac053947aea5279928966bc3 contains MIT Copyright (c)
+2020 Primer. Pin as reference, not exact version of the port.
+Follow up recover actual port lineage and ship applicable Primer MIT
+notice before acceptance. Do not apply this to legacy GitHub or GitHub
+Dark by name. No new shipped notice in this commit.
+
+New post_bsd_themes report compares pinned declarations, separate CSS
+markers and three root licenses, and verifies historical-name coverage
+against retained distribution. 25 retained earlier + 22 later = 47;
+krTheme separately historical/excluded. Historical snapshot coverage
+does not establish current CSS lineage or license clearance. Unit tests
+for declaration and coverage errors. No runtime or vendor changes.
+Exact new HEAD CI and independent review pending.
