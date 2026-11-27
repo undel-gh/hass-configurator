@@ -155,3 +155,32 @@ Remaining 13 candidate archive notices have been collected but their
 shipped mappings and exact version attribution remain open. Base worker,
 themes/snippets, XQuery lexer generator terms and Materialize findings
 remain separate. New inventory CI and independent review required.
+
+## Retained candidate mapping and archive notice pins
+
+Exact #357 / #14 at 9b64354a: all jobs success; author inspected actual
+source 15198574231, installed 15198804542 and rehearsal 15198309106 ZIPs,
+CRC and published SHA-256 match. 172 Python; rehearsal 20/20; wheel/sdist
+15 each, Docker 10; 30 source BOM entries, 31 verified notices, 72 Git
+sources. 553 installed resources per artifact, 5 first-party checks; image
+A/B equal sha256:5442b08d45bbbee9b1f4ca5e40364cbc59d82b9e1cf178d318195151c20f4db0.
+Main OSV 220 queries / 77 matched, esrecurse 4.3.0 zero advisories. No
+additional independent review of 9b64354a claimed.
+
+All 15 candidates now have active component mappings, using published
+unminified node_modules paths and corroborating minified literals. The
+remaining 13 retain exact original candidate npm notice files (15 total)
+from the #357 artifact. Archive SHA-256, SRI and exact member SHA-256 are
+pinned in embedded.json. Existing build-time evidence verifies fresh
+archives and exact member bytes including CRLF, duplicate/symlink rejection
+and package metadata. Only esrecurse has exact version evidence; the
+other 14 records remain partial without npm PURL or version-bound main
+OSV query. Candidate notice license expressions are evidence, not final
+runtime license clearance. Original archive root notices for estraverse
+lack its source copyright header; we also retain the complete original
+source header from pinned v5.3.0. LLVM libc++ upper_bound/lower_bound MIT
+reference remains an additional lineage/notice review. JSON service's
+full archive notice preserves glob-to-regexp BSD-2-Clause terms; two
+Microsoft third-party notice files retained verbatim, not evidence of a
+specific LGPL dependency. More exact identity evidence and all remaining
+native/theme/snippet/lexer terms are required. No runtime code changed.

@@ -104,6 +104,17 @@ class SupplyChainTests(unittest.TestCase):
         l10n = next(c for c in embedded if c["bom-ref"] == "embedded:ace-vscode-l10n")
         self.assertNotIn("version", l10n)
         self.assertNotIn("purl", l10n)
+        expected_candidates = ("ace-babel-parser", "ace-code", "ace-eslint-scope",
+                               "ace-estraverse", "ace-globals", "ace-yaml-parser",
+                               "ace-htmlhint", "ace-jsonc-parser", "ace-vscode-css-languageservice",
+                               "ace-vscode-json-languageservice", "ace-vscode-languageserver-textdocument",
+                               "ace-vscode-languageserver-types", "ace-vscode-uri", "ace-vscode-l10n")
+        for cid in expected_candidates:
+            record = next(c for c in embedded if c["bom-ref"] == "embedded:" + cid)
+            self.assertNotIn("version", record)
+            self.assertNotIn("purl", record)
+            self.assertTrue(record["licenses"])
+        self.assertEqual(sum(n["kind"] == "npm-archive-member" for n in inv["embedded"]["notices"].values()), 15)
         refs = [c["bom-ref"] for c in bom["components"]]
         self.assertEqual(len(refs), len(set(refs)))
         self.assertEqual("2.136", next(c for c in bom["components"]

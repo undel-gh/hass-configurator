@@ -82,3 +82,13 @@ source header; bundled package metadata/version export), and @vscode/l10n
 (MIT, exact source-reference license from tag l10n/v0.0.18; runtime version
 not established) are mapped in embedded.json. Both npm archive root-notice
 gaps remain recorded as archive facts. Remaining nested review open.
+
+Retained Ace worker reference notices: all 15 source-lock candidates are now
+mapped. The 13 additional candidates retain their original npm root notices
+(15 files, including two Microsoft third-party notice files). Candidate npm
+archive/member SHA-256 and SRI are verified in the build-time evidence gate.
+No inferred exact versions or active OSV queries. The estraverse source
+copyright header is retained separately; LLVM-derived code remains open.
+JSON language service includes the BSD-2-Clause glob matching notice in its
+original LICENSE.md. Microsoft generic third-party notices are preserved
+without assuming a specific LGPL dependency. See ACE_WORKER_ATTRIBUTION.md.
