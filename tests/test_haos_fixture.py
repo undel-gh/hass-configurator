@@ -91,9 +91,13 @@ class HAOSIngressFixtureTests(unittest.TestCase):
             self.assertTrue(result["fixture_only"])
             self.assertFalse(result["home_assistant_api"])
             self.assertFalse(result["external_host_ports"])
-            self.assertEqual(result["vendor_resource_count"], 509)
-            self.assertFalse((target / "app" / "hass_configurator" / "vendor" /
-                              "ace" / "theme-kr_theme.js").exists())
+            self.assertEqual(result["vendor_resource_count"], 505)
+            ace = target / "app" / "hass_configurator" / "vendor" / "ace"
+            self.assertFalse((ace / "theme-kr_theme.js").exists())
+            for name in ("abc", "edifact", "gobstones", "lsl"):
+                with self.subTest(excluded_snippet=name):
+                    self.assertFalse((ace / "snippets" / (name + ".js")).exists())
+                    self.assertTrue((ace / ("mode-" + name + ".js")).is_file())
 
             config = (target / "config.yaml").read_text(encoding="utf8")
             nginx = (target / "nginx.conf").read_text(encoding="utf8")
