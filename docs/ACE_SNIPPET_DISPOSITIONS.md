@@ -33,7 +33,8 @@ to the existing parent notice. Independent artifact inspection and review remain
 | snipmate-modified | 8 |
 | textmate-exact | 2 |
 
-Proposed snippet-only exclusion candidates: abc, edifact, gobstones, lsl.
+Optional license-risk exclusion candidates: abc, gobstones, lsl.
+EDIFACT: retain under scoped attribution; product-only removal is a separate decision.
 Language modes are outside this decision; any exclusion requires explicit
 maintainer approval, profile/manifest changes and validation in a separate increment.
 
@@ -41,7 +42,7 @@ maintainer approval, profile/manifest changes and validation in a separate incre
 
 | Snippet | Evidence class | Additional components | Priority | Proposed disposition | Remaining review |
 | --- | --- | --- | --- | --- | --- |
-| abc | historical-endpoint-review-open | — | elevated | consider-snippet-only-exclusion | Zupfnoter vendored intermediate exact match; historical GPL/Commercial project declaration is not a snippet grant. Seek explicit grant or approve snippet-only exclusion. |
+| abc | historical-endpoint-review-open | — | elevated | consider-snippet-only-exclusion | PR #2273: CLA requested, contributor promised submission, later merge; signed CLA and scope unconfirmed. Exact Zupfnoter intermediate match, GPL/Commercial not a snippet grant; spreadsheet negative per Round 7 reviewer. Seek CLA confirmation or exact permissive grant; app-specific exclusion alternative. |
 | actionscript | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
 | c_cpp | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
 | cedar | historical-endpoint-review-open | — | standard | retain-review-open | PR #5944 policy scaffolds; no named snippets in examined vscode-cedar tree. Individual contribution/source rights open. |
@@ -55,10 +56,10 @@ maintainer approval, profile/manifest changes and validation in a separate incre
 | diff | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
 | django | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
 | drools | historical-endpoint-review-open | — | standard | retain-review-open | Three rule/query/declare scaffolds; mode BSD header and drools.org reference do not establish separate snippet rights. |
-| edifact | snipmate-derived | ace-snipmate-snippets | elevated | consider-snippet-only-exclusion | Exact Java raw with two trigger substitutions; historical MIT material retained, but mostly Java templates. Review usefulness and approve or reject snippet-only exclusion. |
+| edifact | snipmate-derived | ace-snipmate-snippets | standard | retain-review-open | Exact Java raw with two trigger substitutions; SnipMate MIT and AUTHORS retained. PR #3514 contributor expressly confirmed BSD contribution headers (mode/rules, not raw). Retain under scoped MIT plus Ace/BSD modifications; product-only removal may be considered separately. |
 | erlang | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
 | fsl | historical-endpoint-review-open | — | standard | retain-review-open | Same-author JSSM MIT examples share metadata conventions, not exact header. machine_license is template content, not a grant. |
-| gobstones | historical-endpoint-review-open | — | elevated | consider-snippet-only-exclusion | Expanded 479-trigger collection not established in examined pre-import Gobstones-web GPL v3 sources. Seek source-specific grant or approve snippet-only exclusion. |
+| gobstones | historical-endpoint-review-open | — | elevated | consider-snippet-only-exclusion | PR #3988 cites IDE behavior, not licensed source. Expanded 479-trigger collection origin open; seek grants covering original and expanded material or licensed replacement; optional risk-based exclusion. GPL association is not a grant. |
 | graphqlschema | historical-endpoint-review-open | — | standard | retain-review-open | Five scaffolds; historical rename preserves raw blob. Original contribution and external input review. |
 | haml | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
 | haskell | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
@@ -69,7 +70,7 @@ maintainer approval, profile/manifest changes and validation in a separate incre
 | jsoniq | historical-endpoint-review-open | — | elevated | retain-review-open | Identical raw to XQuery; legacy static module, source rights open. XQLint Apache and REx grant do not cover snippets. |
 | jsp | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
 | liquid | snipmate-derived | ace-snipmate-snippets | standard | retain-review-open | Exact historical HTML plus fixed 26-line prefix. MIT covers historical SnipMate material only; prefix/HTML changes and individual contributions open. |
-| lsl | exact-source-license-open | ace-lsl-snippet-source-review | elevated | consider-snippet-only-exclusion | Two exact Builders Brewery common-source snapshots; no root/Ace grant established. KWDB GPL and viewer LGPL scope/derivation open. Seek grant or approve snippet-only exclusion. |
+| lsl | exact-source-license-open | ace-lsl-snippet-source-review | elevated | consider-snippet-only-exclusion | Two exact Builders Brewery common-source snapshots; no historical grant established. Active ISC lsl-tools successor lacks Ace collection; request source-specific grant on both blobs, or independently licensed replacement/exclusion. KWDB GPL and viewer LGPL derivation open. |
 | lua | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
 | makefile | snipmate-exact | ace-snipmate-snippets | standard | retain-review-open | Exact historical SnipMate decoded payload; original MIT and AUTHORS retained. Wrapper and individual/external rights review remains open. |
 | markdown | snipmate-modified | ace-snipmate-snippets | elevated | retain-review-open | Octopress-tag templates introduced by two exact 2012 SnipMate patches under existing MIT; 12-template suffix retained exactly. External documentation/example origin and individual contributor attribution review remain open. |

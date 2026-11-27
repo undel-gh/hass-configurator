@@ -36,7 +36,7 @@
       "additional_components": [],
       "review_priority": "elevated",
       "proposed_disposition": "consider-snippet-only-exclusion",
-      "remaining_review": "Zupfnoter vendored intermediate exact match; historical GPL/Commercial project declaration is not a snippet grant. Seek explicit grant or approve snippet-only exclusion."
+      "remaining_review": "PR #2273: CLA requested, contributor promised submission, later merge; signed CLA and scope unconfirmed. Exact Zupfnoter intermediate match, GPL/Commercial not a snippet grant; spreadsheet negative per Round 7 reviewer. Seek CLA confirmation or exact permissive grant; app-specific exclusion alternative."
     },
     {
       "snippet": "actionscript",
@@ -722,9 +722,9 @@
       "additional_components": [
         "ace-snipmate-snippets"
       ],
-      "review_priority": "elevated",
-      "proposed_disposition": "consider-snippet-only-exclusion",
-      "remaining_review": "Exact Java raw with two trigger substitutions; historical MIT material retained, but mostly Java templates. Review usefulness and approve or reject snippet-only exclusion."
+      "review_priority": "standard",
+      "proposed_disposition": "retain-review-open",
+      "remaining_review": "Exact Java raw with two trigger substitutions; SnipMate MIT and AUTHORS retained. PR #3514 contributor expressly confirmed BSD contribution headers (mode/rules, not raw). Retain under scoped MIT plus Ace/BSD modifications; product-only removal may be considered separately."
     },
     {
       "snippet": "eiffel",
@@ -994,7 +994,7 @@
       "additional_components": [],
       "review_priority": "elevated",
       "proposed_disposition": "consider-snippet-only-exclusion",
-      "remaining_review": "Expanded 479-trigger collection not established in examined pre-import Gobstones-web GPL v3 sources. Seek source-specific grant or approve snippet-only exclusion."
+      "remaining_review": "PR #3988 cites IDE behavior, not licensed source. Expanded 479-trigger collection origin open; seek grants covering original and expanded material or licensed replacement; optional risk-based exclusion. GPL association is not a grant."
     },
     {
       "snippet": "golang",
@@ -1583,7 +1583,7 @@
       ],
       "review_priority": "elevated",
       "proposed_disposition": "consider-snippet-only-exclusion",
-      "remaining_review": "Two exact Builders Brewery common-source snapshots; no root/Ace grant established. KWDB GPL and viewer LGPL scope/derivation open. Seek grant or approve snippet-only exclusion."
+      "remaining_review": "Two exact Builders Brewery common-source snapshots; no historical grant established. Active ISC lsl-tools successor lacks Ace collection; request source-specific grant on both blobs, or independently licensed replacement/exclusion. KWDB GPL and viewer LGPL derivation open."
     },
     {
       "snippet": "lua",

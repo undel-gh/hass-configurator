@@ -31,7 +31,12 @@ class SnippetDispositionTests(unittest.TestCase):
         self.assertEqual(sum(r["payload_kind"] == "empty-stub" for r in self.matrix["rows"]), 150)
         self.assertEqual({r["snippet"] for r in self.matrix["rows"]
                           if r["proposed_disposition"] == "consider-snippet-only-exclusion"},
-                         {"abc", "edifact", "gobstones", "lsl"})
+                         {"abc", "gobstones", "lsl"})
+        edifact = next(r for r in self.matrix["rows"] if r["snippet"] == "edifact")
+        self.assertEqual(edifact["proposed_disposition"], "retain-review-open")
+        self.assertEqual(edifact["additional_components"], ["ace-snipmate-snippets"])
+        self.assertIn("The [machine-readable matrix](ace-snippet-dispositions.json) is canonical.",
+                      render_document(self.matrix))
 
     def test_matrix_rejects_missing_duplicate_extra_hash_and_clearance(self):
         for mutation in (

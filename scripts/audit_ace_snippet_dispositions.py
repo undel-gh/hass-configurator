@@ -52,7 +52,7 @@ SHARED_STUB_LOADER = {
     ]
 }
 
-EXCLUSION_CANDIDATES = {"abc", "edifact", "gobstones", "lsl"}
+EXCLUSION_CANDIDATES = {"abc", "gobstones", "lsl"}
 EXACT = set("actionscript c_cpp clojure coffee css diff django erlang haml haskell java jsp lua makefile perl rst ruby snippets sql tcl tex textile".split())
 MODIFIED = set("dart html javascript markdown php python r sh".split())
 DERIVED = {"edifact", "liquid", "wollok"}
@@ -355,7 +355,7 @@ def render_document(matrix):
     counts = Counter(x["evidence_class"] for x in matrix["rows"])
     result = "# Ace snippet disposition matrix (R5.3)\n\nThe [machine-readable matrix](ace-snippet-dispositions.json) is canonical.\nThis is a proposed review disposition, not legal clearance or release acceptance.\nAll 202 assets are currently retained; no exclusion is authorized or implemented.\nThe Ace root BSD-3-Clause declaration applies separately, not as proof of external\ninput rights. Additional component IDs refer to `hass_configurator/third_party/embedded.json`.\nA partial attribution is not a license for the whole payload. Review-only records\nare not libraries. Priority is proposed review order, not a risk rating.\nHistorical references record research endpoints or exact original inputs, not\nnecessarily a unique copy revision. See [research](ACE_SNIPPET_RESEARCH.md).\n\nThe offline source inventory gate checks exact row closure, hashes against\nthe lock and vendor manifest, generated stub bytes by their exact hash,\ncomponent mappings, source pin consistency for mapped records and this rendered\ndocument. The native research gate separately compares all 202 row types and\nthe 52 current source Git blobs against the immutable checkout and static\npayload/empty-stub evidence. It does not replay all historical transformations\nor adjudicate rights. R5.3b maps the 150 generated loaders to the exact Ace\nexportAce extModules template, with a file-specific BSD-3-Clause header identical\nto the existing parent notice. Independent artifact inspection and review remain open.\n\n## Counts\n\n| Evidence class | Count |\n| --- | ---: |\n"
     result += "".join(f"| {key} | {count} |\n" for key, count in sorted(counts.items()))
-    result += "\nProposed snippet-only exclusion candidates: abc, edifact, gobstones, lsl.\nLanguage modes are outside this decision; any exclusion requires explicit\nmaintainer approval, profile/manifest changes and validation in a separate increment.\n\n## Nonempty payloads\n\n| Snippet | Evidence class | Additional components | Priority | Proposed disposition | Remaining review |\n| --- | --- | --- | --- | --- | --- |\n"
+    result += "\nOptional license-risk exclusion candidates: abc, gobstones, lsl.\nEDIFACT: retain under scoped attribution; product-only removal is a separate decision.\nLanguage modes are outside this decision; any exclusion requires explicit\nmaintainer approval, profile/manifest changes and validation in a separate increment.\n\n## Nonempty payloads\n\n| Snippet | Evidence class | Additional components | Priority | Proposed disposition | Remaining review |\n| --- | --- | --- | --- | --- | --- |\n"
     for row in matrix["rows"]:
         if row["payload_kind"] == "nonempty":
             result += "| " + " | ".join((row["snippet"], row["evidence_class"],
