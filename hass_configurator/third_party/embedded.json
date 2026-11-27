@@ -560,20 +560,36 @@
           "git_blob": "e7c858877314ea7caac5d7845c9980043a60a6b5",
           "marker": "@babel/parser",
           "url": "https://github.com/mkslanc/ace-linters/blob/e0d223c5a880cb2f258c96ccd22feaaffb29e5a5/packages/ace-legacy-linters/src/workers/javascript-worker.ts"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-noconflict/worker-javascript.js",
+          "git_blob": "03fb19fd0cd3053da5d23b1aac19b9f0fefe7afa",
+          "marker": "// ../../node_modules/@babel/parser/lib/index.js"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-javascript.js",
+          "git_blob": "1beece92ae3317ce6453fb693afa7503a13285e3",
+          "marker": "BABEL_PARSER_SOURCETYPE_MODULE_REQUIRED"
         }
       ],
       "id": "ace-babel-parser",
       "kind": "library",
-      "license": null,
+      "license": "MIT",
       "locations": [
         {
           "file": "vendor/ace/worker-javascript.js",
           "marker": "@babel/parser"
+        },
+        {
+          "file": "vendor/ace/worker-javascript.js",
+          "marker": "BABEL_PARSER_SOURCETYPE_MODULE_REQUIRED"
         }
       ],
       "name": "@babel/parser",
-      "note": "Source import and shipped marker support partial identity; exact bundled version/license evidence pending.",
-      "notices": [],
+      "note": "Published matching worker has the pinned unminified package path and corroborating minified literal; 7.29.2 is the source-lock candidate, not a proved exact runtime version. Original candidate npm archive notice(s) retained with exact archive SHA-256/SRI and member digest from #357 artifact 15198574231. License expression describes candidate notice terms; no npm PURL or active OSV version assertion until identity is proven.",
+      "notices": [
+        "third_party/licenses/embedded/npm-babel-parser-7.29.2-license.txt"
+      ],
       "parent": "ace",
       "status": "partial",
       "version": null
@@ -595,20 +611,36 @@
           "git_blob": "76ca4bf50c9093640550f2b10229353a631f76ff",
           "marker": "from \"yaml\"",
           "url": "https://github.com/mkslanc/ace-linters/blob/e0d223c5a880cb2f258c96ccd22feaaffb29e5a5/packages/ace-legacy-linters/src/workers/yaml-worker.ts"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-noconflict/worker-yaml.js",
+          "git_blob": "dd7047ff77151fe0035ae8844af41bc179ba73df",
+          "marker": "// node_modules/yaml/browser/dist/doc/directives.js"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-yaml.js",
+          "git_blob": "d640dd3456722a4b6c56edc39beae695ea6c757f",
+          "marker": "%TAG directive should contain exactly two parts"
         }
       ],
       "id": "ace-yaml-parser",
       "kind": "library",
-      "license": null,
+      "license": "ISC",
       "locations": [
         {
           "file": "vendor/ace/worker-yaml.js",
           "marker": "Unresolved tag"
+        },
+        {
+          "file": "vendor/ace/worker-yaml.js",
+          "marker": "%TAG directive should contain exactly two parts"
         }
       ],
       "name": "yaml (Ace worker)",
-      "note": "Source uses yaml.parseAllDocuments; not the standalone js-yaml parser. Exact bundled version/license closure pending.",
-      "notices": [],
+      "note": "Published matching worker has the pinned unminified package path and corroborating minified literal; 2.8.3 is the source-lock candidate, not a proved exact runtime version. Original candidate npm archive notice(s) retained with exact archive SHA-256/SRI and member digest from #357 artifact 15198574231. License expression describes candidate notice terms; no npm PURL or active OSV version assertion until identity is proven.",
+      "notices": [
+        "third_party/licenses/embedded/npm-yaml-parser-2.8.3-license.txt"
+      ],
       "parent": "ace",
       "status": "partial",
       "version": null
@@ -759,6 +791,455 @@
         "third_party/licenses/embedded/vscode-l10n-0.0.18-reference.txt"
       ],
       "note": "Exact published worker source paths and distinctive localization error literal establish component presence in CSS/JSON; pinned source lock selects 0.0.18, matching tagged source package metadata and code marker. Root MIT LICENSE at that tag retained verbatim as reference; no root notice in candidate npm archive. Exact version/complete npm-to-bundle equivalence not established; no npm purl or main OSV version assertion yet."
+    },
+    {
+      "id": "ace-code",
+      "parent": "ace",
+      "kind": "library",
+      "name": "ace-code",
+      "version": null,
+      "ecosystem": null,
+      "status": "partial",
+      "license": "BSD-3-Clause",
+      "locations": [
+        {
+          "file": "vendor/ace/worker-javascript.js",
+          "marker": "[object Object]"
+        },
+        {
+          "file": "vendor/ace/worker-yaml.js",
+          "marker": "[object Object]"
+        },
+        {
+          "file": "vendor/ace/worker-html.js",
+          "marker": "[object Object]"
+        },
+        {
+          "file": "vendor/ace/worker-css.js",
+          "marker": "[object Object]"
+        },
+        {
+          "file": "vendor/ace/worker-json.js",
+          "marker": "[object Object]"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-noconflict/worker-javascript.js",
+          "git_blob": "03fb19fd0cd3053da5d23b1aac19b9f0fefe7afa",
+          "marker": "// ../../node_modules/ace-code/src/lib/deep_copy.js"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-javascript.js",
+          "git_blob": "1beece92ae3317ce6453fb693afa7503a13285e3",
+          "marker": "[object Object]"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-noconflict/worker-yaml.js",
+          "git_blob": "dd7047ff77151fe0035ae8844af41bc179ba73df",
+          "marker": "// ../../node_modules/ace-code/src/lib/deep_copy.js"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-yaml.js",
+          "git_blob": "d640dd3456722a4b6c56edc39beae695ea6c757f",
+          "marker": "[object Object]"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-noconflict/worker-html.js",
+          "git_blob": "35016a50e8e75c714072584a49645df5f45ee484",
+          "marker": "// ../../node_modules/ace-code/src/lib/deep_copy.js"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-html.js",
+          "git_blob": "63e2c21f5fbe7987bae23da5abacb78bf9f4131b",
+          "marker": "[object Object]"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-noconflict/worker-css.js",
+          "git_blob": "5fdf223b3f75d56960a9b7f2011c7b81b7f22d13",
+          "marker": "// ../../node_modules/ace-code/src/lib/deep_copy.js"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-css.js",
+          "git_blob": "ef3eb06052f1f2ff941aff408021280de9d6d0ed",
+          "marker": "[object Object]"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-noconflict/worker-json.js",
+          "git_blob": "09863bc2a5c34314779897daef1fa0052d434792",
+          "marker": "// ../../node_modules/ace-code/src/lib/deep_copy.js"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-json.js",
+          "git_blob": "72b056dfd9ee8f48c3a4ff234a6f078c3bda132b",
+          "marker": "[object Object]"
+        }
+      ],
+      "notices": [
+        "third_party/licenses/embedded/npm-code-1.43.6-license.txt"
+      ],
+      "note": "Published matching worker has the pinned unminified package path and corroborating minified literal; 1.43.6 is the source-lock candidate, not a proved exact runtime version. Original candidate npm archive notice(s) retained with exact archive SHA-256/SRI and member digest from #357 artifact 15198574231. License expression describes candidate notice terms; no npm PURL or active OSV version assertion until identity is proven. Archive license equals main Ace BSD-3-Clause notice, but different source-lock candidate version; five worker paths, not the native base version."
+    },
+    {
+      "id": "ace-eslint-scope",
+      "parent": "ace",
+      "kind": "library",
+      "name": "eslint-scope",
+      "version": null,
+      "ecosystem": null,
+      "status": "partial",
+      "license": "BSD-2-Clause",
+      "locations": [
+        {
+          "file": "vendor/ace/worker-javascript.js",
+          "marker": "ImplicitGlobalVariable"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-noconflict/worker-javascript.js",
+          "git_blob": "03fb19fd0cd3053da5d23b1aac19b9f0fefe7afa",
+          "marker": "// node_modules/eslint-scope/lib/variable.js"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-javascript.js",
+          "git_blob": "1beece92ae3317ce6453fb693afa7503a13285e3",
+          "marker": "ImplicitGlobalVariable"
+        }
+      ],
+      "notices": [
+        "third_party/licenses/embedded/npm-eslint-scope-9.1.2-license.txt"
+      ],
+      "note": "Published matching worker has the pinned unminified package path and corroborating minified literal; 9.1.2 is the source-lock candidate, not a proved exact runtime version. Original candidate npm archive notice(s) retained with exact archive SHA-256/SRI and member digest from #357 artifact 15198574231. License expression describes candidate notice terms; no npm PURL or active OSV version assertion until identity is proven."
+    },
+    {
+      "id": "ace-estraverse",
+      "parent": "ace",
+      "kind": "library",
+      "name": "estraverse",
+      "version": null,
+      "ecosystem": null,
+      "status": "partial",
+      "license": "BSD-2-Clause",
+      "locations": [
+        {
+          "file": "vendor/ace/worker-javascript.js",
+          "marker": "AssignmentExpression"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-noconflict/worker-javascript.js",
+          "git_blob": "03fb19fd0cd3053da5d23b1aac19b9f0fefe7afa",
+          "marker": "// node_modules/estraverse/estraverse.js"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-javascript.js",
+          "git_blob": "1beece92ae3317ce6453fb693afa7503a13285e3",
+          "marker": "AssignmentExpression"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-noconflict/worker-javascript.js",
+          "git_blob": "03fb19fd0cd3053da5d23b1aac19b9f0fefe7afa",
+          "marker": "// ../../node_modules/esrecurse/node_modules/estraverse/estraverse.js"
+        },
+        {
+          "url": "https://github.com/estools/estraverse/blob/ec3f900528eac270a51f7b079edeae086e7ebce4/estraverse.js",
+          "git_blob": "f0d9af9b46bfebb6cda551de17beeb659c7a2f69",
+          "marker": "based on LLVM libc++ upper_bound / lower_bound"
+        }
+      ],
+      "notices": [
+        "third_party/licenses/embedded/npm-estraverse-5.3.0-license.bsd.txt",
+        "third_party/licenses/embedded/estraverse-5.3.0-source-reference.txt"
+      ],
+      "note": "Published matching worker has the pinned unminified package path and corroborating minified literal; 5.3.0 is the source-lock candidate, not a proved exact runtime version. Original candidate npm archive notice(s) retained with exact archive SHA-256/SRI and member digest from #357 artifact 15198574231. License expression describes candidate notice terms; no npm PURL or active OSV version assertion until identity is proven. Two separate lock paths share the candidate version; do not infer that both are exact. Source includes LLVM libc++ upper_bound/lower_bound MIT attribution; further origin/notice review open."
+    },
+    {
+      "id": "ace-globals",
+      "parent": "ace",
+      "kind": "library",
+      "name": "globals",
+      "version": null,
+      "ecosystem": null,
+      "status": "partial",
+      "license": "MIT",
+      "locations": [
+        {
+          "file": "vendor/ace/worker-javascript.js",
+          "marker": "shared-node-browser"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-noconflict/worker-javascript.js",
+          "git_blob": "03fb19fd0cd3053da5d23b1aac19b9f0fefe7afa",
+          "marker": "// ../../node_modules/globals/globals.json"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-javascript.js",
+          "git_blob": "1beece92ae3317ce6453fb693afa7503a13285e3",
+          "marker": "shared-node-browser"
+        }
+      ],
+      "notices": [
+        "third_party/licenses/embedded/npm-globals-14.0.0-license.txt"
+      ],
+      "note": "Published matching worker has the pinned unminified package path and corroborating minified literal; 14.0.0 is the source-lock candidate, not a proved exact runtime version. Original candidate npm archive notice(s) retained with exact archive SHA-256/SRI and member digest from #357 artifact 15198574231. License expression describes candidate notice terms; no npm PURL or active OSV version assertion until identity is proven."
+    },
+    {
+      "id": "ace-htmlhint",
+      "parent": "ace",
+      "kind": "library",
+      "name": "htmlhint",
+      "version": null,
+      "ecosystem": null,
+      "status": "partial",
+      "license": "MIT",
+      "locations": [
+        {
+          "file": "vendor/ace/worker-html.js",
+          "marker": "An alt attribute must be present on <img> elements."
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-noconflict/worker-html.js",
+          "git_blob": "35016a50e8e75c714072584a49645df5f45ee484",
+          "marker": "// ../../node_modules/htmlhint/dist/core/rules/alt-require.js"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-html.js",
+          "git_blob": "63e2c21f5fbe7987bae23da5abacb78bf9f4131b",
+          "marker": "An alt attribute must be present on <img> elements."
+        }
+      ],
+      "notices": [
+        "third_party/licenses/embedded/npm-htmlhint-1.9.2-license.md.txt"
+      ],
+      "note": "Published matching worker has the pinned unminified package path and corroborating minified literal; 1.9.2 is the source-lock candidate, not a proved exact runtime version. Original candidate npm archive notice(s) retained with exact archive SHA-256/SRI and member digest from #357 artifact 15198574231. License expression describes candidate notice terms; no npm PURL or active OSV version assertion until identity is proven."
+    },
+    {
+      "id": "ace-jsonc-parser",
+      "parent": "ace",
+      "kind": "library",
+      "name": "jsonc-parser",
+      "version": null,
+      "ecosystem": null,
+      "status": "partial",
+      "license": "MIT",
+      "locations": [
+        {
+          "file": "vendor/ace/worker-json.js",
+          "marker": "carriageReturn"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-noconflict/worker-json.js",
+          "git_blob": "09863bc2a5c34314779897daef1fa0052d434792",
+          "marker": "// ../../node_modules/jsonc-parser/lib/esm/impl/scanner.js"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-json.js",
+          "git_blob": "72b056dfd9ee8f48c3a4ff234a6f078c3bda132b",
+          "marker": "carriageReturn"
+        }
+      ],
+      "notices": [
+        "third_party/licenses/embedded/npm-jsonc-parser-3.3.1-license.md.txt"
+      ],
+      "note": "Published matching worker has the pinned unminified package path and corroborating minified literal; 3.3.1 is the source-lock candidate, not a proved exact runtime version. Original candidate npm archive notice(s) retained with exact archive SHA-256/SRI and member digest from #357 artifact 15198574231. License expression describes candidate notice terms; no npm PURL or active OSV version assertion until identity is proven."
+    },
+    {
+      "id": "ace-vscode-css-languageservice",
+      "parent": "ace",
+      "kind": "library",
+      "name": "vscode-css-languageservice",
+      "version": null,
+      "ecosystem": null,
+      "status": "partial",
+      "license": "MIT",
+      "locations": [
+        {
+          "file": "vendor/ace/worker-css.js",
+          "marker": "SubstringOperator"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-noconflict/worker-css.js",
+          "git_blob": "5fdf223b3f75d56960a9b7f2011c7b81b7f22d13",
+          "marker": "// ../../node_modules/vscode-css-languageservice/lib/esm/parser/cssScanner.js"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-css.js",
+          "git_blob": "ef3eb06052f1f2ff941aff408021280de9d6d0ed",
+          "marker": "SubstringOperator"
+        }
+      ],
+      "notices": [
+        "third_party/licenses/embedded/npm-vscode-css-languageservice-6.3.10-license.md.txt"
+      ],
+      "note": "Published matching worker has the pinned unminified package path and corroborating minified literal; 6.3.10 is the source-lock candidate, not a proved exact runtime version. Original candidate npm archive notice(s) retained with exact archive SHA-256/SRI and member digest from #357 artifact 15198574231. License expression describes candidate notice terms; no npm PURL or active OSV version assertion until identity is proven."
+    },
+    {
+      "id": "ace-vscode-json-languageservice",
+      "parent": "ace",
+      "kind": "library",
+      "name": "vscode-json-languageservice",
+      "version": null,
+      "ecosystem": null,
+      "status": "partial",
+      "license": "MIT AND BSD-2-Clause",
+      "locations": [
+        {
+          "file": "vendor/ace/worker-json.js",
+          "marker": "EnumValueMismatch"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-noconflict/worker-json.js",
+          "git_blob": "09863bc2a5c34314779897daef1fa0052d434792",
+          "marker": "// ../../node_modules/vscode-json-languageservice/lib/esm/jsonLanguageTypes.js"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-json.js",
+          "git_blob": "72b056dfd9ee8f48c3a4ff234a6f078c3bda132b",
+          "marker": "EnumValueMismatch"
+        }
+      ],
+      "notices": [
+        "third_party/licenses/embedded/npm-vscode-json-languageservice-5.7.2-license.md.txt"
+      ],
+      "note": "Published matching worker has the pinned unminified package path and corroborating minified literal; 5.7.2 is the source-lock candidate, not a proved exact runtime version. Original candidate npm archive notice(s) retained with exact archive SHA-256/SRI and member digest from #357 artifact 15198574231. License expression describes candidate notice terms; no npm PURL or active OSV version assertion until identity is proven. Archive LICENSE.md includes Nick Fitzgerald BSD-2-Clause glob-to-regexp notice; do not collapse it to MIT or infer exact nested version."
+    },
+    {
+      "id": "ace-vscode-languageserver-textdocument",
+      "parent": "ace",
+      "kind": "library",
+      "name": "vscode-languageserver-textdocument",
+      "version": null,
+      "ecosystem": null,
+      "status": "partial",
+      "license": "MIT",
+      "locations": [
+        {
+          "file": "vendor/ace/worker-css.js",
+          "marker": "TextDocument.update: document must be created by TextDocument.create"
+        },
+        {
+          "file": "vendor/ace/worker-json.js",
+          "marker": "TextDocument.update: document must be created by TextDocument.create"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-noconflict/worker-css.js",
+          "git_blob": "5fdf223b3f75d56960a9b7f2011c7b81b7f22d13",
+          "marker": "// ../../node_modules/vscode-languageserver-textdocument/lib/esm/main.js"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-css.js",
+          "git_blob": "ef3eb06052f1f2ff941aff408021280de9d6d0ed",
+          "marker": "TextDocument.update: document must be created by TextDocument.create"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-noconflict/worker-json.js",
+          "git_blob": "09863bc2a5c34314779897daef1fa0052d434792",
+          "marker": "// ../../node_modules/vscode-languageserver-textdocument/lib/esm/main.js"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-json.js",
+          "git_blob": "72b056dfd9ee8f48c3a4ff234a6f078c3bda132b",
+          "marker": "TextDocument.update: document must be created by TextDocument.create"
+        }
+      ],
+      "notices": [
+        "third_party/licenses/embedded/npm-vscode-languageserver-textdocument-1.0.12-license.txt.txt",
+        "third_party/licenses/embedded/npm-vscode-languageserver-textdocument-1.0.12-thirdpartynotices.txt.txt"
+      ],
+      "note": "Published matching worker has the pinned unminified package path and corroborating minified literal; 1.0.12 is the source-lock candidate, not a proved exact runtime version. Original candidate npm archive notice(s) retained with exact archive SHA-256/SRI and member digest from #357 artifact 15198574231. License expression describes candidate notice terms; no npm PURL or active OSV version assertion until identity is proven. Preserve full Microsoft thirdpartynotices.txt; generic LGPL clause is not a claim that a specific LGPL component is shipped."
+    },
+    {
+      "id": "ace-vscode-languageserver-types",
+      "parent": "ace",
+      "kind": "library",
+      "name": "vscode-languageserver-types",
+      "version": null,
+      "ecosystem": null,
+      "status": "partial",
+      "license": "MIT",
+      "locations": [
+        {
+          "file": "vendor/ace/worker-css.js",
+          "marker": "source.organizeImports"
+        },
+        {
+          "file": "vendor/ace/worker-json.js",
+          "marker": "source.organizeImports"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-noconflict/worker-css.js",
+          "git_blob": "5fdf223b3f75d56960a9b7f2011c7b81b7f22d13",
+          "marker": "// ../../node_modules/vscode-languageserver-types/lib/esm/main.js"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-css.js",
+          "git_blob": "ef3eb06052f1f2ff941aff408021280de9d6d0ed",
+          "marker": "source.organizeImports"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-noconflict/worker-json.js",
+          "git_blob": "09863bc2a5c34314779897daef1fa0052d434792",
+          "marker": "// ../../node_modules/vscode-languageserver-types/lib/esm/main.js"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-json.js",
+          "git_blob": "72b056dfd9ee8f48c3a4ff234a6f078c3bda132b",
+          "marker": "source.organizeImports"
+        }
+      ],
+      "notices": [
+        "third_party/licenses/embedded/npm-vscode-languageserver-types-3.17.5-license.txt.txt",
+        "third_party/licenses/embedded/npm-vscode-languageserver-types-3.17.5-thirdpartynotices.txt.txt"
+      ],
+      "note": "Published matching worker has the pinned unminified package path and corroborating minified literal; 3.17.5 is the source-lock candidate, not a proved exact runtime version. Original candidate npm archive notice(s) retained with exact archive SHA-256/SRI and member digest from #357 artifact 15198574231. License expression describes candidate notice terms; no npm PURL or active OSV version assertion until identity is proven. Preserve full Microsoft thirdpartynotices.txt; generic LGPL clause is not a claim that a specific LGPL component is shipped."
+    },
+    {
+      "id": "ace-vscode-uri",
+      "parent": "ace",
+      "kind": "library",
+      "name": "vscode-uri",
+      "version": null,
+      "ecosystem": null,
+      "status": "partial",
+      "license": "MIT",
+      "locations": [
+        {
+          "file": "vendor/ace/worker-json.js",
+          "marker": "[UriError]: Scheme contains illegal characters."
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-noconflict/worker-json.js",
+          "git_blob": "09863bc2a5c34314779897daef1fa0052d434792",
+          "marker": "// ../../node_modules/vscode-uri/lib/esm/index.mjs"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-json.js",
+          "git_blob": "72b056dfd9ee8f48c3a4ff234a6f078c3bda132b",
+          "marker": "[UriError]: Scheme contains illegal characters."
+        }
+      ],
+      "notices": [
+        "third_party/licenses/embedded/npm-vscode-uri-3.1.0-license.md.txt"
+      ],
+      "note": "Published matching worker has the pinned unminified package path and corroborating minified literal; 3.1.0 is the source-lock candidate, not a proved exact runtime version. Original candidate npm archive notice(s) retained with exact archive SHA-256/SRI and member digest from #357 artifact 15198574231. License expression describes candidate notice terms; no npm PURL or active OSV version assertion until identity is proven."
     }
   ],
   "font_provenance": {
@@ -783,7 +1264,8 @@
     "Non-Ace embedded findings and font provenance remain unchanged.",
     "Current Ace 1.45.2 XQuery and JSONiq lexer source blobs are unchanged from baseline and literal tokenizer relationships independently rechecked; not proof of full minified-worker byte equivalence or generated output license.",
     "Curated #37 runtime has six workers. Retired worker containers and previous mappings preserved in docs/history/ace-1.45.2-full-embedded.json. Removed XML Lodash/Chevrotain, CoffeeScript and Lua mappings no longer describe a shipped container; retained-assets scan and installed closure review required before final component absence or risk disposition. Historical notice texts retained conservatively.",
-    "The esrecurse 4.3.0 runtime identity is established by co-bundled package metadata and its version export; upstream license header retained. @vscode/l10n tagged source MIT notice recovered but exact runtime version remains partial. Both npm root-notice gaps remain recorded as archive facts; source notice recovery is not full nested clearance."
+    "The esrecurse 4.3.0 runtime identity is established by co-bundled package metadata and its version export; upstream license header retained. @vscode/l10n tagged source MIT notice recovered but exact runtime version remains partial. Both npm root-notice gaps remain recorded as archive facts; source notice recovery is not full nested clearance.",
+    "All 15 retained replacement-worker source-lock candidates now have component mappings and original source or exact candidate npm archive notices. Only esrecurse has a proved exact version from embedded metadata. Candidate license terms and reference notices are not a final exact version or nested-license closure. Estraverse LLVM libc++ origin and JSON service glob code remain separate follow-ups."
   ],
   "notices": {
     "third_party/licenses/embedded/ace-legacy-linters.txt": {
@@ -971,6 +1453,162 @@
       "source": "https://github.com/microsoft/vscode-l10n/blob/fc7e3d79ddb91a2cc24a9730aad912026a43dbf2/LICENSE",
       "source_blob": "9e841e7a26e4eb057b24511e7b92d42b257a80e5",
       "kind": "whole-file"
+    },
+    "third_party/licenses/embedded/npm-babel-parser-7.29.2-license.txt": {
+      "kind": "npm-archive-member",
+      "sha256": "2e97627cb278aa7556fb9e8817368302301a595b6c7582512b8d74c57b773652",
+      "name": "@babel/parser",
+      "version": "7.29.2",
+      "tarball": "https://registry.npmjs.org/@babel/parser/-/parser-7.29.2.tgz",
+      "archive_sha256": "2e57664c08cf5ffcc292712313ef0d6bdb9435fee3ac1997be34c2788c6e8fc0",
+      "npm_integrity": "sha512-4GgRzy/+fsBa72/RZVJmGKPmZu9Byn8o4MoLpmNe1m8ZfYnz5emHLQz3U4gLud6Zwl0RZIcgiLD7Uq7ySFuDLA==",
+      "member": "package/LICENSE"
+    },
+    "third_party/licenses/embedded/npm-code-1.43.6-license.txt": {
+      "kind": "npm-archive-member",
+      "sha256": "850f545c5254e8c08204edb2a6d50bbb72727c38a82982c17a84bebf6064cdf8",
+      "name": "ace-code",
+      "version": "1.43.6",
+      "tarball": "https://registry.npmjs.org/ace-code/-/ace-code-1.43.6.tgz",
+      "archive_sha256": "3b94817d39ae1e055e8ab7277383aa482f7463de7aa28fc2c5dd3e9100311784",
+      "npm_integrity": "sha512-yFkGfSm4h+hxUeUn/6aGbl8QFfwRjcA/iCg6qqmgJpb2ry6ZHWjXvm/MKhI/zRXQAFmeFxPZ8UbT/Ux56Vjlzw==",
+      "member": "package/LICENSE"
+    },
+    "third_party/licenses/embedded/npm-eslint-scope-9.1.2-license.txt": {
+      "kind": "npm-archive-member",
+      "sha256": "d3a724e2ed749f172ff70b62a1d0631b7d4b0ea273782365a3464d4e2d6b6dbd",
+      "name": "eslint-scope",
+      "version": "9.1.2",
+      "tarball": "https://registry.npmjs.org/eslint-scope/-/eslint-scope-9.1.2.tgz",
+      "archive_sha256": "16b004c4e056634c6b96c44821d453c268359d781a5db3652bddb191b3195dc3",
+      "npm_integrity": "sha512-xS90H51cKw0jltxmvmHy2Iai1LIqrfbw57b79w/J7MfvDfkIkFZ+kj6zC3BjtUwh150HsSSdxXZcsuv72miDFQ==",
+      "member": "package/LICENSE"
+    },
+    "third_party/licenses/embedded/npm-estraverse-5.3.0-license.bsd.txt": {
+      "kind": "npm-archive-member",
+      "sha256": "0e74697a68cebdcd61502c30fe80ab7f9e341d995dcd452023654d57133534b1",
+      "name": "estraverse",
+      "version": "5.3.0",
+      "tarball": "https://registry.npmjs.org/estraverse/-/estraverse-5.3.0.tgz",
+      "archive_sha256": "3e8d45da5b8085a4a8d51368ffead5b551a502c286978962a05d5c8e0d72fda6",
+      "npm_integrity": "sha512-MMdARuVEQziNTeJD8DgMqmhwR11BRQ/cBP+pLtYdSTnf3MIO8fFeiINEbX36ZdNlfU/7A9f3gUw49B3oQsvwBA==",
+      "member": "package/LICENSE.BSD"
+    },
+    "third_party/licenses/embedded/npm-globals-14.0.0-license.txt": {
+      "kind": "npm-archive-member",
+      "sha256": "5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3",
+      "name": "globals",
+      "version": "14.0.0",
+      "tarball": "https://registry.npmjs.org/globals/-/globals-14.0.0.tgz",
+      "archive_sha256": "fabbac02995dca1c432f08c675f3b40f871edd8d0609ac580a66cd7064f88e6a",
+      "npm_integrity": "sha512-oahGvuMGQlPw/ivIYBjVSrWAfWLBeku5tpPE2fOPLi+WHffIWbuh2tCjhyQhTBPMf5E9jDEH4FOmTYgYwbKwtQ==",
+      "member": "package/license"
+    },
+    "third_party/licenses/embedded/npm-yaml-parser-2.8.3-license.txt": {
+      "kind": "npm-archive-member",
+      "sha256": "5bba27375d93e9119f76c1015f7672cf9ad5f70952296e0842fb2243d6376869",
+      "name": "yaml",
+      "version": "2.8.3",
+      "tarball": "https://registry.npmjs.org/yaml/-/yaml-2.8.3.tgz",
+      "archive_sha256": "9539805d7447def2bed5c5b4acacc283362c5e80abc5d93472b2f35f0cbf85ad",
+      "npm_integrity": "sha512-AvbaCLOO2Otw/lW5bmh9d/WEdcDFdQp2Z2ZUH3pX9U2ihyUY0nvLv7J6TrWowklRGPYbB/IuIMfYgxaCPg5Bpg==",
+      "member": "package/LICENSE"
+    },
+    "third_party/licenses/embedded/npm-htmlhint-1.9.2-license.md.txt": {
+      "kind": "npm-archive-member",
+      "sha256": "831976d4d0e92ce16361faceafe37f83a50915308531cd097fa09f4d92f9304f",
+      "name": "htmlhint",
+      "version": "1.9.2",
+      "tarball": "https://registry.npmjs.org/htmlhint/-/htmlhint-1.9.2.tgz",
+      "archive_sha256": "c32775c6abf4ed12bbb87c7310ff76802270989f4880a25196d196b7c7fe7c17",
+      "npm_integrity": "sha512-PweWSPA1Pb+AVFIOSpIGu5KhLdmtk/uf/0CpjvrDf6XUWmdTyqUljlylwSxQ0AWLvPGcBxK2n8uISsI4lCOkBQ==",
+      "member": "package/LICENSE.md"
+    },
+    "third_party/licenses/embedded/npm-jsonc-parser-3.3.1-license.md.txt": {
+      "kind": "npm-archive-member",
+      "sha256": "c3a24c02d678e5f0711623dcf3ab3f243b273c2633f638a1fa8e35fb7c7f8e4d",
+      "name": "jsonc-parser",
+      "version": "3.3.1",
+      "tarball": "https://registry.npmjs.org/jsonc-parser/-/jsonc-parser-3.3.1.tgz",
+      "archive_sha256": "4a0315b8671e7463bae7af7c142cdf19e9aa7ba39eb36dc2df383b8648e3cbc9",
+      "npm_integrity": "sha512-HUgH65KyejrUFPvHFPbqOY0rsFip3Bo5wb4ngvdi1EpCYWUQDC5V+Y7mZws+DLkr4M//zQJoanu1SP+87Dv1oQ==",
+      "member": "package/LICENSE.md"
+    },
+    "third_party/licenses/embedded/npm-vscode-css-languageservice-6.3.10-license.md.txt": {
+      "kind": "npm-archive-member",
+      "sha256": "c3a24c02d678e5f0711623dcf3ab3f243b273c2633f638a1fa8e35fb7c7f8e4d",
+      "name": "vscode-css-languageservice",
+      "version": "6.3.10",
+      "tarball": "https://registry.npmjs.org/vscode-css-languageservice/-/vscode-css-languageservice-6.3.10.tgz",
+      "archive_sha256": "75dfff4a7b2a9b8df08c17d5444a8224a3701e29fc30c2539db12a7a9ffc9448",
+      "npm_integrity": "sha512-eq5N9Er3fC4vA9zd9EFhyBG90wtCCuXgRSpAndaOgXMh1Wgep5lBgRIeDgjZBW9pa+332yC9+49cZMW8jcL3MA==",
+      "member": "package/LICENSE.md"
+    },
+    "third_party/licenses/embedded/npm-vscode-json-languageservice-5.7.2-license.md.txt": {
+      "kind": "npm-archive-member",
+      "sha256": "4742836d395a83a45d2278d9b738824d68abb1a03b81d567210a6cbc3e686e12",
+      "name": "vscode-json-languageservice",
+      "version": "5.7.2",
+      "tarball": "https://registry.npmjs.org/vscode-json-languageservice/-/vscode-json-languageservice-5.7.2.tgz",
+      "archive_sha256": "18dc41edc48bdcab2da866a5b5f53956ee722b66fffe9d89740d04ba7f505459",
+      "npm_integrity": "sha512-WtKRDtJfFEmLrgtu+ODexOHm/6/krRF0k6t+uvkKIKW1Jh9ZIyxZQwJJwB3qhrEgvAxa37zbUg+vn+UyUK/U2w==",
+      "member": "package/LICENSE.md"
+    },
+    "third_party/licenses/embedded/npm-vscode-languageserver-textdocument-1.0.12-license.txt.txt": {
+      "kind": "npm-archive-member",
+      "sha256": "ec9ee83580841e8eb687aca9867f221503809ba6426c7f876ede17d91b9fcfd0",
+      "name": "vscode-languageserver-textdocument",
+      "version": "1.0.12",
+      "tarball": "https://registry.npmjs.org/vscode-languageserver-textdocument/-/vscode-languageserver-textdocument-1.0.12.tgz",
+      "archive_sha256": "9f1d28814d6ee81267f52f5bc8c920bb6a0a23eb6de48960345a0a25fbf3b0db",
+      "npm_integrity": "sha512-cxWNPesCnQCcMPeenjKKsOCKQZ/L6Tv19DTRIGuLWe32lyzWhihGVJ/rcckZXJxfdKCFvRLS3fpBIsV/ZGX4zA==",
+      "member": "package/License.txt"
+    },
+    "third_party/licenses/embedded/npm-vscode-languageserver-textdocument-1.0.12-thirdpartynotices.txt.txt": {
+      "kind": "npm-archive-member",
+      "sha256": "a89123562fe364dc8e969e85614eb6c1f8452afe131d6e42bd1314bb2d092b04",
+      "name": "vscode-languageserver-textdocument",
+      "version": "1.0.12",
+      "tarball": "https://registry.npmjs.org/vscode-languageserver-textdocument/-/vscode-languageserver-textdocument-1.0.12.tgz",
+      "archive_sha256": "9f1d28814d6ee81267f52f5bc8c920bb6a0a23eb6de48960345a0a25fbf3b0db",
+      "npm_integrity": "sha512-cxWNPesCnQCcMPeenjKKsOCKQZ/L6Tv19DTRIGuLWe32lyzWhihGVJ/rcckZXJxfdKCFvRLS3fpBIsV/ZGX4zA==",
+      "member": "package/thirdpartynotices.txt"
+    },
+    "third_party/licenses/embedded/npm-vscode-languageserver-types-3.17.5-license.txt.txt": {
+      "kind": "npm-archive-member",
+      "sha256": "ec9ee83580841e8eb687aca9867f221503809ba6426c7f876ede17d91b9fcfd0",
+      "name": "vscode-languageserver-types",
+      "version": "3.17.5",
+      "tarball": "https://registry.npmjs.org/vscode-languageserver-types/-/vscode-languageserver-types-3.17.5.tgz",
+      "archive_sha256": "d673f9e7f8bbe51351be51c58f32d4dcfa97a670ebb86bc633368394c609cac0",
+      "npm_integrity": "sha512-Ld1VelNuX9pdF39h2Hgaeb5hEZM2Z3jUrrMgWQAu82jMtZp7p3vJT3BzToKtZI7NgQssZje5o0zryOrhQvzQAg==",
+      "member": "package/License.txt"
+    },
+    "third_party/licenses/embedded/npm-vscode-languageserver-types-3.17.5-thirdpartynotices.txt.txt": {
+      "kind": "npm-archive-member",
+      "sha256": "a89123562fe364dc8e969e85614eb6c1f8452afe131d6e42bd1314bb2d092b04",
+      "name": "vscode-languageserver-types",
+      "version": "3.17.5",
+      "tarball": "https://registry.npmjs.org/vscode-languageserver-types/-/vscode-languageserver-types-3.17.5.tgz",
+      "archive_sha256": "d673f9e7f8bbe51351be51c58f32d4dcfa97a670ebb86bc633368394c609cac0",
+      "npm_integrity": "sha512-Ld1VelNuX9pdF39h2Hgaeb5hEZM2Z3jUrrMgWQAu82jMtZp7p3vJT3BzToKtZI7NgQssZje5o0zryOrhQvzQAg==",
+      "member": "package/thirdpartynotices.txt"
+    },
+    "third_party/licenses/embedded/npm-vscode-uri-3.1.0-license.md.txt": {
+      "kind": "npm-archive-member",
+      "sha256": "c669138cb1eb01fbb745e8e460b291e4f2869c14a40061390b6095d845ed4c82",
+      "name": "vscode-uri",
+      "version": "3.1.0",
+      "tarball": "https://registry.npmjs.org/vscode-uri/-/vscode-uri-3.1.0.tgz",
+      "archive_sha256": "c6ec752d7a4858237389b23fb4d5ac05c2f1f606071cd212a9b54730e43cfc54",
+      "npm_integrity": "sha512-/BpdSx+yCQGnCvecbyXdxHDkuk55/G3xwnC0GqY4gmQ3j+A+g8kzzgB4Nk/SINjqn6+waqw3EgbVF2QKExkRxQ==",
+      "member": "package/LICENSE.md"
+    },
+    "third_party/licenses/embedded/estraverse-5.3.0-source-reference.txt": {
+      "sha256": "7ad30269805e5b54b84f1041836d55881afc0c73133d6ac85fa0e5d2ddd5ced5",
+      "source": "https://github.com/estools/estraverse/blob/ec3f900528eac270a51f7b079edeae086e7ebce4/estraverse.js",
+      "source_blob": "f0d9af9b46bfebb6cda551de17beeb659c7a2f69",
+      "kind": "source-excerpt"
     }
   },
   "schema": 1,
