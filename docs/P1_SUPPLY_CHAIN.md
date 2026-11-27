@@ -377,7 +377,7 @@ were recorded in active inventory at full-family HEAD
 identified; candidate OSV had no matches for it. The historical reachability
 assessment in #33 did not grant a VEX or risk waiver.
 
-## #37 curated runtime disposition — pending final review
+## #37 curated runtime disposition — reviewed evidence
 
 Reviewed HEAD `1bc74142ee11db2f4fd283776f4825ed90e90ee5` physically excludes
 worker-xml.js and four other workers. The active inventory no longer maps
@@ -403,10 +403,43 @@ scope. Candidate OSV 16/0 remains separate. Round 3 independent reviewers
 confirmed source/wheel closure and upstream equality; Docker layer results
 are CI evidence, not their independent Docker reproduction.
 
-Both Lodash advisories remain historical findings with removal evidence
-and **final disposition pending**. Do not describe them as an active
-shipped XML worker or as an accepted risk. Marker and exact-digest scans
-are not proof against all transformed copies. Retained component identity
-and notice review, independent final disposition, current correction HEAD
-CI/artifacts and real HAOS upgrade/rollback remain open. No VEX or
-release signoff implied. See ACE_WORKER_PROFILE.md and ACE_WORKER_ATTRIBUTION.md.
+Both advisories are historical findings. The maintainer approved the
+following scoped remediation disposition after two independent reviews
+of correction HEAD `f72a78108a1c84f791efb0abe00876332eb91d0b`.
+
+| Finding | Disposition | Remediation |
+| --- | --- | --- |
+| CVE-2026-4800 / GHSA-r5fr-rjxr-66jc | REMEDIATED — component removed from reviewed runtime | Excluded XML worker |
+| CVE-2025-13465 / GHSA-xxjr-mmjv-4gpg | REMEDIATED — component removed from reviewed runtime | Excluded XML worker |
+
+Scope: Lodash 4.17.21 identified in the former Ace 1.45.2 XML worker,
+not an assertion that every possible Lodash-derived fragment in all
+future builds is absent. Removal commit 0f15bdf1872d45acab1fa1449ef14c36b5b1c215;
+reviewed curated runtime `f72a78108a1c84f791efb0abe00876332eb91d0b`, 490 retained files
+byte-identical to upstream and exact 510-resource manifest. Baseline #356
+45993293324 (4/4 success), rehearsal #13 45993293370 (20/20). Actual source
+15194726976, installed/E2E 15195540350 and rehearsal 15195480591 ZIPs checked
+by author and independent reviewer 2; CRC and published SHA-256 match.
+Source scan 506 executable/source files and 490 same-archive unminified
+counterparts: no searched Lodash markers; only XQuery/JSONiq hits among
+the monitored component groups. Wheel/sdist/Docker each 551 application
+resources and 5 first-party checks, exact vendor closure. Docker 10 layers,
+498 JS members hashed, zero excluded names or identical payload hits.
+Runtime attempts empty. Main OSV 219/77 on 2026-11-27T11:51:02Z, no Lodash
+or Chevrotain queries, as expected after removal (not evidence by itself).
+Independent source/wheel verification and two correction reviews confirm
+closure and no reintroduction; Docker layer evidence is independently
+inspected CI output, not an independent Docker rebuild.
+
+This is a remediation-by-removal decision for the reviewed product
+configuration, not an exception, risk acceptance, CVE patch claim or VEX
+statement of blanket non-applicability. Marker/digest scans cannot exclude
+every renamed/transformed copy. If later retained attribution identifies
+Lodash code, or an Ace/version/profile/asset change invalidates the removal
+evidence, reopen affected findings and restore exact supported SBOM/OSV
+identity. Revalidate source/package/image closure before future release.
+Historical findings, notices and full-family evidence remain available;
+rollback to the old full-family build is outside this disposition.
+Other license/security gates (#9, #24, #33–#35, #37), real HAOS warm-cache
+upgrade/rollback and release approval remain open.
+See ACE_WORKER_PROFILE.md and ACE_WORKER_ATTRIBUTION.md.

@@ -93,6 +93,12 @@ class SupplyChainTests(unittest.TestCase):
         for retired in ("ace-coffee", "ace-luaparse", "ace-xml-lodash", "ace-xml-chevrotain"):
             self.assertNotIn("embedded:" + retired, {c["bom-ref"] for c in embedded})
         self.assertIn("embedded:ace-xqlint", {c["bom-ref"] for c in embedded})
+        esrecurse = next(c for c in embedded if c["bom-ref"] == "embedded:ace-esrecurse")
+        self.assertEqual(esrecurse["version"], "4.3.0")
+        self.assertEqual(esrecurse["purl"], "pkg:npm/esrecurse@4.3.0")
+        l10n = next(c for c in embedded if c["bom-ref"] == "embedded:ace-vscode-l10n")
+        self.assertNotIn("version", l10n)
+        self.assertNotIn("purl", l10n)
         refs = [c["bom-ref"] for c in bom["components"]]
         self.assertEqual(len(refs), len(set(refs)))
         self.assertEqual("2.136", next(c for c in bom["components"]
@@ -193,6 +199,9 @@ class SupplyChainTests(unittest.TestCase):
                        "version": "1.45.2"}, queries)
         self.assertNotIn({"package": {"ecosystem": "npm", "name": "jshint"},
                           "version": "2.11.0"}, queries)
+        self.assertIn({"package": {"ecosystem": "npm", "name": "esrecurse"},
+                       "version": "4.3.0"}, queries)
+        self.assertFalse(any(q["package"]["name"] == "@vscode/l10n" for q in queries))
         self.assertIn({"package": {"ecosystem": "npm", "name": "hammerjs"},
                        "version": "2.0.4"}, queries)
         self.assertFalse(any(q["package"]["name"] in {"Velocity.js", "js-yaml (Ace embedded parser)"}

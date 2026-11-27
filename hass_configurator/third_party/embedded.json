@@ -652,6 +652,113 @@
       "parent": "ace",
       "status": "partial",
       "version": null
+    },
+    {
+      "id": "ace-esrecurse",
+      "parent": "ace",
+      "kind": "library",
+      "name": "esrecurse",
+      "version": "4.3.0",
+      "ecosystem": "npm",
+      "license": "BSD-2-Clause",
+      "status": "identified",
+      "locations": [
+        {
+          "file": "vendor/ace/worker-javascript.js",
+          "marker": "name:\"esrecurse\",description:\"ECMAScript AST recursive visitor\""
+        },
+        {
+          "file": "vendor/ace/worker-javascript.js",
+          "marker": "main:\"esrecurse.js\",version:\"4.3.0\""
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-javascript.js",
+          "git_blob": "1beece92ae3317ce6453fb693afa7503a13285e3",
+          "marker": "main:\"esrecurse.js\",version:\"4.3.0\""
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-noconflict/worker-javascript.js",
+          "git_blob": "03fb19fd0cd3053da5d23b1aac19b9f0fefe7afa",
+          "marker": "../../node_modules/esrecurse/esrecurse.js"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-noconflict/worker-javascript.js",
+          "git_blob": "03fb19fd0cd3053da5d23b1aac19b9f0fefe7afa",
+          "marker": "exports.version = require_package().version;"
+        },
+        {
+          "url": "https://github.com/estools/esrecurse/blob/8ceb63797813d9ac69572a671b95cf58ffdf35b6/package.json",
+          "git_blob": "dec5b1bc1fd3ac43e74d7a575cc6bb98b453b2e3",
+          "marker": "\"version\": \"4.3.0\""
+        },
+        {
+          "url": "https://github.com/estools/esrecurse/blob/8ceb63797813d9ac69572a671b95cf58ffdf35b6/esrecurse.js",
+          "git_blob": "15d57dfd0218f66036a7cb5c5fe8e18c26d82267",
+          "marker": "Copyright (C) 2014 Yusuke Suzuki"
+        }
+      ],
+      "notices": [
+        "third_party/licenses/embedded/esrecurse-4.3.0.txt"
+      ],
+      "note": "Published exact matching minified worker carries esrecurse package name/version together; unminified module path and exports.version = require_package().version bind metadata to bundled visitor. Tagged upstream v4.3.0 source has complete BSD-2-Clause header retained verbatim. Candidate npm archive root notice absent in #356; archive source-member comparison pending, not a claim of reproducible dependency build."
+    },
+    {
+      "id": "ace-vscode-l10n",
+      "parent": "ace",
+      "kind": "library",
+      "name": "@vscode/l10n",
+      "version": null,
+      "ecosystem": null,
+      "license": "MIT",
+      "status": "partial",
+      "locations": [
+        {
+          "file": "vendor/ace/worker-css.js",
+          "marker": "expected a string as the first argument to l10n.t"
+        },
+        {
+          "file": "vendor/ace/worker-json.js",
+          "marker": "expected a string as the first argument to l10n.t"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-css.js",
+          "git_blob": "ef3eb06052f1f2ff941aff408021280de9d6d0ed",
+          "marker": "expected a string as the first argument to l10n.t"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-json.js",
+          "git_blob": "72b056dfd9ee8f48c3a4ff234a6f078c3bda132b",
+          "marker": "expected a string as the first argument to l10n.t"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-noconflict/worker-css.js",
+          "git_blob": "5fdf223b3f75d56960a9b7f2011c7b81b7f22d13",
+          "marker": "../../node_modules/@vscode/l10n/dist/browser.js"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-noconflict/worker-json.js",
+          "git_blob": "09863bc2a5c34314779897daef1fa0052d434792",
+          "marker": "../../node_modules/@vscode/l10n/dist/browser.js"
+        },
+        {
+          "url": "https://github.com/microsoft/vscode-l10n/blob/fc7e3d79ddb91a2cc24a9730aad912026a43dbf2/l10n/package.json",
+          "git_blob": "8ebb31b8d8635de35f382744b898c9579ee20a95",
+          "marker": "\"version\": \"0.0.18\""
+        },
+        {
+          "url": "https://github.com/microsoft/vscode-l10n/blob/fc7e3d79ddb91a2cc24a9730aad912026a43dbf2/l10n/src/main.ts",
+          "git_blob": "9c239f5841c98bc09f01b401d308f16c3a77778d",
+          "marker": "expected a string as the first argument to l10n.t"
+        }
+      ],
+      "notices": [
+        "third_party/licenses/embedded/vscode-l10n-0.0.18-reference.txt"
+      ],
+      "note": "Exact published worker source paths and distinctive localization error literal establish component presence in CSS/JSON; pinned source lock selects 0.0.18, matching tagged source package metadata and code marker. Root MIT LICENSE at that tag retained verbatim as reference; no root notice in candidate npm archive. Exact version/complete npm-to-bundle equivalence not established; no npm purl or main OSV version assertion yet."
     }
   ],
   "font_provenance": {
@@ -675,7 +782,8 @@
     "New worker imports and build markers do not establish exact dependency versions. Candidate OSV queries remain separately scoped.",
     "Non-Ace embedded findings and font provenance remain unchanged.",
     "Current Ace 1.45.2 XQuery and JSONiq lexer source blobs are unchanged from baseline and literal tokenizer relationships independently rechecked; not proof of full minified-worker byte equivalence or generated output license.",
-    "Curated #37 runtime has six workers. Retired worker containers and previous mappings preserved in docs/history/ace-1.45.2-full-embedded.json. Removed XML Lodash/Chevrotain, CoffeeScript and Lua mappings no longer describe a shipped container; retained-assets scan and installed closure review required before final component absence or risk disposition. Historical notice texts retained conservatively."
+    "Curated #37 runtime has six workers. Retired worker containers and previous mappings preserved in docs/history/ace-1.45.2-full-embedded.json. Removed XML Lodash/Chevrotain, CoffeeScript and Lua mappings no longer describe a shipped container; retained-assets scan and installed closure review required before final component absence or risk disposition. Historical notice texts retained conservatively.",
+    "The esrecurse 4.3.0 runtime identity is established by co-bundled package metadata and its version export; upstream license header retained. @vscode/l10n tagged source MIT notice recovered but exact runtime version remains partial. Both npm root-notice gaps remain recorded as archive facts; source notice recovery is not full nested clearance."
   ],
   "notices": {
     "third_party/licenses/embedded/ace-legacy-linters.txt": {
@@ -850,6 +958,18 @@
       "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
       "source": "https://github.com/Chevrotain/chevrotain/blob/01753e36dc2bef849a35a825684b641e0e3508e6/LICENSE.txt",
       "source_blob": "d645695673349e3947e8e5ae42332d0ac3164cd7",
+      "kind": "whole-file"
+    },
+    "third_party/licenses/embedded/esrecurse-4.3.0.txt": {
+      "sha256": "f5928c2e80ca2fb0c64e8709946c1e25dbee92f4d9ec8309123426ef0a3f3a34",
+      "source": "https://github.com/estools/esrecurse/blob/8ceb63797813d9ac69572a671b95cf58ffdf35b6/esrecurse.js",
+      "source_blob": "15d57dfd0218f66036a7cb5c5fe8e18c26d82267",
+      "kind": "source-excerpt"
+    },
+    "third_party/licenses/embedded/vscode-l10n-0.0.18-reference.txt": {
+      "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383",
+      "source": "https://github.com/microsoft/vscode-l10n/blob/fc7e3d79ddb91a2cc24a9730aad912026a43dbf2/LICENSE",
+      "source_blob": "9e841e7a26e4eb057b24511e7b92d42b257a80e5",
       "kind": "whole-file"
     }
   },

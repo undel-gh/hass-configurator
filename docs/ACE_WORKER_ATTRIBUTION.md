@@ -125,3 +125,33 @@ tracked in the main scan and risk register; no automatic acceptance or
 claim of exploitability. Other source-lock version candidates remain
 separate pending stronger evidence. All 8 worker package mappings and
 native coffee/XQuery mappings partial for nested closure; base open.
+
+## Curated runtime and retained notice recovery — 2026-11-27
+
+The preceding full-family sections describe historical evidence, not the
+current shipped inventory. #37 removed XML/PHP/Lua/Coffee/XQuery workers.
+Reviewed correction HEAD f72a78108a1c84f791efb0abe00876332eb91d0b: baseline #356 and
+rehearsal #13 success, all three artifacts inspected by author and reviewer 2.
+Five retained linter pairs, 15 source-lock candidates plus linter (16 OSV
+candidate queries / zero matches), native base open. Former Lodash XML
+findings are remediated by physical removal within the reviewed runtime
+scope, not a VEX/risk waiver; see P1_SUPPLY_CHAIN.md.
+
+The two candidate npm archives without root notice files were investigated:
+
+| Candidate | Source provenance | Notice evidence | Identity disposition |
+| --- | --- | --- | --- |
+| esrecurse 4.3.0 | annotated tag v4.3.0 -> 8ceb63797813d9ac69572a671b95cf58ffdf35b6; package.json blob dec5b1bc1fd3ac43e74d7a575cc6bb98b453b2e3 | Full original BSD-2-Clause source header in esrecurse.js blob 15d57dfd0218f66036a7cb5c5fe8e18c26d82267; exact excerpt shipped | identified 4.3.0: minified worker contains name, description and version in package metadata; unminified module exports version from that metadata |
+| @vscode/l10n 0.0.18 | tag l10n/v0.0.18 -> fc7e3d79ddb91a2cc24a9730aad912026a43dbf2; l10n/package.json blob 8ebb31b8d8635de35f382744b898c9579ee20a95 | Exact root MIT LICENSE blob 9e841e7a26e4eb057b24511e7b92d42b257a80e5, shipped as source-reference notice | partial: distinctive error literal and source paths establish CSS/JSON presence, exact version not proven |
+
+Both source notices are checked by existing embedded-upstream verification
+against immutable Git blobs and by local SHA-256. This does not claim either
+npm archive contains a root license file; that observation remains valid.
+esrecurse has archive SHA-256 3ecf9370d7296b47b570c88a11f70b35bb965af8d536536b259eb55f9b793b61;
+@vscode/l10n archive SHA-256 f1c2dc897488595f6bb42121869f525c6c6a5f7c8dca550754199c3251ed7c5c
+from verified #356 source evidence. Next correlate archive source members
+against published unminified worker sections; no invented exact l10n version.
+Remaining 13 candidate archive notices have been collected but their
+shipped mappings and exact version attribution remain open. Base worker,
+themes/snippets, XQuery lexer generator terms and Materialize findings
+remain separate. New inventory CI and independent review required.

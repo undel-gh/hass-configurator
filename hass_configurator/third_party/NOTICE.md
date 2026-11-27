@@ -76,3 +76,9 @@ commit are literal subsets of tagged Ace source bundles), and xmldom 0.1.19
 establish the entire historical fork license/version; retain partial status.
 
 Historical full-family XML worker contained lodash 4.17.21 (MIT) and Chevrotain 7.1.1 (Apache-2.0); #37 excludes that container. Their notices are retained pending whole-runtime attribution. No claim of complete component absence or risk acceptance. Other source-lock candidates and their attribution remain open. See docs/ACE_WORKER_ATTRIBUTION.md. The ace-legacy-linters npm LICENSE differs from the retained exact Git source LICENSE solely by 21 CRLF-to-LF line endings, verified against exact archive and notice pins.
+
+Retained worker notice recovery: esrecurse 4.3.0 (BSD-2-Clause, full tagged
+source header; bundled package metadata/version export), and @vscode/l10n
+(MIT, exact source-reference license from tag l10n/v0.0.18; runtime version
+not established) are mapped in embedded.json. Both npm archive root-notice
+gaps remain recorded as archive facts. Remaining nested review open.

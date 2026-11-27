@@ -46,3 +46,8 @@ startup (XML and YAML), per-language worker creation count, JSONiq alias,
 and main() overlay verification wiring with a successful and a tampered
 synthetic overlay. See P1_SUPPLY_CHAIN.md for the historical XML finding
 and exact reviewed installed evidence. No upstream runtime change.
+
+Maintainer disposition: both historical Lodash 4.17.21 XML-worker CVEs
+remediated by physical component removal for the independently reviewed
+f72a7810 runtime configuration. See P1_SUPPLY_CHAIN.md for scope, evidence,
+limitations and reopen conditions. Not a blanket VEX, waiver or release signoff.
