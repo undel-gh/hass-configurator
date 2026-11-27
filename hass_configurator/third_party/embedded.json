@@ -359,6 +359,21 @@
           "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/lib/ace/mode/xquery/jsoniq_lexer.js",
           "git_blob": "f123f46fa7bbe78459e8be0861256cab076e0c43",
           "marker": "REx v5.30"
+        },
+        {
+          "url": "https://github.com/wcandillon/xqlint/blob/1778846ed8e707780d791fd3ffb41feccdf9de04/lib/lexers/XQueryTokenizer.ebnf",
+          "git_blob": "d6514598ccf8d385e6baf70319745410630a5c79",
+          "marker": "exports.XQueryTokenizer"
+        },
+        {
+          "url": "https://github.com/wcandillon/xqlint/blob/1778846ed8e707780d791fd3ffb41feccdf9de04/lib/lexers/JSONiqTokenizer.ebnf",
+          "git_blob": "eff1da00eda14040b50cb2891ea2bcd0f9ba4385",
+          "marker": "exports.JSONiqTokenizer"
+        },
+        {
+          "url": "https://github.com/GuntherRademacher/rex-parser-generator/blob/52f3bcc355cbfab7692733d79c38c16441fc4eec/README.md",
+          "git_blob": "6c2f2a1b8cc7db119aa38d02b1dd72efbb5b2464",
+          "marker": "REx is provided under the"
         }
       ],
       "id": "ace-xqlint",
@@ -375,9 +390,12 @@
         }
       ],
       "name": "XQLint and generated XQuery/JSONiq lexers",
-      "note": "Both generated XQueryTokenizer.js and JSONiqTokenizer.js at historical XQLint commit 1778846e (package 0.1.5) are literal full-source substrings of corresponding tagged Ace lexer modules. Apache-2.0 reference license retained; exact full worker version, generated output terms and other nested modules remain open; do not invent a version for the aggregate. Historical source reference; marker survives in the new build, but new embedded byte/version/license closure is not complete. Current Ace 1.45.2 source files at 68d7fd1c0f5ac50cdb610bf06b86074eab3be652 have identical Git blobs to the historical evidence; current source markers independently rechecked. Full nested license closure remains open. #37 removes worker-xquery.js; both lexer modes and their literal source relationships remain. No aggregate XQLint worker identity implied.",
+      "note": "Two retained lexer modes contain generated XQLint tokenizer code, not the removed xquery worker. Source relationships verify exact tokenizer bytes from XQLint 0.1.5 source commit; no full npm package identity asserted. Both exact 2014 REx v5.30 generator copyright/command headers now shipped as separate notices; modern REx Apache-2.0 license at 52f3bcc3 is a source reference only, not proof of 2014 output rights. XQLint source is Apache-2.0, grammar provenance and historical REx output permissions require confirmation. Browserify-style embedded loader also needs attribution. No risk acceptance.",
       "notices": [
-        "third_party/licenses/embedded/xqlint-reference.txt"
+        "third_party/licenses/embedded/xqlint-reference.txt",
+        "third_party/licenses/embedded/rex-2014-xquery-generator-notice.txt",
+        "third_party/licenses/embedded/rex-2014-jsoniq-generator-notice.txt",
+        "third_party/licenses/embedded/rex-current-license-reference.txt"
       ],
       "parent": "ace",
       "status": "partial",
@@ -395,6 +413,21 @@
           "git_blob": "824a528ddd5edb6c3ff523ca885567cbe4dc25af",
           "marker": "ace/theme/monokai",
           "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/theme-monokai.js"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/tool/tmthemes/LICENSE",
+          "git_blob": "08f1380f3a9bce3135253bc69f5861dec3dcae17",
+          "marker": "If not otherwise specified"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/tool/tmtheme.js",
+          "git_blob": "eff23f2b777b3a1fea6d3c32ae048c4bda08b075",
+          "marker": "var themes ="
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/tool/tmsnippets.js",
+          "git_blob": "febc7946e892692859402053b45369033c516a3b",
+          "marker": "readSnippetsInDir"
         }
       ],
       "id": "ace-theme-snippet-attribution",
@@ -407,7 +440,7 @@
         }
       ],
       "name": "Ace theme conversion and snippet attribution review",
-      "note": "Review record, not a claim all themes/snippets derive from this license. Historical tool license expressly allows per-file exceptions. Review theme/snippet upstream copyright and any extension dependencies. Historical source reference; marker survives in the new build, but new embedded byte/version/license closure is not complete.",
+      "note": "Current source tool/tmthemes/LICENSE has explicit per-file exceptions, and tmtheme.js maps only a subset of themes to TextMate files. tmsnippets.js is a generic converter, not proof of individual snippet origin. Dracula MIT block separately mapped. Per-file scan and original payload comparison are required; absence of a marker is not blanket BSD clearance.",
       "notices": [
         "third_party/licenses/embedded/ace-tmthemes-reference.txt"
       ],
@@ -950,7 +983,7 @@
       "version": "5.3.0",
       "ecosystem": "npm",
       "status": "identified",
-      "license": "BSD-2-Clause",
+      "license": "BSD-2-Clause AND MIT",
       "locations": [
         {
           "file": "vendor/ace/worker-javascript.js",
@@ -987,13 +1020,25 @@
           "url": "https://github.com/mkslanc/ace-linters/blob/e0d223c5a880cb2f258c96ccd22feaaffb29e5a5/package-lock.json",
           "git_blob": "17e9297cb3a744c12b1bd2a6c55a7b3138b39918",
           "marker": "\"packages/ace-legacy-linters/node_modules/estraverse\": {"
+        },
+        {
+          "url": "https://github.com/llvm-mirror/libcxx/blob/1b3775e38c24eba35df0fc33b2780068822a8ce7/include/algorithm",
+          "git_blob": "0f6107bdde0547d2d56c75d35ef23e104e4fbb4e",
+          "marker": "__len -= __l2 + 1;"
+        },
+        {
+          "url": "https://github.com/llvm-mirror/libcxx/blob/1b3775e38c24eba35df0fc33b2780068822a8ce7/LICENSE.TXT",
+          "git_blob": "14645d080198f399ae541679b46a87582fe40b9f",
+          "marker": "dual licensed under both"
         }
       ],
       "notices": [
         "third_party/licenses/embedded/npm-estraverse-5.3.0-license.bsd.txt",
-        "third_party/licenses/embedded/estraverse-5.3.0-source-reference.txt"
+        "third_party/licenses/embedded/estraverse-5.3.0-source-reference.txt",
+        "third_party/licenses/embedded/llvm-libcxx-2012-reference.txt",
+        "third_party/licenses/embedded/llvm-libcxx-2012-credits.txt"
       ],
-      "note": "Selective rebuild research #1 artifact 15202630304 (HEAD 74fdc6e8046f81000642d2e59536021359b2e8c7, ZIP SHA-256 37fbc3d25be8328a8193af57d8242df512d7c358c42739734c33baca13aca71b) reproduces all five shipped minified workers byte-for-byte from pinned candidate archives at original lock paths, with exact contributing source member hashes; all five unminified forms differ only by 216 CRLF-to-LF conversions, verified against pinned Ace-builds Git files. Identity established by exact reproducible runtime evidence, not source-lock version alone. Independent review and retained nested license clearance pending. Original lock path(s): node_modules/esrecurse/node_modules/estraverse, packages/ace-legacy-linters/node_modules/estraverse.  Two original lock paths both reproduced, same exact 5.3.0 archive. Source LLVM libc++ upper_bound/lower_bound MIT reference and complete nested notice review remain open."
+      "note": "Selective rebuild research #1 artifact 15202630304 (HEAD 74fdc6e8046f81000642d2e59536021359b2e8c7, ZIP SHA-256 37fbc3d25be8328a8193af57d8242df512d7c358c42739734c33baca13aca71b) reproduces all five shipped minified workers byte-for-byte from pinned candidate archives at original lock paths, with exact contributing source member hashes; all five unminified forms differ only by 216 CRLF-to-LF conversions, verified against pinned Ace-builds Git files. Identity established by exact reproducible runtime evidence, not source-lock version alone. Independent review and retained nested license clearance pending. Original lock path(s): node_modules/esrecurse/node_modules/estraverse, packages/ace-legacy-linters/node_modules/estraverse.  Two original lock paths both reproduced, same exact 5.3.0 archive. The estraverse source expressly attributes its upper_bound/lower_bound adaptation to LLVM libc++ (MIT). Historical libc++ release_32 algorithm and dual MIT/UIUC license checked; both full original LICENSE.TXT and CREDITS.TXT retained; choose MIT for the adapted fragment. Exact historical libc++ revision used by estraverse is not established, and no separate libc++ runtime package/version is asserted. Independent review pending."
     },
     {
       "id": "ace-globals",
@@ -1320,6 +1365,38 @@
         "third_party/licenses/embedded/npm-vscode-uri-3.1.0-license.md.txt"
       ],
       "note": "Selective rebuild research #1 artifact 15202630304 (HEAD 74fdc6e8046f81000642d2e59536021359b2e8c7, ZIP SHA-256 37fbc3d25be8328a8193af57d8242df512d7c358c42739734c33baca13aca71b) reproduces all five shipped minified workers byte-for-byte from pinned candidate archives at original lock paths, with exact contributing source member hashes; all five unminified forms differ only by 216 CRLF-to-LF conversions, verified against pinned Ace-builds Git files. Identity established by exact reproducible runtime evidence, not source-lock version alone. Independent review and retained nested license clearance pending. Original lock path(s): node_modules/vscode-uri. "
+    },
+    {
+      "id": "ace-theme-dracula",
+      "parent": "ace",
+      "kind": "library",
+      "name": "Dracula theme (Ace port)",
+      "version": null,
+      "ecosystem": null,
+      "status": "identified",
+      "license": "MIT",
+      "locations": [
+        {
+          "file": "vendor/ace/theme-dracula.js",
+          "marker": "Zeno Rocha"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/theme-dracula.js",
+          "git_blob": "75ad12708e8827f8f50963c5e1c788633a04bfd0",
+          "marker": "Zeno Rocha"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/theme/dracula-css.js",
+          "git_blob": "ff467e926e173a3be791988a081dc27a0d3da9ce",
+          "marker": "Copyright © 2017 Zeno Rocha"
+        }
+      ],
+      "notices": [
+        "third_party/licenses/embedded/dracula-theme-mit.txt"
+      ],
+      "note": "MIT permission/copyright/warranty block survives in the CSS string of the exact published theme. Original source block also distributed verbatim. No asserted external package version; other themes remain subject to per-file review."
     }
   ],
   "font_provenance": {
@@ -1343,7 +1420,8 @@
     "Non-Ace embedded findings and font provenance remain unchanged.",
     "Current Ace 1.45.2 XQuery and JSONiq lexer source blobs are unchanged from baseline and literal tokenizer relationships independently rechecked; not proof of full minified-worker byte equivalence or generated output license.",
     "Curated #37 runtime has six workers. Retired worker containers and previous mappings preserved in docs/history/ace-1.45.2-full-embedded.json. Removed XML Lodash/Chevrotain, CoffeeScript and Lua mappings no longer describe a shipped container; retained-assets scan and installed closure review required before final component absence or risk disposition. Historical notice texts retained conservatively.",
-    "All 15 retained replacement-worker source-lock candidate versions now have exact reconstructed minified runtime evidence from 16 original package paths, plus pinned CRLF-to-LF relation for published unminified forms. All 15 original candidate archives revalidated; native base, theme/snippets, XQuery lexer/generator terms, nested source-level notices and independent final review remain open. No public-release approval."
+    "All 15 retained replacement-worker source-lock candidate versions now have exact reconstructed minified runtime evidence from 16 original package paths, plus pinned CRLF-to-LF relation for published unminified forms. All 15 original candidate archives revalidated; native base, theme/snippets, XQuery lexer/generator terms, nested source-level notices and independent final review remain open. No public-release approval.",
+    "Retained native/theme/snippet evidence being collected; REx v5.30 original output grant, Browserify loader and grammar lineage remain unresolved. Historical libc++ license/credits reference added for estraverse MIT-adapted fragment; exact revision not asserted. Dracula MIT source copyright notice separately retained."
   ],
   "notices": {
     "third_party/licenses/embedded/ace-legacy-linters.txt": {
@@ -1687,6 +1765,42 @@
       "source": "https://github.com/estools/estraverse/blob/ec3f900528eac270a51f7b079edeae086e7ebce4/estraverse.js",
       "source_blob": "f0d9af9b46bfebb6cda551de17beeb659c7a2f69",
       "kind": "source-excerpt"
+    },
+    "third_party/licenses/embedded/llvm-libcxx-2012-reference.txt": {
+      "kind": "whole-file",
+      "sha256": "9297a42b68c913a66b60c47e5075a67e4b0eda506ea3101e66f4a5f5b03352da",
+      "source": "https://github.com/llvm-mirror/libcxx/blob/1b3775e38c24eba35df0fc33b2780068822a8ce7/LICENSE.TXT",
+      "source_blob": "14645d080198f399ae541679b46a87582fe40b9f"
+    },
+    "third_party/licenses/embedded/llvm-libcxx-2012-credits.txt": {
+      "kind": "whole-file",
+      "sha256": "500246be8cea6777f79d8ae099dafa0c12633e63f53bdcdb1e98552550bddd3f",
+      "source": "https://github.com/llvm-mirror/libcxx/blob/1b3775e38c24eba35df0fc33b2780068822a8ce7/CREDITS.TXT",
+      "source_blob": "f2ca38f9c292aeafe178b91d99591ac2734bc7ab"
+    },
+    "third_party/licenses/embedded/rex-2014-xquery-generator-notice.txt": {
+      "kind": "source-excerpt",
+      "sha256": "2e3a3da0d7459b05859738e656cba28b37825ecbd6c11f2cb443c83a55b9b298",
+      "source": "https://github.com/wcandillon/xqlint/blob/1778846ed8e707780d791fd3ffb41feccdf9de04/lib/lexers/XQueryTokenizer.js",
+      "source_blob": "9ebe64fcd788ffa1af3f82f1cc36596d5968b350"
+    },
+    "third_party/licenses/embedded/rex-2014-jsoniq-generator-notice.txt": {
+      "kind": "source-excerpt",
+      "sha256": "9a3dfca25e4277fd3247e4fac0c3f51863c1383975b8155f123a8e15db083eb3",
+      "source": "https://github.com/wcandillon/xqlint/blob/1778846ed8e707780d791fd3ffb41feccdf9de04/lib/lexers/JSONiqTokenizer.js",
+      "source_blob": "8fcd737b2ec86ccaccdecb4ba2306d18d3027016"
+    },
+    "third_party/licenses/embedded/rex-current-license-reference.txt": {
+      "kind": "whole-file",
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+      "source": "https://github.com/GuntherRademacher/rex-parser-generator/blob/52f3bcc355cbfab7692733d79c38c16441fc4eec/LICENSE",
+      "source_blob": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64"
+    },
+    "third_party/licenses/embedded/dracula-theme-mit.txt": {
+      "kind": "source-excerpt",
+      "sha256": "fa954228e5772fd56b7de83e168982929b19a68efe6868ba7efde99b5235c465",
+      "source": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/theme/dracula-css.js",
+      "source_blob": "ff467e926e173a3be791988a081dc27a0d3da9ce"
     }
   },
   "schema": 1,
@@ -1725,23 +1839,23 @@
     },
     "vendor/ace/worker-css.js": {
       "status": "component-mapping",
-      "note": "Exact published ace-legacy-linters 1.0.2 minified/unminified worker equality; individual dependencies and licenses remain partially attributed."
+      "note": "Exact ace-legacy-linters 1.0.2 published forms and byte-identical reconstructed minified runtime; 15 nested versions identified across original paths, #360/#17/research #2 artifacts verified. Additional source-level license terms and independent review remain."
     },
     "vendor/ace/worker-html.js": {
       "status": "component-mapping",
-      "note": "Exact published ace-legacy-linters 1.0.2 minified/unminified worker equality; individual dependencies and licenses remain partially attributed."
+      "note": "Exact ace-legacy-linters 1.0.2 published forms and byte-identical reconstructed minified runtime; 15 nested versions identified across original paths, #360/#17/research #2 artifacts verified. Additional source-level license terms and independent review remain."
     },
     "vendor/ace/worker-javascript.js": {
       "status": "component-mapping",
-      "note": "Exact published ace-legacy-linters 1.0.2 minified/unminified worker equality; individual dependencies and licenses remain partially attributed."
+      "note": "Exact ace-legacy-linters 1.0.2 published forms and byte-identical reconstructed minified runtime; 15 nested versions identified across original paths, #360/#17/research #2 artifacts verified. Additional source-level license terms and independent review remain."
     },
     "vendor/ace/worker-json.js": {
       "status": "component-mapping",
-      "note": "Exact published ace-legacy-linters 1.0.2 minified/unminified worker equality; individual dependencies and licenses remain partially attributed."
+      "note": "Exact ace-legacy-linters 1.0.2 published forms and byte-identical reconstructed minified runtime; 15 nested versions identified across original paths, #360/#17/research #2 artifacts verified. Additional source-level license terms and independent review remain."
     },
     "vendor/ace/worker-yaml.js": {
       "status": "component-mapping",
-      "note": "Exact published ace-legacy-linters 1.0.2 minified/unminified worker equality; individual dependencies and licenses remain partially attributed."
+      "note": "Exact ace-legacy-linters 1.0.2 published forms and byte-identical reconstructed minified runtime; 15 nested versions identified across original paths, #360/#17/research #2 artifacts verified. Additional source-level license terms and independent review remain."
     }
   }
 }

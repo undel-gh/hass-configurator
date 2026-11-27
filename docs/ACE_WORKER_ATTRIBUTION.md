@@ -227,3 +227,43 @@ All 15 exact versions now mapped to active npm PURL/OSV scope based on
 reconstructed runtime, not on source-lock candidate assumptions. Historical
 candidate-only sections above remain chronology. Independent re-review,
 new exact-HEAD CI and source-level license review remain open.
+
+## Exact version review checkpoint and non-linter attribution
+
+At b22c9f0, baseline #360 / 46008745027 (4/4), rehearsal #17 / 46008744839
+(20/20) and research #2 / 46008744855 succeeded. Actual source 15201929622,
+installed 15202334975, rehearsal 15203605070 and rebuild 15202079765 ZIPs
+inspected, CRC and published SHA-256 match. 41 BOM entries, 47 notices, 76
+Git source files; 569 installed resources each; 10 image layers/498 JS/0
+hits, final browser 10/10; equal A/B sha256:f2eb717d4eba94e27f2c0987875daf0fb6dc4252eefa2db982cdd8eb69d26708.
+Main OSV 234 queries / 77 matched (2026-11-27T13:41:18Z), all 15 retained
+linter dependency queries have zero advisories. No new independent review.
+
+Native base: published unminified worker starts with exact bootstrap from
+Ace source commit 68d7fd1c. It has nine named Ace modules (oop, apply_delta,
+event_emitter, range, anchor, document, deep_copy, lang, mirror). The first
+eight are src/ modules transformed by the upstream TypeScript 5.9.2
+Makefile.dryice.js; mirror is in lib/ace/worker. Native base is 1.45.2, not
+ace-code 1.43.6 from replacement workers. Full source/build comparison
+pending. No additional npm identity asserted for native Ace's own code.
+
+Estraverse: the original 5.3.0 source attributes upperBound to libc++ and
+MIT. llvm-mirror/libcxx release_32 commit 1b3775e3 contains a matching
+algorithm pattern and historical dual MIT/UIUC license. Distribute original
+LICENSE.TXT and CREDITS.TXT; select MIT for the adapted fragment and retain
+BSD-2-Clause source and archive notices. Exact revision not established.
+
+XQuery/JSONiq: XQLint source commit 1778846e (Apache-2.0) supplies both
+lexer grammar and tokenizer files; exact original REx 5.30 headers from
+2014 preserved. REx author's 2026 source is Apache-2.0, but historical
+output grant not established by that statement. Both lexers also contain a
+Browserify-style loader and other XQLint modules. Keep finding OPEN until
+historic output/grammar/loader terms confirmed or scoped removal agreed.
+Do not claim current REx tool package version, complete XQLint npm package,
+or automatic retrospective clearance. No runtime code removed or modified.
+
+Themes and snippets: current TextMate reference license explicitly permits
+per-file exceptions; current converter has limited mapping, generic snippet
+converter does not establish origin. Dracula MIT header identified in exact
+minified CSS payload, separate original source excerpt shipped. Detailed
+all-file comparison and source notice scan pending.

@@ -443,3 +443,13 @@ rollback to the old full-family build is outside this disposition.
 Other license/security gates (#9, #24, #33–#35, #37), real HAOS warm-cache
 upgrade/rollback and release approval remain open.
 See ACE_WORKER_PROFILE.md and ACE_WORKER_ATTRIBUTION.md.
+
+## Remaining native and generated-code license review
+
+After the exact retained-linter reconstruction, the estraverse historical
+MIT libc++ adaptation notice and Dracula MIT notice have been recovered;
+see ACE_WORKER_ATTRIBUTION.md. Do not infer retrospective REx v5.30 output
+permission from the modern Apache-2.0 generator license. Retained XQuery/
+JSONiq grammar and Browserify-style wrapper attribution remain release
+blockers. Native base and all theme/snippet per-file lineage are reviewed
+separately. No risk waiver, no change to #37 physical worker removal.

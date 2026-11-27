@@ -101,3 +101,11 @@ version-only notes. Exact versions/PURLs and main OSV queries now reflect
 these identities. Original notices remain, including source references for
 esrecurse and @vscode/l10n; source-level nested terms and independent review
 are not cleared by this reconstruction. Native base is separate.
+
+Additional retained attribution: estraverse includes an MIT-attributed LLVM
+libc++ algorithm adaptation; historical full dual MIT/UIUC notice and
+CREDITS.TXT retained, MIT elected for that fragment (no exact libc++ package
+version claim). Both 2014 REx v5.30 generator headers and modern Apache-2.0
+reference retained for XQuery/JSONiq lexer modes. Historical generated
+output rights, grammar provenance and Browserify loader remain open.
+Dracula theme carries its own MIT notice, now also distributed verbatim.
