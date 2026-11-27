@@ -92,3 +92,12 @@ copyright header is retained separately; LLVM-derived code remains open.
 JSON language service includes the BSD-2-Clause glob matching notice in its
 original LICENSE.md. Microsoft generic third-party notices are preserved
 without assuming a specific LGPL dependency. See ACE_WORKER_ATTRIBUTION.md.
+
+All 15 retained replacement-worker package versions are now identified by
+byte-exact reconstruction of the shipped minified runtime from pinned
+archives and original lock paths (research #1; reviewed CRLF-to-LF relation
+for all five published unminified forms). This supersedes earlier candidate
+version-only notes. Exact versions/PURLs and main OSV queries now reflect
+these identities. Original notices remain, including source references for
+esrecurse and @vscode/l10n; source-level nested terms and independent review
+are not cleared by this reconstruction. Native base is separate.

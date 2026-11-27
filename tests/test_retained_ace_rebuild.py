@@ -5,7 +5,7 @@ import tarfile
 import tempfile
 import unittest
 
-from scripts.rebuild_retained_ace import materialize, relation
+from scripts.rebuild_retained_ace import materialize, relation, unminified_relation, sha
 
 
 class RetainedRebuildTests(unittest.TestCase):
@@ -39,3 +39,16 @@ class RetainedRebuildTests(unittest.TestCase):
             with self.subTest(member=extra.name), tempfile.TemporaryDirectory() as tmp:
                 with self.assertRaisesRegex(ValueError, "Unsafe or duplicate"):
                     materialize(self.archive(extra), Path(tmp) / "pkg", "fixture", "1.0.0")
+
+    def test_only_pinned_unminified_crlf_relation(self):
+        published = b"first\r\nsecond\nthird\r\n"
+        normalized = b"first\nsecond\nthird\n"
+        pins = (sha(published), sha(normalized))
+        result = unminified_relation(normalized, published, pins, expected_crlf=2)
+        self.assertFalse(result["equal"])
+        self.assertEqual(result["relation"], "crlf-to-lf-exact")
+        self.assertEqual(unminified_relation(published, published, pins, 2)["relation"], "exact")
+        self.assertEqual(unminified_relation(normalized + b"x", published, pins, 2)["relation"], "mismatch")
+        for changed, count in ((published + b"x", 2), (published, 3), (published + b"\r", 2)):
+            with self.subTest(changed=changed, count=count), self.assertRaisesRegex(ValueError, "newline relation drift"):
+                unminified_relation(normalized, changed, pins, count)

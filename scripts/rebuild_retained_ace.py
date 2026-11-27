@@ -53,6 +53,42 @@ EXTRA_PINS = {
 }
 
 
+# Exact relations independently checked against the published Git build bytes
+# and research #1 artifact 15202630304. No general whitespace normalization.
+UNMINIFIED_PINS = {
+    "worker-css.js": [
+        "d763c653af477e96c3548c13ef73d30867db0c72c7714b38918177eb422da830",
+        "745cacd12eb24bbd796e0c51da2f7fa8c31493aafa292bfde3aa6849311b88b5"
+    ],
+    "worker-html.js": [
+        "3b355e152ed4376a15e70118b5e1084808cbb89a1c18c10362e974ddfd5e71cf",
+        "0452c723bf6897f22ccbe88ba87436c148708136add80c0c99d9f4af3e45e494"
+    ],
+    "worker-javascript.js": [
+        "d5cc296f0965881dd92a9de86423201bc8e0fb0ff4d516055935a72c4d9e46ec",
+        "3bd94888ddff72db9fc946ec82d93ca8c2a208757a3b641bd1d8a6a43d35a233"
+    ],
+    "worker-json.js": [
+        "291e9a2d6ecd52e3327f871df93a0d1eabc79bac05dc1185f0a02c5ad373e829",
+        "929a25f12f918630b88f17af09aa2c7b8b11022be1cb5ab9666ba8cdd346acf5"
+    ],
+    "worker-yaml.js": [
+        "a214479de0bd5adb6fa80992c120a7cb36610baa61c53e958ffc792bb58e4616",
+        "cde46e4d22cbb176880858b0c05e0ef82e16e999c69f6ef56b4e5e932196c0bd"
+    ]
+}
+# Three build-only inputs lacking SRI in upstream source lock: observed
+# registry archives from inspected research #1, now pinned for repeatability.
+TOOL_OBSERVED_PINS = {
+    "path-browserify": ("1.0.1", "74ad6965c6f8cb61d17b1798d48095c3238eca5707b517640a12150f17b8f93d",
+                       "sha512-b7uo2UCUOYZcnF/3ID0lulOJi/bafxa1xPe7ZPsammBSpjSWQkjNxlt635YGS2MiR9GjvuXCtz2emr3jbsz98g=="),
+    "source-map": ("0.6.1", "bdbca10d17ff5a5802d5acfc7b2f22f9f9bf587632a95650d3c5f513c7092b86",
+                   "sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g=="),
+    "@jridgewell/resolve-uri": ("3.1.0", "fe4cb2ab38b4813b27926d9e08852ad81d8c14d0034cfa4a23555ec134ee16b0",
+                               "sha512-F2msla3tad+Mfht5cJq7LSXcdudKTWCVYUgw6pLFOOHSTtZlj6SWNYAp+AhuqLmWdBO2X5hPrLcu8cVP8fy28w=="),
+}
+
+
 def candidate_pins():
     records = json.loads((ROOT / "hass_configurator/third_party/embedded.json").read_text("utf-8"))
     pins = dict(EXTRA_PINS)
@@ -106,6 +142,21 @@ def relation(actual, expected):
     return {"equal": actual == expected, "actual_sha256": sha(actual),
             "published_sha256": sha(expected), "actual_size": len(actual),
             "published_size": len(expected), "first_difference": first}
+
+
+def unminified_relation(actual, published, pins, expected_crlf=216):
+    """Only the pinned mixed CRLF/LF published form may normalize to LF."""
+    published_sha, normalized_sha = pins
+    result = relation(actual, published)
+    normalized = published.replace(b"\r\n", b"\n")
+    if (sha(published) != published_sha or published.count(b"\r\n") != expected_crlf
+            or b"\r" in normalized or sha(normalized) != normalized_sha):
+        raise ValueError("Pinned unminified newline relation drift")
+    result.update({"published_crlf_count": expected_crlf,
+                   "normalized_published_sha256": sha(normalized),
+                   "relation": "exact" if actual == published else
+                   "crlf-to-lf-exact" if actual == normalized else "mismatch"})
+    return result
 
 
 def main():
@@ -176,11 +227,18 @@ def main():
             require(not entry.get("integrity") or sri(raw) == entry["integrity"], "Source-lock SRI mismatch")
             if key in selected:
                 require(pins[name] == (version, sha(raw), sri(raw)), "Reviewed candidate archive mismatch")
+            elif name in TOOL_OBSERVED_PINS:
+                require(TOOL_OBSERVED_PINS[name] == (version, sha(raw), sri(raw)),
+                        "Reviewed build-only archive mismatch")
+            else:
+                require(bool(entry.get("integrity")), "Unpinned build-tool archive")
             files = materialize(raw, source / key, name, version)
             hashes.update({key + "/" + path: digest for path, digest in files.items()})
             report["package_archives"].append({"lock_path": key, "name": name, "version": version,
                 "archive_sha256": sha(raw), "npm_integrity": sri(raw), "source_lock_integrity_present": bool(entry.get("integrity")),
-                "reviewed_candidate_pin": key in selected, "files": len(files)})
+                "reviewed_candidate_pin": key in selected,
+                "reviewed_build_only_pin": name in TOOL_OBSERVED_PINS and key not in selected,
+                "files": len(files)})
         save()
         # Evidence-only instrumentation of the exact original script. Preserve
         # all output options and source inputs, generate only retained targets.
@@ -206,6 +264,7 @@ def main():
             report[label + "_log"] = (result.stdout + result.stderr)[-16000:]
             save()
             require(result.returncode == 0, "Upstream " + label + " failed")
+        contributed = set()
         for worker in WORKERS:
             plain, mini = expected[worker]
             meta = json.loads((pkg / (worker + ".meta.json")).read_text("utf-8"))
@@ -237,15 +296,35 @@ def main():
                 digest = sha(read_file(source, filename))
                 require(hashes.get(filename) == digest, "CSS generator data archive mismatch")
                 additional[filename] = digest
+            # Bind each emitted dependency input to its deepest original
+            # lock path, including both estraverse installations.
+            contributors = {}
+            for filename in inputs:
+                if "/node_modules/" not in "/" + filename:
+                    continue
+                matched = max((key for key in paths if filename.startswith(key + "/")),
+                              key=len, default=None)
+                if matched is not None:
+                    contributors[filename] = matched
+                    contributed.add(matched)
             report["workers"].append({"worker": worker,
-                "unminified": relation((pkg / "build/src-noconflict" / worker).read_bytes(), plain),
+                "unminified": unminified_relation((pkg / "build/src-noconflict" / worker).read_bytes(),
+                                                  plain, UNMINIFIED_PINS[worker]),
                 "minified": relation((pkg / "build/src-min-noconflict" / worker).read_bytes(), mini),
                 "contributing_inputs": inputs, "additional_inputs": additional,
+                "contributing_lock_paths": sorted(set(contributors.values())),
+                "unmapped_dependency_inputs": sorted(name for name in inputs
+                    if "/node_modules/" in "/" + name and name not in contributors),
                 "unverified_dependency_inputs": sorted(name for name, row in inputs.items()
                     if "/node_modules/" in "/" + name and not row["archive_member_verified"])})
-        equal = all(w["unminified"]["equal"] and w["minified"]["equal"]
-                    and not w["unverified_dependency_inputs"] for w in report["workers"])
-        report["status"] = "exact-rebuild-match" if equal else "rebuild-differs"
+        report["contributing_candidate_paths"] = sorted(contributed)
+        report["missing_candidate_paths"] = sorted(set(selected) - contributed)
+        report["unexpected_contributing_paths"] = sorted(contributed - set(selected))
+        equal = all(w["unminified"]["relation"] in {"exact", "crlf-to-lf-exact"}
+                    and w["minified"]["equal"] and not w["unverified_dependency_inputs"]
+                    and not w["unmapped_dependency_inputs"] for w in report["workers"])
+        equal = equal and contributed == set(selected)
+        report["status"] = "exact-runtime-rebuild-match" if equal else "rebuild-differs"
         save()
         require(equal, "Rebuild differs; inspect actual report before attributing versions")
     except Exception as exc:

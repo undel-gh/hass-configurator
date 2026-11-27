@@ -199,3 +199,31 @@ pinned official linter package; actual contributing archive inputs and
 additional bootstrap/CSS generator input hashes are recorded. No generated
 JS is promoted. Failure/mismatch retains a report and blocks the research
 claim, not a reason to invent versions or alter shipped bytes.
+
+## Research #1 result and version attribution
+
+Exact source HEAD 74fdc6e8046f81000642d2e59536021359b2e8c7, research run
+46008174383, actual artifact 15202630304 (ZIP SHA-256
+37fbc3d25be8328a8193af57d8242df512d7c358c42739734c33baca13aca71b, CRC clean).
+31 package paths materialized without npm install or scripts; 16 retained
+candidate paths (15 package/version pairs; two estraverse paths), 15 build
+or alias paths. All five retained minified workers match exact shipped bytes.
+All contributing dependency inputs are verified archive members; none
+unverified. All 16 candidate paths contribute bytes. Build-only path-browserify,
+source-map and @jridgewell/resolve-uri lacked upstream SRI; their observed
+registry archives now have explicit SHA-256/SRI pins from this artifact.
+None contributed runtime code. Node v22.23.5, esbuild 0.27.2, Terser 5.31.6.
+
+The strict first research run failed because every published unminified form
+was 216 bytes longer, first difference at offset 16. Author fetched all five
+immutable Ace-builds Git files, checked raw SHA-256 against official linter
+archive hashes, counted exactly 216 CRLF and no stray CR, and verified that
+CRLF->LF conversion reproduces each actual rebuilt SHA-256. All five raw
+minified comparisons remain exact. The new gate pins both hashes for every
+unminified file, exact CRLF count and equality after that single specified
+conversion; no generalized normalization. Raw equality remains false in the
+report; relation is explicit. Recheck all contributing original lock paths.
+All 15 exact versions now mapped to active npm PURL/OSV scope based on
+reconstructed runtime, not on source-lock candidate assumptions. Historical
+candidate-only sections above remain chronology. Independent re-review,
+new exact-HEAD CI and source-level license review remain open.

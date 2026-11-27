@@ -88,9 +88,9 @@ class SupplyChainTests(unittest.TestCase):
         self.assertIn("embedded:ace-legacy-linters", next(d for d in bom["dependencies"]
                       if d["ref"] == "asset:ace")["dependsOn"])
         yaml = next(c for c in embedded if c["bom-ref"] == "embedded:ace-yaml-parser")
-        self.assertEqual(yaml["name"], "yaml (Ace worker)")
-        self.assertNotIn("version", yaml)
-        self.assertNotIn("purl", yaml)
+        self.assertEqual(yaml["name"], "yaml")
+        self.assertEqual(yaml["version"], "2.8.3")
+        self.assertEqual(yaml["purl"], "pkg:npm/yaml@2.8.3")
         self.assertEqual(inv["legacy_archive_locks"]["js-yaml.min.js"]["relation"], "exact")
         self.assertEqual(len(inv["embedded"]["worker_review"]), 6)
         historical = json.loads((PACKAGE.parent / "docs/history/ace-1.9.6-embedded.json").read_text("utf-8"))
@@ -102,17 +102,74 @@ class SupplyChainTests(unittest.TestCase):
         self.assertEqual(esrecurse["version"], "4.3.0")
         self.assertEqual(esrecurse["purl"], "pkg:npm/esrecurse@4.3.0")
         l10n = next(c for c in embedded if c["bom-ref"] == "embedded:ace-vscode-l10n")
-        self.assertNotIn("version", l10n)
-        self.assertNotIn("purl", l10n)
-        expected_candidates = ("ace-babel-parser", "ace-code", "ace-eslint-scope",
-                               "ace-estraverse", "ace-globals", "ace-yaml-parser",
-                               "ace-htmlhint", "ace-jsonc-parser", "ace-vscode-css-languageservice",
-                               "ace-vscode-json-languageservice", "ace-vscode-languageserver-textdocument",
-                               "ace-vscode-languageserver-types", "ace-vscode-uri", "ace-vscode-l10n")
-        for cid in expected_candidates:
+        self.assertEqual(l10n["version"], "0.0.18")
+        self.assertEqual(l10n["purl"], "pkg:npm/%40vscode/l10n@0.0.18")
+        expected_candidates = {
+          "ace-babel-parser": [
+                    "@babel/parser",
+                    "7.29.2"
+          ],
+          "ace-code": [
+                    "ace-code",
+                    "1.43.6"
+          ],
+          "ace-eslint-scope": [
+                    "eslint-scope",
+                    "9.1.2"
+          ],
+          "ace-esrecurse": [
+                    "esrecurse",
+                    "4.3.0"
+          ],
+          "ace-estraverse": [
+                    "estraverse",
+                    "5.3.0"
+          ],
+          "ace-globals": [
+                    "globals",
+                    "14.0.0"
+          ],
+          "ace-yaml-parser": [
+                    "yaml",
+                    "2.8.3"
+          ],
+          "ace-htmlhint": [
+                    "htmlhint",
+                    "1.9.2"
+          ],
+          "ace-jsonc-parser": [
+                    "jsonc-parser",
+                    "3.3.1"
+          ],
+          "ace-vscode-css-languageservice": [
+                    "vscode-css-languageservice",
+                    "6.3.10"
+          ],
+          "ace-vscode-json-languageservice": [
+                    "vscode-json-languageservice",
+                    "5.7.2"
+          ],
+          "ace-vscode-languageserver-textdocument": [
+                    "vscode-languageserver-textdocument",
+                    "1.0.12"
+          ],
+          "ace-vscode-languageserver-types": [
+                    "vscode-languageserver-types",
+                    "3.17.5"
+          ],
+          "ace-vscode-uri": [
+                    "vscode-uri",
+                    "3.1.0"
+          ],
+          "ace-vscode-l10n": [
+                    "@vscode/l10n",
+                    "0.0.18"
+          ]
+}
+        for cid, (name, version) in expected_candidates.items():
             record = next(c for c in embedded if c["bom-ref"] == "embedded:" + cid)
-            self.assertNotIn("version", record)
-            self.assertNotIn("purl", record)
+            self.assertEqual((record["name"], record["version"]), (name, version))
+            self.assertEqual(record["purl"], "pkg:npm/" + name.replace("@", "%40") + "@" + version)
             self.assertTrue(record["licenses"])
         self.assertEqual(sum(n["kind"] == "npm-archive-member" for n in inv["embedded"]["notices"].values()), 15)
         refs = [c["bom-ref"] for c in bom["components"]]
@@ -262,7 +319,9 @@ class SupplyChainTests(unittest.TestCase):
                           "version": "2.11.0"}, queries)
         self.assertIn({"package": {"ecosystem": "npm", "name": "esrecurse"},
                        "version": "4.3.0"}, queries)
-        self.assertFalse(any(q["package"]["name"] == "@vscode/l10n" for q in queries))
+        for name, version in [["@babel/parser","7.29.2"],["ace-code","1.43.6"],["eslint-scope","9.1.2"],["esrecurse","4.3.0"],["estraverse","5.3.0"],["globals","14.0.0"],["yaml","2.8.3"],["htmlhint","1.9.2"],["jsonc-parser","3.3.1"],["vscode-css-languageservice","6.3.10"],["vscode-json-languageservice","5.7.2"],["vscode-languageserver-textdocument","1.0.12"],["vscode-languageserver-types","3.17.5"],["vscode-uri","3.1.0"],["@vscode/l10n","0.0.18"]]:
+            self.assertIn({"package": {"ecosystem": "npm", "name": name},
+                           "version": version}, queries)
         self.assertIn({"package": {"ecosystem": "npm", "name": "hammerjs"},
                        "version": "2.0.4"}, queries)
         self.assertFalse(any(q["package"]["name"] in {"Velocity.js", "js-yaml (Ace embedded parser)"}

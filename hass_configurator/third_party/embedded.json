@@ -549,7 +549,7 @@
       "version": "1.0.2"
     },
     {
-      "ecosystem": null,
+      "ecosystem": "npm",
       "evidence": [
         {
           "git_blob": "1beece92ae3317ce6453fb693afa7503a13285e3",
@@ -570,6 +570,11 @@
           "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-javascript.js",
           "git_blob": "1beece92ae3317ce6453fb693afa7503a13285e3",
           "marker": "BABEL_PARSER_SOURCETYPE_MODULE_REQUIRED"
+        },
+        {
+          "url": "https://github.com/mkslanc/ace-linters/blob/e0d223c5a880cb2f258c96ccd22feaaffb29e5a5/package-lock.json",
+          "git_blob": "17e9297cb3a744c12b1bd2a6c55a7b3138b39918",
+          "marker": "\"node_modules/@babel/parser\": {"
         }
       ],
       "id": "ace-babel-parser",
@@ -586,16 +591,16 @@
         }
       ],
       "name": "@babel/parser",
-      "note": "Published matching worker has the pinned unminified package path and corroborating minified literal; 7.29.2 is the source-lock candidate, not a proved exact runtime version. Original candidate npm archive notice(s) retained with exact archive SHA-256/SRI and member digest from #357 artifact 15198574231. License expression describes candidate notice terms; no npm PURL or active OSV version assertion until identity is proven.",
+      "note": "Selective rebuild research #1 artifact 15202630304 (HEAD 74fdc6e8046f81000642d2e59536021359b2e8c7, ZIP SHA-256 37fbc3d25be8328a8193af57d8242df512d7c358c42739734c33baca13aca71b) reproduces all five shipped minified workers byte-for-byte from pinned candidate archives at original lock paths, with exact contributing source member hashes; all five unminified forms differ only by 216 CRLF-to-LF conversions, verified against pinned Ace-builds Git files. Identity established by exact reproducible runtime evidence, not source-lock version alone. Independent review and retained nested license clearance pending. Original lock path(s): node_modules/@babel/parser. ",
       "notices": [
         "third_party/licenses/embedded/npm-babel-parser-7.29.2-license.txt"
       ],
       "parent": "ace",
-      "status": "partial",
-      "version": null
+      "status": "identified",
+      "version": "7.29.2"
     },
     {
-      "ecosystem": null,
+      "ecosystem": "npm",
       "evidence": [
         {
           "git_blob": "d640dd3456722a4b6c56edc39beae695ea6c757f",
@@ -621,6 +626,11 @@
           "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-yaml.js",
           "git_blob": "d640dd3456722a4b6c56edc39beae695ea6c757f",
           "marker": "%TAG directive should contain exactly two parts"
+        },
+        {
+          "url": "https://github.com/mkslanc/ace-linters/blob/e0d223c5a880cb2f258c96ccd22feaaffb29e5a5/package-lock.json",
+          "git_blob": "17e9297cb3a744c12b1bd2a6c55a7b3138b39918",
+          "marker": "\"packages/ace-legacy-linters/node_modules/yaml\": {"
         }
       ],
       "id": "ace-yaml-parser",
@@ -636,14 +646,14 @@
           "marker": "%TAG directive should contain exactly two parts"
         }
       ],
-      "name": "yaml (Ace worker)",
-      "note": "Published matching worker has the pinned unminified package path and corroborating minified literal; 2.8.3 is the source-lock candidate, not a proved exact runtime version. Original candidate npm archive notice(s) retained with exact archive SHA-256/SRI and member digest from #357 artifact 15198574231. License expression describes candidate notice terms; no npm PURL or active OSV version assertion until identity is proven.",
+      "name": "yaml",
+      "note": "Selective rebuild research #1 artifact 15202630304 (HEAD 74fdc6e8046f81000642d2e59536021359b2e8c7, ZIP SHA-256 37fbc3d25be8328a8193af57d8242df512d7c358c42739734c33baca13aca71b) reproduces all five shipped minified workers byte-for-byte from pinned candidate archives at original lock paths, with exact contributing source member hashes; all five unminified forms differ only by 216 CRLF-to-LF conversions, verified against pinned Ace-builds Git files. Identity established by exact reproducible runtime evidence, not source-lock version alone. Independent review and retained nested license clearance pending. Original lock path(s): packages/ace-legacy-linters/node_modules/yaml.  Worker parser is npm yaml, separate from standalone js-yaml.",
       "notices": [
         "third_party/licenses/embedded/npm-yaml-parser-2.8.3-license.txt"
       ],
       "parent": "ace",
-      "status": "partial",
-      "version": null
+      "status": "identified",
+      "version": "2.8.3"
     },
     {
       "ecosystem": null,
@@ -729,22 +739,27 @@
           "url": "https://github.com/estools/esrecurse/blob/8ceb63797813d9ac69572a671b95cf58ffdf35b6/esrecurse.js",
           "git_blob": "15d57dfd0218f66036a7cb5c5fe8e18c26d82267",
           "marker": "Copyright (C) 2014 Yusuke Suzuki"
+        },
+        {
+          "url": "https://github.com/mkslanc/ace-linters/blob/e0d223c5a880cb2f258c96ccd22feaaffb29e5a5/package-lock.json",
+          "git_blob": "17e9297cb3a744c12b1bd2a6c55a7b3138b39918",
+          "marker": "\"node_modules/esrecurse\": {"
         }
       ],
       "notices": [
         "third_party/licenses/embedded/esrecurse-4.3.0.txt"
       ],
-      "note": "Published exact matching minified worker carries esrecurse package name/version together; unminified module path and exports.version = require_package().version bind metadata to bundled visitor. Tagged upstream v4.3.0 source has complete BSD-2-Clause header retained verbatim. Candidate npm archive root notice absent in #356; archive source-member comparison pending, not a claim of reproducible dependency build."
+      "note": "Selective rebuild research #1 artifact 15202630304 (HEAD 74fdc6e8046f81000642d2e59536021359b2e8c7, ZIP SHA-256 37fbc3d25be8328a8193af57d8242df512d7c358c42739734c33baca13aca71b) reproduces all five shipped minified workers byte-for-byte from pinned candidate archives at original lock paths, with exact contributing source member hashes; all five unminified forms differ only by 216 CRLF-to-LF conversions, verified against pinned Ace-builds Git files. Identity established by exact reproducible runtime evidence, not source-lock version alone. Independent review and retained nested license clearance pending. Original lock path(s): node_modules/esrecurse.  Co-bundled package metadata independently confirms 4.3.0; original BSD-2-Clause source header retained. No root archive notice."
     },
     {
       "id": "ace-vscode-l10n",
       "parent": "ace",
       "kind": "library",
       "name": "@vscode/l10n",
-      "version": null,
-      "ecosystem": null,
+      "version": "0.0.18",
+      "ecosystem": "npm",
       "license": "MIT",
-      "status": "partial",
+      "status": "identified",
       "locations": [
         {
           "file": "vendor/ace/worker-css.js",
@@ -785,21 +800,26 @@
           "url": "https://github.com/microsoft/vscode-l10n/blob/fc7e3d79ddb91a2cc24a9730aad912026a43dbf2/l10n/src/main.ts",
           "git_blob": "9c239f5841c98bc09f01b401d308f16c3a77778d",
           "marker": "expected a string as the first argument to l10n.t"
+        },
+        {
+          "url": "https://github.com/mkslanc/ace-linters/blob/e0d223c5a880cb2f258c96ccd22feaaffb29e5a5/package-lock.json",
+          "git_blob": "17e9297cb3a744c12b1bd2a6c55a7b3138b39918",
+          "marker": "\"node_modules/@vscode/l10n\": {"
         }
       ],
       "notices": [
         "third_party/licenses/embedded/vscode-l10n-0.0.18-reference.txt"
       ],
-      "note": "Exact published worker source paths and distinctive localization error literal establish component presence in CSS/JSON; pinned source lock selects 0.0.18, matching tagged source package metadata and code marker. Root MIT LICENSE at that tag retained verbatim as reference; no root notice in candidate npm archive. Exact version/complete npm-to-bundle equivalence not established; no npm purl or main OSV version assertion yet."
+      "note": "Selective rebuild research #1 artifact 15202630304 (HEAD 74fdc6e8046f81000642d2e59536021359b2e8c7, ZIP SHA-256 37fbc3d25be8328a8193af57d8242df512d7c358c42739734c33baca13aca71b) reproduces all five shipped minified workers byte-for-byte from pinned candidate archives at original lock paths, with exact contributing source member hashes; all five unminified forms differ only by 216 CRLF-to-LF conversions, verified against pinned Ace-builds Git files. Identity established by exact reproducible runtime evidence, not source-lock version alone. Independent review and retained nested license clearance pending. Original lock path(s): node_modules/@vscode/l10n.  Exact tagged MIT source notice retained; candidate npm archive has no root LICENSE."
     },
     {
       "id": "ace-code",
       "parent": "ace",
       "kind": "library",
       "name": "ace-code",
-      "version": null,
-      "ecosystem": null,
-      "status": "partial",
+      "version": "1.43.6",
+      "ecosystem": "npm",
+      "status": "identified",
       "license": "BSD-3-Clause",
       "locations": [
         {
@@ -873,21 +893,26 @@
           "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-json.js",
           "git_blob": "72b056dfd9ee8f48c3a4ff234a6f078c3bda132b",
           "marker": "[object Object]"
+        },
+        {
+          "url": "https://github.com/mkslanc/ace-linters/blob/e0d223c5a880cb2f258c96ccd22feaaffb29e5a5/package-lock.json",
+          "git_blob": "17e9297cb3a744c12b1bd2a6c55a7b3138b39918",
+          "marker": "\"node_modules/ace-code\": {"
         }
       ],
       "notices": [
         "third_party/licenses/embedded/npm-code-1.43.6-license.txt"
       ],
-      "note": "Published matching worker has the pinned unminified package path and corroborating minified literal; 1.43.6 is the source-lock candidate, not a proved exact runtime version. Original candidate npm archive notice(s) retained with exact archive SHA-256/SRI and member digest from #357 artifact 15198574231. License expression describes candidate notice terms; no npm PURL or active OSV version assertion until identity is proven. Archive license equals main Ace BSD-3-Clause notice, but different source-lock candidate version; five worker paths, not the native base version."
+      "note": "Selective rebuild research #1 artifact 15202630304 (HEAD 74fdc6e8046f81000642d2e59536021359b2e8c7, ZIP SHA-256 37fbc3d25be8328a8193af57d8242df512d7c358c42739734c33baca13aca71b) reproduces all five shipped minified workers byte-for-byte from pinned candidate archives at original lock paths, with exact contributing source member hashes; all five unminified forms differ only by 216 CRLF-to-LF conversions, verified against pinned Ace-builds Git files. Identity established by exact reproducible runtime evidence, not source-lock version alone. Independent review and retained nested license clearance pending. Original lock path(s): node_modules/ace-code.  Archive license equals main Ace BSD-3-Clause notice, but this is the 1.43.6 replacement worker code, not native Ace 1.45.2 base."
     },
     {
       "id": "ace-eslint-scope",
       "parent": "ace",
       "kind": "library",
       "name": "eslint-scope",
-      "version": null,
-      "ecosystem": null,
-      "status": "partial",
+      "version": "9.1.2",
+      "ecosystem": "npm",
+      "status": "identified",
       "license": "BSD-2-Clause",
       "locations": [
         {
@@ -905,21 +930,26 @@
           "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-javascript.js",
           "git_blob": "1beece92ae3317ce6453fb693afa7503a13285e3",
           "marker": "ImplicitGlobalVariable"
+        },
+        {
+          "url": "https://github.com/mkslanc/ace-linters/blob/e0d223c5a880cb2f258c96ccd22feaaffb29e5a5/package-lock.json",
+          "git_blob": "17e9297cb3a744c12b1bd2a6c55a7b3138b39918",
+          "marker": "\"packages/ace-legacy-linters/node_modules/eslint-scope\": {"
         }
       ],
       "notices": [
         "third_party/licenses/embedded/npm-eslint-scope-9.1.2-license.txt"
       ],
-      "note": "Published matching worker has the pinned unminified package path and corroborating minified literal; 9.1.2 is the source-lock candidate, not a proved exact runtime version. Original candidate npm archive notice(s) retained with exact archive SHA-256/SRI and member digest from #357 artifact 15198574231. License expression describes candidate notice terms; no npm PURL or active OSV version assertion until identity is proven."
+      "note": "Selective rebuild research #1 artifact 15202630304 (HEAD 74fdc6e8046f81000642d2e59536021359b2e8c7, ZIP SHA-256 37fbc3d25be8328a8193af57d8242df512d7c358c42739734c33baca13aca71b) reproduces all five shipped minified workers byte-for-byte from pinned candidate archives at original lock paths, with exact contributing source member hashes; all five unminified forms differ only by 216 CRLF-to-LF conversions, verified against pinned Ace-builds Git files. Identity established by exact reproducible runtime evidence, not source-lock version alone. Independent review and retained nested license clearance pending. Original lock path(s): packages/ace-legacy-linters/node_modules/eslint-scope. "
     },
     {
       "id": "ace-estraverse",
       "parent": "ace",
       "kind": "library",
       "name": "estraverse",
-      "version": null,
-      "ecosystem": null,
-      "status": "partial",
+      "version": "5.3.0",
+      "ecosystem": "npm",
+      "status": "identified",
       "license": "BSD-2-Clause",
       "locations": [
         {
@@ -947,22 +977,32 @@
           "url": "https://github.com/estools/estraverse/blob/ec3f900528eac270a51f7b079edeae086e7ebce4/estraverse.js",
           "git_blob": "f0d9af9b46bfebb6cda551de17beeb659c7a2f69",
           "marker": "based on LLVM libc++ upper_bound / lower_bound"
+        },
+        {
+          "url": "https://github.com/mkslanc/ace-linters/blob/e0d223c5a880cb2f258c96ccd22feaaffb29e5a5/package-lock.json",
+          "git_blob": "17e9297cb3a744c12b1bd2a6c55a7b3138b39918",
+          "marker": "\"node_modules/esrecurse/node_modules/estraverse\": {"
+        },
+        {
+          "url": "https://github.com/mkslanc/ace-linters/blob/e0d223c5a880cb2f258c96ccd22feaaffb29e5a5/package-lock.json",
+          "git_blob": "17e9297cb3a744c12b1bd2a6c55a7b3138b39918",
+          "marker": "\"packages/ace-legacy-linters/node_modules/estraverse\": {"
         }
       ],
       "notices": [
         "third_party/licenses/embedded/npm-estraverse-5.3.0-license.bsd.txt",
         "third_party/licenses/embedded/estraverse-5.3.0-source-reference.txt"
       ],
-      "note": "Published matching worker has the pinned unminified package path and corroborating minified literal; 5.3.0 is the source-lock candidate, not a proved exact runtime version. Original candidate npm archive notice(s) retained with exact archive SHA-256/SRI and member digest from #357 artifact 15198574231. License expression describes candidate notice terms; no npm PURL or active OSV version assertion until identity is proven. Two separate lock paths share the candidate version; do not infer that both are exact. Source includes LLVM libc++ upper_bound/lower_bound MIT attribution; further origin/notice review open."
+      "note": "Selective rebuild research #1 artifact 15202630304 (HEAD 74fdc6e8046f81000642d2e59536021359b2e8c7, ZIP SHA-256 37fbc3d25be8328a8193af57d8242df512d7c358c42739734c33baca13aca71b) reproduces all five shipped minified workers byte-for-byte from pinned candidate archives at original lock paths, with exact contributing source member hashes; all five unminified forms differ only by 216 CRLF-to-LF conversions, verified against pinned Ace-builds Git files. Identity established by exact reproducible runtime evidence, not source-lock version alone. Independent review and retained nested license clearance pending. Original lock path(s): node_modules/esrecurse/node_modules/estraverse, packages/ace-legacy-linters/node_modules/estraverse.  Two original lock paths both reproduced, same exact 5.3.0 archive. Source LLVM libc++ upper_bound/lower_bound MIT reference and complete nested notice review remain open."
     },
     {
       "id": "ace-globals",
       "parent": "ace",
       "kind": "library",
       "name": "globals",
-      "version": null,
-      "ecosystem": null,
-      "status": "partial",
+      "version": "14.0.0",
+      "ecosystem": "npm",
+      "status": "identified",
       "license": "MIT",
       "locations": [
         {
@@ -980,21 +1020,26 @@
           "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-javascript.js",
           "git_blob": "1beece92ae3317ce6453fb693afa7503a13285e3",
           "marker": "shared-node-browser"
+        },
+        {
+          "url": "https://github.com/mkslanc/ace-linters/blob/e0d223c5a880cb2f258c96ccd22feaaffb29e5a5/package-lock.json",
+          "git_blob": "17e9297cb3a744c12b1bd2a6c55a7b3138b39918",
+          "marker": "\"node_modules/globals\": {"
         }
       ],
       "notices": [
         "third_party/licenses/embedded/npm-globals-14.0.0-license.txt"
       ],
-      "note": "Published matching worker has the pinned unminified package path and corroborating minified literal; 14.0.0 is the source-lock candidate, not a proved exact runtime version. Original candidate npm archive notice(s) retained with exact archive SHA-256/SRI and member digest from #357 artifact 15198574231. License expression describes candidate notice terms; no npm PURL or active OSV version assertion until identity is proven."
+      "note": "Selective rebuild research #1 artifact 15202630304 (HEAD 74fdc6e8046f81000642d2e59536021359b2e8c7, ZIP SHA-256 37fbc3d25be8328a8193af57d8242df512d7c358c42739734c33baca13aca71b) reproduces all five shipped minified workers byte-for-byte from pinned candidate archives at original lock paths, with exact contributing source member hashes; all five unminified forms differ only by 216 CRLF-to-LF conversions, verified against pinned Ace-builds Git files. Identity established by exact reproducible runtime evidence, not source-lock version alone. Independent review and retained nested license clearance pending. Original lock path(s): node_modules/globals. "
     },
     {
       "id": "ace-htmlhint",
       "parent": "ace",
       "kind": "library",
       "name": "htmlhint",
-      "version": null,
-      "ecosystem": null,
-      "status": "partial",
+      "version": "1.9.2",
+      "ecosystem": "npm",
+      "status": "identified",
       "license": "MIT",
       "locations": [
         {
@@ -1012,21 +1057,26 @@
           "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-html.js",
           "git_blob": "63e2c21f5fbe7987bae23da5abacb78bf9f4131b",
           "marker": "An alt attribute must be present on <img> elements."
+        },
+        {
+          "url": "https://github.com/mkslanc/ace-linters/blob/e0d223c5a880cb2f258c96ccd22feaaffb29e5a5/package-lock.json",
+          "git_blob": "17e9297cb3a744c12b1bd2a6c55a7b3138b39918",
+          "marker": "\"node_modules/htmlhint\": {"
         }
       ],
       "notices": [
         "third_party/licenses/embedded/npm-htmlhint-1.9.2-license.md.txt"
       ],
-      "note": "Published matching worker has the pinned unminified package path and corroborating minified literal; 1.9.2 is the source-lock candidate, not a proved exact runtime version. Original candidate npm archive notice(s) retained with exact archive SHA-256/SRI and member digest from #357 artifact 15198574231. License expression describes candidate notice terms; no npm PURL or active OSV version assertion until identity is proven."
+      "note": "Selective rebuild research #1 artifact 15202630304 (HEAD 74fdc6e8046f81000642d2e59536021359b2e8c7, ZIP SHA-256 37fbc3d25be8328a8193af57d8242df512d7c358c42739734c33baca13aca71b) reproduces all five shipped minified workers byte-for-byte from pinned candidate archives at original lock paths, with exact contributing source member hashes; all five unminified forms differ only by 216 CRLF-to-LF conversions, verified against pinned Ace-builds Git files. Identity established by exact reproducible runtime evidence, not source-lock version alone. Independent review and retained nested license clearance pending. Original lock path(s): node_modules/htmlhint. "
     },
     {
       "id": "ace-jsonc-parser",
       "parent": "ace",
       "kind": "library",
       "name": "jsonc-parser",
-      "version": null,
-      "ecosystem": null,
-      "status": "partial",
+      "version": "3.3.1",
+      "ecosystem": "npm",
+      "status": "identified",
       "license": "MIT",
       "locations": [
         {
@@ -1044,21 +1094,26 @@
           "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-json.js",
           "git_blob": "72b056dfd9ee8f48c3a4ff234a6f078c3bda132b",
           "marker": "carriageReturn"
+        },
+        {
+          "url": "https://github.com/mkslanc/ace-linters/blob/e0d223c5a880cb2f258c96ccd22feaaffb29e5a5/package-lock.json",
+          "git_blob": "17e9297cb3a744c12b1bd2a6c55a7b3138b39918",
+          "marker": "\"node_modules/jsonc-parser\": {"
         }
       ],
       "notices": [
         "third_party/licenses/embedded/npm-jsonc-parser-3.3.1-license.md.txt"
       ],
-      "note": "Published matching worker has the pinned unminified package path and corroborating minified literal; 3.3.1 is the source-lock candidate, not a proved exact runtime version. Original candidate npm archive notice(s) retained with exact archive SHA-256/SRI and member digest from #357 artifact 15198574231. License expression describes candidate notice terms; no npm PURL or active OSV version assertion until identity is proven."
+      "note": "Selective rebuild research #1 artifact 15202630304 (HEAD 74fdc6e8046f81000642d2e59536021359b2e8c7, ZIP SHA-256 37fbc3d25be8328a8193af57d8242df512d7c358c42739734c33baca13aca71b) reproduces all five shipped minified workers byte-for-byte from pinned candidate archives at original lock paths, with exact contributing source member hashes; all five unminified forms differ only by 216 CRLF-to-LF conversions, verified against pinned Ace-builds Git files. Identity established by exact reproducible runtime evidence, not source-lock version alone. Independent review and retained nested license clearance pending. Original lock path(s): node_modules/jsonc-parser. "
     },
     {
       "id": "ace-vscode-css-languageservice",
       "parent": "ace",
       "kind": "library",
       "name": "vscode-css-languageservice",
-      "version": null,
-      "ecosystem": null,
-      "status": "partial",
+      "version": "6.3.10",
+      "ecosystem": "npm",
+      "status": "identified",
       "license": "MIT",
       "locations": [
         {
@@ -1076,21 +1131,26 @@
           "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-css.js",
           "git_blob": "ef3eb06052f1f2ff941aff408021280de9d6d0ed",
           "marker": "SubstringOperator"
+        },
+        {
+          "url": "https://github.com/mkslanc/ace-linters/blob/e0d223c5a880cb2f258c96ccd22feaaffb29e5a5/package-lock.json",
+          "git_blob": "17e9297cb3a744c12b1bd2a6c55a7b3138b39918",
+          "marker": "\"node_modules/vscode-css-languageservice\": {"
         }
       ],
       "notices": [
         "third_party/licenses/embedded/npm-vscode-css-languageservice-6.3.10-license.md.txt"
       ],
-      "note": "Published matching worker has the pinned unminified package path and corroborating minified literal; 6.3.10 is the source-lock candidate, not a proved exact runtime version. Original candidate npm archive notice(s) retained with exact archive SHA-256/SRI and member digest from #357 artifact 15198574231. License expression describes candidate notice terms; no npm PURL or active OSV version assertion until identity is proven."
+      "note": "Selective rebuild research #1 artifact 15202630304 (HEAD 74fdc6e8046f81000642d2e59536021359b2e8c7, ZIP SHA-256 37fbc3d25be8328a8193af57d8242df512d7c358c42739734c33baca13aca71b) reproduces all five shipped minified workers byte-for-byte from pinned candidate archives at original lock paths, with exact contributing source member hashes; all five unminified forms differ only by 216 CRLF-to-LF conversions, verified against pinned Ace-builds Git files. Identity established by exact reproducible runtime evidence, not source-lock version alone. Independent review and retained nested license clearance pending. Original lock path(s): node_modules/vscode-css-languageservice. "
     },
     {
       "id": "ace-vscode-json-languageservice",
       "parent": "ace",
       "kind": "library",
       "name": "vscode-json-languageservice",
-      "version": null,
-      "ecosystem": null,
-      "status": "partial",
+      "version": "5.7.2",
+      "ecosystem": "npm",
+      "status": "identified",
       "license": "MIT AND BSD-2-Clause",
       "locations": [
         {
@@ -1108,21 +1168,26 @@
           "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-json.js",
           "git_blob": "72b056dfd9ee8f48c3a4ff234a6f078c3bda132b",
           "marker": "EnumValueMismatch"
+        },
+        {
+          "url": "https://github.com/mkslanc/ace-linters/blob/e0d223c5a880cb2f258c96ccd22feaaffb29e5a5/package-lock.json",
+          "git_blob": "17e9297cb3a744c12b1bd2a6c55a7b3138b39918",
+          "marker": "\"node_modules/vscode-json-languageservice\": {"
         }
       ],
       "notices": [
         "third_party/licenses/embedded/npm-vscode-json-languageservice-5.7.2-license.md.txt"
       ],
-      "note": "Published matching worker has the pinned unminified package path and corroborating minified literal; 5.7.2 is the source-lock candidate, not a proved exact runtime version. Original candidate npm archive notice(s) retained with exact archive SHA-256/SRI and member digest from #357 artifact 15198574231. License expression describes candidate notice terms; no npm PURL or active OSV version assertion until identity is proven. Archive LICENSE.md includes Nick Fitzgerald BSD-2-Clause glob-to-regexp notice; do not collapse it to MIT or infer exact nested version."
+      "note": "Selective rebuild research #1 artifact 15202630304 (HEAD 74fdc6e8046f81000642d2e59536021359b2e8c7, ZIP SHA-256 37fbc3d25be8328a8193af57d8242df512d7c358c42739734c33baca13aca71b) reproduces all five shipped minified workers byte-for-byte from pinned candidate archives at original lock paths, with exact contributing source member hashes; all five unminified forms differ only by 216 CRLF-to-LF conversions, verified against pinned Ace-builds Git files. Identity established by exact reproducible runtime evidence, not source-lock version alone. Independent review and retained nested license clearance pending. Original lock path(s): node_modules/vscode-json-languageservice.  Preserve full original license including Nick Fitzgerald BSD-2-Clause glob-to-regexp notice; nested source lineage remains open."
     },
     {
       "id": "ace-vscode-languageserver-textdocument",
       "parent": "ace",
       "kind": "library",
       "name": "vscode-languageserver-textdocument",
-      "version": null,
-      "ecosystem": null,
-      "status": "partial",
+      "version": "1.0.12",
+      "ecosystem": "npm",
+      "status": "identified",
       "license": "MIT",
       "locations": [
         {
@@ -1154,22 +1219,27 @@
           "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-json.js",
           "git_blob": "72b056dfd9ee8f48c3a4ff234a6f078c3bda132b",
           "marker": "TextDocument.update: document must be created by TextDocument.create"
+        },
+        {
+          "url": "https://github.com/mkslanc/ace-linters/blob/e0d223c5a880cb2f258c96ccd22feaaffb29e5a5/package-lock.json",
+          "git_blob": "17e9297cb3a744c12b1bd2a6c55a7b3138b39918",
+          "marker": "\"node_modules/vscode-languageserver-textdocument\": {"
         }
       ],
       "notices": [
         "third_party/licenses/embedded/npm-vscode-languageserver-textdocument-1.0.12-license.txt.txt",
         "third_party/licenses/embedded/npm-vscode-languageserver-textdocument-1.0.12-thirdpartynotices.txt.txt"
       ],
-      "note": "Published matching worker has the pinned unminified package path and corroborating minified literal; 1.0.12 is the source-lock candidate, not a proved exact runtime version. Original candidate npm archive notice(s) retained with exact archive SHA-256/SRI and member digest from #357 artifact 15198574231. License expression describes candidate notice terms; no npm PURL or active OSV version assertion until identity is proven. Preserve full Microsoft thirdpartynotices.txt; generic LGPL clause is not a claim that a specific LGPL component is shipped."
+      "note": "Selective rebuild research #1 artifact 15202630304 (HEAD 74fdc6e8046f81000642d2e59536021359b2e8c7, ZIP SHA-256 37fbc3d25be8328a8193af57d8242df512d7c358c42739734c33baca13aca71b) reproduces all five shipped minified workers byte-for-byte from pinned candidate archives at original lock paths, with exact contributing source member hashes; all five unminified forms differ only by 216 CRLF-to-LF conversions, verified against pinned Ace-builds Git files. Identity established by exact reproducible runtime evidence, not source-lock version alone. Independent review and retained nested license clearance pending. Original lock path(s): node_modules/vscode-languageserver-textdocument.  Full Microsoft thirdpartynotices.txt retained; generic LGPL clause does not identify a specific LGPL dependency."
     },
     {
       "id": "ace-vscode-languageserver-types",
       "parent": "ace",
       "kind": "library",
       "name": "vscode-languageserver-types",
-      "version": null,
-      "ecosystem": null,
-      "status": "partial",
+      "version": "3.17.5",
+      "ecosystem": "npm",
+      "status": "identified",
       "license": "MIT",
       "locations": [
         {
@@ -1201,22 +1271,27 @@
           "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-json.js",
           "git_blob": "72b056dfd9ee8f48c3a4ff234a6f078c3bda132b",
           "marker": "source.organizeImports"
+        },
+        {
+          "url": "https://github.com/mkslanc/ace-linters/blob/e0d223c5a880cb2f258c96ccd22feaaffb29e5a5/package-lock.json",
+          "git_blob": "17e9297cb3a744c12b1bd2a6c55a7b3138b39918",
+          "marker": "\"node_modules/vscode-languageserver-types\": {"
         }
       ],
       "notices": [
         "third_party/licenses/embedded/npm-vscode-languageserver-types-3.17.5-license.txt.txt",
         "third_party/licenses/embedded/npm-vscode-languageserver-types-3.17.5-thirdpartynotices.txt.txt"
       ],
-      "note": "Published matching worker has the pinned unminified package path and corroborating minified literal; 3.17.5 is the source-lock candidate, not a proved exact runtime version. Original candidate npm archive notice(s) retained with exact archive SHA-256/SRI and member digest from #357 artifact 15198574231. License expression describes candidate notice terms; no npm PURL or active OSV version assertion until identity is proven. Preserve full Microsoft thirdpartynotices.txt; generic LGPL clause is not a claim that a specific LGPL component is shipped."
+      "note": "Selective rebuild research #1 artifact 15202630304 (HEAD 74fdc6e8046f81000642d2e59536021359b2e8c7, ZIP SHA-256 37fbc3d25be8328a8193af57d8242df512d7c358c42739734c33baca13aca71b) reproduces all five shipped minified workers byte-for-byte from pinned candidate archives at original lock paths, with exact contributing source member hashes; all five unminified forms differ only by 216 CRLF-to-LF conversions, verified against pinned Ace-builds Git files. Identity established by exact reproducible runtime evidence, not source-lock version alone. Independent review and retained nested license clearance pending. Original lock path(s): node_modules/vscode-languageserver-types.  Full Microsoft thirdpartynotices.txt retained; generic LGPL clause does not identify a specific LGPL dependency."
     },
     {
       "id": "ace-vscode-uri",
       "parent": "ace",
       "kind": "library",
       "name": "vscode-uri",
-      "version": null,
-      "ecosystem": null,
-      "status": "partial",
+      "version": "3.1.0",
+      "ecosystem": "npm",
+      "status": "identified",
       "license": "MIT",
       "locations": [
         {
@@ -1234,12 +1309,17 @@
           "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-json.js",
           "git_blob": "72b056dfd9ee8f48c3a4ff234a6f078c3bda132b",
           "marker": "[UriError]: Scheme contains illegal characters."
+        },
+        {
+          "url": "https://github.com/mkslanc/ace-linters/blob/e0d223c5a880cb2f258c96ccd22feaaffb29e5a5/package-lock.json",
+          "git_blob": "17e9297cb3a744c12b1bd2a6c55a7b3138b39918",
+          "marker": "\"node_modules/vscode-uri\": {"
         }
       ],
       "notices": [
         "third_party/licenses/embedded/npm-vscode-uri-3.1.0-license.md.txt"
       ],
-      "note": "Published matching worker has the pinned unminified package path and corroborating minified literal; 3.1.0 is the source-lock candidate, not a proved exact runtime version. Original candidate npm archive notice(s) retained with exact archive SHA-256/SRI and member digest from #357 artifact 15198574231. License expression describes candidate notice terms; no npm PURL or active OSV version assertion until identity is proven."
+      "note": "Selective rebuild research #1 artifact 15202630304 (HEAD 74fdc6e8046f81000642d2e59536021359b2e8c7, ZIP SHA-256 37fbc3d25be8328a8193af57d8242df512d7c358c42739734c33baca13aca71b) reproduces all five shipped minified workers byte-for-byte from pinned candidate archives at original lock paths, with exact contributing source member hashes; all five unminified forms differ only by 216 CRLF-to-LF conversions, verified against pinned Ace-builds Git files. Identity established by exact reproducible runtime evidence, not source-lock version alone. Independent review and retained nested license clearance pending. Original lock path(s): node_modules/vscode-uri. "
     }
   ],
   "font_provenance": {
@@ -1260,12 +1340,10 @@
     "Partial current inventory; missing nested identities, versions and notices are release blockers, not accepted risk.",
     "Historical Ace 1.9.6 rows and literal source relationships: docs/history/ace-1.9.6-embedded.json and checkpoint b5924860ad8e27a2c47cecb71cac7905627a2819",
     "Historical retained notices are references, not proof of active libraries or current license closure.",
-    "New worker imports and build markers do not establish exact dependency versions. Candidate OSV queries remain separately scoped.",
     "Non-Ace embedded findings and font provenance remain unchanged.",
     "Current Ace 1.45.2 XQuery and JSONiq lexer source blobs are unchanged from baseline and literal tokenizer relationships independently rechecked; not proof of full minified-worker byte equivalence or generated output license.",
     "Curated #37 runtime has six workers. Retired worker containers and previous mappings preserved in docs/history/ace-1.45.2-full-embedded.json. Removed XML Lodash/Chevrotain, CoffeeScript and Lua mappings no longer describe a shipped container; retained-assets scan and installed closure review required before final component absence or risk disposition. Historical notice texts retained conservatively.",
-    "The esrecurse 4.3.0 runtime identity is established by co-bundled package metadata and its version export; upstream license header retained. @vscode/l10n tagged source MIT notice recovered but exact runtime version remains partial. Both npm root-notice gaps remain recorded as archive facts; source notice recovery is not full nested clearance.",
-    "All 15 retained replacement-worker source-lock candidates now have component mappings and original source or exact candidate npm archive notices. Only esrecurse has a proved exact version from embedded metadata. Candidate license terms and reference notices are not a final exact version or nested-license closure. Estraverse LLVM libc++ origin and JSON service glob code remain separate follow-ups."
+    "All 15 retained replacement-worker source-lock candidate versions now have exact reconstructed minified runtime evidence from 16 original package paths, plus pinned CRLF-to-LF relation for published unminified forms. All 15 original candidate archives revalidated; native base, theme/snippets, XQuery lexer/generator terms, nested source-level notices and independent final review remain open. No public-release approval."
   ],
   "notices": {
     "third_party/licenses/embedded/ace-legacy-linters.txt": {
