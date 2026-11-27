@@ -317,3 +317,75 @@ locations and core CSS, and record converter input provenance per theme.
 Brilliance Black and Brilliance Dull historical plist files are malformed;
 neither is a current converter mapping. Preserve parse errors; no blanket
 license inference. Per-file origin/terms remain open even for equal data.
+
+
+## R5.1 historical lexer attribution and upstream clarification (2026-11-27)
+
+Independent reviews supplied for c62292449d35f8a9b6167c959b0df302bb2840f0
+report 177 Python tests / 939 subtests, 20/20 browser regression and 7/7 CI
+jobs successful. Reviewer 1 independently reproduced five retained workers,
+nine native modules, 48/48 theme static payloads and 52 nonempty snippet
+payloads plus 150 exact empty stubs. Scoped approval only; actual CI artifact
+contents not inspected in this round. No release or merge signoff.
+
+Historical XQLint source evidence (retrieved via immutable Git references):
+
+- XQuery introduction 840c3f05963eb07390112e582c1a2e5affbbb432,
+  lib/XQueryTokenizer.ebnf, blob 2dbde102f96306b9c23bddf0271946fad2a91f76:
+  https://github.com/wcandillon/xqlint/blob/840c3f05963eb07390112e582c1a2e5affbbb432/lib/XQueryTokenizer.ebnf
+- JSONiq introduction 23cca84bb0c18a99362e3890f92b0e3ee3740de3,
+  lib/JSONiqTokenizer.ebnf, blob b03294875246a4b5d7ff1e84af5c9b984b69085a:
+  https://github.com/wcandillon/xqlint/blob/23cca84bb0c18a99362e3890f92b0e3ee3740de3/lib/JSONiqTokenizer.ebnf
+- Original generation scripts generate_xquery_lexer.xq and
+  generate_jsoniq_lexer.xq at those respective commits, blobs
+  eb714917cf9175c8188570e5ebdd926e24ae947b and
+  b69d9312b30aec340c6434ed8a13cef9cd13be6f, POST input to REx with
+  -ll 2 -backtrack -tree -javascript -a xqlint.
+
+Both original EBNF headers identify Ajax.org B.V., 2010, BSD three-clause.
+Ad hoc programmatic comparison: remove leading comment decoration, extract
+from Copyright (c) through before END LICENSE BLOCK, collapse whitespace
+and trim; compare with similarly whitespace-normalized shipped
+hass_configurator/vendor/licenses/ace.txt (blob
+4760be2a6220cf545129b233e20574f2a7bb630e). Both exact normalized text
+comparisons returned true. This is not raw-byte equality, an automated CI
+gate, or proof of complete grammar ancestry. Known historical BSD notice
+text is already shipped; no duplicate notice added.
+
+The maintainer opened https://github.com/GuntherRademacher/rex-parser-generator/issues/80
+on 2026-11-27 to request explicit historical output redistribution terms.
+No comments at author-side check. The REx author's XQLint contribution
+6645a0c348512990536b011b1497e2f67e6d1f6d in 2022 corroborates familiarity,
+not a license grant. Historical web service terms not recovered.
+REx output rights and remaining grammar ancestry remain OPEN / HOLD.
+No change to component license expression or runtime scope in this research
+checkpoint.
+
+## R5.2 preliminary theme upstream references
+
+The reviewed static-payload matches establish shipped Ace content identity,
+not original license clearance. The following original-project reference
+files were fetched from immutable commits; these are candidate attribution
+references, not verified historical input equivalence or new shipped notices.
+
+| Family | Reference (commit / file) | Git blob | Observed terms |
+| --- | --- | --- | --- |
+| Tomorrow | [ccf6666d / LICENSE.md](https://github.com/chriskempson/tomorrow-theme/blob/ccf6666d888198d341b26b3a99d0bc96500ad503/LICENSE.md) | 0e689d0a004eb37155ef430fe615a6e27209d30f | MIT, Chris Kempson 2011 |
+| Solarized | [62f656a0 / LICENSE](https://github.com/altercation/solarized/blob/62f656a02f93c5190a8753159e34b385588d5ff3/LICENSE) | ee08d7e44f15108ef5359550399dad55955b56ca | MIT, Ethan Schoonover 2011 |
+| Gruvbox port | [75407cc8 / LICENSE](https://github.com/Briles/gruvbox/blob/75407cc80c51814d61beb1df07e380d6f58ad767/LICENSE) | 1d533cf6dcb3dd57aba8c955001f89d4ed03db81 | MIT, Brian Reilly 2016 |
+| Nord | [1cef7160 / license](https://github.com/nordtheme/nord/blob/1cef71605416a222e57225b544540ce0fcec18d4/license) | 996f8fb61226844c6bbd2167a8b1a118be10609f | MIT, Sven Greb 2016-present |
+| One Dark | [9c96f445 / LICENSE.md](https://github.com/atom/one-dark-syntax/blob/9c96f4454362267ac45322063e193ccf9d2debb1/LICENSE.md) | 4e47b02a28a95c1d3001e4b747ce0638f11475e1 | MIT, GitHub Inc. 2016 |
+
+At Ace source 68d7fd1c0f5ac50cdb610bf06b86074eab3be652,
+tool/tmthemes/Tomorrow.tmTheme (8c98c22657b272436fd55d6ce4ab3b99a1382877)
+references Chris Kempson's website; gruvboxDarkHard.tmTheme
+(64c80d32a27dad6d38edc1b74005f805c802b979) explicitly names Brian Reilly
+and Pavel Pertsev. Solarized-dark.tmTheme
+(4efdabdbd5ca5e588d0357c2b3d8aa7b255f7813) has no observed individual
+license marker. The current morhetz/gruvbox tree at
+ef8864bb42bf244f0295d1c5a403b27e3d139695 has no root LICENSE; the header
+of colors/gruvbox.vim (66246fba24fd49eeb50dd833094d272f0bbab640)
+identifies morhetz but has no explicit license grant. Do not infer an
+original license from the port's MIT terms. Further history, exact input
+relationships, per-file exceptions and original notices required. No
+new SBOM/PURL or license clearance asserted.
