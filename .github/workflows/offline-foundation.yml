@@ -82,6 +82,16 @@ jobs:
           python -m pip install --disable-pip-version-check fonttools==4.60.1 brotli==1.1.0
           python scripts/audit_supply_chain.py source \
             --output e2e/artifacts/supply-chain/source.cdx.json --archives /tmp --fonts --embedded-upstream
+      - name: Attribute Ace workers against official linter archive and source lock
+        run: |
+          set -euo pipefail
+          npm view ace-legacy-linters@1.0.2 dist.integrity dist.tarball --json > /tmp/ace-linters-registry.json
+          npm pack ace-legacy-linters@1.0.2 --ignore-scripts --silent --pack-destination /tmp
+          curl --fail --silent --show-error --location 'https://raw.githubusercontent.com/mkslanc/ace-linters/e0d223c5a880cb2f258c96ccd22feaaffb29e5a5/package-lock.json' -o /tmp/ace-linters-source-lock.json
+          python scripts/attribute_ace_workers.py --ace /tmp/ace-builds-1.45.2.tgz \
+            --linters /tmp/ace-legacy-linters-1.0.2.tgz --registry /tmp/ace-linters-registry.json \
+            --source-lock /tmp/ace-linters-source-lock.json \
+            --output e2e/artifacts/supply-chain/ace-worker-attribution.json
       - name: Bounded regression probes against shipped js-yaml
         run: node e2e/yaml-migration-probe.cjs hass_configurator/js-yaml.min.js
       - name: Routing and loopback HTTP tests
