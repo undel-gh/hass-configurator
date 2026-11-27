@@ -501,3 +501,51 @@ pinned old manifest hash. Immutable Docker base job passed; installed
 wheel/sdist and image-layer acceptance not complete. Correct these three
 drifts without weakening gates, add fixture absence regression. New
 manifest SHA-256 a024c5d46349eb005f34e6368029d6c5ef9afd27d31a48861d55fd5de630df2f. Fresh exact-HEAD CI and artifacts pending.
+
+## R5.2e grouped TextMate input review
+
+Baseline 031b94ca4cc63e637e88b85545f094b42a380caf: Offline foundation
+46037811065, rehearsal 46037811071 and research 46037811061 all SUCCESS.
+Downloaded and inspected exact-HEAD source artifact 15219800924 (SHA-256
+44c836f883f71589b53233021c19a2665a2ab68fb2a1a9d043088b3853218d01),
+installed/E2E artifact 15219416589 (3d126adfddae5875edaf2b8f84f21e61f6e9f378ec711479dfeff84be47a36b8),
+and native artifact 15218476318 (8d7b79c5cf8237952bb8e70b1b8165c3c7eb0af8b3a7acdc8330c73e0c2dfeed).
+ZIP CRC and published digests match. Source marker report exact checkout:
+489 retained files, 505 runtime/source files, 489 upstream counterparts.
+Installed wheel, sdist and Docker reports each verify 583 application
+resources, 5 first-party resources and exact curated vendor closure.
+Docker image scan 10 layers, 497 JS members, no excluded filename or
+identical digest hits. Native report 47 theme static payloads, 52 nonempty
+snippets, 150 generated empty stubs. This supports krTheme removal in
+the tested distribution, not an independent Docker rebuild or real HAOS
+acceptance. Remaining two research/rehearsal artifacts not reviewed here.
+
+Group scope: nine remaining mapped converter inputs (Clouds, Clouds
+Midnight, idleFingers, Merbivore, Merbivore Soft, monoindustrial, Monokai,
+Katzenmilch, Vibrant Ink), plus iPlastic and Mac Classic historic inputs.
+Full upstream trees and path histories establish immutable snapshots.
+Six current inputs match the selected historic Ace blob: Clouds pair,
+monoindustrial, Katzenmilch, iPlastic, Mac Classic (renamed to Textmate
+(Mac Classic) in the current tree). Five differ: idleFingers, Merbivore
+pair, Monokai, Vibrant Ink. Snapshot is not necessarily first import.
+All eleven are now pinned in grouped_textmate; the research gate
+compares complete plists and records historical/current metadata and
+rights marker candidates, current companion filenames, converter status
+and external lineage gaps. Historical companion inventory is explicitly
+not collected by this function. No blanket clearance from absent markers.
+
+iPlastic and Mac Classic also match exact TextMate input blobs at
+c2fcd871773e33529fecd77fd484f8aa9b66fe8b, respectively
+7253df6a7516986b50acb280acb6d8d2959d8b7b and
+4b789dfea34e1328a9b4a6fa4c7172aeb023310f. Author metadata (Jeroen van
+der Ham and Chris Thomas) corroborated by their direct TextMate commits
+5967f6e29c1b3620c07986559dd5c3f3ea495fc8 (2005-09-13, iPlastic)
+and 970a59af99c3315aae9559c4990e0b5009d5ce4a (2005-07-25, Mac Classic).
+iPlastic absent from current converter mapping; textmate mapping commented,
+with current CSS in ace.js. Historical file match is not a generated CSS
+lineage proof. Other nine inputs have no exact external source established
+by this group investigation; follow up individually. Current metadata
+lacks author fields for these nine; Katzenmilch has a comment, not a grant.
+Prior evidence for Cobalt/Dawn/Pastels/Twilight, external ports, MIT theme
+families and krTheme remains intact. No new notices or license assignments,
+no runtime changes, no issue closures. New CI pending.

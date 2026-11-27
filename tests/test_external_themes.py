@@ -1,7 +1,7 @@
 """External theme evidence must not hide changes or imply license clearance."""
 import plistlib
 import unittest
-from scripts.audit_external_themes import compare_plist, verify_blob, reference, verify_historical_import, textmate_license_relation, verify_expected_comparison
+from scripts.audit_external_themes import compare_plist, verify_blob, reference, verify_historical_import, textmate_license_relation, verify_expected_comparison, input_rights_indicators, converter_input_status
 from scripts.audit_supply_chain import git_blob_sha1
 
 
@@ -70,3 +70,24 @@ class ExternalThemeTests(unittest.TestCase):
             verify_expected_comparison(raw, changed, True)
         with self.assertRaisesRegex(ValueError, "Unexpected external port byte relation"):
             verify_expected_comparison(raw, raw, False)
+
+    def test_grouped_input_indicators_do_not_clear_license(self):
+        raw = plistlib.dumps({"author": "Example", "comment": "All rights reserved",
+                              "settings": []})
+        result = input_rights_indicators(raw, "Example.tmTheme",
+                                         ["Example-license.txt", "other-license.txt"])
+        self.assertEqual(result["metadata"]["author"], "Example")
+        self.assertEqual(result["companion_candidates"], ["Example-license.txt"])
+        self.assertTrue(result["rights_marker_hits"])
+        self.assertEqual(result["license_status"], "review-open")
+        empty = input_rights_indicators(plistlib.dumps({"settings": []}), "A.tmTheme", [])
+        self.assertEqual(empty["rights_marker_hits"], [])
+        self.assertEqual(empty["license_status"], "review-open")
+
+    def test_grouped_converter_mapping_is_not_assumed(self):
+        converter = 'var themes = {\n    "a": "A",\n    //"b": "B"\n};'
+        self.assertEqual(converter_input_status(converter, "a", "A.tmTheme"), "active")
+        self.assertEqual(converter_input_status(converter, "b", "B.tmTheme"), "commented")
+        self.assertEqual(converter_input_status(converter, "c", "C.tmTheme"), "unmapped")
+        with self.assertRaisesRegex(ValueError, "Unexpected converter mapping"):
+            converter_input_status(converter, "a", "Wrong.tmTheme")

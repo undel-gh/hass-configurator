@@ -1,5 +1,6 @@
 """Pinned external theme references, not a license-clearance decision."""
 import plistlib
+import re
 from urllib.parse import quote
 
 try:
@@ -228,6 +229,131 @@ def historical_textmate(source, fetch, source_file):
             "limitations": ["2011 original README license postdates the 2010 Ace import; Ace directory license dates to 2010.",
                             "File-specific exceptions and upstream author/derivative rights remain open.",
                             "Input identity is not generated CSS equivalence or license clearance."]}
+
+
+
+# R5.2e: historical Ace snapshots for remaining converter inputs, plus
+# two historical inputs with exact TextMate counterparts. These are
+# evidence of input identity, not proof of generated CSS or permission.
+GROUPED_TEXTMATE_INPUTS = (
+    ("clouds", "Clouds.tmTheme", "cba64d86be96864665b26e109603f021e1141e67",
+     "Clouds.tmTheme", "821476be783ba004772b44d5de72b66ae0b62efc", "821476be783ba004772b44d5de72b66ae0b62efc", None, "active"),
+    ("clouds_midnight", "Clouds Midnight.tmTheme", "cba64d86be96864665b26e109603f021e1141e67",
+     "Clouds Midnight.tmTheme", "1859deba9fb48277dd2527d32db121591cc33a72", "1859deba9fb48277dd2527d32db121591cc33a72", None, "active"),
+    ("idle_fingers", "idleFingers.tmTheme", "cba64d86be96864665b26e109603f021e1141e67",
+     "idleFingers.tmTheme", "51666df3fc100fd15ed9156ee4224bcff5c31958", "d86a0edd29a73726bb317cc86b57120133642067", None, "active"),
+    ("merbivore", "Merbivore.tmTheme", "abd7a158583ae06fa95d14716977f119d8b89d15",
+     "Merbivore.tmTheme", "ce8e56e3ad9d0906bbf9c1987140dc22dc66cf96", "41afeb81f5d65e901ce3bfab8819e6e2649daa12", None, "active"),
+    ("merbivore_soft", "Merbivore Soft.tmTheme", "abd7a158583ae06fa95d14716977f119d8b89d15",
+     "Merbivore Soft.tmTheme", "0a4c97cea018e77e834e22c4e749cb9126274038", "60c4cc94d138e03dbdd26fe4efc78ef5da00e287", None, "active"),
+    ("mono_industrial", "monoindustrial.tmTheme", "cba64d86be96864665b26e109603f021e1141e67",
+     "monoindustrial.tmTheme", "81f8eb701c1989e4e7257c3717a3deb05e5b6171", "81f8eb701c1989e4e7257c3717a3deb05e5b6171", None, "active"),
+    ("monokai", "Monokai.tmTheme", "cba64d86be96864665b26e109603f021e1141e67",
+     "Monokai.tmTheme", "fb01ff36d194c6d24a9d68ba6c32ea06e01c109e", "c179cbe2f97509d5f1d96132641e50707c7b223f", None, "active"),
+    ("katzenmilch", "Katzenmilch.tmTheme", "ab6aa3be5c59b2202a737f90b78c488b419a241d",
+     "Katzenmilch.tmTheme", "3878ffe9c3b7911bc27d6cca60e24661bc496b03", "3878ffe9c3b7911bc27d6cca60e24661bc496b03", None, "active"),
+    ("vibrant_ink", "Vibrant Ink.tmTheme", "abd7a158583ae06fa95d14716977f119d8b89d15",
+     "Vibrant Ink.tmTheme", "67d774a6bf8369d6810a2fcdd7543568e5a5f0f1", "a1e5cf288b8fb82ef8a6d2182feef521d886aa4b", None, "active"),
+    ("iplastic", "iPlastic.tmTheme", "cba64d86be96864665b26e109603f021e1141e67",
+     "iPlastic.tmTheme", "7253df6a7516986b50acb280acb6d8d2959d8b7b", "7253df6a7516986b50acb280acb6d8d2959d8b7b", "iPlastic.tmTheme", "unmapped"),
+    ("textmate", "Textmate (Mac Classic).tmTheme", "cba64d86be96864665b26e109603f021e1141e67",
+     "Mac Classic.tmTheme", "4b789dfea34e1328a9b4a6fa4c7172aeb023310f", "4b789dfea34e1328a9b4a6fa4c7172aeb023310f", "Mac Classic.tmTheme", "commented"),
+)
+GROUP_TEXTMATE_REV = "c2fcd871773e33529fecd77fd484f8aa9b66fe8b"
+
+
+def input_rights_indicators(raw, filename, directory_names):
+    """Record candidates for manual review; absence is not permission."""
+    parsed = plistlib.loads(raw)
+    if not isinstance(parsed, dict) or not isinstance(parsed.get("settings"), list):
+        raise ValueError("Expected theme settings lists")
+    markers = re.compile(rb"copyright|licen[cs]e|all\s+rights\s+reserved|permission|redistribut|based\s+on|inspired\s+by", re.I)
+    hits = [{"line": i, "text": line.decode("utf-8", errors="replace")}
+            for i, line in enumerate(raw.splitlines(), 1) if markers.search(line)]
+    stem = filename.rsplit(".", 1)[0].casefold() + "-license"
+    companions = sorted(name for name in directory_names
+                        if name.casefold() == stem or name.casefold().startswith(stem + "."))
+    return {"metadata": {key: value for key, value in parsed.items()
+                         if isinstance(value, str) and key != "uuid"},
+            "rights_marker_hits": hits, "companion_candidates": companions,
+            "license_status": "review-open"}
+
+
+def converter_input_status(converter, name, filename):
+    block = converter.split("var themes = {", 1)[1].split("\n};", 1)[0]
+    expression = (r'^\s*(//\s*)?"' + re.escape(name) + r'":\s*"([^"]+)"\s*,?\s*
+    licenses = {}
+    for family, pin in LICENSES.items():
+        _, licenses[family] = reference(*pin, fetch)
+    rows = []
+    for name, family, path, blob, ace_path, ace_blob, js_path, js_blob in THEMES:
+        repo, commit = LICENSES[family][:2]
+        raw, external = reference(repo, commit, path, blob, fetch)
+        ace_path = "tool/tmthemes/" + ace_path
+        ace_raw, actual = source_file(source, ace_path)
+        if actual != ace_blob:
+            raise ValueError("Ace theme reference pin mismatch: " + name)
+        row = {"theme": name, "family": family, "external": external,
+               "ace": {"path": ace_path, **verify_blob(ace_raw, ace_blob)},
+               "plist": compare_plist(raw, ace_raw),
+               "license_reference": family, "license_status": "review-open"}
+        if js_path is not None:
+            js_raw, row["external_ace_port"] = reference(repo, commit, js_path, js_blob, fetch)
+            dest = work / "external-theme" / (name + ".js")
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            dest.write_bytes(js_raw)
+        rows.append(row)
+    return {"licenses": licenses, "themes": rows,
+            "historical_textmate": historical_textmate(source, fetch, source_file),
+            "grouped_textmate": grouped_textmate(source, fetch, source_file),
+            "limitations": ["Pinned reference identity and comparisons are not historical lineage or license clearance.",
+                            "Differences are evidence, not failures; pin drift fails closed."]}
+)
+    matches = re.findall(expression, block, re.M)
+    if not matches:
+        return "unmapped"
+    if len(matches) != 1 or matches[0][1] + ".tmTheme" != filename:
+        raise ValueError("Unexpected converter mapping: " + name)
+    return "commented" if matches[0][0] else "active"
+
+
+def grouped_textmate(source, fetch, source_file):
+    converter, blob = source_file(source, "tool/tmtheme.js")
+    verify_blob(converter, "eff23f2b777b3a1fea6d3c32ae048c4bda08b075")
+    names = [p.name for p in (source / "tool/tmthemes").iterdir() if p.is_file()]
+    rows = []
+    for name, filename, revision, historical_name, old_blob, new_blob, tm_name, mapping in GROUPED_TEXTMATE_INPUTS:
+        historic, historical_pin = reference("ajaxorg/ace", revision,
+                                            "tool/tmthemes/" + historical_name, old_blob, fetch)
+        path = "tool/tmthemes/" + filename
+        current, actual = source_file(source, path)
+        if actual != new_blob:
+            raise ValueError("Grouped theme input pin mismatch: " + name)
+        observed_mapping = converter_input_status(converter.decode("utf-8"), name, filename)
+        if observed_mapping != mapping:
+            raise ValueError("Grouped converter status drift: " + name)
+        row = {"theme": name, "historical_ace": historical_pin,
+               "current_ace": {"path": path, **verify_blob(current, new_blob)},
+               "comparison": verify_expected_comparison(historic, current, old_blob == new_blob),
+               "converter_status": observed_mapping,
+               "historical_indicators": input_rights_indicators(historic, historical_name, []),
+               "current_indicators": input_rights_indicators(current, filename, names),
+               "external_source_status": "not-established-in-group-review",
+               "license_status": "review-open"}
+        # Historical companion inventories are not obtained by this function.
+        row["historical_indicators"]["companion_candidates"] = None
+        if tm_name is not None:
+            original, external_pin = reference(TEXTMATE, GROUP_TEXTMATE_REV,
+                                               "Themes/" + tm_name, old_blob, fetch)
+            row["textmate"] = external_pin
+            row["external_comparison"] = verify_historical_import(original, historic)
+            row["external_source_status"] = "exact-historical-textmate-input"
+        rows.append(row)
+    return {"themes": rows,
+            "limitations": ["Historical snapshots are not necessarily first imports.",
+                            "Current mapping is not proof of conversion into shipped CSS.",
+                            "Current companion filenames and literal rights markers are leads, not exhaustive permission checks.",
+                            "Historical companion directories and upstream ports require individual review."]}
 
 
 def research(source, work, fetch, source_file):
