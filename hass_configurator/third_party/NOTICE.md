@@ -4,10 +4,10 @@ This package includes offline third-party resources. Their upstream license
 texts are distributed unmodified in `../vendor/licenses/` and `licenses/`.
 See `inventory.json` for component-to-file ownership, checksums and
 immutable license-source references. Existing vendor manifest covers the
-515 resources on the #33 migration branch; this separate inventory covers inherited JS/font
+510 resources on the #37 curated branch; this separate inventory covers inherited JS/font
 assets and notices without making notice files web routes.
 
-- Ace 1.45.2: Ajax.org B.V., BSD-3-Clause; complete selected upstream build family.
+- Ace 1.45.2: Ajax.org B.V., BSD-3-Clause; curated subset of exact upstream build family.
 - Materialize 0.100.2: Copyright 2014-2017 Materialize, MIT.
 - Material Design Icons 3.4.93: Austin Andrews, reserved font name Material
   Design Icons (OFL-1.1); upstream notice also credits Google material icons
@@ -50,9 +50,10 @@ adapter, raf.js (Nicolas Gryman, original polyfill Erik Möller) and
 Underscore fragments. Historical candidate notices do not establish exact
 versions of copied fragments or the full original shim license.
 
-Ace 1.45.2 uses the independently reviewed 495-file upstream build family.
+Ace 1.45.2 retains 490 of the independently reviewed 495 upstream files.
+Five unnecessary workers are physically excluded; all retained bytes unchanged.
 Current embedded attribution is partial. Source evidence for ace-legacy-linters
-(1.0.2, eight exact published worker pairs; MIT source notice retained), @babel/parser and yaml is recorded;
+(1.0.2, five retained exact published worker pairs; MIT source notice retained), @babel/parser and yaml is recorded;
 remaining exact nested versions, worker dependencies, theme/snippet licenses
 and full attribution remain OPEN. The old JSHint module and historical JSON
 license literal were not found in the verified new family; this marker check
@@ -74,4 +75,4 @@ commit are literal subsets of tagged Ace source bundles), and xmldom 0.1.19
 (MIT/LGPL choice links, historical parent only). These references do not
 establish the entire historical fork license/version; retain partial status.
 
-Current XML worker also contains lodash 4.17.21 (MIT; exact version/module markers) and Chevrotain 7.1.1 (Apache-2.0); release notices match official npm archive bytes. Other source-lock candidates and their attribution remain open. See docs/ACE_WORKER_ATTRIBUTION.md. The ace-legacy-linters npm LICENSE differs from the retained exact Git source LICENSE solely by 21 CRLF-to-LF line endings, verified against exact archive and notice pins.
+Historical full-family XML worker contained lodash 4.17.21 (MIT) and Chevrotain 7.1.1 (Apache-2.0); #37 excludes that container. Their notices are retained pending whole-runtime attribution. No claim of complete component absence or risk acceptance. Other source-lock candidates and their attribution remain open. See docs/ACE_WORKER_ATTRIBUTION.md. The ace-legacy-linters npm LICENSE differs from the retained exact Git source LICENSE solely by 21 CRLF-to-LF line endings, verified against exact archive and notice pins.

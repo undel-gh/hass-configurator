@@ -5,7 +5,7 @@
     "archive_sha256": "5260354a14533fa8e94572597b1ff53025b1bb0a9b2e25d50ecf2a01e57aa9e0",
     "candidate_archive_url": "https://registry.npmjs.org/ace-builds/-/ace-builds-1.45.2.tgz",
     "currently_loaded_core": "assets/v<digest>/vendor/ace/ace.js",
-    "dynamic_modules_status": "All 495 files of pinned src-min-noconflict family are local; new runtime exact-HEAD acceptance pending.",
+    "dynamic_modules_status": "Curated 490-file subset; all non-worker modes/themes/snippets retained, six workers; exact upstream bytes.",
     "keyboard_bindings_offered": [
       "vim",
       "emacs"
@@ -151,7 +151,7 @@
     "proposed_package": "ace-builds",
     "proposed_version": "1.45.2",
     "selected_build_family": "src-min-noconflict",
-    "selection_status": "Promoted candidate on #33 draft branch; all 174 UI-required filenames present; no public-release approval.",
+    "selection_status": "Reviewed full upstream archive, curated shipped subset derived from ace-bootstrap.js worker profile (#37). Installed acceptance pending.",
     "themes_offered": [
       "ambiance",
       "chaos",
@@ -188,7 +188,8 @@
       "twilight",
       "vibrant_ink",
       "xcode"
-    ]
+    ],
+    "worker_profile": "hass_configurator/ace-bootstrap.js (HC_WORKER_PROFILE_BEGIN/END)"
   },
   "audited_date": "2026-11-13",
   "auto_loaded_external_images": [],

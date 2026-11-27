@@ -17,9 +17,11 @@ import tarfile
 try:
     from .inspect_ace_candidate import inspect_candidate, ROOT
     from .audit_supply_chain import git_blob_sha1, query_osv
+    from .ace_worker_profile import read_profile, selected_family
 except ImportError:
     from inspect_ace_candidate import inspect_candidate, ROOT
     from audit_supply_chain import git_blob_sha1, query_osv
+    from ace_worker_profile import read_profile, selected_family
 
 ACE_SHA256 = "5260354a14533fa8e94572597b1ff53025b1bb0a9b2e25d50ecf2a01e57aa9e0"
 ACE_SRI = "sha512-a0IADaETGBnBW5CIkniUJn7F+NyTuHWKqlv1A8FXaMmFflJsMGnU3TzkiyslInqIZ3odfcVKOdXBGIKBefzFDA=="
@@ -150,6 +152,14 @@ def main():
     report_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     if any(row["advisories"] for row in osv):
         raise ValueError("Candidate package/version has OSV matches; review before promotion")
+    # Full archive evidence remains research; only selected subset enters overlay.
+    runtime_lock = json.loads((ROOT / "docs/ace-builds-1.45.2-lock.json").read_text("utf-8"))
+    selected = selected_family(read_profile(ROOT / "hass_configurator/ace-bootstrap.js"), runtime_lock)
+    if {name: sha(raw) for name, raw in family.items()} != runtime_lock["files_sha256"]:
+        raise ValueError("Full rehearsal family differs from runtime lock")
+    family = {name: family[name] for name in selected}
+    report["curated_family_files"] = len(family)
+    report["excluded_workers"] = sorted(set(runtime_lock["files_sha256"]) - set(family))
     dest.mkdir()
     pkg = dest / "hass_configurator"
     shutil.copytree(ROOT / "hass_configurator", pkg)

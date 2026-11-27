@@ -1,7 +1,6 @@
 """Read the single #37 worker profile from the first-party bootstrap.
 
-Phase 1 validates the proposed subset against the complete upstream lock.
-The installed manifest still describes the full family until physical pruning.
+Validate the curated subset against the complete upstream lock.
 """
 import json
 from pathlib import Path
@@ -56,11 +55,39 @@ def selected_family(profile, lock):
             if name not in excluded}
 
 
+def validate_manifest(profile, lock, manifest):
+    expected = {"vendor/ace/" + name: digest
+                for name, digest in selected_family(profile, lock).items()}
+    actual = {name: digest for name, digest in manifest["resources"].items()
+              if name.startswith("vendor/ace/")}
+    if actual != expected:
+        raise ValueError("Curated Ace manifest differs from selected upstream subset")
+    return expected
+
+
+def verify_vendor_tree(root, resources):
+    """Exact filesystem closure, including untracked files and symlinks."""
+    vendor = root / "vendor"
+    if vendor.is_symlink() or not vendor.is_dir():
+        raise ValueError("Unsafe vendor directory")
+    paths = set()
+    for item in vendor.rglob("*"):
+        if item.is_symlink() or (not item.is_dir() and not item.is_file()):
+            raise ValueError("Unsafe vendor entry: " + str(item))
+        if item.is_file():
+            paths.add(item.relative_to(root).as_posix())
+    if paths != set(resources) | {"vendor/manifest.json"}:
+        raise ValueError("Untracked or absent vendor resource")
+
+
 def main():
     profile = read_profile()
     lock = json.loads(LOCK.read_text("utf-8"))
     selected = selected_family(profile, lock)
-    print(json.dumps({"status": "target-profile-only", "upstream_family": len(lock["files_sha256"]),
+    manifest = json.loads((ROOT / "hass_configurator/vendor/manifest.json").read_text("utf-8"))
+    validate_manifest(profile, lock, manifest)
+    verify_vendor_tree(ROOT / "hass_configurator", manifest["resources"])
+    print(json.dumps({"status": "curated-profile-verified", "upstream_family": len(lock["files_sha256"]),
                       "target_family": len(selected), "excluded": profile["excluded"],
                       "target_workers": sorted(name for name in selected if name.startswith("worker-"))},
                      indent=2))

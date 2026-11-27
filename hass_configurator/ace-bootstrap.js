@@ -1,5 +1,5 @@
 /* First-party Ace policy. The JSON literal is also read by build tooling.
- * #37 phase 1: enforce target worker policy before pruning the archive family.
+ * #37: enforce the curated worker policy for the shipped archive subset.
  * The complete upstream lock remains separate; no retained Ace bytes change.
  */
 (function () {

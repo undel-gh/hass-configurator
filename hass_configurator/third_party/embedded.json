@@ -313,75 +313,6 @@
       "version": null
     },
     {
-      "ecosystem": "npm",
-      "evidence": [
-        {
-          "git_blob": "69d72fcc47a453e6a180f5af97e973962994f2bd",
-          "marker": "CoffeeScript Compiler v2.2.1",
-          "url": "https://github.com/ajaxorg/ace/blob/238b88ed1773005fd2b81eccacf6cf4ef5e7334d/lib/ace/mode/coffee/coffee.js"
-        },
-        {
-          "git_blob": "abf00126f02b4c4ad6b57785e4a16fa83a4743f7",
-          "marker": "version:\"2.2.1\"",
-          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-coffee.js"
-        },
-        {
-          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/lib/ace/mode/coffee/coffee.js",
-          "git_blob": "69d72fcc47a453e6a180f5af97e973962994f2bd",
-          "marker": "CoffeeScript Compiler v2.2.1"
-        }
-      ],
-      "id": "ace-coffee",
-      "kind": "library",
-      "license": "MIT",
-      "locations": [
-        {
-          "file": "vendor/ace/worker-coffee.js",
-          "marker": "version:\"2.2.1\""
-        }
-      ],
-      "name": "coffeescript",
-      "note": "Compiler header and shipped version match, original upstream release LICENSE included. Historical source reference; marker survives in the new build, but new embedded byte/version/license closure is not complete. Current Ace 1.45.2 source files at 68d7fd1c0f5ac50cdb610bf06b86074eab3be652 have identical Git blobs to the historical evidence; current source markers independently rechecked. Full nested license closure remains open.",
-      "notices": [
-        "third_party/licenses/embedded/coffee.txt"
-      ],
-      "parent": "ace",
-      "status": "partial",
-      "version": "2.2.1"
-    },
-    {
-      "ecosystem": "npm",
-      "evidence": [
-        {
-          "git_blob": "d36f9fadd14c30bdd9530584012d36920f4ffb0f",
-          "marker": "exports.version = \"0.3.1\"",
-          "url": "https://github.com/ajaxorg/ace/blob/238b88ed1773005fd2b81eccacf6cf4ef5e7334d/lib/ace/mode/lua/luaparse.js"
-        },
-        {
-          "git_blob": "304d06237a0d4199192409ec3f7b9ace281e595e",
-          "marker": "version=\"0.3.1\"",
-          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-lua.js"
-        }
-      ],
-      "id": "ace-luaparse",
-      "kind": "library",
-      "license": "MIT",
-      "locations": [
-        {
-          "file": "vendor/ace/worker-lua.js",
-          "marker": "version=\"0.3.1\""
-        }
-      ],
-      "name": "luaparse",
-      "note": "Version explicit in source and shipped worker; exact release license. Historical source reference; marker survives in the new build, but new embedded byte/version/license closure is not complete.",
-      "notices": [
-        "third_party/licenses/embedded/luaparse.txt"
-      ],
-      "parent": "ace",
-      "status": "partial",
-      "version": "0.3.1"
-    },
-    {
       "ecosystem": null,
       "evidence": [
         {
@@ -415,11 +346,6 @@
           "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/mode-jsoniq.js"
         },
         {
-          "git_blob": "ca18b43a42ca5ea827b3092c7b54cffba5e9c7c6",
-          "marker": "xqlint",
-          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-xquery.js"
-        },
-        {
           "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/lib/ace/mode/xquery_worker.js",
           "git_blob": "b77096be3cf1289f52d1dde5c0f326fdf9b062d0",
           "marker": "require(\"./xquery/xqlint\")"
@@ -446,14 +372,10 @@
         {
           "file": "vendor/ace/mode-jsoniq.js",
           "marker": "ace/mode/xquery/jsoniq_lexer"
-        },
-        {
-          "file": "vendor/ace/worker-xquery.js",
-          "marker": "xqlint"
         }
       ],
       "name": "XQLint and generated XQuery/JSONiq lexers",
-      "note": "Both generated XQueryTokenizer.js and JSONiqTokenizer.js at historical XQLint commit 1778846e (package 0.1.5) are literal full-source substrings of corresponding tagged Ace lexer modules. Apache-2.0 reference license retained; exact full worker version, generated output terms and other nested modules remain open; do not invent a version for the aggregate. Historical source reference; marker survives in the new build, but new embedded byte/version/license closure is not complete. Current Ace 1.45.2 source files at 68d7fd1c0f5ac50cdb610bf06b86074eab3be652 have identical Git blobs to the historical evidence; current source markers independently rechecked. Full nested license closure remains open.",
+      "note": "Both generated XQueryTokenizer.js and JSONiqTokenizer.js at historical XQLint commit 1778846e (package 0.1.5) are literal full-source substrings of corresponding tagged Ace lexer modules. Apache-2.0 reference license retained; exact full worker version, generated output terms and other nested modules remain open; do not invent a version for the aggregate. Historical source reference; marker survives in the new build, but new embedded byte/version/license closure is not complete. Current Ace 1.45.2 source files at 68d7fd1c0f5ac50cdb610bf06b86074eab3be652 have identical Git blobs to the historical evidence; current source markers independently rechecked. Full nested license closure remains open. #37 removes worker-xquery.js; both lexer modes and their literal source relationships remain. No aggregate XQLint worker identity implied.",
       "notices": [
         "third_party/licenses/embedded/xqlint-reference.txt"
       ],
@@ -579,21 +501,6 @@
           "marker": "ace/mode/json_worker"
         },
         {
-          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-lua.js",
-          "git_blob": "304d06237a0d4199192409ec3f7b9ace281e595e",
-          "marker": "ace/mode/lua_worker"
-        },
-        {
-          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-php.js",
-          "git_blob": "4b08531534c9e27cba64adf7b1795dc6001cf5e6",
-          "marker": "ace/mode/php_worker"
-        },
-        {
-          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-xml.js",
-          "git_blob": "2050bbf3d6128671e312c279b289e30f652d5169",
-          "marker": "ace/mode/xml_worker"
-        },
-        {
           "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-yaml.js",
           "git_blob": "d640dd3456722a4b6c56edc39beae695ea6c757f",
           "marker": "ace/mode/yaml_worker"
@@ -628,24 +535,12 @@
           "marker": "ace/mode/json_worker"
         },
         {
-          "file": "vendor/ace/worker-lua.js",
-          "marker": "ace/mode/lua_worker"
-        },
-        {
-          "file": "vendor/ace/worker-php.js",
-          "marker": "ace/mode/php_worker"
-        },
-        {
-          "file": "vendor/ace/worker-xml.js",
-          "marker": "ace/mode/xml_worker"
-        },
-        {
           "file": "vendor/ace/worker-yaml.js",
           "marker": "ace/mode/yaml_worker"
         }
       ],
       "name": "ace-legacy-linters",
-      "note": "Both build forms of all eight workers match official pinned npm ace-legacy-linters 1.0.2 byte-for-byte (#351 artifact 15187533994). Source MIT license LF copy is exact Git source; npm LICENSE has exactly 21 CRLF line endings and no other byte difference. Full nested dependency closure remains open.",
+      "note": "Five retained replacement workers match the official pinned npm ace-legacy-linters 1.0.2 archive; historical eight-worker match on full-family HEAD 5ad73bad. License relation unchanged. Nested closure open.",
       "notices": [
         "third_party/licenses/embedded/ace-legacy-linters.txt"
       ],
@@ -737,14 +632,18 @@
         }
       ],
       "name": "Historical Ace 1.9.6 notice references",
-      "note": "Conservatively retained historical notices pending new bundle attribution. These do not assert the old libraries or historical JSON license are present in the new runtime.",
+      "note": "Conservatively retained historical notices pending new bundle attribution. These do not assert the old libraries or historical JSON license are present in the new runtime. #37 retains historical notices pending whole-retained-runtime attribution, not evidence of active excluded worker libraries.",
       "notices": [
+        "third_party/licenses/embedded/chevrotain-7.1.1.txt",
+        "third_party/licenses/embedded/coffee.txt",
         "third_party/licenses/embedded/csslint.txt",
         "third_party/licenses/embedded/html5-reference.txt",
         "third_party/licenses/embedded/jshint-json.txt",
         "third_party/licenses/embedded/jshint.txt",
         "third_party/licenses/embedded/json-parser-attribution.txt",
+        "third_party/licenses/embedded/lodash-4.17.21.txt",
         "third_party/licenses/embedded/lodash-reference.txt",
+        "third_party/licenses/embedded/luaparse.txt",
         "third_party/licenses/embedded/parserlib.txt",
         "third_party/licenses/embedded/phpjs-attribution.txt",
         "third_party/licenses/embedded/xmldom-reference.txt",
@@ -753,78 +652,6 @@
       "parent": "ace",
       "status": "partial",
       "version": null
-    },
-    {
-      "id": "ace-xml-lodash",
-      "parent": "ace",
-      "kind": "library",
-      "name": "lodash",
-      "version": "4.17.21",
-      "ecosystem": "npm",
-      "license": "MIT",
-      "status": "identified",
-      "notices": [
-        "third_party/licenses/embedded/lodash-4.17.21.txt"
-      ],
-      "locations": [
-        {
-          "file": "vendor/ace/worker-xml.js",
-          "marker": "Bn.VERSION=\"4.17.21\""
-        },
-        {
-          "file": "vendor/ace/worker-xml.js",
-          "marker": "../../node_modules/lodash/lodash.js"
-        }
-      ],
-      "evidence": [
-        {
-          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-xml.js",
-          "git_blob": "2050bbf3d6128671e312c279b289e30f652d5169",
-          "marker": "Bn.VERSION=\"4.17.21\""
-        },
-        {
-          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-xml.js",
-          "git_blob": "2050bbf3d6128671e312c279b289e30f652d5169",
-          "marker": "../../node_modules/lodash/lodash.js"
-        }
-      ],
-      "note": "Exact version marker and source-module path in shipped XML worker; unminified counterpart and pinned source lock agree. npm LICENSE matches immutable Git source bytes. GHSA-r5fr-rjxr-66jc and GHSA-xxjr-mmjv-4gpg in #351 candidate OSV; applicability/remediation OPEN, not accepted."
-    },
-    {
-      "id": "ace-xml-chevrotain",
-      "parent": "ace",
-      "kind": "library",
-      "name": "chevrotain",
-      "version": "7.1.1",
-      "ecosystem": "npm",
-      "license": "Apache-2.0",
-      "status": "identified",
-      "notices": [
-        "third_party/licenses/embedded/chevrotain-7.1.1.txt"
-      ],
-      "locations": [
-        {
-          "file": "vendor/ace/worker-xml.js",
-          "marker": "t.VERSION=\"7.1.1\""
-        },
-        {
-          "file": "vendor/ace/worker-xml.js",
-          "marker": "../../node_modules/chevrotain/lib/src/version.js"
-        }
-      ],
-      "evidence": [
-        {
-          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-xml.js",
-          "git_blob": "2050bbf3d6128671e312c279b289e30f652d5169",
-          "marker": "t.VERSION=\"7.1.1\""
-        },
-        {
-          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-xml.js",
-          "git_blob": "2050bbf3d6128671e312c279b289e30f652d5169",
-          "marker": "../../node_modules/chevrotain/lib/src/version.js"
-        }
-      ],
-      "note": "Exact version and module-path markers in shipped XML worker; source lock candidate agrees. npm LICENSE matches immutable release Git blob. Further nested closure remains open."
     }
   ],
   "font_provenance": {
@@ -848,7 +675,7 @@
     "New worker imports and build markers do not establish exact dependency versions. Candidate OSV queries remain separately scoped.",
     "Non-Ace embedded findings and font provenance remain unchanged.",
     "Current Ace 1.45.2 XQuery and JSONiq lexer source blobs are unchanged from baseline and literal tokenizer relationships independently rechecked; not proof of full minified-worker byte equivalence or generated output license.",
-    "Eight exact replacement worker pairs identify ace-legacy-linters 1.0.2, not the complete dependency versions. XML lodash 4.17.21 and chevrotain 7.1.1 have specific shipped version/module markers and archive/Git license agreement; remaining 25 source-lock candidate queries are a separate evidence scope."
+    "Curated #37 runtime has six workers. Retired worker containers and previous mappings preserved in docs/history/ace-1.45.2-full-embedded.json. Removed XML Lodash/Chevrotain, CoffeeScript and Lua mappings no longer describe a shipped container; retained-assets scan and installed closure review required before final component absence or risk disposition. Historical notice texts retained conservatively."
   ],
   "notices": {
     "third_party/licenses/embedded/ace-legacy-linters.txt": {
@@ -1060,10 +887,6 @@
       "note": "Ace 1.45.2 exact build verified; full current worker dependencies, versions and notices not cleared.",
       "status": "open-review"
     },
-    "vendor/ace/worker-coffee.js": {
-      "status": "component-mapping",
-      "note": "Current source and shipped markers rechecked; partial mapping only, no complete nested/license clearance."
-    },
     "vendor/ace/worker-css.js": {
       "status": "component-mapping",
       "note": "Exact published ace-legacy-linters 1.0.2 minified/unminified worker equality; individual dependencies and licenses remain partially attributed."
@@ -1079,22 +902,6 @@
     "vendor/ace/worker-json.js": {
       "status": "component-mapping",
       "note": "Exact published ace-legacy-linters 1.0.2 minified/unminified worker equality; individual dependencies and licenses remain partially attributed."
-    },
-    "vendor/ace/worker-lua.js": {
-      "status": "component-mapping",
-      "note": "Exact published ace-legacy-linters 1.0.2 minified/unminified worker equality; individual dependencies and licenses remain partially attributed."
-    },
-    "vendor/ace/worker-php.js": {
-      "status": "component-mapping",
-      "note": "Exact published ace-legacy-linters 1.0.2 minified/unminified worker equality; individual dependencies and licenses remain partially attributed."
-    },
-    "vendor/ace/worker-xml.js": {
-      "status": "component-mapping",
-      "note": "Exact published ace-legacy-linters 1.0.2 minified/unminified worker equality; individual dependencies and licenses remain partially attributed."
-    },
-    "vendor/ace/worker-xquery.js": {
-      "status": "component-mapping",
-      "note": "Current source and shipped markers rechecked; partial mapping only, no complete nested/license clearance."
     },
     "vendor/ace/worker-yaml.js": {
       "status": "component-mapping",

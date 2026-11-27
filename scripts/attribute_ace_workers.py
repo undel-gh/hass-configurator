@@ -186,7 +186,14 @@ def main():
     lock_raw = args.source_lock.read_bytes()
     require(git_blob_sha1(lock_raw) == LOCK_BLOB, "Linter source lock Git blob mismatch")
     packages = json.loads(lock_raw)["packages"]
+    try:
+        from .ace_worker_profile import read_profile, selected_family
+    except ImportError:
+        from ace_worker_profile import read_profile, selected_family
     lock = load(ROOT / "docs/ace-builds-1.45.2-lock.json")
+    shipped = set(selected_family(read_profile(), lock))
+    retained_workers = (REPLACEMENTS | NATIVE) & shipped
+    retained_replacements = REPLACEMENTS & shipped
     require(set(lock["worker_files"]) == REPLACEMENTS | NATIVE,
             "Unexpected runtime worker set")
     with tarfile.open(args.ace, "r:gz") as ace, tarfile.open(args.linters, "r:gz") as linters:
@@ -200,7 +207,7 @@ def main():
         license_relation = linter_license_relation(license_bytes, shipped_license)
         license_match = license_relation == "crlf-to-lf-exact"
         workers = []
-        for name in sorted(REPLACEMENTS | NATIVE):
+        for name in sorted(retained_workers):
             actual = read_file(PKG, "vendor/ace/" + name)
             require(sha(actual) == lock["files_sha256"][name], "Worker lock drift: " + name)
             workers.append(compare_worker(ace, linters, name, actual, packages))
@@ -227,7 +234,8 @@ def main():
                   "license_relation": license_relation,
                   "source_lock_git_blob": LOCK_BLOB,
                   "source_commit": SOURCE_COMMIT},
-              "workers": workers, "candidate_notices": [],
+              "workers": workers, "excluded_workers": sorted((REPLACEMENTS | NATIVE) - retained_workers),
+              "scope": "curated shipped workers only", "candidate_notices": [],
               "limitations": ["Exact equality of the two published build forms proves worker-package attribution only.",
                               "Source paths and source lock identify candidate dependency versions, not a verified rebuild.",
                               "Candidate notices are reference evidence, not shipped notice closure.",
@@ -250,13 +258,13 @@ def main():
                for name, version in sorted(set(candidates) | {("ace-legacy-linters", "1.0.2")})]
     report["candidate_osv"] = query_osv(queries)
     exact_count = sum(w["status"] == "exact-linter-build-match" for w in workers)
-    report["status"] = ("partial-attribution-evidence" if license_match and exact_count == len(REPLACEMENTS)
+    report["status"] = ("partial-attribution-evidence" if license_match and exact_count == len(retained_replacements)
                         else "attribution-blocked")
     save()
     print("Ace worker exact linter matches:", exact_count,
-          "/", len(REPLACEMENTS), "; source-lock candidate queries:", len(queries))
+          "/", len(retained_replacements), "; source-lock candidate queries:", len(queries))
     require(license_match, "Linter notice mismatch: actual bytes retained in attribution report")
-    require(exact_count == len(REPLACEMENTS), "Linter worker build mismatch: actual evidence retained")
+    require(exact_count == len(retained_replacements), "Linter worker build mismatch: actual evidence retained")
 
 
 if __name__ == "__main__":
