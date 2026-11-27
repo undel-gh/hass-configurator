@@ -32,7 +32,7 @@ def verify_checkout():
         from ace_worker_profile import read_profile, validate_manifest, verify_vendor_tree, LOCK
     validate_manifest(read_profile(), json.loads(LOCK.read_text("utf-8")), manifest)
     verify_vendor_tree(PACKAGE, manifest["resources"])
-    if manifest["schema"] != 1 or len(manifest["resources"]) != 510:
+    if manifest["schema"] != 1 or len(manifest["resources"]) != 509:
         raise ValueError("Incomplete offline vendor manifest")
     for name, sha in manifest["resources"].items():
         item = PACKAGE / name

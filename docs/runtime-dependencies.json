@@ -5,7 +5,7 @@
     "archive_sha256": "5260354a14533fa8e94572597b1ff53025b1bb0a9b2e25d50ecf2a01e57aa9e0",
     "candidate_archive_url": "https://registry.npmjs.org/ace-builds/-/ace-builds-1.45.2.tgz",
     "currently_loaded_core": "assets/v<digest>/vendor/ace/ace.js",
-    "dynamic_modules_status": "Curated 490-file subset; all non-worker modes/themes/snippets retained, six workers; exact upstream bytes.",
+    "dynamic_modules_status": "Curated 489-file subset; five workers and krTheme excluded, all other upstream bytes unchanged. Six workers, 47 theme files; 34 themes offered in first-party selector.",
     "keyboard_bindings_offered": [
       "vim",
       "emacs"
@@ -151,7 +151,7 @@
     "proposed_package": "ace-builds",
     "proposed_version": "1.45.2",
     "selected_build_family": "src-min-noconflict",
-    "selection_status": "Reviewed full upstream archive, curated shipped subset derived from ace-bootstrap.js worker profile (#37). Installed acceptance pending.",
+    "selection_status": "Reviewed full upstream archive, curated shipped subset derived from ace-bootstrap.js worker and theme profile (#37). Installed acceptance pending.",
     "themes_offered": [
       "ambiance",
       "chaos",
@@ -168,7 +168,6 @@
       "idle_fingers",
       "iplastic",
       "katzenmilch",
-      "kr_theme",
       "kuroir",
       "merbivore",
       "merbivore_soft",

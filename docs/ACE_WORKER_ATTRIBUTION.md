@@ -463,3 +463,41 @@ and its live review location, retain the upstream lock, and migrate saved
 theme choices to a retained theme before loading options. Kuroir, Xcode,
 Cobalt/Slate and other unresolved themes are not excluded by this change.
 Exact-HEAD package/image/CI verification and independent review pending.
+
+## Gruvbox upstream deletion and re-addition (review disposition proposed)
+
+GitHub commit 88520c2912ead6b8f5eaa88e6c267d97bab909a8 explicitly
+reverts 8a5fa7fb due to missing CLA, removing all 122 CSS and nine JS
+lines. Deleted blob identities e8d72de790a67822c0d423085bcd22caccc4ee88
+and 2925afc86711ff0715fa1424c99da24c50775a0d. Non-truncated recursive
+Git trees at that revert and at f6cb3b97f052df3948562de72a25bf93c3bb1439
+(parent immediately before the 2017 contribution) contain no Gruvbox
+paths. Commit d9199ac2d8efb42f2781126ee125cff5f00ceef9 adds 95 CSS and
+33 JS lines as two new files (blobs 48a4161e6866f562d091fccf506d83f4559c447f
+and 67d90430a208226366874409852af3b748f502d3). There are shared lines,
+principally conventional Ace selectors and font-style; do not interpret
+the revert diff as proof of zero shared lines in today's implementation.
+Together with the earlier bounded CSS comparison and current 2017
+lineage, evidence supports separate adaptations. Proposed disposition
+for independent review: historical contribution removed upstream; no
+evidence of material reuse identified in the retained implementation by
+the scoped comparison. No claim of a signed CLA, independent creation
+proof, original-port version closure or blanket licensing clearance.
+Do not treat missing 2016 CLA alone as an independent release blocker
+once independently reviewed. No issue closure or risk acceptance.
+
+## krTheme removal verification and consistency corrections
+
+3798f61 research run 46036889563 and rehearsal 46036889587 SUCCESS.
+Downloaded exact-HEAD native artifact 15219165168 and rehearsal artifact
+15218515477; published SHA-256 digests and ZIP CRC verified. Native report
+source_checkout exact, 47 retained theme payloads, 52 nonempty snippets,
+150 exact generated empty stubs; excluded_themes lists theme-kr_theme.js,
+no krTheme asset row. Rehearsal verified-input exact HEAD, 489 curated Ace
+files, 509 vendor resources, five excluded workers and one excluded theme.
+Offline foundation 46036889562 FAILED: static inventory retained krTheme,
+fixture expected 510 rather than 509 resources, and supply-chain inventory
+pinned old manifest hash. Immutable Docker base job passed; installed
+wheel/sdist and image-layer acceptance not complete. Correct these three
+drifts without weakening gates, add fixture absence regression. New
+manifest SHA-256 a024c5d46349eb005f34e6368029d6c5ef9afd27d31a48861d55fd5de630df2f. Fresh exact-HEAD CI and artifacts pending.
