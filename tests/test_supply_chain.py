@@ -75,6 +75,30 @@ class SupplyChainTests(unittest.TestCase):
                     with self.assertRaisesRegex(ValueError, "Missing or unsafe inventory file"):
                         read_file(root, name)
 
+    def test_original_gruvbox_license_declaration_inventory(self):
+        inv, vendor = source_inventory()
+        record = next(c for c in inv["embedded"]["components"]
+                      if c["id"] == "ace-theme-gruvbox-original")
+        self.assertEqual(record["status"], "partial")
+        self.assertEqual(record["license"], "MIT")
+        self.assertIsNone(record["version"])
+        self.assertIsNone(record["ecosystem"])
+        self.assertEqual({x["file"] for x in record["locations"]}, {
+            "vendor/ace/theme-gruvbox.js",
+            "vendor/ace/theme-gruvbox_dark_hard.js",
+            "vendor/ace/theme-gruvbox_light_hard.js",
+        })
+        self.assertEqual(len(record["evidence"]), 7)
+        declaration, template = record["notices"]
+        self.assertEqual(inv["embedded"]["notices"][declaration]["kind"], "source-excerpt")
+        self.assertEqual(inv["embedded"]["notices"][template]["kind"], "whole-file")
+        self.assertIn(b"[MIT/X11][]", read_file(PACKAGE, declaration))
+        self.assertIn(b"<year> <copyright holders>", read_file(PACKAGE, template))
+        component = next(c for c in sbom(inv, vendor)["components"]
+                         if c["bom-ref"] == "embedded:ace-theme-gruvbox-original")
+        self.assertNotIn("purl", component)
+        self.assertNotIn("version", component)
+
     def test_source_inventory_and_bom(self):
         inv, vendor = source_inventory()
         self.assertEqual(len(inv["components"]), 7)

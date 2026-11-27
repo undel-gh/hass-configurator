@@ -1687,7 +1687,7 @@
       "notices": [
         "third_party/licenses/embedded/gruvbox-hard-theme-mit.txt"
       ],
-      "note": "PR #3673 explicitly imports Briles/gruvbox. MIT applies to identified port contribution only; original Pavel Pertsev terms and exact historical port version OPEN. Ordinary Gruvbox is not covered by this record. No risk acceptance."
+      "note": "PR #3673 explicitly imports Briles/gruvbox. MIT applies to identified port contribution only; original Pavel Pertsev MIT/X11 declaration now documented separately in ace-theme-gruvbox-original; exact historical port version and full lineage OPEN. Ordinary Gruvbox is not covered by this record. No risk acceptance."
     },
     {
       "id": "ace-theme-gozalishvili-wrappers",
@@ -1757,7 +1757,73 @@
       "notices": [
         "third_party/licenses/embedded/gozalishvili-theme-wrapper-reference.txt"
       ],
-      "note": "Full 2017 historical scan: 36 wrappers, three Gozalishvili 2011 headers (Ambiance, Chaos, Gruvbox); substantive MIT permission text labelled BSD. Preserve original Gruvbox header verbatim; other two differ only in one whitespace line. Exact bounded AMD-to-CommonJS transformations; current Gruvbox CSS retains 2017 payload plus active indent guide. License attribution scoped to wrapper, not color schemes. Original Gruvbox rights, 2016 CLA revert and 2017 contribution independence remain OPEN."
+      "note": "Full 2017 historical scan: 36 wrappers, three Gozalishvili 2011 headers (Ambiance, Chaos, Gruvbox); substantive MIT permission text labelled BSD. Preserve original Gruvbox header verbatim; other two differ only in one whitespace line. Exact bounded AMD-to-CommonJS transformations; current Gruvbox CSS retains 2017 payload plus active indent guide. License attribution scoped to wrapper, not color schemes. Original Gruvbox MIT/X11 declaration now documented separately; exact original lineage, 2016 CLA revert and 2017 contribution independence remain OPEN."
+    },
+    {
+      "id": "ace-theme-gruvbox-original",
+      "parent": "ace",
+      "kind": "library",
+      "name": "Original Gruvbox color scheme (Pavel Pertsev / morhetz)",
+      "version": null,
+      "ecosystem": null,
+      "status": "partial",
+      "license": "MIT",
+      "locations": [
+        {
+          "file": "vendor/ace/theme-gruvbox.js",
+          "marker": "ace/theme/gruvbox"
+        },
+        {
+          "file": "vendor/ace/theme-gruvbox_dark_hard.js",
+          "marker": "ace/theme/gruvbox_dark_hard"
+        },
+        {
+          "file": "vendor/ace/theme-gruvbox_light_hard.js",
+          "marker": "ace/theme/gruvbox_light_hard"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/morhetz/gruvbox/blob/317ca28a8e4306cdfcd43d45a41355a2a0aa25d8/README.md",
+          "git_blob": "fc5bd3a2cffb45a7365064abe47ea7c9de663b87",
+          "marker": "[MIT/X11][]"
+        },
+        {
+          "url": "https://github.com/morhetz/gruvbox/blob/317ca28a8e4306cdfcd43d45a41355a2a0aa25d8/colors/gruvbox.vim",
+          "git_blob": "70a8a50b8f0b5a15d8afaef54761b0b6aca77669",
+          "marker": "282828"
+        },
+        {
+          "url": "https://github.com/morhetz/gruvbox/blob/ef8864bb42bf244f0295d1c5a403b27e3d139695/README.md",
+          "git_blob": "008de69c071f2b783b8822739e0d6258dbde18c4",
+          "marker": "[MIT/X11][]"
+        },
+        {
+          "url": "https://github.com/morhetz/gruvbox/blob/ef8864bb42bf244f0295d1c5a403b27e3d139695/colors/gruvbox.vim",
+          "git_blob": "66246fba24fd49eeb50dd833094d272f0bbab640",
+          "marker": "Author: morhetz"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/tool/tmthemes/gruvboxDarkHard.tmTheme",
+          "git_blob": "64c80d32a27dad6d38edc1b74005f805c802b979",
+          "marker": "Pavel Pertsev"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/tool/tmthemes/gruvboxLightHard.tmTheme",
+          "git_blob": "c75d15f76891a0e1c5c38011834de03a360e9fb9",
+          "marker": "Pavel Pertsev"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/theme/gruvbox-css.js",
+          "git_blob": "1ecc918c22cabd6e6c7143ef94f3a6515616fc95",
+          "marker": "ace-gruvbox"
+        }
+      ],
+      "notices": [
+        "third_party/licenses/embedded/gruvbox-original-license-reference.txt",
+        "third_party/licenses/embedded/gruvbox-original-mit-standard-reference.txt"
+      ],
+      "note": "Original author explicitly declared MIT/X11 in README at 2012-12-02 commit 317ca28 adding colors/gruvbox.vim; declaration remains at descendant ef8864bb (193 ahead, 0 behind at research). Both README and Vim source pins retained. Exact original declaration excerpt and separately labelled unmodified SPDX standard MIT template (placeholders, not an original copyright header) shipped; attribution to Pavel Pertsev supported by Ace Hard input metadata, morhetz by original source header. This establishes original project's declared license, not exact external revision used by each Ace port, uninterrupted terms at every intermediate commit, or complete third-party provenance. Ordinary Gruvbox 2016 CLA revert and 2017 contribution independence remain open; no risk acceptance."
     }
   ],
   "font_provenance": {
@@ -1786,7 +1852,8 @@
     "XQLint retained source closure expanded to both shared lexer and two language wrappers; browser-pack prelude bounded adaptation verified, MIT notice retained. REx historical output/grammar licensing remains unresolved. No runtime version asserted for browser-pack.",
     "Research #4 native base source mapping verified; review record is not a new SBOM component. Browser-pack loader attribution recovered; exact package version and REx historical output/grammar grant remain open. Theme/snippet source equality is not historical license clearance.",
     "Historical Ace contributions establish nine exact TextMate input blobs for Tomorrow, Solarized and Gruvbox Hard; original-project MIT notices retained as pinned whole files. No exact external release, signed CLA, complete historical license clearance or original Gruvbox rights inferred.",
-    "Historical Gozalishvili wrapper notice preserved, bounded relations for three wrappers and 2017 Gruvbox CSS; does not establish original color scheme rights or CLA clearance."
+    "Historical Gozalishvili wrapper notice preserved, bounded relations for three wrappers and 2017 Gruvbox CSS; does not establish original color scheme rights or CLA clearance.",
+    "Supersedes earlier original Gruvbox license uncertainty: author MIT/X11 README declaration established at 317ca28 and descendant ef8864bb; exact source excerpt and separately identified SPDX MIT template retained. No original full copyright notice invented. Exact port lineage, independent contributions and CLA remain open."
   ],
   "notices": {
     "third_party/licenses/embedded/ace-legacy-linters.txt": {
@@ -2196,6 +2263,18 @@
       "sha256": "e518ce7f3215efc9760322190c75f696b0257e2cd3439259b7dd47b0a76b5fe5",
       "source": "https://github.com/ajaxorg/ace/blob/d9199ac2d8efb42f2781126ee125cff5f00ceef9/lib/ace/theme/gruvbox.js",
       "source_blob": "67d90430a208226366874409852af3b748f502d3"
+    },
+    "third_party/licenses/embedded/gruvbox-original-license-reference.txt": {
+      "kind": "source-excerpt",
+      "sha256": "152e954f50f98d161a9ea722747c5e5cf09dccab62850b1ae4dba86ac8cd3a6a",
+      "source": "https://github.com/morhetz/gruvbox/blob/317ca28a8e4306cdfcd43d45a41355a2a0aa25d8/README.md",
+      "source_blob": "fc5bd3a2cffb45a7365064abe47ea7c9de663b87"
+    },
+    "third_party/licenses/embedded/gruvbox-original-mit-standard-reference.txt": {
+      "kind": "whole-file",
+      "sha256": "b05785f9f18e6716bab63424b11454513b9943a222595b70411009202fc592b5",
+      "source": "https://github.com/spdx/license-list-data/blob/cc4fe1ac462bd3ad3c81a07234baf7d9541ee871/text/MIT.txt",
+      "source_blob": "d817195dad53ec992418c28ffca5fbd1cd86502a"
     }
   },
   "schema": 1,

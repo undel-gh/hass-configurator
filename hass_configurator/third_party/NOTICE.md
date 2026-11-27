@@ -129,3 +129,14 @@ Historical Gozalishvili 2011 theme wrapper notice retained for Ambiance,
 Chaos and Gruvbox (MIT permission text labelled BSD in original header).
 Bounded source relations recorded; original color scheme rights and Gruvbox
 CLA history remain open.
+
+Original Gruvbox color scheme: Pavel Pertsev (morhetz), declared MIT/X11 in
+README at the initial implementation commit 317ca28 (2012-12-02), retained
+at descendant ef8864bb. Attribution covers the original scheme behind the
+three retained Gruvbox variants. `gruvbox-original-license-reference.txt`
+is the exact historical declaration excerpt. The separate
+`gruvbox-original-mit-standard-reference.txt` is an unmodified SPDX MIT
+license template with placeholders, NOT an original Gruvbox copyright
+notice or a license grant from SPDX. Earlier original-license uncertainty
+is superseded; exact historical port lineage and ordinary Gruvbox CLA /
+2017 contribution independence remain open. No license clearance implied.
