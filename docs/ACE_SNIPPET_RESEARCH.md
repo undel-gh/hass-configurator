@@ -350,3 +350,82 @@ Baseline `2a54aed1ff35851cdde314d591fd842442b5ff0a`: all three workflows SUCCESS
 - Liquid at `58fcde32061df7d7f6ef38a6bfcf306b0f800f92` is exactly a fixed 26-line Liquid-specific prefix ending in the HTML inclusion comment, followed by the entire HTML raw snapshot at `d9b38ac378d0dea6e1ca820c0e8294f04c46010a` (blob `20a73d72e339c352216ce4803e6c5b842f7d7212`). The prior 18-transition replay established HTML lineage including this endpoint. The new relation requires exact prefix and unchanged suffix; no arbitrary substring or fuzzy normalization. CDN references are snippet text, not bundled dependencies.
 
 Both raw derivatives equal their current static template payloads. The two bounded raw-to-raw relations and existing template-literal relations are pinned in embedded inventory with regression checks; existing original MIT LICENSE and AUTHORS remain intact. Scope expands from 30 to 32 locations for historical material only. The 20 other assets, the additional inputs of modified descendants, wrapper/mode rights and 150 stubs remain open. In particular Io and Vala original bundles, large LSL/Gobstones, Wollok Java-like material, and SQL Server template origin need targeted research. No exclusions, new external package identity, runtime/vendor bytes, license text or curated profile changes. No full license clearance, issue closure, or merge approval.
+
+
+## R5.3a follow-up — Io and Vala TextMate bundle inputs, Wollok comparison
+
+Baseline Configurator `ed62f11aab6b4d6e8d5d36e9df177a18790fe46a`: all three exact-HEAD workflows SUCCESS (46065961387, 46065961298, 46065961408), metadata checked. Archive content and independent review remain open.
+
+### Exact external source collections
+
+Both external trees were obtained at snapshots preceding their Ace import commit dates, with complete non-truncated recursive tree listings. Compared each XML plist dictionary to its unique named entry in the pinned Ace inline JSON array (no JavaScript execution). The observed conversion is deletion of UUID and removal of `source.` from scope, plus XML entity decoding. All retained string values and field sets compare exactly, including content whitespace, triggers and key equivalents where present. The interactive comparator accepts only the observed key/string dictionary structure, rejects unparsed fields and duplicate keys, and compares per-name entries, not array ordering. The observed conversion agrees with historical Ace [tool/tmsnippets.js](https://github.com/ajaxorg/ace/blob/09ddbeb3417d668cdb47a46225d3f46a68f42d80/tool/tmsnippets.js) blob `febc7946e892692859402053b45369033c516a3b`. This is not a byte rebuild of the JS wrapper, a unique proof of the checkout used by Ace, or an automated gate yet.
+
+| Payload | External historical snapshot | Ace import (committer date UTC) | Current Ace module blob | Result |
+| --- | --- | --- | --- | --- |
+| Io | [textmate/io.tmbundle e8f7b377](https://github.com/textmate/io.tmbundle/tree/e8f7b3773544cfc14a7ede7344ed94683f7ed602/Snippets), 2014-06-18 | [09ddbeb3](https://github.com/ajaxorg/ace/commit/09ddbeb3417d668cdb47a46225d3f46a68f42d80), 2014-09-02 | `500eb8b25ca88e35a0dc4ce97011c577a72ed057` | 10/10 exact dictionaries |
+| Vala | [technosophos/Vala-TMBundle 40ec6f4f](https://github.com/technosophos/Vala-TMBundle/tree/40ec6f4f5e1cf921d521d0589fd9e7fc6ba0b305/Snippets), 2013-11-12 | [a7cac946](https://github.com/ajaxorg/ace/commit/a7cac9466d563ed31bad9e0fa8d13b463ee5f6d9), 2014-06-01 | `b1230e6871d9f08406d16dd862f371c36bbabc6f` | 31/31 exact dictionaries |
+
+Current source modules pinned at Ace `68d7fd1c0f5ac50cdb610bf06b86074eab3be652`. Io Snippets tree `c0b78b8dfa7b3e03abfb40879a15a572b5d90484`; Vala Snippets tree `2506df0b1ff0b4b3d360c1c74d829d0457e44d31`. The external counts equal the current Ace array counts. No copyright/license marker found in the 41 individual XML files; no accompanying license-suffix file in either historical Snippets tree.
+
+#### Io file pins (all 10 exact)
+
+| Path relative to Snippets/ | Git blob |
+| --- | --- |
+| `Indented Bracketed Line.plist` | `98bb36feff73383d6398ba5e03e757b154679106` |
+| `Indented return.plist` | `97bfd34c245f79c304f9e3f6c2810477b1037958` |
+| `Method.plist` | `b082f3d68bde632a4649e28408553cb3f040f4f6` |
+| `Object clone do.plist` | `3bbf7cc53380be415fa0c15ff2e1085e4dc43516` |
+| `UnitTest.plist` | `e0fb79c4666d214fd4a79fca8d2a35b0b9f0dff1` |
+| `assertEquals.plist` | `6ca41752bc0b6dfba3f94cdb1224113656805ef9` |
+| `clone do.plist` | `c27be9c3bc7050aedd9ee24aa645b528384cae99` |
+| `docSlot.plist` | `4345e801e14beb4c63e8de998b97bd976670ea57` |
+| `newSlot.plist` | `ec84683c68570ea0afd0d8a09078d6365e019146` |
+| `testMethod.plist` | `7f3693713cbb0f59ef6609379dfac9618488031a` |
+
+Historical [README.mdown](https://github.com/textmate/io.tmbundle/blob/e8f7b3773544cfc14a7ede7344ed94683f7ed602/README.mdown) blob `32d8f85a4c5f41b1fd636664c7a4ca776f511b9f` grants copy/use/modify/sell/distribute permission at repository scope, with exceptions for files containing their own terms or accompanied by same-directory license files. No such exception identified for the ten checked inputs. The README blob is identical to the previously recorded themes.tmbundle historical README, but the Io repository scope is separately established; a generic converter or theme notice alone is not source-specific evidence. Proposed disposition: retain, recover source-specific TextMate permission reference and map the Io payload, subject to exact gate/independent review. No other Io grammar rights inferred.
+
+#### Vala file pins (all 31 exact)
+
+| Path relative to Snippets/ | Git blob |
+| --- | --- |
+| `Comment (multiline).tmSnippet` | `1f58883393206674f86d8eced7e1225876b46398` |
+| `Console.WriteLine (writeline).tmSnippet` | `d7828633f15704389c7027eff003dc88e37072de` |
+| `DBus annotation.tmSnippet` | `e8f6e1c54bd760612a9c8fba4bad1d2bdced3f29` |
+| `DocBlock.tmSnippet` | `d00916a9d4fa1d7f44b947318f146655e9c24fef` |
+| `Gee_ArrayList.tmSnippet` | `d67415cbdc1c243d235601356145ce52e5dcf326` |
+| `Gee_HashMap.tmSnippet` | `e96031b7ab04d5afefd0b1467b7894cfcbf38cd7` |
+| `Gee_HashSet.tmSnippet` | `6b3b6806665841cd03255ddfd17a4fc9a7acfc37` |
+| `Main function.tmSnippet` | `bd86c7e4ca31823ce41e6fa46945911d0d2d51ca` |
+| `String template (@).tmSnippet` | `6e488970ee80ecdf6829d50cfc032dc063433e00` |
+| `Verbatim string (""").tmSnippet` | `c3afa7bfd0d7dc71abd5341cd5e620c8104e7a75` |
+| `case.tmSnippet` | `818d8e9586479c0e981866c547e07664dc5261d3` |
+| `class.tmSnippet` | `bafc69bdcab709bffebcb9d93f9687133363e92f` |
+| `closure.tmSnippet` | `e63ee79c17f2c963f3cd5791e1515b1302649ef0` |
+| `delegate.tmSnippet` | `7e79b111ca44585948fc1eb5be7ba9af4cb7cf23` |
+| `do while.tmSnippet` | `9dd440145033f6fc0a5ac2a62a4f33ddbfe4547a` |
+| `else if (elseif).tmSnippet` | `a637fbb794e3ae72b872bb2297ac748c3d1291e3` |
+| `else.tmSnippet` | `0fb763415925f90fcd870c8947ea094dc5d2eb14` |
+| `enum.tmSnippet` | `5b1f36bc90d9f31c5e427222db2749b1601897d5` |
+| `error domain.tmSnippet` | `730dd21376c574b72a93d0e14e2257152675c66d` |
+| `for.tmSnippet` | `e26a938aff3e8f48e486fd9a54b8ae86a95d6c18` |
+| `foreach.tmSnippet` | `5d0254b6fc3773ebf0427ec0008d44e45ea1fc42` |
+| `if.tmSnippet` | `fb5a269903b238fc14ddeca5807b1b658a9a328d` |
+| `interface.tmSnippet` | `e7cf218c5415533d0153640e9e3841a06600770f` |
+| `namespace (ns).tmSnippet` | `2682216c02b2a77f892f7d0d74cca2a7f903b075` |
+| `printf.tmSnippet` | `274ee7a3a2347aa18142590228615a595c5af679` |
+| `property (prop).tmSnippet` | `572447dc0595f4b3c0c97e63e0405c96110711e6` |
+| `read-only property (roprop).tmSnippet` | `333d5fb20dee592811fd246098fd326e9a6d3a68` |
+| `struct.tmSnippet` | `3ed0b3ffff5fc71895f07c023b321e8946aeb225` |
+| `switch.tmSnippet` | `b44baff8fc7fcec7537521b6ed03a4ee86a12846` |
+| `try:catch.tmSnippet` | `610ede504a37d18f9f9f9a9f3ac5f9524002db72` |
+| `while.tmSnippet` | `eb784d1a64de35902ae8466baafe17acc7d88128` |
+
+The pre-import [README.md](https://github.com/technosophos/Vala-TMBundle/blob/40ec6f4f5e1cf921d521d0589fd9e7fc6ba0b305/README.md) blob `d74231b55b3f6caa79067ddc8666aa4733b18921` credits Daniel Lucraft's original bundle; no explicit grant in that snapshot. A later first LICENSE addition [2fd9373f](https://github.com/technosophos/Vala-TMBundle/commit/2fd9373f90bf74eef0b15f43c7240c28d55bebaa), 2014-11-13, adds only LICENSE, MIT, copyright 2014 Matt Butcher. Its [LICENSE](https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/LICENSE) blob `1ee64503bcb3ae31e5b01f5cf61e9a02846cb3a3` is also present at later snapshot `935bd21c13068158435f64b3dbd8423c8d812c92`. All 31 path/blob pairs match the 2013 snapshot at both later revisions, and the LICENSE addition has exactly the same Snippets tree hash `2506df0b1ff0b4b3d360c1c74d829d0457e44d31`. This is direct evidence of a later published MIT grant for identical bundle material, not a claim that MIT was declared at Ace import or that the later grant settles all pre-existing contributors' rights. The earlier Daniel Lucraft bundle grant remains open. Linguist metadata was a lead to the actual upstream LICENSE, not the source of the grant. Proposed disposition: retain review-open and recover original MIT text with explicit later-grant and earlier-rights limitations, or consider maintainer-approved snippet-only exclusion if remaining rights cannot be resolved. No exact package release/PURL inferred.
+
+### Wollok — evidence of Java adaptation, not full origin clearance
+
+Compared historical Wollok raw blob `f98f8587908fefe10bc9dc3a9fa02443a60bb1aa` at [1693305c](https://github.com/ajaxorg/ace/commit/1693305c8974a5dd4f350bb0b9d48b134fca113c) to historical imported Java raw blob `854f14ac22f148309d4f9ec450fda38244ede6ec` (SnipMate MIT already mapped for Java). Seven exact same-trigger bodies: im, cl, /*, el, if, thr, /**. The re trigger differs only by the final line terminator in the isolated body comparison. Eight same-trigger bodies differ (m, as, ca, try, print, set, get, re); several clearly parallel Java structure with Wollok syntax, but exact generic snippets alone do not prove unique origin. The earlier 49/85 Wollok vs 241 Java LCS result is similarity evidence only. The contribution preserves Java-oriented section headings including the initial Java packages/import heading and Javadocs. This supports a targeted bounded block/section lineage investigation, not a blanket SnipMate MIT grant or full-file derivation. No promotion of Wollok in this increment.
+
+### Next implementation gate / scope
+
+Record only research here. Existing immutable_raw_url validation accepts a restricted path alphabet; several demonstrated source filenames contain spaces, parentheses, quotes, @ or colon. Do not silently relax the URL allowlist or omit such files to obtain a partial apparent closure. Design a narrowly scoped canonical encoded-path validator with traversal/double-encoding/control rejection, strict XML plist/JSON-array comparison and one-to-one set/count closure, or an equivalently bounded source-blob retrieval method; add tamper/negative tests. Then preserve the actual Io README license section and Vala original LICENSE and promote source-specific partial attribution records. The existing 32 SnipMate locations remain unchanged. No runtime, vendor, notices, inventory, curated profile or production audit code changed here. No independent acceptance, final license clearance, issue closure or merge approval.
