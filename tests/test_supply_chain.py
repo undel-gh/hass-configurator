@@ -482,6 +482,24 @@ class SupplyChainTests(unittest.TestCase):
                 self.assertFalse(embedded_source_relation(raw, changed, relation))
         self.assertFalse(embedded_source_relation(b"unrelated", wrapped, relation))
 
+    def test_snipmate_derived_relations_fail_closed(self):
+        old = b"## Access Modifiers\nsnippet po\n\tprotected\nsnippet pu\n\tpublic\nsnippet pr\n\tprivate\n"
+        new = b"## Access Modifiers\nsnippet u\n\tUN\nsnippet un\n\tUNB\nsnippet pr\n\tprivate\n"
+        relation = "ace-edifact-java-two-triggers"
+        self.assertTrue(embedded_source_relation(old, new, relation))
+        for changed in (new + b"x", new.replace(b"private", b"public"), new.replace(b"UNB", b"UN")):
+            self.assertFalse(embedded_source_relation(old, changed, relation))
+        self.assertFalse(embedded_source_relation(old + old, new + new, relation))
+        self.assertFalse(embedded_source_relation(b"x" + old, b"x" + new, relation))
+        html = b"# Some useful Unicode entities\nsnippet nbs\n\t&nbsp;\n"
+        prefix = b"\n# liquid specific snippets\nsnippet ife\n\t{% if ${1:condition} %}\n\n\t{% else %}\n\n\t{% endif %}\nsnippet if\n\t{% if ${1:condition} %}\n\t\t\n\t{% endif %}\nsnippet for\n\t{% for in ${1:iterator} %}\n\n\t{% endfor %}\nsnippet capture\n\t{% capture ${1} %}\n\n\t{% endcapture %}\nsnippet comment\n\t{% comment %}\n\t  ${1:comment}\n\t{% endcomment %}\n\n# Include html.snippets\n"
+        relation = "ace-liquid-html-prefix"
+        self.assertTrue(embedded_source_relation(html, prefix + html, relation))
+        for changed in (b"x" + prefix + html, prefix + html + b"x",
+                        prefix.replace(b"snippet ife", b"snippet if") + html, prefix + html[:-1]):
+            self.assertFalse(embedded_source_relation(html, changed, relation))
+        self.assertFalse(embedded_source_relation(b"x" + html, prefix + b"x" + html, relation))
+
     def test_snipmate_exact_and_modified_payload_attribution(self):
         inv, vendor = source_inventory()
         record = next(c for c in inv["embedded"]["components"]
@@ -494,7 +512,9 @@ class SupplyChainTests(unittest.TestCase):
         exact_names = names.copy()
         modified = {"dart", "html", "javascript", "markdown", "php", "python", "r", "sh"}
         self.assertTrue(exact_names.isdisjoint(modified))
-        names |= modified
+        derived = {"edifact", "liquid"}
+        self.assertTrue(derived.isdisjoint(exact_names | modified))
+        names |= modified | derived
         self.assertEqual({loc["file"] for loc in record["locations"]},
                          {"vendor/ace/snippets/" + n + ".js" for n in names})
         self.assertEqual(len(record["locations"]), len(names))
@@ -559,6 +579,29 @@ class SupplyChainTests(unittest.TestCase):
                 self.assertEqual(relation["upstream"]["git_blob"], endpoint)
                 self.assertEqual(relation["container"]["git_blob"], current)
                 self.assertNotEqual(original, endpoint)
+        derived_pins = {
+            "edifact": ("ace-edifact-java-two-triggers",
+                "https://github.com/ajaxorg/ace/blob/d16daddc5ea91e578fafde6c9c17b41cdb036579/lib/ace/snippets/java.snippets", "854f14ac22f148309d4f9ec450fda38244ede6ec",
+                "f884c8fd6394d60311782c50e6d233dbc6da4ecc", "624b87ad3d9e135050ba3415237fff3e38241bbc", "afe85e064b4594d344b7b101d82cefc42460565f"),
+            "liquid": ("ace-liquid-html-prefix",
+                "https://github.com/ajaxorg/ace/blob/d9b38ac378d0dea6e1ca820c0e8294f04c46010a/lib/ace/snippets/html.snippets", "20a73d72e339c352216ce4803e6c5b842f7d7212",
+                "58fcde32061df7d7f6ef38a6bfcf306b0f800f92", "b3e3c982cfa70d04544b74652bbe85e702f5ebf2", "7c72fe03a9fce8c65f6b486d83fbc88f618a97b5"),
+        }
+        self.assertEqual(set(derived_pins), derived)
+        for n, (kind, original_url, original_blob, revision, endpoint, current) in derived_pins.items():
+            with self.subTest(derived=n):
+                historical = "https://github.com/ajaxorg/ace/blob/" + revision + "/lib/ace/snippets/" + n + ".snippets"
+                self.assertEqual(evidence[original_url], original_blob)
+                self.assertEqual(evidence[historical], endpoint)
+                self.assertEqual(by_name[n]["upstream"]["url"], historical)
+                self.assertEqual(by_name[n]["upstream"]["git_blob"], endpoint)
+                self.assertEqual(by_name[n]["container"]["git_blob"], current)
+                matches = [r for r in inv["embedded"]["source_relationships"] if r["relation"] == kind]
+                self.assertEqual(len(matches), 1)
+                self.assertEqual(matches[0]["upstream"]["url"], original_url)
+                self.assertEqual(matches[0]["upstream"]["git_blob"], original_blob)
+                self.assertEqual(matches[0]["container"]["url"], historical)
+                self.assertEqual(matches[0]["container"]["git_blob"], endpoint)
         component = next(c for c in sbom(inv, vendor)["components"]
                          if c["bom-ref"] == "embedded:ace-snipmate-snippets")
         self.assertNotIn("version", component)

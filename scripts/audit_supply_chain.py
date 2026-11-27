@@ -123,13 +123,27 @@ def verify_npm_notice(info, raw, local):
 
 SOURCE_RELATIONS = {"literal-full-source-substring", "xqlint-two-require-renames",
                     "browser-pack-standalone-prelude", "ace-theme-wrapper-amd-to-commonjs",
-                    "ace-gruvbox-css-indent-guide", "ace-snippet-template-literal"}
+                    "ace-gruvbox-css-indent-guide", "ace-snippet-template-literal",
+                    "ace-edifact-java-two-triggers", "ace-liquid-html-prefix"}
 
 
 def embedded_source_relation(upstream, container, relation):
     """Apply only named, bounded source transformations to immutable blobs."""
     if not upstream or relation not in SOURCE_RELATIONS:
         raise ValueError("Invalid embedded source relation")
+    if relation == "ace-edifact-java-two-triggers":
+        # Exactly the two observed access-modifier trigger replacements.
+        old = b"snippet po\n\tprotected\nsnippet pu\n\tpublic\n"
+        new = b"snippet u\n\tUN\nsnippet un\n\tUNB\n"
+        if not upstream.startswith(b"## Access Modifiers\n" + old) or upstream.count(old) != 1:
+            return False
+        return container == upstream.replace(old, new, 1)
+    if relation == "ace-liquid-html-prefix":
+        # Exact observed Liquid additions; no arbitrary prefix or trimming.
+        prefix = b"\n# liquid specific snippets\nsnippet ife\n\t{% if ${1:condition} %}\n\n\t{% else %}\n\n\t{% endif %}\nsnippet if\n\t{% if ${1:condition} %}\n\t\t\n\t{% endif %}\nsnippet for\n\t{% for in ${1:iterator} %}\n\n\t{% endfor %}\nsnippet capture\n\t{% capture ${1} %}\n\n\t{% endcapture %}\nsnippet comment\n\t{% comment %}\n\t  ${1:comment}\n\t{% endcomment %}\n\n# Include html.snippets\n"
+        if not upstream.startswith(b"# Some useful Unicode entities\n"):
+            return False
+        return container == prefix + upstream
     if relation == "ace-snippet-template-literal":
         # Exact static payload only: never execute JS or normalize whitespace.
         try:

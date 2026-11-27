@@ -2574,6 +2574,21 @@
           "git_blob": "305fb661ed25a75093d8e168f46deb012f662c07",
           "marker": "snippet",
           "url": "https://github.com/ajaxorg/ace/blob/b6463844b04758745f99b1553416f4cf4b8ad013/lib/ace/snippets/sh.snippets"
+        },
+        {
+          "git_blob": "624b87ad3d9e135050ba3415237fff3e38241bbc",
+          "marker": "snippet",
+          "url": "https://github.com/ajaxorg/ace/blob/f884c8fd6394d60311782c50e6d233dbc6da4ecc/lib/ace/snippets/edifact.snippets"
+        },
+        {
+          "git_blob": "20a73d72e339c352216ce4803e6c5b842f7d7212",
+          "marker": "snippet",
+          "url": "https://github.com/ajaxorg/ace/blob/d9b38ac378d0dea6e1ca820c0e8294f04c46010a/lib/ace/snippets/html.snippets"
+        },
+        {
+          "git_blob": "b3e3c982cfa70d04544b74652bbe85e702f5ebf2",
+          "marker": "snippet",
+          "url": "https://github.com/ajaxorg/ace/blob/58fcde32061df7d7f6ef38a6bfcf306b0f800f92/lib/ace/snippets/liquid.snippets"
         }
       ],
       "id": "ace-snipmate-snippets",
@@ -2613,6 +2628,10 @@
           "marker": "ace/snippets/django"
         },
         {
+          "file": "vendor/ace/snippets/edifact.js",
+          "marker": "ace/snippets/edifact"
+        },
+        {
           "file": "vendor/ace/snippets/erlang.js",
           "marker": "ace/snippets/erlang"
         },
@@ -2639,6 +2658,10 @@
         {
           "file": "vendor/ace/snippets/jsp.js",
           "marker": "ace/snippets/jsp"
+        },
+        {
+          "file": "vendor/ace/snippets/liquid.js",
+          "marker": "ace/snippets/liquid"
         },
         {
           "file": "vendor/ace/snippets/lua.js",
@@ -2702,7 +2725,7 @@
         }
       ],
       "name": "SnipMate snippets collection (historical material in retained Ace payloads)",
-      "note": "Historical honza/vim-snippets January 2013 MIT collection, 31 relevant import blob matches. Scoped attribution covers historical MIT material in 30 retained payloads: 22 exact decoded matches (cpp to c_cpp, make to makefile included) and eight modified descendants with exact historical endpoint-to-current relations. Four have prior exact net-delta replay (dart, markdown, python, sh); four have 18 exact path-history patch transitions (html, javascript, php, r). Original LICENSE references AUTHORS; both whole files retained. MIT applies to the historical collection material, not a blanket license for Ace modifications, wrappers or other snippets. Ace root BSD declaration is separate; individual contribution rights and additional inputs remain review-open. No exact collection version/PURL or legal clearance asserted.",
+      "note": "Historical honza/vim-snippets January 2013 MIT collection, 31 relevant import blob matches. Scoped attribution covers historical MIT material in 32 retained payloads: 22 exact decoded matches (cpp to c_cpp, make to makefile included) and eight modified descendants with exact historical endpoint-to-current relations. Four have prior exact net-delta replay (dart, markdown, python, sh); four have 18 exact path-history patch transitions (html, javascript, php, r). Two further derived payloads are mapped only for historical MIT material: EDIFACT (two trigger replacements from Java) and Liquid (exact 26-line prefix plus 2017 HTML endpoint). Both have separate bounded raw-to-raw and raw-to-current relations; HTML 2017 delta already reconstructed. Original LICENSE references AUTHORS; both whole files retained. MIT applies to the historical collection material, not a blanket license for Ace modifications, wrappers or other snippets. Ace root BSD declaration is separate; individual contribution rights and additional inputs remain review-open. No exact collection version/PURL or legal clearance asserted.",
       "notices": [
         "third_party/licenses/embedded/snipmate-snippets-mit.txt",
         "third_party/licenses/embedded/snipmate-snippets-authors.txt"
@@ -2746,7 +2769,8 @@
     "krTheme removal approved, target runtime excludes theme-kr_theme.js; source/installed artifact and CI review required. Historical permission question retained; not a grant or risk acceptance. Original Ace ext-themelist metadata remains, without the excluded CSS/module payload. Other retained themes unchanged.",
     "REx #80 author response confirms v5.30 generated portions of two lexer files may be redistributed (including modified/minified) under Apache-2.0 or permissive license, no additional requirements; grammar lineage remains open. No changes to generated files, shipped notices or component status.",
     "SnipMate historical MIT notice recovery: 22 exact retained payloads mapped with bounded template-literal source relations; eight modified candidates and other snippets, wrapper history, underlying contribution rights and final review remain open. No package version/PURL or full license clearance.",
-    "R5.3a expanded scoped SnipMate attribution to 30 retained payloads (22 unchanged, eight modified); 18 additional path-history patch transitions checked interactively with exact snapshot equality and historical Ace root BSD license blob. Network gate verifies eight additional historical endpoint-to-current static relations and historical import evidence pins, not patch replay itself. Other 22 nonempty payloads, empty stubs, wrapper and original third-party/contribution rights remain open; no release clearance."
+    "R5.3a expanded scoped SnipMate attribution to 30 retained payloads (22 unchanged, eight modified); 18 additional path-history patch transitions checked interactively with exact snapshot equality and historical Ace root BSD license blob. Network gate verifies eight additional historical endpoint-to-current static relations and historical import evidence pins, not patch replay itself. Other 22 nonempty payloads, empty stubs, wrapper and original third-party/contribution rights remain open; no release clearance.",
+    "R5.3a remaining 22: all historical endpoint-to-current payloads matched, 19 distinct endpoint root LICENSE blobs checked. EDIFACT and Liquid proven bounded derivatives of already attributed Java and HTML, respectively; historical MIT scope expanded to 32. New named networked raw-to-raw relations and existing static wrapper relations pin both derived paths. Other 20 historical inputs and contribution rights remain open; no blanket BSD/MIT clearance, no curated exclusions."
   ],
   "notices": {
     "third_party/licenses/embedded/ace-legacy-linters.txt": {
@@ -3745,6 +3769,58 @@
         "git_blob": "8c5e7f6c288d2078e4d4dfe9bc481ab536b3a7fe",
         "marker": "module.exports",
         "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/snippets/sh.snippets.js"
+      },
+      "relation": "ace-snippet-template-literal"
+    },
+    {
+      "upstream": {
+        "git_blob": "854f14ac22f148309d4f9ec450fda38244ede6ec",
+        "marker": "snippet",
+        "url": "https://github.com/ajaxorg/ace/blob/d16daddc5ea91e578fafde6c9c17b41cdb036579/lib/ace/snippets/java.snippets"
+      },
+      "container": {
+        "git_blob": "624b87ad3d9e135050ba3415237fff3e38241bbc",
+        "marker": "snippet",
+        "url": "https://github.com/ajaxorg/ace/blob/f884c8fd6394d60311782c50e6d233dbc6da4ecc/lib/ace/snippets/edifact.snippets"
+      },
+      "relation": "ace-edifact-java-two-triggers"
+    },
+    {
+      "upstream": {
+        "git_blob": "624b87ad3d9e135050ba3415237fff3e38241bbc",
+        "marker": "snippet",
+        "url": "https://github.com/ajaxorg/ace/blob/f884c8fd6394d60311782c50e6d233dbc6da4ecc/lib/ace/snippets/edifact.snippets"
+      },
+      "container": {
+        "git_blob": "afe85e064b4594d344b7b101d82cefc42460565f",
+        "marker": "module.exports",
+        "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/snippets/edifact.snippets.js"
+      },
+      "relation": "ace-snippet-template-literal"
+    },
+    {
+      "upstream": {
+        "git_blob": "20a73d72e339c352216ce4803e6c5b842f7d7212",
+        "marker": "snippet",
+        "url": "https://github.com/ajaxorg/ace/blob/d9b38ac378d0dea6e1ca820c0e8294f04c46010a/lib/ace/snippets/html.snippets"
+      },
+      "container": {
+        "git_blob": "b3e3c982cfa70d04544b74652bbe85e702f5ebf2",
+        "marker": "snippet",
+        "url": "https://github.com/ajaxorg/ace/blob/58fcde32061df7d7f6ef38a6bfcf306b0f800f92/lib/ace/snippets/liquid.snippets"
+      },
+      "relation": "ace-liquid-html-prefix"
+    },
+    {
+      "upstream": {
+        "git_blob": "b3e3c982cfa70d04544b74652bbe85e702f5ebf2",
+        "marker": "snippet",
+        "url": "https://github.com/ajaxorg/ace/blob/58fcde32061df7d7f6ef38a6bfcf306b0f800f92/lib/ace/snippets/liquid.snippets"
+      },
+      "container": {
+        "git_blob": "7c72fe03a9fce8c65f6b486d83fbc88f618a97b5",
+        "marker": "module.exports",
+        "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/snippets/liquid.snippets.js"
       },
       "relation": "ace-snippet-template-literal"
     }
