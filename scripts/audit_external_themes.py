@@ -592,7 +592,7 @@ def post_bsd_theme_research(fetch, source, source_file):
             "limitations": ["Snapshot under current name, not necessarily first creation.",
                             "Wrapper declarations do not establish separate CSS or external rights.",
                             "Root-only means no individual declaration found in pinned wrapper.",
-                            "Primer reference is not exact port source/version or completed notice recovery."]}
+                            "Primer reference is not exact port source/version; notice retained separately."]}
 
 
 def verify_theme_history_coverage(retained, early, additional, later):
@@ -604,6 +604,89 @@ def verify_theme_history_coverage(retained, early, additional, later):
     return {"retained_count": len(retained), "historical_count": len(names),
             "excluded": ["kr_theme"], "retained": sorted(retained),
             "status": "historical-snapshot-coverage-not-license-clearance"}
+
+
+
+def primer_port_evidence(fetch, source, source_file):
+    import json
+    repo = "primer/github-vscode-theme"
+    rev = "38b50d41bdc6b190b7351e220956af043221d763"
+    palette, palette_pin = reference(repo, rev, "src/classic/colors.json",
+        "56b4c173dbb931fea43ca95f7deada58a543a998", fetch)
+    package, package_pin = reference(repo, rev, "package.json",
+        "9ba47ac5951a4b5e8b89729090a788ad73778d85", fetch)
+    meta = json.loads(package)
+    if (meta["publisher"], meta["name"], meta["version"]) != ("GitHub", "github-vscode-theme", "6.3.4"):
+        raise ValueError("Primer reference identity drift")
+    if not any(row["label"] == "GitHub Light Default" for row in meta["contributes"]["themes"]):
+        raise ValueError("Primer reference theme missing")
+    css, css_pin = reference("ajaxorg/ace", "e78b1acabe5f599b3c5da31a7839a3e9274fc86e",
+        "src/theme/github_light_default-css.js", "a44571416044088b456a27ed4edc4e8789fb652e", fetch)
+    current, _ = source_file(source, "src/theme/github_light_default-css.js")
+    if current != css:
+        raise ValueError("GitHub Light Default CSS changed since introduction")
+    values = {v.lower() for group in json.loads(palette).values()
+              for v in (group if isinstance(group, list) else [group])}
+    values = {"#ffffff" if v == "#fff" else v for v in values}
+    colors = {v.decode("ascii").lower() for v in re.findall(rb"#[0-9a-f]{6}\b", css, re.I)}
+    if (len(colors), len(colors & values)) != (18, 15):
+        raise ValueError("Primer bounded palette comparison drift")
+    return {"palette": palette_pin, "package": package_pin, "css": css_pin,
+            "historical_reference_version": meta["version"], "port_version": None,
+            "css_hex_colors": sorted(colors), "shared": sorted(colors & values),
+            "not_shared": sorted(colors - values), "current_css_equal": True,
+            "limitations": ["PR #5597 identifies official extension, not exact variant/version.",
+                            "Color overlap alone is not source or rights proof."]}
+
+
+def sphinx_krtheme_reference(fetch):
+    repo = "kennethreitz/kr-sphinx-themes"
+    rev = "010ddb33d2aaca5d3ba7e18c372bcb8850d6b07b"
+    license_raw, license_pin = reference(repo, rev, "LICENSE",
+        "81f4d30592d3b4270b2f52a135769c1b3df2c36b", fetch)
+    readme, readme_pin = reference(repo, rev, "README.rst",
+        "e8179f9690f0d3b8b9f5873cd4939614e8aa8027", fetch)
+    style, style_pin = reference(repo, rev, "flask_theme_support.py",
+        "33f47449c11d241e36c83d7f95d819bbe56e2c8f", fetch)
+    if (b"Copyright (c) 2010 Kenneth Reitz." not in license_raw
+            or b"Copyright (c) 2010 by Armin Ronacher." not in license_raw
+            or b"Redistribution and use" not in license_raw
+            or b"based on tango style" not in style):
+        raise ValueError("Sphinx krTheme reference drift")
+    return {"license": license_pin, "readme": readme_pin, "pygments_style": style_pin,
+            "scope": "separate-sphinx-project-not-textmate-grant"}
+
+
+def verify_theme_dispositions(matrix, embedded, historical):
+    if (matrix["schema"] != 1 or matrix["review_status"] != "independent-review-pending"
+            or matrix["ace_source_commit"] != "68d7fd1c0f5ac50cdb610bf06b86074eab3be652"):
+        raise ValueError("Unexpected theme disposition identity")
+    expected = {}
+    for group in (historical["historical_ace_theme_licenses"]["themes"],
+                  historical["additional_bsd_theme_wrappers"]):
+        for row in group:
+            expected[row["theme"]] = "ajax-bsd"
+    for row in historical["post_bsd_themes"]["themes"]:
+        expected[row["theme"]] = row["wrapper_declaration"]
+    names = [row["theme"] for row in matrix["rows"]]
+    if (len(names) != len(set(names)) or set(names) != set(expected)
+            or set(names) != set(historical["theme_history_coverage"]["retained"]) | {"kr_theme"}):
+        raise ValueError("Theme disposition coverage mismatch")
+    for row in matrix["rows"]:
+        theme = row["theme"]
+        excluded = theme == "kr_theme"
+        if (row["distribution"] != ("excluded" if excluded else "retained")
+                or row["disposition"] != ("excluded-reassessment-open" if excluded else "retained-review-open")
+                or row["historical_declaration"] != expected[theme]
+                or row["review_priority"] not in {"standard", "elevated"}
+                or not row["remaining_review"].strip()):
+            raise ValueError("Unexpected theme disposition: " + theme)
+        components = sorted(c["id"] for c in embedded["components"] if c["kind"] == "library"
+                            and any(loc["file"] == "vendor/ace/theme-" + theme + ".js"
+                                    for loc in c["locations"]))
+        if row["additional_components"] != components or (excluded and components):
+            raise ValueError("Theme additional notice mapping mismatch: " + theme)
+    return matrix
 
 
 def research(source, work, fetch, source_file):
@@ -635,5 +718,7 @@ def research(source, work, fetch, source_file):
             "additional_bsd_theme_wrappers": additional_bsd_wrappers(fetch),
             "krtheme_reassessment": krtheme_reassessment(fetch, source, source_file),
             "post_bsd_themes": post_bsd_theme_research(fetch, source, source_file),
+            "primer_port_evidence": primer_port_evidence(fetch, source, source_file),
+            "sphinx_krtheme_reference": sphinx_krtheme_reference(fetch),
             "limitations": ["Pinned reference identity and comparisons are not historical lineage or license clearance.",
                             "Differences are evidence, not failures; pin drift fails closed."]}

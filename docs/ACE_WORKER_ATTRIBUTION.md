@@ -777,3 +777,50 @@ krTheme separately historical/excluded. Historical snapshot coverage
 does not establish current CSS lineage or license clearance. Unit tests
 for declaration and coverage errors. No runtime or vendor changes.
 Exact new HEAD CI and independent review pending.
+
+## R5.2j consolidated theme dispositions and Primer notice
+
+R5.2i HEAD e125d1ef9002ca0c1cd390eb70cc447079c66452 all workflows
+SUCCESS (46046445455, 46046445408, 46046445524).
+Native artifact 15223170929 inspected, SHA-256
+ad80139a1fc37ec33679f3b9712187bf479ce459347ffe94ad196da4a8989221
+matches published digest, CRC OK, source_checkout exact. 47 retained
+plus krTheme; 22 later declarations: 15 Ajax BSD, 3 MIT-labelled-BSD,
+4 root-only. CSS rights markers only Dracula in that group. Other
+artifacts not reviewed in this iteration.
+
+PR #5597 names official GitHub VS Code port. Pinned Primer package.json
+at 38b50d41 verifies publisher GitHub, extension github-vscode-theme,
+reference version 6.3.4 and label GitHub Light Default; not an asserted
+port version. 15/18 distinct six-digit colors in initial Ace CSS match
+classic palette (#fff expanded); other values #e8e8e8, #eeeeee, #1a85ff.
+Introductory and current CSS identical blob a4457141. This is bounded
+corroboration, not exact variant or version identification. Retain
+whole-file MIT notice e2c871bb6effe9f6ec8d94d6596db33c4bfe4dd94969a6a9a2fb0473ebe6442e.
+Partial component ace-theme-github-light-default, null version/ecosystem,
+no inferred applicability to other GitHub themes or new runtime dependency.
+
+Maintainer's Sphinx reference: kennethreitz/kr-sphinx-themes at
+010ddb33d2aaca5d3ba7e18c372bcb8850d6b07b, LICENSE
+81f4d30592d3b4270b2f52a135769c1b3df2c36b, README
+e8179f9690f0d3b8b9f5873cd4939614e8aa8027.
+Armin Ronacher added BSD-style Flask Design License with kind request
+at b8e0f4f1bfc7c89fffb5440fcdf60edaa033c836 (2010-06-19).
+Reitz added his modification copyright at
+b8fae3ce841b666c47cfa5008580f3f9d24219d6 (2010-09-15).
+Scope is Sphinx Flask derivative; do not equate extra request with
+exact SPDX BSD-3-Clause text. Current tree no .tmTheme; FlaskyStyle
+explicitly Tango-derived Pygments source blob
+33f47449c11d241e36c83d7f95d819bbe56e2c8f. No separate TextMate grant
+established. Pinned as research evidence, not shipped notice.
+krTheme stays excluded-reassessment-open.
+
+Proposed dispositions in docs/ace-theme-dispositions.json and readable
+docs/ACE_THEME_DISPOSITIONS.md: 47 retained-review-open, 1 excluded.
+Retained historical declarations 40 Ajax BSD, 3 MIT-labelled-BSD, 4 root-only.
+16 retained themes have additional attribution library records.
+Other rows use Ace and applicable scoped reference notices; no
+blanket clearance. Elevated priority is proposed review order, not risk
+rating. Native research checks coverage, declarations, distribution
+and exact additional component mappings. Runtime/vendor unchanged.
+New CI and installation evidence pending, no independent clearance.

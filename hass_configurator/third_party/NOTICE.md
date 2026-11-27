@@ -148,3 +148,8 @@ original MIT whole-file references retained. Ace PR #4203 and #4415
 explicitly grant permission for the respective contributions. Historical
 BSD Ace wrappers and current source pins recorded; exact original revision
 and any intermediate port lineage remain open. See embedded.json.
+
+GitHub Light Default: PR #5597 identifies official GitHub VS Code theme.
+Historical Primer MIT LICENSE (Copyright (c) 2020 Primer) retained verbatim
+as github-vscode-theme-mit.txt. Exact variant/version open. Applies only to
+this theme, not legacy GitHub or GitHub Dark. See docs/ace-theme-dispositions.json.

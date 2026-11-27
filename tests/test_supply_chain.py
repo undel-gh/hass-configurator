@@ -444,3 +444,22 @@ class SupplyChainTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+    def test_github_light_default_primer_attribution(self):
+        inv, vendor = source_inventory()
+        record = next(c for c in inv["embedded"]["components"]
+                      if c["id"] == "ace-theme-github-light-default")
+        self.assertEqual(record["status"], "partial")
+        self.assertEqual(record["license"], "MIT")
+        self.assertIsNone(record["version"])
+        self.assertIsNone(record["ecosystem"])
+        self.assertEqual([loc["file"] for loc in record["locations"]],
+                         ["vendor/ace/theme-github_light_default.js"])
+        self.assertEqual(len(record["notices"]), 1)
+        path = record["notices"][0]
+        self.assertEqual(inv["embedded"]["notices"][path]["kind"], "whole-file")
+        self.assertIn(b"Copyright (c) 2020 Primer", read_file(PACKAGE, path))
+        component = next(c for c in sbom(inv, vendor)["components"]
+                         if c["bom-ref"] == "embedded:ace-theme-github-light-default")
+        self.assertNotIn("purl", component)
+        self.assertNotIn("version", component)

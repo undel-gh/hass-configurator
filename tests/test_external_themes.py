@@ -1,7 +1,7 @@
 """External theme evidence must not hide changes or imply license clearance."""
 import plistlib
 import unittest
-from scripts.audit_external_themes import compare_plist, verify_blob, reference, verify_historical_import, textmate_license_relation, verify_expected_comparison, input_rights_indicators, converter_input_status, historic_header, split_css_source, krtheme_input_relation, later_wrapper_declaration, verify_theme_history_coverage
+from scripts.audit_external_themes import compare_plist, verify_blob, reference, verify_historical_import, textmate_license_relation, verify_expected_comparison, input_rights_indicators, converter_input_status, historic_header, split_css_source, krtheme_input_relation, later_wrapper_declaration, verify_theme_history_coverage, verify_theme_dispositions
 from scripts.audit_supply_chain import git_blob_sha1
 
 
@@ -143,3 +143,29 @@ class ExternalThemeTests(unittest.TestCase):
         for retained, extra in (({"a", "b"}, later), ({"a", "b", "c"}, later + later)):
             with self.assertRaises(ValueError):
                 verify_theme_history_coverage(retained, early, additional, extra)
+
+    def test_disposition_matrix_rejects_notice_and_clearance_drift(self):
+        history = {"historical_ace_theme_licenses": {"themes": [{"theme": "kr_theme"}]},
+                   "additional_bsd_theme_wrappers": [],
+                   "post_bsd_themes": {"themes": [{"theme": "a", "wrapper_declaration": "root-only"}]},
+                   "theme_history_coverage": {"retained": ["a"]}}
+        inventory = {"components": [{"id": "external-a", "kind": "library",
+                                      "locations": [{"file": "vendor/ace/theme-a.js"}]}]}
+        def row(theme, decl, excluded, components):
+            return {"theme": theme, "historical_declaration": decl,
+                    "distribution": "excluded" if excluded else "retained",
+                    "disposition": "excluded-reassessment-open" if excluded else "retained-review-open",
+                    "additional_components": components, "review_priority": "standard",
+                    "remaining_review": "verify rights"}
+        matrix = {"schema": 1, "review_status": "independent-review-pending",
+                  "ace_source_commit": "68d7fd1c0f5ac50cdb610bf06b86074eab3be652",
+                  "rows": [row("kr_theme", "ajax-bsd", True, []),
+                           row("a", "root-only", False, ["external-a"])]}
+        self.assertEqual(verify_theme_dispositions(matrix, inventory, history), matrix)
+        matrix["rows"][1]["additional_components"] = []
+        with self.assertRaisesRegex(ValueError, "notice mapping"):
+            verify_theme_dispositions(matrix, inventory, history)
+        matrix["rows"][1]["additional_components"] = ["external-a"]
+        matrix["rows"][1]["disposition"] = "cleared"
+        with self.assertRaisesRegex(ValueError, "Unexpected theme disposition"):
+            verify_theme_dispositions(matrix, inventory, history)
