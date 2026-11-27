@@ -184,3 +184,18 @@ full archive notice preserves glob-to-regexp BSD-2-Clause terms; two
 Microsoft third-party notice files retained verbatim, not evidence of a
 specific LGPL dependency. More exact identity evidence and all remaining
 native/theme/snippet/lexer terms are required. No runtime code changed.
+
+## Selective rebuild research
+
+A separate read-only CI workflow reconstructs only the five retained linter
+workers in a disposable pinned upstream checkout. It materializes exact
+candidate npm archives at source-lock paths, plus explicit esbuild/Terser
+tool closure and YAML alias; no npm install or lifecycle scripts. Tool
+archives missing source-lock integrity are recorded as registry-integrity
+observations, not historical toolchain pins. The reviewed upstream builder
+is instrumented only to select retained nonconflict targets and collect
+esbuild metafiles. Both output forms are compared byte-for-byte with the
+pinned official linter package; actual contributing archive inputs and
+additional bootstrap/CSS generator input hashes are recorded. No generated
+JS is promoted. Failure/mismatch retains a report and blocks the research
+claim, not a reason to invent versions or alter shipped bytes.
