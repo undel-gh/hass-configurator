@@ -6,7 +6,8 @@ permissions:
   contents: read
 jobs:
   prepare:
-    if: github.repository == 'undel-gh/hass-configurator' && github.event.head_commit.message == 'chore: stage reviewed runtime transfer (#33)'
+    if: >-
+      github.repository == 'undel-gh/hass-configurator' && github.event.head_commit.message == 'chore: stage reviewed runtime transfer (#33)'
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
@@ -51,7 +52,8 @@ jobs:
           if-no-files-found: error
   commit:
     needs: prepare
-    if: github.repository == 'undel-gh/hass-configurator' && github.ref == 'refs/heads/feat/p1-ace-yaml-remediation-issue-33' && github.event.head_commit.message == 'chore: stage reviewed runtime transfer (#33)'
+    if: >-
+      github.repository == 'undel-gh/hass-configurator' && github.ref == 'refs/heads/feat/p1-ace-yaml-remediation-issue-33' && github.event.head_commit.message == 'chore: stage reviewed runtime transfer (#33)'
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     permissions:
