@@ -146,13 +146,15 @@ SOURCE_RELATIONS = {"literal-full-source-substring", "xqlint-two-require-renames
                     "browser-pack-standalone-prelude", "ace-theme-wrapper-amd-to-commonjs",
                     "ace-gruvbox-css-indent-guide", "ace-snippet-template-literal",
                     "ace-edifact-java-two-triggers", "ace-liquid-html-prefix",
-                    "ace-wollok-java-retained-blocks"}
+                    "ace-wollok-java-retained-blocks", "ace-lsl-identical-raw"}
 
 
 def embedded_source_relation(upstream, container, relation):
     """Apply only named, bounded source transformations to immutable blobs."""
     if not upstream or relation not in SOURCE_RELATIONS:
         raise ValueError("Invalid embedded source relation")
+    if relation == "ace-lsl-identical-raw":
+        return upstream == container and b"snippet CAMERA_ACTIVE\n" in upstream
     if relation == "ace-wollok-java-retained-blocks":
         # Partial shared-material relation only. Whole input bytes are separately
         # pinned by the network gate and the endpoint-to-current relation.

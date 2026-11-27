@@ -3021,6 +3021,71 @@
       "parent": "ace",
       "status": "partial",
       "version": null
+    },
+    {
+      "id": "ace-lsl-snippet-source-review",
+      "name": "LSL historical Builders Brewery snippet source review",
+      "parent": "ace",
+      "kind": "review",
+      "status": "partial",
+      "version": null,
+      "ecosystem": null,
+      "license": null,
+      "locations": [
+        {
+          "file": "vendor/ace/snippets/lsl.js",
+          "marker": "ace/snippets/lsl"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/36198a50f4bdef76c5044ba83df09d3298e90b6a/lib/ace/snippets/lsl.snippets",
+          "git_blob": "bc0d2eb9d0286050bbb56efa09cc02aaec500dba",
+          "marker": "snippet CAMERA_ACTIVE"
+        },
+        {
+          "url": "https://github.com/dazzle-lsl/linden-scripting-language/blob/d777b7ad20cfa223a368d8bdf379edfc58130f4f/ace/lib/ace/snippets/lsl.snippets",
+          "git_blob": "bc0d2eb9d0286050bbb56efa09cc02aaec500dba",
+          "marker": "snippet CAMERA_ACTIVE"
+        },
+        {
+          "url": "https://github.com/dazzle-lsl/linden-scripting-language/blob/54ef136c1eb3cb2703fb0b6b6e610918e03c217d/ace/lib/ace/snippets/lsl.snippets",
+          "git_blob": "352d26e7b4ed7389ddefb8365b4e2d985e63d037",
+          "marker": "snippet CAMERA_ACTIVE"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/fb0384329602f0ea99aa1fd983f094f7b0c31797/lib/ace/snippets/lsl.snippets",
+          "git_blob": "352d26e7b4ed7389ddefb8365b4e2d985e63d037",
+          "marker": "snippet CAMERA_ACTIVE"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/snippets/lsl.snippets.js",
+          "git_blob": "7e33bdc2855b5f7e3ff0cb5d4f5f546dc809ccf5",
+          "marker": "module.exports"
+        },
+        {
+          "url": "https://github.com/dazzle-lsl/linden-scripting-language/blob/54ef136c1eb3cb2703fb0b6b6e610918e03c217d/README.md",
+          "git_blob": "276b2a807b8991a1a0be3bb2b6e818e6012350c8",
+          "marker": "snippet files"
+        },
+        {
+          "url": "https://github.com/dazzle-lsl/linden-scripting-language/blob/54ef136c1eb3cb2703fb0b6b6e610918e03c217d/ace/README.md",
+          "git_blob": "978ba7615b0608435bdd30845597aa4aaf72cb43",
+          "marker": "Ace Editor"
+        },
+        {
+          "url": "https://github.com/dazzle-lsl/linden-scripting-language/blob/54ef136c1eb3cb2703fb0b6b6e610918e03c217d/sublimetext/LSL/other/kwdb/LICENSE.md",
+          "git_blob": "8cb9f32f550b7ca8ecf725066c437ee4b356bc18",
+          "marker": "GNU GENERAL PUBLIC LICENSE"
+        },
+        {
+          "url": "https://github.com/dazzle-lsl/linden-scripting-language/blob/54ef136c1eb3cb2703fb0b6b6e610918e03c217d/sublimetext/LSL/other/lindenlab-viewer/LICENSE.md",
+          "git_blob": "723f008e956b5c9b045d7139c444ecc222b7ef07",
+          "marker": "GNU LESSER GENERAL PUBLIC LICENSE"
+        }
+      ],
+      "notices": [],
+      "note": "Historical Builders Brewery repository preserved in dazzle-lsl fork: initial 2015 snapshot exactly matches 2014 Ace raw and 2015-09-18 21:42:30 UTC source exactly matches Ace 21:49:57 UTC endpoint; both histories have same contributor. Full raw equality and current static template relation checked by gate. No root or Ace-directory license found at that external snapshot; nested KWDB GPL-3.0 and viewer LGPL-2.1 texts are separate scope references, not proof of generated payload derivation or a license assignment. Original upstream direction for earliest import, API data source and rights remain open; no new library identity, notice or clearance."
     }
   ],
   "font_provenance": {
@@ -3060,7 +3125,8 @@
     "R5.3a expanded scoped SnipMate attribution to 30 retained payloads (22 unchanged, eight modified); 18 additional path-history patch transitions checked interactively with exact snapshot equality and historical Ace root BSD license blob. Network gate verifies eight additional historical endpoint-to-current static relations and historical import evidence pins, not patch replay itself. Other 22 nonempty payloads, empty stubs, wrapper and original third-party/contribution rights remain open; no release clearance.",
     "R5.3a remaining 22: all historical endpoint-to-current payloads matched, 19 distinct endpoint root LICENSE blobs checked. EDIFACT and Liquid proven bounded derivatives of already attributed Java and HTML, respectively; historical MIT scope expanded to 32. New named networked raw-to-raw relations and existing static wrapper relations pin both derived paths. Other 20 historical inputs and contribution rights remain open; no blanket BSD/MIT clearance, no curated exclusions.",
     "Io/Vala scoped source-specific attribution: 10/10 and 31/31 TextMate dictionaries checked by exact collection closure from pinned Io pre-import and Vala later MIT-licensed revisions. Vala earlier Daniel Lucraft rights, other mode/grammar inputs and independent review remain open. No package version/PURL or blanket clearance.",
-    "R5.3a Wollok: 33 SnipMate locations, 35 snippet payloads with active source-specific attribution including Io/Vala. Wollok shares 15 ordered triggers and eight headings with exact parent Java import blob; 16 unique ordered literal spans compared by bounded partial relation, not a complete historical patch reconstruction. Full raw/current pins checked independently. ABC intermediate Zupfnoter match and GPL/Commercial project declaration are research leads only; no GPL assignment, new notice, or exclusion. JSONiq/XQuery snippet origin separate from XQLint/REx remains open."
+    "R5.3a Wollok: 33 SnipMate locations, 35 snippet payloads with active source-specific attribution including Io/Vala. Wollok shares 15 ordered triggers and eight headings with exact parent Java import blob; 16 unique ordered literal spans compared by bounded partial relation, not a complete historical patch reconstruction. Full raw/current pins checked independently. ABC intermediate Zupfnoter match and GPL/Commercial project declaration are research leads only; no GPL assignment, new notice, or exclusion. JSONiq/XQuery snippet origin separate from XQLint/REx remains open.",
+    "R5.3a LSL review-only: exact 2014 and 2015 Ace raw snapshots match historical Builders Brewery fork; 481 triggers in final raw and exact current static module relation. External root/ace grant missing; nested KWDB GPL and viewer LGPL are distinct scoped leads, no license assignment or new SBOM library. Gobstones GPL web-project relationship, SQL Server later MIT reference templates and GraphQLSchema contribution evidence remain research-open."
   ],
   "notices": {
     "third_party/licenses/embedded/ace-legacy-linters.txt": {
@@ -4151,6 +4217,45 @@
         "marker": "module.exports"
       },
       "relation": "ace-snippet-template-literal"
+    },
+    {
+      "relation": "ace-lsl-identical-raw",
+      "upstream": {
+        "url": "https://github.com/ajaxorg/ace/blob/36198a50f4bdef76c5044ba83df09d3298e90b6a/lib/ace/snippets/lsl.snippets",
+        "git_blob": "bc0d2eb9d0286050bbb56efa09cc02aaec500dba",
+        "marker": "snippet CAMERA_ACTIVE"
+      },
+      "container": {
+        "url": "https://github.com/dazzle-lsl/linden-scripting-language/blob/d777b7ad20cfa223a368d8bdf379edfc58130f4f/ace/lib/ace/snippets/lsl.snippets",
+        "git_blob": "bc0d2eb9d0286050bbb56efa09cc02aaec500dba",
+        "marker": "snippet CAMERA_ACTIVE"
+      }
+    },
+    {
+      "relation": "ace-lsl-identical-raw",
+      "upstream": {
+        "url": "https://github.com/dazzle-lsl/linden-scripting-language/blob/54ef136c1eb3cb2703fb0b6b6e610918e03c217d/ace/lib/ace/snippets/lsl.snippets",
+        "git_blob": "352d26e7b4ed7389ddefb8365b4e2d985e63d037",
+        "marker": "snippet CAMERA_ACTIVE"
+      },
+      "container": {
+        "url": "https://github.com/ajaxorg/ace/blob/fb0384329602f0ea99aa1fd983f094f7b0c31797/lib/ace/snippets/lsl.snippets",
+        "git_blob": "352d26e7b4ed7389ddefb8365b4e2d985e63d037",
+        "marker": "snippet CAMERA_ACTIVE"
+      }
+    },
+    {
+      "relation": "ace-snippet-template-literal",
+      "upstream": {
+        "url": "https://github.com/ajaxorg/ace/blob/fb0384329602f0ea99aa1fd983f094f7b0c31797/lib/ace/snippets/lsl.snippets",
+        "git_blob": "352d26e7b4ed7389ddefb8365b4e2d985e63d037",
+        "marker": "snippet CAMERA_ACTIVE"
+      },
+      "container": {
+        "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/snippets/lsl.snippets.js",
+        "git_blob": "7e33bdc2855b5f7e3ff0cb5d4f5f546dc809ccf5",
+        "marker": "module.exports"
+      }
     }
   ],
   "worker_review": {

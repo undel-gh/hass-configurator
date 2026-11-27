@@ -534,6 +534,38 @@ class SupplyChainTests(unittest.TestCase):
         self.assertFalse(embedded_source_relation(upstream.replace(b"snippet thr\n", b"snippet other\n"),
                                                   container, relation))
 
+
+    def test_lsl_historical_source_review_is_exact_not_a_library(self):
+        inv, vendor = source_inventory()
+        record = next(c for c in inv["embedded"]["components"]
+                      if c["id"] == "ace-lsl-snippet-source-review")
+        self.assertEqual(record["kind"], "review")
+        self.assertEqual(record["status"], "partial")
+        self.assertIsNone(record["license"])
+        self.assertIsNone(record["version"])
+        self.assertIsNone(record["ecosystem"])
+        self.assertEqual(record["notices"], [])
+        self.assertEqual(record["locations"], [{"file": "vendor/ace/snippets/lsl.js",
+                                               "marker": "ace/snippets/lsl"}])
+        rels = inv["embedded"]["source_relationships"]
+        matches = [r for r in rels if r["relation"] == "ace-lsl-identical-raw"]
+        self.assertEqual(len(matches), 2)
+        self.assertEqual({r["upstream"]["git_blob"] for r in matches}, {
+            "bc0d2eb9d0286050bbb56efa09cc02aaec500dba", "352d26e7b4ed7389ddefb8365b4e2d985e63d037"})
+        for row in matches:
+            self.assertEqual(row["upstream"]["git_blob"], row["container"]["git_blob"])
+        current = [r for r in rels if r["relation"] == "ace-snippet-template-literal"
+                   and r["container"]["url"].endswith("/lsl.snippets.js")]
+        self.assertEqual(len(current), 1)
+        self.assertEqual(current[0]["upstream"]["git_blob"], "352d26e7b4ed7389ddefb8365b4e2d985e63d037")
+        self.assertEqual(current[0]["container"]["git_blob"], "7e33bdc2855b5f7e3ff0cb5d4f5f546dc809ccf5")
+        self.assertNotIn("embedded:ace-lsl-snippet-source-review",
+                         {c["bom-ref"] for c in sbom(inv, vendor)["components"]})
+        sample = b"snippet CAMERA_ACTIVE\n\tvalue\n"
+        self.assertTrue(embedded_source_relation(sample, sample, "ace-lsl-identical-raw"))
+        self.assertFalse(embedded_source_relation(sample, sample + b"\n", "ace-lsl-identical-raw"))
+        self.assertFalse(embedded_source_relation(b"other", b"other", "ace-lsl-identical-raw"))
+
     def test_snipmate_exact_and_modified_payload_attribution(self):
         inv, vendor = source_inventory()
         record = next(c for c in inv["embedded"]["components"]
@@ -563,7 +595,8 @@ class SupplyChainTests(unittest.TestCase):
                 self.assertEqual(inv["embedded"]["notices"][path]["kind"], "whole-file")
                 self.assertEqual(git_blob_sha1(read_file(PACKAGE, path)), blob)
         relations = [r for r in inv["embedded"]["source_relationships"]
-                     if r["relation"] == "ace-snippet-template-literal"]
+                     if r["relation"] == "ace-snippet-template-literal"
+                     and r["container"]["url"].rsplit("/", 1)[1] in {n + ".snippets.js" for n in names}]
         self.assertEqual(len(relations), len(names))
         self.assertEqual({r["container"]["url"].rsplit("/", 1)[1] for r in relations},
                          {n + ".snippets.js" for n in names})
