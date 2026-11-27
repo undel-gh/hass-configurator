@@ -5,6 +5,7 @@ import base64
 import datetime
 import hashlib
 import importlib.metadata as metadata
+import io
 import json
 from pathlib import Path, PurePosixPath
 import re
@@ -78,6 +79,48 @@ def git_blob_sha1(raw):
     return hashlib.sha1(b"blob " + str(len(raw)).encode("ascii") + b"\0" + raw).hexdigest()
 
 
+def check_npm_notice_pin(info):
+    """Strict immutable npm tarball/member identity for reference notices."""
+    name, version = info["name"], info["version"]
+    member = info["member"]
+    if (not re.fullmatch(r"(?:@[a-z0-9_.-]+/)?[a-z0-9_.-]+", name)
+            or any(part in {".", ".."} for part in name.split("/"))
+            or not re.fullmatch(r"[0-9][a-zA-Z0-9.+-]*", version)
+            or not re.fullmatch(r"package/[A-Za-z0-9_.-]+", member)
+            or member.split("/")[-1] in {".", ".."}):
+        raise ValueError("Invalid npm notice identity")
+    expected = ("https://registry.npmjs.org/" + name + "/-/" +
+                name.split("/")[-1] + "-" + version + ".tgz")
+    if (info["tarball"] != expected
+            or not re.fullmatch(r"[0-9a-f]{64}", info["archive_sha256"])
+            or not re.fullmatch(r"sha512-[A-Za-z0-9+/]{86}==", info["npm_integrity"])
+            or not re.fullmatch(r"[0-9a-f]{64}", info["sha256"])):
+        raise ValueError("Invalid npm notice archive pin")
+
+
+def verify_npm_notice(info, raw, local):
+    """No extraction or execution; exact member bytes, not a version proof."""
+    check_npm_notice_pin(info)
+    actual_sri = "sha512-" + base64.b64encode(hashlib.sha512(raw).digest()).decode("ascii")
+    if len(raw) > 32 * 1024 * 1024 or sha(raw) != info["archive_sha256"] or actual_sri != info["npm_integrity"]:
+        raise ValueError("Embedded npm archive mismatch: " + info["name"])
+    with tarfile.open(fileobj=io.BytesIO(raw), mode="r:gz") as archive:
+        def member(name, limit):
+            matches = [item for item in archive.getmembers() if item.name == name]
+            if len(matches) != 1 or not matches[0].isfile() or matches[0].size > limit:
+                raise ValueError("Invalid or duplicate npm notice member: " + name)
+            return archive.extractfile(matches[0]).read()
+        package = json.loads(member("package/package.json", 512 * 1024))
+        if (package.get("name"), package.get("version")) != (info["name"], info["version"]):
+            raise ValueError("Embedded npm notice package identity mismatch")
+        upstream = member(info["member"], 512 * 1024)
+    if sha(upstream) != info["sha256"] or upstream != local:
+        raise ValueError("Embedded npm notice bytes mismatch: " + info["member"])
+    return {"name": info["name"], "version": info["version"], "tarball": info["tarball"],
+            "archive_sha256": info["archive_sha256"], "member": info["member"],
+            "member_sha256": sha(upstream), "relation": "exact-archive-reference-member"}
+
+
 def validate_embedded(root, inv, vendor, embedded, notice_paths):
     """Parent ownership remains exclusive; embedded code can share containers."""
     if embedded["schema"] != 1 or not embedded["components"]:
@@ -129,8 +172,11 @@ def validate_embedded(root, inv, vendor, embedded, notice_paths):
     for name, info in embedded["notices"].items():
         if not name.startswith("third_party/licenses/embedded/"):
             raise ValueError("Invalid embedded notice path: " + name)
-        check_git_pin(info["source"], info["source_blob"])
-        if info["kind"] not in {"whole-file", "source-excerpt"}:
+        if info["kind"] == "npm-archive-member":
+            check_npm_notice_pin(info)
+        elif info["kind"] in {"whole-file", "source-excerpt"}:
+            check_git_pin(info["source"], info["source_blob"])
+        else:
             raise ValueError("Invalid embedded notice source kind: " + name)
     for relationship in embedded["source_relationships"]:
         if relationship["relation"] != "literal-full-source-substring":
@@ -157,8 +203,9 @@ def embedded_upstream_evidence(inv, fetch=None):
     if fetch is None:
         def fetch(url):
             with urlopen(url, timeout=25) as response:
-                raw = response.read(8 * 1024 * 1024 + 1)
-            if len(raw) > 8 * 1024 * 1024:
+                limit = (32 if url.startswith("https://registry.npmjs.org/") else 8) * 1024 * 1024
+                raw = response.read(limit + 1)
+            if len(raw) > limit:
                 raise ValueError("Embedded evidence exceeds size limit")
             return raw
     cache = {}
@@ -176,9 +223,18 @@ def embedded_upstream_evidence(inv, fetch=None):
             raw = verified(evidence["url"], evidence["git_blob"])
             if evidence["marker"].encode("utf-8") not in raw:
                 raise ValueError("Embedded upstream source marker missing: " + item["id"])
+    npm_cache = {}
+    npm_notices = []
     for path, notice in embedded["notices"].items():
-        raw = verified(notice["source"], notice["source_blob"])
         local = read_file(PACKAGE, path)
+        if notice["kind"] == "npm-archive-member":
+            check_npm_notice_pin(notice)
+            url = notice["tarball"]
+            if url not in npm_cache:
+                npm_cache[url] = fetch(url)
+            npm_notices.append({"path": path, **verify_npm_notice(notice, npm_cache[url], local)})
+            continue
+        raw = verified(notice["source"], notice["source_blob"])
         if ((notice["kind"] == "whole-file" and local != raw)
                 or (notice["kind"] == "source-excerpt" and local not in raw)):
             raise ValueError("Embedded upstream license text mismatch: " + path)
@@ -201,6 +257,7 @@ def embedded_upstream_evidence(inv, fetch=None):
                              for url, raw in sorted(cache.items())],
             "component_records": len(embedded["components"]),
             "notices_verified": len(embedded["notices"]),
+            "npm_archive_notices": npm_notices,
             "literal_source_relationships_verified": len(embedded["source_relationships"]),
             "font_lineage": "repository-byte-match; original CDN archive unresolved",
             "limitations": embedded["limitations"]}

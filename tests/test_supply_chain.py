@@ -1,5 +1,9 @@
 """Supply-chain evidence must fail closed on drift and incomplete scans."""
 import json
+import base64
+import hashlib
+import io
+import tarfile
 from pathlib import Path
 import shutil
 import tempfile
@@ -8,6 +12,7 @@ import unittest
 from scripts.audit_supply_chain import (
     PACKAGE, NOTICE, source_inventory, sbom, query_osv, scan_queries, verify_legacy_relation,
     read_file, EMBEDDED, immutable_raw_url, git_blob_sha1, embedded_upstream_evidence,
+    check_npm_notice_pin, verify_npm_notice,
 )
 
 
@@ -156,6 +161,51 @@ class SupplyChainTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Embedded upstream Git blob mismatch"):
             embedded_upstream_evidence(inv, fetch=lambda url: b"not the pinned source")
         self.assertEqual(git_blob_sha1(b""), "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391")
+
+    def test_npm_notice_exact_archive_and_member(self):
+        local = b"original notice\r\n"
+
+        def fixture(duplicate=False, link=False, wrong_identity=False):
+            buffer = io.BytesIO()
+            with tarfile.open(fileobj=buffer, mode="w:gz") as archive:
+                items = [("package/package.json", json.dumps({
+                    "name": "wrong" if wrong_identity else "@scope/pkg",
+                    "version": "1.2.3"}).encode()), ("package/LICENSE", local)]
+                if duplicate:
+                    items.append(items[-1])
+                for name, payload in items:
+                    info = tarfile.TarInfo(name)
+                    if link and name.endswith("LICENSE"):
+                        info.type = tarfile.SYMTYPE
+                        info.linkname = "package/package.json"
+                        archive.addfile(info)
+                    else:
+                        info.size = len(payload)
+                        archive.addfile(info, io.BytesIO(payload))
+            raw = buffer.getvalue()
+            pin = {"name": "@scope/pkg", "version": "1.2.3", "member": "package/LICENSE",
+                   "tarball": "https://registry.npmjs.org/@scope/pkg/-/pkg-1.2.3.tgz",
+                   "archive_sha256": hashlib.sha256(raw).hexdigest(),
+                   "npm_integrity": "sha512-" + base64.b64encode(hashlib.sha512(raw).digest()).decode(),
+                   "sha256": hashlib.sha256(local).hexdigest()}
+            return pin, raw
+
+        pin, raw = fixture()
+        self.assertEqual(verify_npm_notice(pin, raw, local)["relation"], "exact-archive-reference-member")
+        for change in ({"tarball": "https://example.invalid/a"}, {"member": "package/../LICENSE"},
+                       {"npm_integrity": "invalid"}):
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                check_npm_notice_pin({**pin, **change})
+        with self.assertRaisesRegex(ValueError, "archive mismatch"):
+            verify_npm_notice(pin, raw + b"x", local)
+        with self.assertRaisesRegex(ValueError, "bytes mismatch"):
+            verify_npm_notice(pin, raw, local.replace(b"\r\n", b"\n"))
+        for options, message in (({"duplicate": True}, "duplicate"),
+                                 ({"link": True}, "duplicate"),
+                                 ({"wrong_identity": True}, "identity mismatch")):
+            altered, payload = fixture(**options)
+            with self.subTest(options=options), self.assertRaisesRegex(ValueError, message):
+                verify_npm_notice(altered, payload, local)
 
     def test_legacy_bytes_and_notice_hashes(self):
         for name in ("js-yaml.min.js", "third_party/licenses/roboto.txt"):
