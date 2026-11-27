@@ -177,3 +177,10 @@ Ace Vala array and the 2014-11-13 licensed tree is identical to the pre-import
 2013 Snippets tree. The grant postdates Ace import; earlier Daniel Lucraft rights
 remain open. Both mappings are partial and limited to snippet payloads; no
 version, PURL, grammar rights, full clearance or risk acceptance asserted.
+
+Microsoft SSMS templates: original Microsoft Corporation MIT license retained
+as microsoft-ssms-templates-mit.txt. Official 2018 samples/templates grant and
+bounded shared blocks in Ace SQL Server createproc/createfn only (4+6 spans).
+The grant is later than the 2015 Ace contribution; original revision, modified
+content and remaining ten triggers are review-open. No blanket SQL Server MIT,
+package version or PURL asserted. See docs/ACE_SNIPPET_RESEARCH.md.

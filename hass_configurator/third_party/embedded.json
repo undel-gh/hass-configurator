@@ -3086,6 +3086,58 @@
       ],
       "notices": [],
       "note": "Historical Builders Brewery repository preserved in dazzle-lsl fork: initial 2015 snapshot exactly matches 2014 Ace raw and 2015-09-18 21:42:30 UTC source exactly matches Ace 21:49:57 UTC endpoint; both histories have same contributor. Full raw equality and current static template relation checked by gate. No root or Ace-directory license found at that external snapshot; nested KWDB GPL-3.0 and viewer LGPL-2.1 texts are separate scope references, not proof of generated payload derivation or a license assignment. Original upstream direction for earliest import, API data source and rights remain open; no new library identity, notice or clearance."
+    },
+    {
+      "id": "ace-sqlserver-microsoft-template-material",
+      "name": "Microsoft SSMS template material in Ace SQL Server snippets",
+      "parent": "ace",
+      "kind": "library",
+      "status": "partial",
+      "version": null,
+      "ecosystem": null,
+      "license": "MIT",
+      "locations": [
+        {
+          "file": "vendor/ace/snippets/sqlserver.js",
+          "marker": "ace/snippets/sqlserver"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/microsoft/sql-server-samples/blob/80d5bf59f8df98a4b1bc910a9424c77647896f00/samples/features/ssms-templates/Sql/Stored%20Procedure/Create%20Stored%20Procedure%20%28New%20Menu%29.sql",
+          "git_blob": "af6446ac87edcc649836882b4821a92342954024",
+          "marker": "CREATE PROCEDURE"
+        },
+        {
+          "url": "https://github.com/microsoft/sql-server-samples/blob/80d5bf59f8df98a4b1bc910a9424c77647896f00/samples/features/ssms-templates/Sql/Function/Create%20Scalar%20Function%20%28New%20Menu%29.sql",
+          "git_blob": "3261841c5cc34ca28113a745ebb5802e1caf461c",
+          "marker": "CREATE FUNCTION"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/cf0c81a25fa5373409b086d824e4405698622f64/lib/ace/snippets/sqlserver.snippets",
+          "git_blob": "403bd6bc551a0fcb224e84fd5c996a0ca6c26984",
+          "marker": "snippet createproc"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/snippets/sqlserver.snippets.js",
+          "git_blob": "18328505dc5a94e2c112e61e2413fbc2d3fda1c9",
+          "marker": "module.exports"
+        },
+        {
+          "url": "https://github.com/microsoft/sql-server-samples/blob/80d5bf59f8df98a4b1bc910a9424c77647896f00/license.txt",
+          "git_blob": "9d333bb098c152c0983042ca77f16ac0c8999441",
+          "marker": "Copyright (c) Microsoft Corporation"
+        },
+        {
+          "url": "https://github.com/microsoft/sql-server-samples/blob/80d5bf59f8df98a4b1bc910a9424c77647896f00/README.md",
+          "git_blob": "447895f7a617ec616864a3f04db52f7dae9bfb5b",
+          "marker": "These samples and templates are all licensed under the MIT license."
+        }
+      ],
+      "notices": [
+        "third_party/licenses/embedded/microsoft-ssms-templates-mit.txt"
+      ],
+      "note": "Source-specific partial attribution of retained Microsoft template material in createproc and createfn only. Official 2018 Microsoft MIT declaration explicitly covers these templates, later than Ace 2015 import; 4 procedure and 6 function bounded ordered source/target spans with exact placeholders/indentation/comment adaptations verified. This does not prove the original copy revision, whole-file derivation, retroactive rights for all material, or license for the other ten triggers. No package version, PURL or OSV identity."
     }
   ],
   "font_provenance": {
@@ -3126,7 +3178,8 @@
     "R5.3a remaining 22: all historical endpoint-to-current payloads matched, 19 distinct endpoint root LICENSE blobs checked. EDIFACT and Liquid proven bounded derivatives of already attributed Java and HTML, respectively; historical MIT scope expanded to 32. New named networked raw-to-raw relations and existing static wrapper relations pin both derived paths. Other 20 historical inputs and contribution rights remain open; no blanket BSD/MIT clearance, no curated exclusions.",
     "Io/Vala scoped source-specific attribution: 10/10 and 31/31 TextMate dictionaries checked by exact collection closure from pinned Io pre-import and Vala later MIT-licensed revisions. Vala earlier Daniel Lucraft rights, other mode/grammar inputs and independent review remain open. No package version/PURL or blanket clearance.",
     "R5.3a Wollok: 33 SnipMate locations, 35 snippet payloads with active source-specific attribution including Io/Vala. Wollok shares 15 ordered triggers and eight headings with exact parent Java import blob; 16 unique ordered literal spans compared by bounded partial relation, not a complete historical patch reconstruction. Full raw/current pins checked independently. ABC intermediate Zupfnoter match and GPL/Commercial project declaration are research leads only; no GPL assignment, new notice, or exclusion. JSONiq/XQuery snippet origin separate from XQLint/REx remains open.",
-    "R5.3a LSL review-only: exact 2014 and 2015 Ace raw snapshots match historical Builders Brewery fork; 481 triggers in final raw and exact current static module relation. External root/ace grant missing; nested KWDB GPL and viewer LGPL are distinct scoped leads, no license assignment or new SBOM library. Gobstones GPL web-project relationship, SQL Server later MIT reference templates and GraphQLSchema contribution evidence remain research-open."
+    "R5.3a LSL review-only: exact 2014 and 2015 Ace raw snapshots match historical Builders Brewery fork; 481 triggers in final raw and exact current static module relation. External root/ace grant missing; nested KWDB GPL and viewer LGPL are distinct scoped leads, no license assignment or new SBOM library. Gobstones GPL web-project relationship, SQL Server later MIT reference templates and GraphQLSchema contribution evidence remain research-open.",
+    "R5.3a SQL Server: official later 2018 Microsoft MIT templates scoped partial attribution (createproc/createfn, 4+6 ordered bounded spans). No proof of original 2015 source revision or all rights; other ten triggers unresolved. 36/52 active historical-material locations, LSL review-only. Remaining ten specialized raw payloads inspected and introduction history pinned in research; no automatic clearance from Ace BSD root or grammar citations."
   ],
   "notices": {
     "third_party/licenses/embedded/ace-legacy-linters.txt": {
@@ -3590,6 +3643,12 @@
       "sha256": "bd8d484dff2f6915f512e4bd089ac89b5f9787c0946b36a70065075588f71c38",
       "source": "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/LICENSE",
       "source_blob": "1ee64503bcb3ae31e5b01f5cf61e9a02846cb3a3"
+    },
+    "third_party/licenses/embedded/microsoft-ssms-templates-mit.txt": {
+      "kind": "whole-file",
+      "source": "https://github.com/microsoft/sql-server-samples/blob/80d5bf59f8df98a4b1bc910a9424c77647896f00/license.txt",
+      "source_blob": "9d333bb098c152c0983042ca77f16ac0c8999441",
+      "sha256": "201f3705979e932c92cd3c6ddbddf4dc3c71dcc5a82089a1e4018227cfe1cf09"
     }
   },
   "schema": 1,
@@ -4254,6 +4313,45 @@
       "container": {
         "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/snippets/lsl.snippets.js",
         "git_blob": "7e33bdc2855b5f7e3ff0cb5d4f5f546dc809ccf5",
+        "marker": "module.exports"
+      }
+    },
+    {
+      "relation": "ace-sqlserver-ms-procedure-shared",
+      "upstream": {
+        "url": "https://github.com/microsoft/sql-server-samples/blob/80d5bf59f8df98a4b1bc910a9424c77647896f00/samples/features/ssms-templates/Sql/Stored%20Procedure/Create%20Stored%20Procedure%20%28New%20Menu%29.sql",
+        "git_blob": "af6446ac87edcc649836882b4821a92342954024",
+        "marker": "CREATE PROCEDURE"
+      },
+      "container": {
+        "url": "https://github.com/ajaxorg/ace/blob/cf0c81a25fa5373409b086d824e4405698622f64/lib/ace/snippets/sqlserver.snippets",
+        "git_blob": "403bd6bc551a0fcb224e84fd5c996a0ca6c26984",
+        "marker": "snippet createproc"
+      }
+    },
+    {
+      "relation": "ace-sqlserver-ms-function-shared",
+      "upstream": {
+        "url": "https://github.com/microsoft/sql-server-samples/blob/80d5bf59f8df98a4b1bc910a9424c77647896f00/samples/features/ssms-templates/Sql/Function/Create%20Scalar%20Function%20%28New%20Menu%29.sql",
+        "git_blob": "3261841c5cc34ca28113a745ebb5802e1caf461c",
+        "marker": "CREATE FUNCTION"
+      },
+      "container": {
+        "url": "https://github.com/ajaxorg/ace/blob/cf0c81a25fa5373409b086d824e4405698622f64/lib/ace/snippets/sqlserver.snippets",
+        "git_blob": "403bd6bc551a0fcb224e84fd5c996a0ca6c26984",
+        "marker": "snippet createproc"
+      }
+    },
+    {
+      "relation": "ace-snippet-template-literal",
+      "upstream": {
+        "url": "https://github.com/ajaxorg/ace/blob/cf0c81a25fa5373409b086d824e4405698622f64/lib/ace/snippets/sqlserver.snippets",
+        "git_blob": "403bd6bc551a0fcb224e84fd5c996a0ca6c26984",
+        "marker": "snippet createproc"
+      },
+      "container": {
+        "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/snippets/sqlserver.snippets.js",
+        "git_blob": "18328505dc5a94e2c112e61e2413fbc2d3fda1c9",
         "marker": "module.exports"
       }
     }

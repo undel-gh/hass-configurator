@@ -14,6 +14,7 @@ from scripts.audit_supply_chain import (
     read_file, EMBEDDED, immutable_raw_url, git_blob_sha1, embedded_upstream_evidence,
     check_npm_notice_pin, verify_npm_notice, embedded_source_relation,
     textmate_snippet_collection, textmate_collection_records, textmate_plist_entry,
+    SQLSERVER_SHARED_BLOCKS, SQLSERVER_REFERENCE_PATHS, SQLSERVER_REFERENCE_REV,
 )
 
 
@@ -534,6 +535,56 @@ class SupplyChainTests(unittest.TestCase):
         self.assertFalse(embedded_source_relation(upstream.replace(b"snippet thr\n", b"snippet other\n"),
                                                   container, relation))
 
+
+
+    def test_sqlserver_microsoft_reference_scope_and_tamper(self):
+        from urllib.parse import quote
+        root = "https://github.com/microsoft/sql-server-samples/blob/" + SQLSERVER_REFERENCE_REV + "/"
+        for path in SQLSERVER_REFERENCE_PATHS:
+            url = root + quote(path, safe="/")
+            self.assertEqual(immutable_raw_url(url), url.replace("github.com/", "raw.githubusercontent.com/").replace("/blob/", "/"))
+            for bad in (url.replace("%20", "%2520", 1), url.replace("%28", "%28%2F", 1),
+                        url.replace("%20", "%20%00", 1), url.replace("New%20Menu", "Other%20Menu"),
+                        url.replace(SQLSERVER_REFERENCE_REV, "a" * 40), url + "#x",
+                        url.replace("microsoft/", "other/"), url.replace("%28", "%28%2E%2E", 1)):
+                with self.subTest(bad=bad), self.assertRaises(ValueError):
+                    immutable_raw_url(bad)
+        proc = "ace-sqlserver-ms-procedure-shared"
+        func = "ace-sqlserver-ms-function-shared"
+        blocks = SQLSERVER_SHARED_BLOCKS
+        source = lambda kind: b"upstream-only\n".join(a for a, _ in blocks[kind])
+        section = lambda kind: b"ace-only\n".join(b for _, b in blocks[kind])
+        raw = (b"# unrelated\nsnippet unrelated\n\tx\n# Create Procedure\nsnippet createproc\n"
+               + section(proc) + b"# Create Scalar Function\nsnippet createfn\n" + section(func))
+        for kind in (proc, func):
+            self.assertTrue(embedded_source_relation(source(kind), raw, kind))
+            self.assertFalse(embedded_source_relation(source(kind).replace(blocks[kind][0][0], b"changed"),
+                                                      raw, kind))
+            self.assertFalse(embedded_source_relation(source(kind), raw.replace(blocks[kind][0][1], b"changed", 1)
+                                                      if kind == proc else raw.replace(blocks[kind][0][1], b"changed"), kind))
+            self.assertFalse(embedded_source_relation(blocks[kind][0][0] + source(kind), raw, kind))
+        self.assertFalse(embedded_source_relation(source(proc), raw.replace(b"snippet createproc", b"snippet other"), proc))
+        self.assertFalse(embedded_source_relation(source(func), raw + b"\n", func))
+        self.assertTrue(embedded_source_relation(source(proc), raw.replace(b"\tx\n", b"\ty\n"), proc))
+        # Whole payload pins independently protect unshared material; partial comparator must not claim otherwise.
+
+    def test_sqlserver_microsoft_partial_inventory(self):
+        inv, vendor = source_inventory()
+        embedded = inv["embedded"]
+        record = next(c for c in embedded["components"] if c["id"] == "ace-sqlserver-microsoft-template-material")
+        self.assertEqual((record["status"], record["license"], record["version"], record["ecosystem"]),
+                         ("partial", "MIT", None, None))
+        self.assertEqual(record["notices"], ["third_party/licenses/embedded/microsoft-ssms-templates-mit.txt"])
+        self.assertEqual(git_blob_sha1(read_file(PACKAGE, record["notices"][0])),
+                         "9d333bb098c152c0983042ca77f16ac0c8999441")
+        for kind in SQLSERVER_SHARED_BLOCKS:
+            rows = [r for r in embedded["source_relationships"] if r["relation"] == kind]
+            self.assertEqual(len(rows), 1)
+            self.assertEqual(rows[0]["container"]["git_blob"], "403bd6bc551a0fcb224e84fd5c996a0ca6c26984")
+        component = next(c for c in sbom(inv, vendor)["components"] if c["bom-ref"] == "embedded:" + record["id"])
+        self.assertNotIn("purl", component)
+        self.assertNotIn("version", component)
+        self.assertFalse(any(q["package"]["name"] == record["name"] for q in scan_queries(inv, [])))
 
     def test_lsl_historical_source_review_is_exact_not_a_library(self):
         inv, vendor = source_inventory()

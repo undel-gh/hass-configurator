@@ -63,6 +63,13 @@ TEXTMATE_COLLECTIONS = {
 }
 TEXTMATE_ACE_REV = "68d7fd1c0f5ac50cdb610bf06b86074eab3be652"
 
+# Exactly two official reference template paths; no general encoded-path exception.
+SQLSERVER_REFERENCE_REV = "80d5bf59f8df98a4b1bc910a9424c77647896f00"
+SQLSERVER_REFERENCE_PATHS = {
+    "samples/features/ssms-templates/Sql/Stored Procedure/Create Stored Procedure (New Menu).sql",
+    "samples/features/ssms-templates/Sql/Function/Create Scalar Function (New Menu).sql",
+}
+
 
 def immutable_raw_url(url):
     """Only exact public GitHub commit/blob evidence, never mutable tags."""
@@ -79,8 +86,10 @@ def immutable_raw_url(url):
         allowed = any(f"{owner}/{repo}" == project and commit == revision
                       and decoded.endswith(extension)
                       for project, revision, extension, _, _ in TEXTMATE_COLLECTIONS.values())
-        if (not allowed or not re.fullmatch(r'Snippets/[A-Za-z0-9_. ()"@:\-]+', decoded)
-                or quote(decoded, safe="/") != filename):
+        textmate = allowed and re.fullmatch(r'Snippets/[A-Za-z0-9_. ()"@:\-]+', decoded)
+        ssms = (owner == "microsoft" and repo == "sql-server-samples"
+                and commit == SQLSERVER_REFERENCE_REV and decoded in SQLSERVER_REFERENCE_PATHS)
+        if (not (textmate or ssms) or quote(decoded, safe="/") != filename):
             raise ValueError("Unsafe encoded embedded evidence URL: " + url)
     path = PurePosixPath(filename)
     if (owner in {".", ".."} or repo in {".", ".."} or path.is_absolute()
@@ -146,13 +155,71 @@ SOURCE_RELATIONS = {"literal-full-source-substring", "xqlint-two-require-renames
                     "browser-pack-standalone-prelude", "ace-theme-wrapper-amd-to-commonjs",
                     "ace-gruvbox-css-indent-guide", "ace-snippet-template-literal",
                     "ace-edifact-java-two-triggers", "ace-liquid-html-prefix",
-                    "ace-wollok-java-retained-blocks", "ace-lsl-identical-raw"}
+                    "ace-wollok-java-retained-blocks", "ace-lsl-identical-raw",
+                    "ace-sqlserver-ms-procedure-shared", "ace-sqlserver-ms-function-shared"}
+
+
+SQLSERVER_SHARED_BLOCKS = {
+    "ace-sqlserver-ms-procedure-shared": (
+        (b"-- =============================================\n-- Author:\t\t<Author,,Name>\n-- Create date: <Create Date,,>\n-- Description:\t<Description,,>\n-- =============================================\nCREATE PROCEDURE <Procedure_Name, sysname, ProcedureName> \n",
+         b"\t-- =============================================\n\t-- Author:\t\t${1:Author}\n\t-- Create date: ${2:Date}\n\t-- Description:\t${3:Description}\n\t-- =============================================\n\tCREATE PROCEDURE ${4:Procedure_Name}\n"),
+        (b"\t-- Add the parameters for the stored procedure here\n",
+         b"\t\t${5:/*Add the parameters for the stored procedure here*/}\n"),
+        (b"AS\nBEGIN\n\t-- SET NOCOUNT ON added to prevent extra result sets from\n\t-- interfering with SELECT statements.\n\tSET NOCOUNT ON;\n",
+         b"\tAS\n\tBEGIN\n\t\t-- SET NOCOUNT ON added to prevent extra result sets from interfering with SELECT statements.\n\t\tSET NOCOUNT ON;\n"),
+        (b"END\nGO\n",
+         b"\tEND\n\tGO\n"),
+    ),
+    "ace-sqlserver-ms-function-shared": (
+        (b"-- =============================================\n-- Author:\t\t<Author,,Name>\n-- Create date: <Create Date, ,>\n-- Description:\t<Description, ,>\n-- =============================================\nCREATE FUNCTION <Scalar_Function_Name, sysname, FunctionName> \n",
+         b"\t-- =============================================\n\t-- Author:\t\t${1:Author}\n\t-- Create date: ${2:Date}\n\t-- Description:\t${3:Description}\n\t-- =============================================\n\tCREATE FUNCTION ${4:Scalar_Function_Name}\n"),
+        (b"\t-- Add the parameters for the function here\n",
+         b"\t\t-- Add the parameters for the function here\n"),
+        (b"RETURNS <Function_Data_Type, ,int>\nAS\nBEGIN\n",
+         b"\tRETURNS ${5:Function_Data_Type}\n\tAS\n\tBEGIN\n"),
+        (b"\tDECLARE <@ResultVar, sysname, @Result> <Function_Data_Type, ,int>\n",
+         b"\t\tDECLARE @Result ${5:Function_Data_Type}\n"),
+        (b"\t-- Add the T-SQL statements to compute the return value here\n",
+         b"\t\t${6:/*Add the T-SQL statements to compute the return value here*/}\n"),
+        (b"END\nGO\n",
+         b"\tEND\n\tGO"),
+    ),
+}
+
+
+def sqlserver_shared_blocks(upstream, container, relation):
+    # Deliberately partial: compare only fixed, distinctive spans in the
+    # designated trigger, not the other ten snippets or arbitrary SQL.
+    proc = relation == "ace-sqlserver-ms-procedure-shared"
+    trigger = b"\nsnippet createproc\n" if proc else b"\nsnippet createfn\n"
+    if container.count(trigger) != 1:
+        return False
+    section = container.split(trigger, 1)[1]
+    if proc:
+        boundary = b"# Create Scalar Function\nsnippet createfn\n"
+        if section.count(boundary) != 1:
+            return False
+        section = section.split(boundary, 1)[0]
+    if b"\nsnippet " in section:
+        return False
+    blocks = SQLSERVER_SHARED_BLOCKS[relation]
+    for raw, side in ((upstream, 0), (section, 1)):
+        end = 0
+        for pair in blocks:
+            block = pair[side]
+            start = raw.find(block, end)
+            if start < 0 or raw.count(block) != 1:
+                return False
+            end = start + len(block)
+    return section.endswith(blocks[-1][1])
 
 
 def embedded_source_relation(upstream, container, relation):
     """Apply only named, bounded source transformations to immutable blobs."""
     if not upstream or relation not in SOURCE_RELATIONS:
         raise ValueError("Invalid embedded source relation")
+    if relation in SQLSERVER_SHARED_BLOCKS:
+        return sqlserver_shared_blocks(upstream, container, relation)
     if relation == "ace-lsl-identical-raw":
         return upstream == container and b"snippet CAMERA_ACTIVE\n" in upstream
     if relation == "ace-wollok-java-retained-blocks":

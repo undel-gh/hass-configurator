@@ -502,3 +502,31 @@ Microsoft's official [sql-server-samples 80d5bf59](https://github.com/microsoft/
 [Initial f5a98d4f](https://github.com/ajaxorg/ace/commit/f5a98d4f87751e77eb0ac27bcfdd6dae2bf985b6), DxCx, 2017-04-17, added five templates for type/input/interface/union/enum; later [4cfeb90e](https://github.com/ajaxorg/ace/commit/4cfeb90e96b0fedb5e5b345b33e6f92830685dd5) rename from graphqlscheme to graphqlschema retains blob `32c6286c42d1b728bbd50840b177d8d9d7e73030`. No license marker inside raw, no external source found from distinctive placeholder search. Related mode has Ace BSD header, but not evidence of external snippet rights. Retain candidate pending contribution/source review; no new library or notice.
 
 This increment adds only an LSL review record, 3 source relations, test and research documentation. No new license notices or actual vendor/runtime/profile changes. 35/52 active historical attribution unchanged; LSL exact common source is additional review-only evidence. No exclusion without maintainer disposition, no overall clearance/issue closure/merge approval.
+
+
+## R5.3a follow-up — Microsoft SSMS partial attribution and ten remaining small payloads
+
+Baseline `4c74dfddf5b36c18dca3b4799b37dabc8970fb97`: exact-head workflows 46069221116, 46069221164, 46069221089 all SUCCESS; metadata only, artifact contents and independent reviews open.
+
+### SQL Server bounded retained-material gate
+
+Re-read both official 2018 Microsoft template files, historical Ace raw and current source module. Verified 4 unique ordered source/target spans for createproc and 6 for createfn (10 total); fixed pairs preserve specific header scaffold, placeholders, comments, NOCOUNT/DECLARE, return-value comment and boundaries, rather than loosely normalize SQL. Each source span occurs exactly once in its own Microsoft file, each target span once in its named Ace trigger and in order. Whole raw Git blobs independently pinned; exact raw-to-current static template relation. Partial comparator intentionally does not verify unrelated triggers or unshared content by itself. Two exact encoded paths allowed only at official Microsoft pinned revision; canonical percent roundtrip maintained, no general widening. Added exact original MIT notice (Git blob `9d333bb098c152c0983042ca77f16ac0c8999441`, SHA256 `201f3705979e932c92cd3c6ddbddf4dc3c71dcc5a82089a1e4018227cfe1cf09`, independently calculated against 1142-byte text and checked against Git identity). README specifically grants MIT for templates. New partial embedded record for source-specific material only, no claim that 2018 grant retroactively clears all 2015 modifications or other ten triggers. No version/PURL/OSV identity. Regression covers scope, tampered blocks, missing trigger, duplicate source blocks, changed EOF, canonical URL rejections and notice/SBOM mapping. Active historical-material coverage 35→36/52; not clearance.
+
+### Ten remaining small payloads — original contribution review inputs
+
+Re-read full historical endpoints (source URL for each is the Ace commit/path already recorded in the endpoint table). Intro commit metadata and complete raw content were inspected. Cedar modules are already static JS and count includes first trigger inside wrapper (7 and 6 respectively); others are raw. No individual grant established merely by absence of source markers.
+
+| Payload | Intro author/date (UTC) | Triggers | Source review observation |
+| --- | --- | ---: | --- |
+| cedar | Swolebrain, 2026-04-21 | 7 | Common permit/forbid, when/unless, annotation scaffolds; PR #5944 also credits Victor Moreno. |
+| cedarschema | Swolebrain, 2026-04-21 | 6 | Namespace/entity/action/type scaffolds. PR explicitly cites vscode-cedar TextMate grammar, not snippet source. |
+| csound_document | nwhetsell, 2017-09-03 | 1 | CsoundSynthesizer XML scaffold only; mode's Pygments/Csound citations are separate. |
+| csound_orchestra | nwhetsell, 2017-09-03 | 9 | Control, instrument and opcode scaffolds; no external snippet source marker. |
+| drools | GitHub author account not resolved, 2015-09-19 | 3 | Rule/query/declare scaffolds; intro mentions drools.org for language details. |
+| fsl | StoneCypher, 2018-11-20 | 1 | Machine metadata header; machine_license MIT is a generated-machine field, not a grant for the snippet. |
+| maze | geraintwhite, 2015-06-06 | 2 | Two entries share trigger >, distinct description assignment/if; do not collapse. |
+| razor | pmdevers, 2016-01-17 | 1 | 35-byte raw, one conditional scaffold (no final LF). |
+| robot | SullyJHF, 2022-01-18 / 2022-05-05 | 11 | Settings/keywords/test/variables/control scaffolds; initial and later contribution, source rights still open. |
+| velocity | rgriffith, 2013-12-04 | 6 | Common directives macro/foreach/if/import/set; commit describes added common directives. |
+
+Cedar external [vscode-cedar pre-import snapshot dcb96c61](https://github.com/cedar-policy/vscode-cedar/tree/dcb96c6138a9798c935082e36727c2954f7804b9) (2026-03-24) complete tree has no paths named snippet; LICENSE blob `67db8588217f266eb561f75fae738656325deac9`. No direct snippet source established; grammar attribution remains separate. FSL same-author [StoneCypher/jssm snapshot 3dac8f22](https://github.com/StoneCypher/jssm/tree/3dac8f22fe90f68a27a312795dc3a779d45d2325) (2018-05-20) has MIT LICENSE.md blob `a9422124822b6838b1917698e17e2efddb39973c`, example files (states of matter `bab0829451cffa6c5311aaaadeec990e88d75eea`, TCP/IP `02a4e91f213369969955017440b06d1403d7b12b`, HTTP `82b27cf4cc8d41f85afaff4a0e6b468f29edb59d`) share machine metadata conventions but not the exact header. No MIT reassignment for FSL. These are limited source/intro reviews, not exhaustive searches or proof of originality. All ten remain review-open until disposition and independent acceptance. Next: consolidate per-payload evidence/disposition matrix and targeted remaining source leads (including actual Robot template history, Csound source candidates, and upstream contribution grants). No runtime/profile/exclusion change.
