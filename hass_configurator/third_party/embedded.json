@@ -440,7 +440,7 @@
         }
       ],
       "name": "Ace theme conversion and snippet attribution review",
-      "note": "Current source tool/tmthemes/LICENSE has explicit per-file exceptions, and tmtheme.js maps only a subset of themes to TextMate files. tmsnippets.js is a generic converter, not proof of individual snippet origin. Dracula MIT block separately mapped. Per-file scan and original payload comparison are required; absence of a marker is not blanket BSD clearance.",
+      "note": "Current source tool/tmthemes/LICENSE has explicit per-file exceptions, and tmtheme.js maps only a subset of themes to TextMate files. tmsnippets.js is a generic converter, not proof of individual snippet origin. Dracula MIT block separately mapped. Per-file scan and original payload comparison are required; absence of a marker is not blanket BSD clearance. Research #4 verified 47 theme and 50 snippet static payloads; remaining packaging cases investigated separately. Per-file original lineage/terms remain open.",
       "notices": [
         "third_party/licenses/embedded/ace-tmthemes-reference.txt"
       ],
@@ -1463,6 +1463,36 @@
         "third_party/licenses/embedded/browser-pack-prelude-reference.txt"
       ],
       "note": "Exact browser-pack prelude code matches both Ace lexer prefixes after removing comment-only/empty lines and changing one return to standalone entry export. Same blob in tags 3.1.0, 3.1.1, 3.2.0 and 4.0.0; exact package version not asserted. Original MIT notice retained from 3.1.0 reference. Only loader fragment shipped, no npm PURL or version query."
+    },
+    {
+      "id": "ace-native-base-source-review",
+      "name": "Native Ace 1.45.2 base worker source mapping",
+      "parent": "ace",
+      "kind": "review",
+      "status": "partial",
+      "version": null,
+      "ecosystem": null,
+      "license": "BSD-3-Clause",
+      "locations": [
+        {
+          "file": "vendor/ace/worker-base.js",
+          "marker": "ace/worker/mirror"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-base.js",
+          "git_blob": "42ab3fa593c9b19d6ca2ea1d17ef213c5fda30a1",
+          "marker": "ace/worker/mirror"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-noconflict/worker-base.js",
+          "git_blob": "e12f86588e6dc55c1176d2df0c98d35e07d86c83",
+          "marker": "ace/worker/mirror"
+        }
+      ],
+      "notices": [],
+      "note": "Parent Ace BSD-3-Clause notice applies to native Ace code; not a new npm component. Research #4 run 46014275424 artifact 15205796171: exact bootstrap, exact nine-module unminified closure and 9/9 source AST relations after upstream TS 5.9.2 transformation; pinned official minified archive unchanged. No raw native minified rebuild or independent license clearance claimed."
     }
   ],
   "font_provenance": {
@@ -1488,7 +1518,8 @@
     "Curated #37 runtime has six workers. Retired worker containers and previous mappings preserved in docs/history/ace-1.45.2-full-embedded.json. Removed XML Lodash/Chevrotain, CoffeeScript and Lua mappings no longer describe a shipped container; retained-assets scan and installed closure review required before final component absence or risk disposition. Historical notice texts retained conservatively.",
     "All 15 retained replacement-worker source-lock candidate versions now have exact reconstructed minified runtime evidence from 16 original package paths, plus pinned CRLF-to-LF relation for published unminified forms. All 15 original candidate archives revalidated; native base, theme/snippets, XQuery lexer/generator terms, nested source-level notices and independent final review remain open. No public-release approval.",
     "Retained native/theme/snippet evidence being collected; REx v5.30 original output grant, Browserify loader and grammar lineage remain unresolved. Historical libc++ license/credits reference added for estraverse MIT-adapted fragment; exact revision not asserted. Dracula MIT source copyright notice separately retained.",
-    "XQLint retained source closure expanded to both shared lexer and two language wrappers; browser-pack prelude bounded adaptation verified, MIT notice retained. REx historical output/grammar licensing remains unresolved. No runtime version asserted for browser-pack."
+    "XQLint retained source closure expanded to both shared lexer and two language wrappers; browser-pack prelude bounded adaptation verified, MIT notice retained. REx historical output/grammar licensing remains unresolved. No runtime version asserted for browser-pack.",
+    "Research #4 native base source mapping verified; review record is not a new SBOM component. Browser-pack loader attribution recovered; exact package version and REx historical output/grammar grant remain open. Theme/snippet source equality is not historical license clearance."
   ],
   "notices": {
     "third_party/licenses/embedded/ace-legacy-linters.txt": {
@@ -1985,8 +2016,8 @@
   ],
   "worker_review": {
     "vendor/ace/worker-base.js": {
-      "note": "Ace 1.45.2 exact build verified; full current worker dependencies, versions and notices not cleared.",
-      "status": "open-review"
+      "status": "component-mapping",
+      "note": "Native Ace 1.45.2 parent-owned source mapping verified in research #4; see ace-native-base-source-review. Independent review pending; not ace-code 1.43.6 or linter package."
     },
     "vendor/ace/worker-css.js": {
       "status": "component-mapping",

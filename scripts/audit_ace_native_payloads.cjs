@@ -102,9 +102,29 @@ function staticComparison(src, plain, mini) {
     });
 }
 function stub(name) {
-    return canonical('; (function() { ace.require([' + JSON.stringify("ace/snippets/" + name) +
-        '], function(m) { if (typeof module == "object" && typeof exports == "object" && module) { module.exports = m; } }); })();');
+    return ';                (function() {\n' +
+        '                    ace.require([' + JSON.stringify("ace/snippets/" + name) + '], function(m) {\n' +
+        '                        if (typeof module == "object" && typeof exports == "object" && module) {\n' +
+        '                            module.exports = m;\n' +
+        '                        }\n' +
+        '                    });\n' +
+        '                })();\n' +
+        '            ';
 }
+function sourcePath(id) {
+    const candidates = ["src/" + id.slice(4) + ".js", "lib/ace/" + id.slice(4) + ".js"];
+    return candidates.find(name => Object.hasOwn(report.sources, name));
+}
+function exactEmptyStub(name, plain, mini) {
+    const id = "ace/snippets/" + name;
+    return !sourcePath(id) && !sourcePath(id + ".snippets") &&
+        plain === "\n" + stub(name) && mini === stub(name);
+}
+// Positive and negative controls: reject added code, wrong language and
+// even a changed wrapper; only the published generated template qualifies.
+assert(exactEmptyStub("abap", "\n" + stub("abap"), stub("abap")));
+assert(!exactEmptyStub("abap", "\n" + stub("abap"), stub("abap") + "\nfoo();"));
+assert(!exactEmptyStub("abap", "\n" + stub("ada"), stub("ada")));
 function native() {
     const bootstrap = read(source, "lib/ace/worker/worker.js");
     const raw = read(path.join(work, "plain"), "worker-base.js");
@@ -149,13 +169,13 @@ function asset(row) {
     const info = {...row, category: dir, name: basename, published_modules: [...p.keys()],
                   minified_modules: [...m.keys()], source_files: [], payloads: []};
     if (!p.size && !m.size && !isTheme) {
-        info.status = canonical(plain) === stub(basename) && canonical(mini) === stub(basename) ?
+        info.status = exactEmptyStub(basename, plain, mini) ?
             "exact-generated-empty-stub" : "unresolved-empty-or-loader";
         return info;
     }
     for (const id of p.keys()) {
-        const file = "src/" + id.slice(4) + ".js";
-        const exists = Object.hasOwn(report.sources, file);
+        const file = sourcePath(id);
+        const exists = file !== undefined;
         const item = {module: id, source: file, source_present: exists, minified_module_present: m.has(id)};
         if (exists) {
             const raw = read(source, file);
@@ -167,6 +187,19 @@ function asset(row) {
         }
         info.source_files.push(item);
     }
+    // TextMate CSS is already in the core bundle, not repeated in its theme wrapper.
+    if (name === "theme-textmate.js") {
+        const id = "ace/theme/textmate-css", file = sourcePath(id);
+        const corePlain = modules(read(path.join(work, "plain"), "ace.js")).get(id);
+        const coreMini = modules(read(path.join(work, "mini"), "ace.js")).get(id);
+        if (file && corePlain && coreMini) {
+            const raw = read(source, file);
+            const comparisons = staticComparison(dataAssignments(raw, "exports", "module"), payload(corePlain), payload(coreMini));
+            info.source_files.push({module: id, source: file, source_present: true,
+                minified_module_present: true, container: "ace.js"});
+            info.payloads.push(...comparisons.map(v => ({module: id, container: "ace.js", ...v})));
+        }
+    }
     info.status = "source-review-required";
     if (JSON.stringify([...p.keys()].sort()) === JSON.stringify([...m.keys()].sort()) &&
         p.has(base) && info.source_files.every(x => x.source_present && x.minified_module_present) &&
@@ -176,7 +209,7 @@ function asset(row) {
 }
 try {
     report.native = native();
-    report.theme_snippet_assets = report.assets.filter(a => a.file !== "worker-base.js").map(asset);
+    report.theme_snippet_assets = report.assets.filter(a => a.file.startsWith("theme-") || a.file.startsWith("snippets/")).map(asset);
     report.status = report.native.all_source_relations_match ? "native-source-mapped-payload-review-open" : "native-source-mismatch";
     console.log("Native module relations:", report.native.modules.filter(m => m.ast_equal).length, "/", report.native.modules.length);
     const stats = {};

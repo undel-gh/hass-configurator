@@ -60,7 +60,7 @@ class WorkerAttributionTests(unittest.TestCase):
                       "package/src-noconflict/" + name: b"plain"}) as ace:
             with archive({}) as linters:
                 row = audit.compare_worker(ace, linters, name, b"min", {})
-                self.assertEqual(row["status"], "native-worker-review-open")
+                self.assertEqual(row["status"], "native-worker-separate-source-audit")
                 self.assertEqual(row["source_lock_candidates"], [])
 
     def test_notice_source_lock_sri_mismatch_fails(self):

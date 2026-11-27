@@ -99,7 +99,7 @@ def compare_worker(ace, linters, worker, actual, packages):
     row = {"worker": worker, "shipped_sha256": sha(actual),
            "ace_unminified_sha256": sha(plain)}
     if worker not in REPLACEMENTS:
-        row.update({"status": "native-worker-review-open",
+        row.update({"status": "native-worker-separate-source-audit",
                     "source_lock_candidates": []})
         return row
     candidate = exact_member(linters, "package/build/" + min_name)

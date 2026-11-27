@@ -296,3 +296,24 @@ Research #3 failed because one historic TextMate plist is malformed XML
 (ExpatError). Preserve error in per-file report rather than stop scanning
 or infer no notice; raw source hashes and textual evidence still checked.
 No native/theme result claimed from the failed job.
+
+## Research #4: native source mapping and first theme/snippet pass
+
+At 2ecdaf8f, research #4 (46014275424) succeeded in both jobs. Actual
+native artifact 15205796171 SHA-256
+246efcaf74d4e23444a739982acf96c48ce1b198c2f8ea946ed4307cfc063ad1;
+rebuild artifact 15205041609 SHA-256
+25e1879338575ef65b4736ae89c2fe1f6ff08e9e5e025be702014cdedd55cb8e.
+CRC and published hashes verified. Native bootstrap exact, nine expected
+modules and nine canonical source/TypeScript relations equal. Parent Ace
+BSD-3-Clause notice; no additional runtime npm component. Raw native
+minified rebuild and independent review not claimed. TS archive now pinned.
+
+First pass: 48 themes (47 static payload equal; TextMate wrapper needs
+core ace.js CSS), 202 snippets (50 static payload equal, two legacy
+lib/ace/snippets sources and 150 loader-only candidates unresolved by the
+first comparator). Follow-up checks use exact loader template, both source
+locations and core CSS, and record converter input provenance per theme.
+Brilliance Black and Brilliance Dull historical plist files are malformed;
+neither is a current converter mapping. Preserve parse errors; no blanket
+license inference. Per-file origin/terms remain open even for equal data.

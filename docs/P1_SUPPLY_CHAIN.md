@@ -453,3 +453,11 @@ permission from the modern Apache-2.0 generator license. Retained XQuery/
 JSONiq grammar and Browserify-style wrapper attribution remain release
 blockers. Native base and all theme/snippet per-file lineage are reviewed
 separately. No risk waiver, no change to #37 physical worker removal.
+
+Research #4 verified native base source mapping (exact bootstrap and nine
+modules); parent Ace notice, independent review pending. XQLint shared
+lexer and wrappers have exact bounded source relations, and browser-pack
+prelude MIT notice is recovered. This supersedes the earlier unresolved
+wrapper attribution; exact browser-pack package version is not asserted.
+REx historical output grant and grammar lineage remain open, as do original
+theme/snippet terms. No scope change or release approval.

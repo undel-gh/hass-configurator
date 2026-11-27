@@ -50,6 +50,8 @@ NOTICE_PATTERN = re.compile(
     r"redistribution|ported from|adapted from|based on|taken from|"
     r"https?://|github\.com|author|contributor", re.I)
 MAX_ARCHIVE = 64 * 1024 * 1024
+TS_SHA256 = "67a3bc82e822b8f45f653a80fc3a9730d23214d36c83ba85dd7f5abebee82062"
+TS_SRI = "sha512-CWBzXQrc/qOkhidw1OzBTQuYRbfyxDXJMVJ1XNwUHGROVmuaeiEm3OslpZ1RV96d7SKKjZKrSJu3+t/xlw3R9A=="
 
 
 def fetch(url):
@@ -99,7 +101,7 @@ def main():
         source_rows[path] = {"git_blob": actual, "sha256": sha(data), "notice_hits": notice_scan(data)}
     # Exact source files from the immutable checkout, including per-file
     # TextMate exception evidence. Never infer a license from missing matches.
-    for directory in ("src/theme", "src/snippets", "tool/tmthemes"):
+    for directory in ("src/theme", "src/snippets", "lib/ace/snippets", "tool/tmthemes"):
         for path in sorted((source / directory).iterdir()):
             if not path.is_file():
                 continue
@@ -114,8 +116,67 @@ def main():
                 except (ValueError, plistlib.InvalidFileException, TypeError, ExpatError) as exc:
                     row["plist_parse_error"] = str(exc)
             source_rows[name] = row
+    converter = read_file(source, "tool/tmtheme.js").decode("utf-8")
+    mapping_block = converter.split("var themes = {", 1)[1].split("\n};", 1)[0]
+    theme_inputs = {}
+    for name, title in re.findall(r'^\s*"([a-z_]+)": "([^"]+)"\s*,?\s*
+    assets = []
+    with tarfile.open(fileobj=io.BytesIO(raw), mode="r:gz") as archive:
+        for name in selected:
+            plain = exact_member(archive, "package/src-noconflict/" + name)
+            mini = exact_member(archive, "package/src-min-noconflict/" + name)
+            require(sha(mini) == lock["files_sha256"][name] and
+                    mini == read_file(ROOT / "hass_configurator", "vendor/ace/" + name),
+                    "Shipped resource mismatch: " + name)
+            for folder, data in (("plain", plain), ("mini", mini)):
+                path = work / folder / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(data)
+            assets.append({"file": name, "published_unminified_sha256": sha(plain),
+                           "shipped_minified_sha256": sha(mini)})
+    # Upstream builder pins this TypeScript version. Record the observed
+    # registry integrity and archive hash; not a historical toolchain lock.
+    package = json.loads(read_file(source, "package.json"))
+    version = package["devDependencies"]["typescript"]
+    require(version == "5.9.2", "Unexpected native TypeScript version")
+    meta = json.loads(fetch("https://registry.npmjs.org/typescript/" + version))
+    url = "https://registry.npmjs.org/typescript/-/typescript-" + version + ".tgz"
+    require(meta["name"] == "typescript" and meta["version"] == version and
+            meta["dist"]["tarball"] == url, "TypeScript registry identity mismatch")
+    ts = fetch(url)
+    require(sri(ts) == meta["dist"]["integrity"] == TS_SRI and sha(ts) == TS_SHA256,
+            "TypeScript archive pin mismatch")
+    materialize(ts, work / "typescript", "typescript", version)
+    report = {
+        "schema": 1,
+        "status": "source-audit-in-progress",
+        "source_checkout": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
+        "ace_source_commit": ACE_COMMIT, "ace_build_commit": BUILD_COMMIT,
+        "ace_archive_sha256": sha(raw),
+        "typescript": {"version": version, "archive_sha256": sha(ts), "integrity": sri(ts),
+                       "provenance": "upstream declared version, exact archive observed in research #4 and now pinned"},
+        "sources": source_rows, "assets": assets, "theme_converter_inputs": theme_inputs,
+        "native_sources": {key: value[0] for key, value in NATIVE.items()},
+        "limitations": [
+            "Native source comparison uses upstream transpilation and AST printer without comments; not a raw rebuild of the native minified file.",
+            "Theme/snippet static data comparison and marker scans do not establish historical authorship, licensing, or absence of additional terms.",
+            "No generated or transformed runtime files are promoted; no upstream JS is executed.",
+        ],
+    }
+    out.write_text(json.dumps(report, indent=2, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8")
+    subprocess.run(["node", str(ROOT / "scripts/audit_ace_native_payloads.cjs"), str(source),
+                    str(work), str(out)], check=True)
+
+
+if __name__ == "__main__":
+    main()
+, mapping_block, re.M):
+        filename = "tool/tmthemes/" + title + ".tmTheme"
+        theme_inputs[name] = {"source": filename, "present": filename in source_rows,
+                              "evidence": source_rows.get(filename),
+                              "relation": "converter-input-reference-not-license-clearance"}
     selected = sorted(name for name in lock["files_sha256"] if
-                      name == "worker-base.js" or name.startswith(("theme-", "snippets/")))
+                      name in {"worker-base.js", "ace.js"} or name.startswith(("theme-", "snippets/")))
     assets = []
     with tarfile.open(fileobj=io.BytesIO(raw), mode="r:gz") as archive:
         for name in selected:
