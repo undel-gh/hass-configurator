@@ -86,6 +86,7 @@ No npm archive notice substituted into the runtime without review.
 
 #351 source artifact [15187533994](https://github.com/undel-gh/hass-configurator/actions/runs/45978519039/artifacts/15187533994), exact HEAD 5c25067e2e1311fc70714e0e928ca527fe4b03db: downloaded and inspected, CRC and SHA-256
 4bbf25465cf6fee3b2bb5c3cb364f35afffd18dfe12a560784938c270b3ad389 match.
+Round 9 reviewer 2 reported HTTP 404 for the historical browser artifact link (P4-5, pre-existing; actual reference is here, not ACE_SNIPPET_RESEARCH.md). Rechecked 2026-11-28 through authenticated GitHub Actions API: artifact 15187533994 is listed under [run 45978519039](https://github.com/undel-gh/hass-configurator/actions/runs/45978519039), expired=false; downloaded actual ZIP again, CRC clean for all seven members and same published SHA-256. Retain original ID and digest; unauthenticated access may be unavailable and future retention expiry is possible. The reviewer's 404 is not evidence of archive deletion or failed historical verification.
 All eight minified **and** unminified worker pairs match the official
 ace-legacy-linters 1.0.2 npm archive byte-for-byte. Archive SHA-256
 3b816b72064cbe56412885b2a22703ac2dbdc13784ece24bed46b5ee9c0a435f.
