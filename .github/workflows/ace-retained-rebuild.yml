@@ -1,0 +1,74 @@
+name: Ace retained worker rebuild research
+on:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  retained-rebuild:
+    name: Rebuild five retained Ace workers (research only)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Obtain exact upstream source in disposable checkout
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/hc-retained-rebuild-evidence
+          git init /tmp/hc-retained-rebuild
+          git -C /tmp/hc-retained-rebuild remote add origin https://github.com/mkslanc/ace-linters.git
+          git -C /tmp/hc-retained-rebuild fetch --depth=1 origin e0d223c5a880cb2f258c96ccd22feaaffb29e5a5
+          git -C /tmp/hc-retained-rebuild checkout --detach FETCH_HEAD
+      - name: Materialize pinned archives without npm scripts and reproduce outputs
+        run: |
+          python scripts/rebuild_retained_ace.py --source /tmp/hc-retained-rebuild --report /tmp/hc-retained-rebuild-evidence/rebuild.json
+      - name: Retain actual rebuild evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ace-retained-rebuild-research
+          path: /tmp/hc-retained-rebuild-evidence/
+          if-no-files-found: warn
+
+  native-payload-research:
+    name: Native Ace base and theme/snippet evidence (research only)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Obtain pinned source and Ace archive
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/hc-native-evidence
+          git init /tmp/hc-native-source
+          git -C /tmp/hc-native-source remote add origin https://github.com/ajaxorg/ace.git
+          git -C /tmp/hc-native-source fetch --depth=1 origin 68d7fd1c0f5ac50cdb610bf06b86074eab3be652
+          git -C /tmp/hc-native-source checkout --detach FETCH_HEAD
+          npm pack ace-builds@1.45.2 --ignore-scripts --silent --pack-destination /tmp
+      - name: Compare native module sources and static theme/snippet payloads
+        run: |
+          python scripts/audit_ace_native.py --source /tmp/hc-native-source --ace /tmp/ace-builds-1.45.2.tgz --work /tmp/hc-native-work --output /tmp/hc-native-evidence/native-payloads.json
+      - name: Retain source and payload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ace-native-payload-research
+          path: /tmp/hc-native-evidence/
+          if-no-files-found: warn

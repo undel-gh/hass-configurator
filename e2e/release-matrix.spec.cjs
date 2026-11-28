@@ -145,3 +145,58 @@ test('new tab retains the application base, including simulated ingress', async 
   await popup.close();
   assertClean();
 });
+
+for (const [extension, modeName, before, after] of [
+  ['xml', 'xml', '<root>before</root>\n', '<root>after</root>\n'],
+  ['php', 'php', '<?php echo "before"; ?>\n', '<?php echo "after"; ?>\n'],
+  ['lua', 'lua', 'local value = "before"\n', 'local value = "after"\n'],
+  ['coffee', 'coffee', 'value = "before"\n', 'value = "after"\n'],
+  ['xq', 'xquery', '<root>before</root>\n', '<root>after</root>\n']
+]) {
+  test('file browser keeps editing and saving without ' + modeName + ' worker', async ({ page }, info) => {
+    test.skip(!workspace, 'E2E_WORKSPACE required');
+    const directory = path.resolve(workspace);
+    fs.mkdirSync(directory, { recursive: true });
+    const name = 'curated-roundtrip-' + info.workerIndex + '.' + extension;
+    const filename = path.join(directory, name);
+    fs.writeFileSync(filename, before, 'utf8');
+    const forbidden = [];
+    page.on('request', req => {
+      if (/\/worker-(xml|php|lua|coffee|xquery)\.js$/.test(new URL(req.url()).pathname))
+        forbidden.push(req.url());
+    });
+    try {
+      const assertClean = await guardNetwork(page);
+      await page.goto(server + '/', { waitUntil: 'domcontentloaded' });
+      await expect.poll(() => page.evaluate(() => Boolean(window.editor))).toBe(true);
+      await page.evaluate(dir => listdir(dir), directory);
+      await expect(page.locator('#fbheader')).toHaveText(directory);
+      const entry = page.locator('#fbelements li[title="' + name + '"]');
+      await expect(entry).toBeVisible();
+      await page.locator('a.files-collapse').first().click();
+      await entry.locator('a').first().click();
+      await expect(page.locator('#currentfile')).toHaveValue(filename);
+      await expect.poll(() => page.evaluate(() => editor.getValue())).toBe(before);
+      await page.evaluate(name => new Promise(resolve => {
+        editor.session.setUseWorker(true);
+        editor.session.setMode('ace/mode/' + name, resolve);
+      }), modeName);
+      expect(await page.evaluate(() => ({
+        mode: editor.session.getMode().$id,
+        worker: Boolean(editor.session.$worker),
+        preference: editor.session.getUseWorker(),
+        tokens: editor.session.getTokens(0).map(token => token.type)
+      }))).toMatchObject({ mode: 'ace/mode/' + modeName, worker: false, preference: true });
+      // Actual tokenizer remains loaded; do not equate no worker with text mode.
+      expect(await page.evaluate(() => editor.session.getTokens(0).some(t => t.type !== 'text'))).toBe(true);
+      await page.evaluate(value => { editor.setValue(value, -1); save_check(); }, after);
+      await expect.poll(() => fs.readFileSync(filename, 'utf8')).toBe(after);
+      await page.reload({ waitUntil: 'domcontentloaded' });
+      await expect.poll(() => page.evaluate(() => editor.getValue())).toBe(after);
+      expect(forbidden).toEqual([]);
+      assertClean();
+    } finally {
+      fs.rmSync(filename, { force: true });
+    }
+  });
+}

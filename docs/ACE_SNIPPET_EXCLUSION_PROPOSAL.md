@@ -1,0 +1,65 @@
+# R5.3c — snippet-only exclusion decision record
+
+Status: **maintainer approved; implementation committed, exact-HEAD verification pending**. On 2026-11-28 the maintainer approved all four snippet-only exclusions on product relevance/cost grounds. No rights outreach; no mode removal or merge authorization. Historical proposals below are superseded by the approved decision.
+Baseline `c32d0f12ed6522b28f9a3b0dedf7e3a00de96e2d` (R5.3b): exact-head workflows 46071297199, 46071297176, 46071297249 SUCCESS; 219 Python tests, 7 jobs. Source artifact 15233385149 and native artifact 15232204358 metadata observed; content inspection and independent review not completed.
+
+## Revised scope after Round 7
+
+The prior four-file package is not a mandatory licensing remedy. Prefer retaining EDIFACT under scoped SnipMate MIT and Ace BSD contribution evidence; any EDIFACT removal is a separate product decision. First pursue source-specific confirmation/grants for ABC, Gobstones and LSL or licensed replacement; exclusion is an optional risk-based alternative. No outreach has been sent.
+
+| Payload | Bytes (shipped JS) | Why consider exclusion | Mode retained |
+| --- | ---: | --- | --- |
+| abc | 1421 | [PR #2273](https://github.com/ajaxorg/ace/pull/2273) CLA discussion, signed scope unconfirmed; exact grant or optional exclusion (Zupfnoter-specific templates) | mode-abc.js |
+| gobstones | 39606 | [PR #3988](https://github.com/ajaxorg/ace/pull/3988) behavior only; grants from contributors or licensed replacement; GPL association not proof | mode-gobstones.js |
+| lsl | 35897 | Exact Builders Brewery source; request explicit grant on two historical blobs; ISC successor not retroactive | mode-lsl.js |
+| **Total** | **76924** | Optional three-file scope; no license violation finding asserted | All three retained unchanged |
+
+Tree sizes from exact baseline; not a gzip/container-size estimate. Optional three-file removal would reduce retained snippet count 202→199 (52→49 nonempty, 150 stubs unchanged), Ace assets 489→486, vendor resources 509→506; matrix remains 202 upstream names. EDIFACT (4807 bytes) retained by recommendation: exact SnipMate MIT chain plus [BSD contribution confirmation](https://github.com/ajaxorg/ace/pull/3514#pullrequestreview-90671856), see research addendum for scope. If separately approved on product grounds, four-file removal totals 81731 bytes and 198 snippets/485 Ace/505 vendor. All modes remain unchanged. No removal resolves mode licensing or authorizes issue closure.
+
+## Runtime dependency review (pinned Ace 68d7fd1)
+
+- [src/mode/abc.js](https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/mode/abc.js) blob `7c27dc18e1184d5bbe5b1b02de15db17500584df`; [edifact.js](https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/mode/edifact.js) `49a2c297bb600599d2ff4a57ebc030fdaf090e15`; [gobstones.js](https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/mode/gobstones.js) `4250d1fe51ee46ab1494d4bfca83a773278fcfb2`; [lsl.js](https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/mode/lsl.js) `49ca28ae3d23175948f7924719ccbb5255b7665e`. Each has explicit snippetFileId and separate tokenizer/highlight rules. Gobstones inherits JavaScript mode but overrides createWorker with null.
+- [src/ext/language_tools.js](https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/ext/language_tools.js#L138-L172) blob `cc04a46c7b881ec187d4e0a97b9e8307a26ce136` loads snippets on mode change via config.loadModule, and may recurse into submodes/includeScopes. It initializes snippetManager.files[id] before load; a falsy module callback returns safely. Configurator dev.html enables snippets in both relevant editor options blocks and loads first-party ace-bootstrap.js before ext-language_tools.js.
+- [src/config.js](https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/config.js#L120-L172) blob `bb624a983e5fbf7820acf72b2c8b2b36561fd648` accepts both string and typed-array module IDs, tries already-loaded modules/dynamic loaders, and can call net.loadScript when packaged. Physical deletion alone is insufficient. Existing bootstrap only intercepts worker loads and resolves excluded themes. Proposed extend first-party interception of config.loadModule for the explicitly approved canonical snippet module IDs, return an absent module via callback (if provided), without network, module cache mutation, synthetic third-party snippet or disabling all completions. Guard both string and array forms; retain normal callback/this/arguments for others. Verify behavior against actual browser runtime; no claim of full dependency closure from inspected sources alone. Audit all retained mode/snippet assets for static embedded copies/references and distinguish expected mode metadata from actual embedded payload before removal.
+
+## Implementation acceptance (only after explicit maintainer approval)
+
+1. Bump curated profile schema and add validated exact excluded_snippets list; reject missing/unknown/duplicate/unsafe paths. Keep complete upstream lock unchanged; selected_family, vendor archive generation, manifest/resource ownership and physical filesystem closure reflect only approved subset. Recalculate manifest pin. No replacement vendor stub or edited retained upstream JS.
+2. Update first-party loader policy as above; check retained modes/tokenization, theme and worker policy, no requests to excluded URLs even with snippets enabled, mode switching/repeat, ordinary completions/retained snippets and callback behavior. Direct excluded static route returns normal not-found response, not external fetch. Test prefix/Ingress deployment and cache-version boundaries; previously cached bytes on client are not remotely erased by removing files.
+3. Keep all 202 matrix rows and original source pins, represent actual distribution excluded and proposed excluded-reassessment-open; separate historical references from active distributed component mapping. Compare retained native report against the actually retained rows (199 for three-file scenario), verify excluded upstream evidence separately without asserting shipment. Preserve exact stub loader evidence for 150. Update source inventory/evidence validators, SBOM scope and docs; keep EDIFACT active SnipMate location unless separately approved on product grounds; if LSL excluded, move its review-only active location to historical documentation rather than an absent-file inventory record. Retain historical source pins/relations where appropriately scoped; do not claim removed bytes shipped. Update tests/counts that explicitly pin old subset; validate manifest generation, distribution wheel/sdist/container, native and migration workflows.
+4. Require exact-HEAD CI, offline browser smoke for each mode, tamper/reintroduction tests, artifact content inspection and independent review. No issue closure, no merge or public-release signoff. #9/#33/#37 open; #36/#32 Draft/HOLD.
+
+Decision requested: prioritize grant/CLA requests for ABC, Gobstones and LSL, or explicitly approve a named subset for snippet-only removal. EDIFACT is a separate product-only question; default recommendation retain. Retaining any license-open candidate keeps its review-open status; restoration after exclusion requires explicit decision and renewed source review. See research Round 7 addendum for precise grant targets. No authority inferred to send outreach, remove assets or merge.
+
+## Approved decision (2026-11-28)
+
+| Payload | Bytes | Decision rationale |
+| --- | ---: | --- |
+| ABC | 1421 | Zupfnoter-specific notation; low utility and unresolved CLA/grant |
+| EDIFACT | 4807 | Product-only: irrelevant Java-derived templates; existing scoped MIT/BSD evidence remains valid within its scope |
+| Gobstones | 39606 | Educational language; low utility does not warrant further rights research |
+| LSL | 35897 | Second Life scripting; low utility does not warrant historical grant outreach |
+| **Total** | **81731** | All four snippet-only, not a license violation finding |
+
+Approved profile schema 3: four exact excluded_snippets; full upstream lock unchanged. 198 retained snippets (48 nonempty, 150 stubs), 485 Ace assets, 505 vendor resources. Matrix 202 upstream rows; four excluded-reassessment-open records with explicit reasons and original pins. Move five historical EDIFACT/LSL relationships and LSL review record to docs/history/ace-snippet-exclusions.json; 32 active SnipMate locations, all original notices retained. Native research compares four excluded archive members with upstream-only hash fields, never claims shipment. First-party loader returns undefined for excluded canonical string/array IDs without requests; ordinary mode/worker/theme behavior unchanged. Direct and simulated Ingress browser regression and installed selection added. Exact-HEAD CI, artifact inspection, independent review and real HAOS acceptance pending. Restoration requires separate explicit approval and renewed license review. Historical grant routes retained as evidence, not prerequisites for removing these assets. PR #36/#32 Draft/HOLD; #9/#33/#37 open.
+
+## Second approved decision (2026-11-28)
+
+Maintainer requested targeted assessment of retaining SQL Server and approved snippet-only exclusion of the other twelve candidates. SQL Server, GraphQLSchema, Robot and Vala remain retained and review-open. No contributor outreach performed.
+
+| Additional payload | Reason |
+| --- | --- |
+| cedar | Authorization policy templates; low HA Configurator utility does not warrant further source rights research. |
+| cedarschema | Authorization schema templates; low HA Configurator utility does not warrant further source rights research. |
+| csound_document | Audio synthesis document templates; low HA Configurator utility does not warrant further source rights research. |
+| csound_orchestra | Audio synthesis orchestra templates; low HA Configurator utility does not warrant further source rights research. |
+| drools | Business rules templates; low HA Configurator utility does not warrant further source rights research. |
+| fsl | Finite-state machines templates; low HA Configurator utility does not warrant further source rights research. |
+| jsoniq | Specialized query templates; low HA Configurator utility does not warrant further source rights research. Separate mode/grammar review remains open. |
+| maze | Specialized language templates; low HA Configurator utility does not warrant further source rights research. |
+| razor | ASP.NET templates; low HA Configurator utility does not warrant further source rights research. |
+| velocity | Java template language templates; low HA Configurator utility does not warrant further source rights research. |
+| wollok | Educational language templates; low HA Configurator utility does not warrant further source rights research. Historical scoped SnipMate MIT evidence retained in archive. |
+| xquery | XML query templates; low HA Configurator utility does not warrant further source rights research. Separate mode/grammar review remains open. |
+
+Profile schema 3 retains exact allowlist semantics: 16 exclusions total, 186 retained snippet assets (36 nonempty, 150 stubs), 473 Ace files, 493 vendor resources. Upstream 495-file lock and 202 matrix rows remain unchanged in coverage; historical pins preserved. All 16 modes remain unchanged. Archive both Wollok source relationships and scoped evidence, leaving 31 active SnipMate locations and all 68 original notices. Existing scoped Microsoft attribution stays active and is not full rights clearance. Separate JSONiq/XQuery mode/grammar rights remain open. Exact-HEAD CI, artifact inspection, independent review and real HAOS acceptance required. PR #36/#32 Draft/HOLD; no merge or public-release sign-off.

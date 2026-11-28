@@ -1,0 +1,474 @@
+{
+  "schema": 1,
+  "ace_source_commit": "68d7fd1c0f5ac50cdb610bf06b86074eab3be652",
+  "review_status": "independent-review-pending",
+  "rows": [
+    {
+      "theme": "ambiance",
+      "distribution": "retained",
+      "historical_declaration": "mit-labelled-bsd",
+      "additional_components": [
+        "ace-theme-gozalishvili-wrappers"
+      ],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "MIT wrapper notice retained; CSS origin and external rights review."
+    },
+    {
+      "theme": "chaos",
+      "distribution": "retained",
+      "historical_declaration": "mit-labelled-bsd",
+      "additional_components": [
+        "ace-theme-gozalishvili-wrappers"
+      ],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "MIT wrapper notice retained; CSS origin and external rights review."
+    },
+    {
+      "theme": "chrome",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [],
+      "review_priority": "elevated",
+      "disposition": "retained-review-open",
+      "remaining_review": "Austin Cummings exact imported input; original grant and CSS lineage open."
+    },
+    {
+      "theme": "cloud9_day",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "PR #4715 contributor grant; c9 branch CSS ancestry open."
+    },
+    {
+      "theme": "cloud9_night",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "PR #4715 contributor grant; c9 branch CSS ancestry open."
+    },
+    {
+      "theme": "cloud9_night_low_color",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "PR #4715 contributor grant; c9 branch CSS ancestry open."
+    },
+    {
+      "theme": "cloud_editor",
+      "distribution": "retained",
+      "historical_declaration": "root-only",
+      "additional_components": [],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "PR #5404 and root BSD; CSS origin and external inputs review."
+    },
+    {
+      "theme": "cloud_editor_dark",
+      "distribution": "retained",
+      "historical_declaration": "root-only",
+      "additional_components": [],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "PR #5404 and root BSD; CSS origin and external inputs review."
+    },
+    {
+      "theme": "clouds",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "Licensed inline CSS history; original TextMate input origin and terms open."
+    },
+    {
+      "theme": "clouds_midnight",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "Licensed inline CSS history; original TextMate input origin and terms open."
+    },
+    {
+      "theme": "cobalt",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [],
+      "review_priority": "elevated",
+      "disposition": "retained-review-open",
+      "remaining_review": "Exact historical TextMate input; Slate derivative credit and rights review."
+    },
+    {
+      "theme": "crimson_editor",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "BSD wrapper; separate CSS and external source review."
+    },
+    {
+      "theme": "dawn",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "Exact TextMate input; scope and timing of directory permission review."
+    },
+    {
+      "theme": "dracula",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [
+        "ace-theme-dracula"
+      ],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "MIT CSS notice retained; independent review of final notice/payload mapping."
+    },
+    {
+      "theme": "dreamweaver",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [],
+      "review_priority": "elevated",
+      "disposition": "retained-review-open",
+      "remaining_review": "BSD wrapper; Jim Isaacs input and CSS relation open."
+    },
+    {
+      "theme": "eclipse",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "BSD and exact 2012 split; pre-inline CSS origin review."
+    },
+    {
+      "theme": "github",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [],
+      "review_priority": "elevated",
+      "disposition": "retained-review-open",
+      "remaining_review": "Legacy CSS origin not established; PR #5597 did not locate original source."
+    },
+    {
+      "theme": "github_dark",
+      "distribution": "retained",
+      "historical_declaration": "root-only",
+      "additional_components": [],
+      "review_priority": "elevated",
+      "disposition": "retained-review-open",
+      "remaining_review": "PR #5154 contributor grant; external origin open, no Primer grant inferred."
+    },
+    {
+      "theme": "github_light_default",
+      "distribution": "retained",
+      "historical_declaration": "root-only",
+      "additional_components": [
+        "ace-theme-github-light-default"
+      ],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "Primer MIT notice retained; exact source variant/version open."
+    },
+    {
+      "theme": "gob",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "BSD wrapper; separate CSS and external source review."
+    },
+    {
+      "theme": "gruvbox",
+      "distribution": "retained",
+      "historical_declaration": "mit-labelled-bsd",
+      "additional_components": [
+        "ace-theme-gozalishvili-wrappers",
+        "ace-theme-gruvbox-original"
+      ],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "MIT scheme/wrapper notices retained; independently review proposed non-blocking 2016 revert/2017 re-addition disposition."
+    },
+    {
+      "theme": "gruvbox_dark_hard",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [
+        "ace-theme-gruvbox-hard",
+        "ace-theme-gruvbox-original"
+      ],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "Original and port MIT notices retained; exact Briles version open."
+    },
+    {
+      "theme": "gruvbox_light_hard",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [
+        "ace-theme-gruvbox-hard",
+        "ace-theme-gruvbox-original"
+      ],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "Original and port MIT notices retained; exact Briles version open."
+    },
+    {
+      "theme": "idle_fingers",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "Licensed inline CSS history; external input origin and terms open."
+    },
+    {
+      "theme": "iplastic",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "Exact historical TextMate input; Sublime rename and CSS lineage open."
+    },
+    {
+      "theme": "katzenmilch",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "BSD wrapper and converter input; original source and permission open."
+    },
+    {
+      "theme": "kr_theme",
+      "distribution": "excluded",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [],
+      "review_priority": "elevated",
+      "disposition": "excluded-reassessment-open",
+      "remaining_review": "Near-identical Reitz TextMate input (two color changes); All Rights Reserved. Sphinx license separate. No restoration without independent reassessment and explicit approval."
+    },
+    {
+      "theme": "kuroir",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [],
+      "review_priority": "elevated",
+      "disposition": "retained-review-open",
+      "remaining_review": "Exact Mario Ricalde port input; Stanley Rost origin and separate permissions open."
+    },
+    {
+      "theme": "merbivore",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "BSD wrapper and changed converter input; origin and terms open."
+    },
+    {
+      "theme": "merbivore_soft",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "BSD wrapper and changed converter input; origin and terms open."
+    },
+    {
+      "theme": "mono_industrial",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "Licensed inline CSS history; external input origin and terms open."
+    },
+    {
+      "theme": "monokai",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [],
+      "review_priority": "elevated",
+      "disposition": "retained-review-open",
+      "remaining_review": "Licensed inline CSS history; external input revision and separate rights open."
+    },
+    {
+      "theme": "nord_dark",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [
+        "ace-theme-nord"
+      ],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "Original MIT notice and contribution grant; exact source/intermediate port open."
+    },
+    {
+      "theme": "one_dark",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [
+        "ace-theme-one-dark"
+      ],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "Original MIT notice and contribution grant; exact source/intermediate port open."
+    },
+    {
+      "theme": "pastel_on_dark",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "Exact initial TextMate input and subsequent changes; directory terms and contribution review."
+    },
+    {
+      "theme": "solarized_dark",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [
+        "ace-theme-solarized"
+      ],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "MIT notice retained; exact external version and individual relicensing evidence open."
+    },
+    {
+      "theme": "solarized_light",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [
+        "ace-theme-solarized"
+      ],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "MIT notice retained; exact external version and individual relicensing evidence open."
+    },
+    {
+      "theme": "sqlserver",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "BSD wrapper; separate CSS and external source review."
+    },
+    {
+      "theme": "terminal",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "BSD wrapper; separate CSS and external source review."
+    },
+    {
+      "theme": "textmate",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [],
+      "review_priority": "elevated",
+      "disposition": "retained-review-open",
+      "remaining_review": "Exact historical Mac Classic input; CSS also in ace.js; conversion lineage and source terms open."
+    },
+    {
+      "theme": "tomorrow",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [
+        "ace-theme-tomorrow"
+      ],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "MIT notice and direct author contribution; exact version and promised CLA unverified."
+    },
+    {
+      "theme": "tomorrow_night",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [
+        "ace-theme-tomorrow"
+      ],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "MIT notice and direct author contribution; exact version and promised CLA unverified."
+    },
+    {
+      "theme": "tomorrow_night_blue",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [
+        "ace-theme-tomorrow"
+      ],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "MIT notice and direct author contribution; exact version and promised CLA unverified."
+    },
+    {
+      "theme": "tomorrow_night_bright",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [
+        "ace-theme-tomorrow"
+      ],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "MIT notice and direct author contribution; exact version and promised CLA unverified."
+    },
+    {
+      "theme": "tomorrow_night_eighties",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [
+        "ace-theme-tomorrow"
+      ],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "MIT notice and direct author contribution; exact version and promised CLA unverified."
+    },
+    {
+      "theme": "twilight",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "Exact initial TextMate input and later change; directory permission scope review."
+    },
+    {
+      "theme": "vibrant_ink",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [],
+      "review_priority": "standard",
+      "disposition": "retained-review-open",
+      "remaining_review": "BSD wrapper and changed converter input; external origin and terms open."
+    },
+    {
+      "theme": "xcode",
+      "distribution": "retained",
+      "historical_declaration": "ajax-bsd",
+      "additional_components": [],
+      "review_priority": "elevated",
+      "disposition": "retained-review-open",
+      "remaining_review": "Exact Carmine Paolino author input; separate grant and generated CSS lineage open."
+    }
+  ]
+}

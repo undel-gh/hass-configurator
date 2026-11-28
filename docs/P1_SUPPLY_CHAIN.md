@@ -1,6 +1,13 @@
 # P1 supply-chain audit — Issue #9
 
+## #33 runtime promotion checkpoint
+
+The original audit below describes Ace 1.9.6 and js-yaml 4.1.0 on checkpoint b5924860ad8e27a2c47cecb71cac7905627a2819. On the #33 draft branch, exact reviewed Ace 1.45.2 and js-yaml 4.3.2 bytes are promoted; the current lock, manifest and top-level inventory supersede the old version assertions. Historical risks remain documented. New embedded inventory is partial, not a license clearance; installed wheel/sdist/Docker, exact-HEAD OSV and independent review are pending. #9, #33–#35 remain release gates. No automatic risk acceptance.
+
 Status: **audit implementation candidate; not release acceptance**.
+The following baseline findings are historical wherever they describe Ace
+1.9.6/js-yaml 4.1.0. Current #33 branch evidence is scoped in the promotion
+checkpoint and P1_ACE_YAML_MIGRATION.md; exact nested identities remain open.
 Source baseline: master `196907aa1e37d75adf0bfde7df45c43bcd3d01c0`.
 Owner: maintainer. No runtime dependency/version upgrade or privilege change
 in this audit candidate.
@@ -357,3 +364,118 @@ current package. Candidate exploratory OSV queries are separate from the
 current runtime scan and explicitly mark source-minimum-version hypotheses.
 No auto-promotion; require actual report, independent review, exact bundled
 licenses/versions, #33/#24 regression and real HAOS before migration.
+
+## #33 historical XML worker finding (pre-curation)
+
+The #351 attribution artifact 15187533994 at full-family HEAD
+`5c25067e2e1311fc70714e0e928ca527fe4b03db` returned candidate OSV matches
+for lodash 4.17.21: [GHSA-r5fr-rjxr-66jc](https://github.com/advisories/GHSA-r5fr-rjxr-66jc)
+(CVE-2026-4800) and [GHSA-xxjr-mmjv-4gpg](https://github.com/advisories/GHSA-xxjr-mmjv-4gpg)
+(CVE-2025-13465). Version/module markers and exact npm/Git notice evidence
+were recorded in active inventory at full-family HEAD
+`5ad73badb58b113fc240618215000a8eaa45c568`. Chevrotain 7.1.1 was also
+identified; candidate OSV had no matches for it. The historical reachability
+assessment in #33 did not grant a VEX or risk waiver.
+
+## #37 curated runtime disposition — reviewed evidence
+
+Reviewed HEAD `1bc74142ee11db2f4fd283776f4825ed90e90ee5` physically excludes
+worker-xml.js and four other workers. The active inventory no longer maps
+Lodash or Chevrotain to an XML worker. The old mappings are preserved in
+docs/history/ace-1.45.2-full-embedded.json; their license texts remain as
+historical reference notices pending retained license review. XQuery/JSONiq
+mode tokenizer evidence is retained.
+
+Exact-HEAD baseline #355 (45988758552) and rehearsal #12 (45988758652)
+completed successfully. Source artifact 15192606781: 490 retained Ace
+files, 510 vendor resources, 506 package executable/source files and all
+490 unminified counterparts scanned, no searched Lodash/Chevrotain markers.
+Installed/E2E artifact 15192952501 was downloaded and inspected; ZIP
+SHA-256 467065a44c3bf92f583054be95c41b3b251dff357c5b303c014698f87e59da4c,
+CRC clean. Wheel, sdist and Docker each verify 551 application resources
+and exact curated vendor closure; 5 first-party resources additionally
+verified. Docker layer report: 10 layers, 498 JS members hashed, zero
+excluded filename/identical JS digest hits. Equal no-cache image IDs
+sha256:9052e6bac658fd6e760ac0abe8db515ad363f3d27b7e29237fc0cb4e799c677f.
+Main OSV completed on the exact reviewed SHA: 219 queries / 77 matched;
+the historical removed-container mappings are no longer in active query
+scope. Candidate OSV 16/0 remains separate. Round 3 independent reviewers
+confirmed source/wheel closure and upstream equality; Docker layer results
+are CI evidence, not their independent Docker reproduction.
+
+Both advisories are historical findings. The maintainer approved the
+following scoped remediation disposition after two independent reviews
+of correction HEAD `f72a78108a1c84f791efb0abe00876332eb91d0b`.
+
+| Finding | Disposition | Remediation |
+| --- | --- | --- |
+| CVE-2026-4800 / GHSA-r5fr-rjxr-66jc | REMEDIATED — component removed from reviewed runtime | Excluded XML worker |
+| CVE-2025-13465 / GHSA-xxjr-mmjv-4gpg | REMEDIATED — component removed from reviewed runtime | Excluded XML worker |
+
+Scope: Lodash 4.17.21 identified in the former Ace 1.45.2 XML worker,
+not an assertion that every possible Lodash-derived fragment in all
+future builds is absent. Removal commit 0f15bdf1872d45acab1fa1449ef14c36b5b1c215;
+reviewed curated runtime `f72a78108a1c84f791efb0abe00876332eb91d0b`, 490 retained files
+byte-identical to upstream and exact 510-resource manifest. Baseline #356
+45993293324 (4/4 success), rehearsal #13 45993293370 (20/20). Actual source
+15194726976, installed/E2E 15195540350 and rehearsal 15195480591 ZIPs checked
+by author and independent reviewer 2; CRC and published SHA-256 match.
+Source scan 506 executable/source files and 490 same-archive unminified
+counterparts: no searched Lodash markers; only XQuery/JSONiq hits among
+the monitored component groups. Wheel/sdist/Docker each 551 application
+resources and 5 first-party checks, exact vendor closure. Docker 10 layers,
+498 JS members hashed, zero excluded names or identical payload hits.
+Runtime attempts empty. Main OSV 219/77 on 2026-11-27T11:51:02Z, no Lodash
+or Chevrotain queries, as expected after removal (not evidence by itself).
+Independent source/wheel verification and two correction reviews confirm
+closure and no reintroduction; Docker layer evidence is independently
+inspected CI output, not an independent Docker rebuild.
+
+This is a remediation-by-removal decision for the reviewed product
+configuration, not an exception, risk acceptance, CVE patch claim or VEX
+statement of blanket non-applicability. Marker/digest scans cannot exclude
+every renamed/transformed copy. If later retained attribution identifies
+Lodash code, or an Ace/version/profile/asset change invalidates the removal
+evidence, reopen affected findings and restore exact supported SBOM/OSV
+identity. Revalidate source/package/image closure before future release.
+Historical findings, notices and full-family evidence remain available;
+rollback to the old full-family build is outside this disposition.
+Other license/security gates (#9, #24, #33–#35, #37), real HAOS warm-cache
+upgrade/rollback and release approval remain open.
+See ACE_WORKER_PROFILE.md and ACE_WORKER_ATTRIBUTION.md.
+
+## Remaining native and generated-code license review
+
+After the exact retained-linter reconstruction, the estraverse historical
+MIT libc++ adaptation notice and Dracula MIT notice have been recovered;
+see ACE_WORKER_ATTRIBUTION.md. Do not infer retrospective REx v5.30 output
+permission from the modern Apache-2.0 generator license. Retained XQuery/
+JSONiq grammar and Browserify-style wrapper attribution remain release
+blockers. Native base and all theme/snippet per-file lineage are reviewed
+separately. No risk waiver, no change to #37 physical worker removal.
+
+Research #4 verified native base source mapping (exact bootstrap and nine
+modules); parent Ace notice, independent review pending. XQLint shared
+lexer and wrappers have exact bounded source relations, and browser-pack
+prelude MIT notice is recovered. This supersedes the earlier unresolved
+wrapper attribution; exact browser-pack package version is not asserted.
+REx historical output grant and grammar lineage remain open, as do original
+theme/snippet terms. No scope change or release approval.
+
+## #37 krTheme target-source disposition
+
+Maintainer approved extending curated distribution to remove the optional
+krTheme payload because historical redistribution permission for the
+specific variant remains unestablished. This is removal, not a finding
+of infringement, a license grant, an exception, or risk acceptance.
+Retain historical evidence, full upstream lock and all other retained
+upstream bytes; remove its active runtime location and selector entry,
+and map legacy saved settings to Monokai before Ace restores them.
+Expected source closure: 489 Ace files / 509 vendor resources. Extend
+wheel/sdist and Docker closure via the shared selected-family policy,
+with marker checks in retained Ace assets and filename/digest checks
+across image layers. Upstream ext-themelist name-only metadata remains.
+Physical removal at target source is distinct from installed acceptance;
+exact-HEAD CI, artifact inspection, independent review and real HAOS
+warm-cache upgrade/rollback remain release gates. Reopen if an asset,
+profile, version or later discovery invalidates removal evidence.

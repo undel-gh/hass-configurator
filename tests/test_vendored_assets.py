@@ -17,8 +17,8 @@ class VendoredAssetsTests(unittest.TestCase):
     def test_hash_manifest_is_complete_and_matches_every_file(self):
         self.assertEqual(MANIFEST["schema"], 1)
         resources = MANIFEST["resources"]
-        self.assertEqual(len([p for p in resources if p.startswith("vendor/ace/")]), 440)
-        self.assertGreaterEqual(len(resources), 455)
+        self.assertEqual(len([p for p in resources if p.startswith("vendor/ace/")]), 473)
+        self.assertEqual(len(resources), 493)
         for name, checksum in resources.items():
             with self.subTest(name=name):
                 source = PACKAGE / name
@@ -30,14 +30,16 @@ class VendoredAssetsTests(unittest.TestCase):
                          {"vendor/manifest.json"}, set(resources))
 
     def test_provenance_integrity_matches_pinned_ace_lock(self):
-        original = json.loads((ROOT / "docs" / "ace-builds-1.9.6-lock.json")
+        original = json.loads((ROOT / "docs" / "ace-builds-1.45.2-lock.json")
                               .read_text("utf8"))
         ace = MANIFEST["provenance"]["ace"]
-        self.assertEqual(ace["version"], "1.9.6")
+        self.assertEqual(ace["version"], "1.45.2")
         self.assertEqual(ace["npm_integrity"], original["npm_integrity"])
         self.assertEqual(ace["sha256"], original["sha256"])
-        for filename, value in original["files_sha256"].items():
-            self.assertEqual(MANIFEST["resources"]["vendor/ace/" + filename], value)
+        from scripts.ace_worker_profile import read_profile, selected_family
+        selected = selected_family(read_profile(), original)
+        self.assertEqual({n: h for n, h in MANIFEST["resources"].items() if n.startswith("vendor/ace/")},
+                         {"vendor/ace/" + n: h for n, h in selected.items()})
 
     def test_css_urls_resolve_to_exact_allowlisted_local_files(self):
         for css in ("vendor/materialize/css/materialize.min.css",
@@ -81,6 +83,36 @@ class VendoredAssetsTests(unittest.TestCase):
                               resp.headers)
                 self.assertEqual(router.match("GET", route + "/escape").kind,
                                  "not_found")
+
+    def test_excluded_ace_routes_not_served(self):
+        from scripts.ace_worker_profile import read_profile
+        assets = Assets()
+        router = Router(assets)
+        profile = read_profile()
+        for name in profile["excluded"] + profile["excluded_themes"] + profile["excluded_snippets"]:
+            for version in (assets.version, "0" * 16):
+                route = "/assets/v%s/vendor/ace/%s" % (version, name)
+                self.assertEqual(router.match("GET", route).kind, "not_found")
+
+    def test_excluded_snippet_definitions_and_retained_modes(self):
+        from scripts.ace_worker_profile import read_profile
+        for filename in read_profile()["excluded_snippets"]:
+            name = filename.split("/")[-1][:-3]
+            self.assertTrue((PACKAGE / ("vendor/ace/mode-" + name + ".js")).is_file())
+            self.assertFalse((PACKAGE / ("vendor/ace/" + filename)).exists())
+            for path in (PACKAGE / "vendor/ace").rglob("*.js"):
+                raw = path.read_bytes()
+                for quote in (b'"', b"'"):
+                    self.assertNotIn(b"ace.define(" + quote + ("ace/snippets/" + name).encode() + quote, raw, str(path))
+
+    def test_removed_theme_payload_markers_absent_from_retained_ace(self):
+        # A label in the unmodified upstream theme list is metadata, not CSS.
+        for path in (PACKAGE / "vendor/ace").rglob("*.js"):
+            with self.subTest(path=path):
+                raw = path.read_bytes()
+                self.assertNotIn(b"ace/theme/kr_theme-css", raw)
+                self.assertNotIn(b".ace-kr-theme", raw)
+        self.assertNotIn("ace/theme/kr_theme", (PACKAGE / "dev.html").read_text("utf8"))
 
     def test_missing_or_tampered_vendored_file_fails_at_startup(self):
         # Copy only the baseline files and manifest with one tampered resource,

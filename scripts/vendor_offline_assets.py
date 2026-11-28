@@ -3,7 +3,7 @@
 
 This is a BUILD-TIME command (network is external to this script). Runtime
 must never download assets. Usage:
-  python scripts/vendor_offline_assets.py --ace /tmp/ace-builds-1.9.6.tgz \
+  python scripts/vendor_offline_assets.py --ace /tmp/ace-builds-1.45.2.tgz \
       --materialize /tmp/materialize-css-0.100.2.tgz \
       --mdi /tmp/mdi-font-3.4.93.tgz
 The source artifacts must be downloaded only by an authenticated package manager
@@ -18,11 +18,16 @@ import re
 import tarfile
 from urllib.parse import urlsplit
 
+try:
+    from .ace_worker_profile import read_profile, selected_family, verify_vendor_tree
+except ImportError:
+    from ace_worker_profile import read_profile, selected_family, verify_vendor_tree
+
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "hass_configurator" / "vendor"
-ACE_LOCK = json.loads((ROOT / "docs/ace-builds-1.9.6-lock.json").read_text("utf8"))
+ACE_LOCK = json.loads((ROOT / "docs/ace-builds-1.45.2-lock.json").read_text("utf8"))
 SOURCES = {
-    "ace": ("ace-builds", "1.9.6", "package/src-min-noconflict/"),
+    "ace": ("ace-builds", "1.45.2", "package/src-min-noconflict/"),
     "materialize": ("materialize-css", "0.100.2", "package/dist/css/"),
     "mdi": ("@mdi/font", "3.4.93", "package/css/"),
 }
@@ -111,6 +116,7 @@ def package_license(archive, name, output_map):
 def build(archives, integrity_values, verify_only=False):
     resources = {}
     provenance = {}
+    selected = selected_family(read_profile(), ACE_LOCK)
     for alias, (package, version, archive_prefix) in SOURCES.items():
         filename = archives[alias]
         tarbytes = filename.read_bytes()
@@ -127,7 +133,8 @@ def build(archives, integrity_values, verify_only=False):
                     raw = member_bytes(archive, archive_prefix + rel)
                     if digest(raw) != expected:
                         raise RuntimeError("Ace file hash mismatch: " + rel)
-                    add_file(resources, "ace/" + rel, raw)
+                    if rel in selected:
+                        add_file(resources, "ace/" + rel, raw)
                 if any(x.startswith(archive_prefix) and x[len(archive_prefix):]
                        not in ACE_LOCK["files_sha256"] for x in index):
                     raise RuntimeError("Untracked Ace file in upstream archive")
@@ -146,6 +153,8 @@ def build(archives, integrity_values, verify_only=False):
                                            (package, tarpath))
                     add_file(resources, alias + "/" + dep, member_bytes(archive, tarpath))
             license_file = package_license(archive, alias, resources)
+            if alias == "ace" and digest(resources["licenses/ace.txt"]) != ACE_LOCK["license_sha256"]:
+                raise RuntimeError("Ace license differs from pinned artifact")
         provenance[alias] = {
             "package": package, "version": version,
             "tarball": "https://registry.npmjs.org/" +
@@ -178,9 +187,13 @@ def build(archives, integrity_values, verify_only=False):
             target = OUTPUT / name
             if not target.is_file() or target.read_bytes() != data:
                 raise RuntimeError("Committed vendor resource differs from archive: " + name)
+        verify_vendor_tree(OUTPUT.parent, manifest["resources"])
         print("Verified all %d vendored files against pinned upstream archives." %
               len(resources))
         return manifest
+    # Reject stale extras instead of silently leaving or deleting arbitrary files.
+    if existing_path.exists():
+        verify_vendor_tree(OUTPUT.parent, manifest["resources"])
     OUTPUT.mkdir(parents=True, exist_ok=True)
     for name, data in resources.items():
         dest = OUTPUT / name
@@ -189,8 +202,8 @@ def build(archives, integrity_values, verify_only=False):
     existing_path.write_text(
         json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf8")
     print("Vendored %s resources: Ace=%d; other=%d" %
-          (len(resources), len(ACE_LOCK["files_sha256"]),
-           len(resources) - len(ACE_LOCK["files_sha256"])))
+          (len(resources), len(selected),
+           len(resources) - len(selected)))
     print("Provenance:", json.dumps(provenance, indent=2))
     return manifest
 

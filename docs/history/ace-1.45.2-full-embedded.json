@@ -1,0 +1,1104 @@
+{
+  "components": [
+    {
+      "ecosystem": "npm",
+      "evidence": [
+        {
+          "git_blob": "6c232c8cfcbf343f9d438b0563687fe10d666b41",
+          "marker": "VERSION=\"2.0.4\"",
+          "url": "https://github.com/Dogfalo/materialize/blob/9bc43a1199ad5dfb78d58ba47726ab039218a939/js/hammer.min.js"
+        }
+      ],
+      "id": "mat-hammer",
+      "kind": "library",
+      "license": "MIT",
+      "locations": [
+        {
+          "file": "materialize.min.js",
+          "marker": "VERSION=\"2.0.4\""
+        }
+      ],
+      "name": "hammerjs",
+      "note": "Embedded version, not package.json ^2.0.8. Original release license retained.",
+      "notices": [
+        "third_party/licenses/embedded/hammer.txt"
+      ],
+      "parent": "materialize",
+      "status": "identified",
+      "version": "2.0.4"
+    },
+    {
+      "ecosystem": null,
+      "evidence": [
+        {
+          "git_blob": "ea21aad889fae591acd6a8d0ef012f53ff5e0efb",
+          "marker": "VelocityJS.org (1.2.3)",
+          "url": "https://github.com/Dogfalo/materialize/blob/9bc43a1199ad5dfb78d58ba47726ab039218a939/js/velocity.min.js"
+        },
+        {
+          "git_blob": "3d06957ef054aa2670f6489b750b6c8c1a32cf4a",
+          "marker": "version: { major: 1, minor: 2, patch: 2 }",
+          "url": "https://github.com/Dogfalo/materialize/blob/9bc43a1199ad5dfb78d58ba47726ab039218a939/dist/js/materialize.js"
+        }
+      ],
+      "id": "mat-velocity",
+      "kind": "library",
+      "license": "MIT",
+      "locations": [
+        {
+          "file": "materialize.min.js",
+          "marker": "major:1,minor:2,patch:2"
+        }
+      ],
+      "name": "Velocity.js",
+      "note": "Header 1.2.3, runtime version 1.2.2; explicitly modified by Materialize. MIT text from 1.2.3; exact version unresolved, no purl. Both candidate versions require review in #34.",
+      "notices": [
+        "third_party/licenses/embedded/velocity.txt"
+      ],
+      "parent": "materialize",
+      "status": "partial",
+      "version": null
+    },
+    {
+      "ecosystem": null,
+      "evidence": [
+        {
+          "git_blob": "ea21aad889fae591acd6a8d0ef012f53ff5e0efb",
+          "marker": "VelocityJS.org jQuery Shim (1.0.1)",
+          "url": "https://github.com/Dogfalo/materialize/blob/9bc43a1199ad5dfb78d58ba47726ab039218a939/js/velocity.min.js"
+        }
+      ],
+      "id": "mat-velocity-shim",
+      "kind": "library",
+      "license": "MIT",
+      "locations": [
+        {
+          "file": "materialize.min.js",
+          "marker": "Velocity"
+        }
+      ],
+      "name": "Velocity jQuery Shim",
+      "note": "Header attribution retained; exact shim distribution and full historical license text unresolved. Do not substitute a modern jQuery notice as proof.",
+      "notices": [
+        "third_party/licenses/embedded/velocity-shim-attribution.txt"
+      ],
+      "parent": "materialize",
+      "status": "partial",
+      "version": "1.0.1"
+    },
+    {
+      "ecosystem": "npm",
+      "evidence": [
+        {
+          "git_blob": "8e982f0905158be723da7ed0b3c4e3b42e82f1c5",
+          "marker": "jQuery Easing v1.4.0",
+          "url": "https://github.com/Dogfalo/materialize/blob/9bc43a1199ad5dfb78d58ba47726ab039218a939/js/jquery.easing.1.4.js"
+        }
+      ],
+      "id": "mat-easing",
+      "kind": "library",
+      "license": "BSD-3-Clause",
+      "locations": [
+        {
+          "file": "materialize.min.js",
+          "marker": "jswing"
+        }
+      ],
+      "name": "jquery.easing",
+      "note": "Upstream tag license contains both George McGinley Smith and Robert Penner BSD terms, even though its header still says 1.3.1.",
+      "notices": [
+        "third_party/licenses/embedded/jquery-easing.txt"
+      ],
+      "parent": "materialize",
+      "status": "identified",
+      "version": "1.4.0"
+    },
+    {
+      "ecosystem": null,
+      "evidence": [
+        {
+          "git_blob": "ae2cdcb6b3ec5053a703cc11707995b85e77c7fe",
+          "marker": "Waves v0.6.4",
+          "url": "https://github.com/Dogfalo/materialize/blob/9bc43a1199ad5dfb78d58ba47726ab039218a939/js/waves.js"
+        }
+      ],
+      "id": "mat-waves",
+      "kind": "library",
+      "license": "MIT",
+      "locations": [
+        {
+          "file": "materialize.min.js",
+          "marker": "Waves"
+        }
+      ],
+      "name": "Waves",
+      "note": "Historical package metadata says Waves; npm ecosystem identity not established; no invented purl.",
+      "notices": [
+        "third_party/licenses/embedded/waves.txt"
+      ],
+      "parent": "materialize",
+      "status": "identified",
+      "version": "0.6.4"
+    },
+    {
+      "ecosystem": "npm",
+      "evidence": [
+        {
+          "git_blob": "745ef7177748f34867ee9ffae4945e9ea4adbdd9",
+          "marker": "pickadate.js v3.5.0",
+          "url": "https://github.com/Dogfalo/materialize/blob/9bc43a1199ad5dfb78d58ba47726ab039218a939/js/date_picker/picker.js"
+        },
+        {
+          "git_blob": "f282f4cf5e9e0f1b71abea0c9b88381ba2604534",
+          "marker": "Date picker for pickadate.js v3.5.0",
+          "url": "https://github.com/Dogfalo/materialize/blob/9bc43a1199ad5dfb78d58ba47726ab039218a939/js/date_picker/picker.date.js"
+        }
+      ],
+      "id": "mat-pickadate",
+      "kind": "library",
+      "license": "MIT",
+      "locations": [
+        {
+          "file": "materialize.min.js",
+          "marker": "pickadate"
+        }
+      ],
+      "name": "pickadate",
+      "note": "Materialize-adapted core/date picker; not an independently installed npm package.",
+      "notices": [
+        "third_party/licenses/embedded/pickadate.txt"
+      ],
+      "parent": "materialize",
+      "status": "identified",
+      "version": "3.5.0"
+    },
+    {
+      "ecosystem": "npm",
+      "evidence": [
+        {
+          "git_blob": "eac5213ba30f09bff0d051d83c42df62779bf985",
+          "marker": "ClockPicker v0.0.7",
+          "url": "https://github.com/Dogfalo/materialize/blob/9bc43a1199ad5dfb78d58ba47726ab039218a939/js/date_picker/picker.time.js"
+        }
+      ],
+      "id": "mat-clockpicker",
+      "kind": "library",
+      "license": "MIT",
+      "locations": [
+        {
+          "file": "materialize.min.js",
+          "marker": "clockpicker"
+        }
+      ],
+      "name": "clockpicker",
+      "note": "Modified by Ching Yaw Hao (2015), preserve modification attribution in NOTICE.",
+      "notices": [
+        "third_party/licenses/embedded/clockpicker.txt"
+      ],
+      "parent": "materialize",
+      "status": "identified",
+      "version": "0.0.7"
+    },
+    {
+      "ecosystem": null,
+      "evidence": [
+        {
+          "git_blob": "fa8150b7d94c32a1ab253eb35891be155e0c9be5",
+          "marker": "@version 0.1.2",
+          "url": "https://github.com/Dogfalo/materialize/blob/9bc43a1199ad5dfb78d58ba47726ab039218a939/js/scrollspy.js"
+        }
+      ],
+      "id": "mat-scrollspy",
+      "kind": "library",
+      "license": "MIT",
+      "locations": [
+        {
+          "file": "materialize.min.js",
+          "marker": "scrollSpy"
+        }
+      ],
+      "name": "jQuery ScrollSpy",
+      "note": "Version and copyright in tagged Materialize source; pinned upstream LICENSE agrees with author, original release identity not proven.",
+      "notices": [
+        "third_party/licenses/embedded/scrollspy.txt"
+      ],
+      "parent": "materialize",
+      "status": "partial",
+      "version": "0.1.2"
+    },
+    {
+      "ecosystem": null,
+      "evidence": [
+        {
+          "git_blob": "e444b5c79aa9fa46433337822efc1717547b25a9",
+          "marker": "Hammer.Manager.prototype",
+          "url": "https://github.com/Dogfalo/materialize/blob/9bc43a1199ad5dfb78d58ba47726ab039218a939/js/jquery.hammer.js"
+        }
+      ],
+      "id": "mat-jquery-hammer",
+      "kind": "library",
+      "license": "MIT",
+      "locations": [
+        {
+          "file": "materialize.min.js",
+          "marker": "hammer"
+        }
+      ],
+      "name": "jQuery Hammer adapter",
+      "note": "Source identified; upstream LICENSE is a candidate from immutable commit; exact source revision unresolved.",
+      "notices": [
+        "third_party/licenses/embedded/jquery-hammer.txt"
+      ],
+      "parent": "materialize",
+      "status": "partial",
+      "version": null
+    },
+    {
+      "ecosystem": null,
+      "evidence": [
+        {
+          "git_blob": "106e10d12253311bb35f83d03171d32209ea2877",
+          "marker": "Copyright (c) 2013 ngryman",
+          "url": "https://github.com/Dogfalo/materialize/blob/9bc43a1199ad5dfb78d58ba47726ab039218a939/js/global.js"
+        }
+      ],
+      "id": "mat-raf",
+      "kind": "library",
+      "license": "MIT",
+      "locations": [
+        {
+          "file": "materialize.min.js",
+          "marker": "requestAnimationFrame"
+        }
+      ],
+      "name": "raf.js",
+      "note": "Tagged source credits Nicolas Gryman and Erik Möller; candidate upstream MIT text retained; exact revision unresolved.",
+      "notices": [
+        "third_party/licenses/embedded/raf.txt"
+      ],
+      "parent": "materialize",
+      "status": "partial",
+      "version": null
+    },
+    {
+      "ecosystem": null,
+      "evidence": [
+        {
+          "git_blob": "106e10d12253311bb35f83d03171d32209ea2877",
+          "marker": "jashkenas/underscore/master/LICENSE",
+          "url": "https://github.com/Dogfalo/materialize/blob/9bc43a1199ad5dfb78d58ba47726ab039218a939/js/global.js"
+        },
+        {
+          "git_blob": "fa8150b7d94c32a1ab253eb35891be155e0c9be5",
+          "marker": "throttle() and getTime() taken from Underscore.js",
+          "url": "https://github.com/Dogfalo/materialize/blob/9bc43a1199ad5dfb78d58ba47726ab039218a939/js/scrollspy.js"
+        }
+      ],
+      "id": "mat-underscore",
+      "kind": "library",
+      "license": "MIT",
+      "locations": [
+        {
+          "file": "materialize.min.js",
+          "marker": "throttle"
+        }
+      ],
+      "name": "Underscore.js fragments",
+      "note": "Copied throttle/time fragments, not full library. Exact historic license/copyright revision needs review; include Underscore notice provisionally in next step. Underscore 1.10.2 reference notice is packaged; not a version assertion for the older fragments.",
+      "notices": [
+        "third_party/licenses/embedded/underscore.txt"
+      ],
+      "parent": "materialize",
+      "status": "partial",
+      "version": null
+    },
+    {
+      "ecosystem": "npm",
+      "evidence": [
+        {
+          "git_blob": "69d72fcc47a453e6a180f5af97e973962994f2bd",
+          "marker": "CoffeeScript Compiler v2.2.1",
+          "url": "https://github.com/ajaxorg/ace/blob/238b88ed1773005fd2b81eccacf6cf4ef5e7334d/lib/ace/mode/coffee/coffee.js"
+        },
+        {
+          "git_blob": "abf00126f02b4c4ad6b57785e4a16fa83a4743f7",
+          "marker": "version:\"2.2.1\"",
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-coffee.js"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/lib/ace/mode/coffee/coffee.js",
+          "git_blob": "69d72fcc47a453e6a180f5af97e973962994f2bd",
+          "marker": "CoffeeScript Compiler v2.2.1"
+        }
+      ],
+      "id": "ace-coffee",
+      "kind": "library",
+      "license": "MIT",
+      "locations": [
+        {
+          "file": "vendor/ace/worker-coffee.js",
+          "marker": "version:\"2.2.1\""
+        }
+      ],
+      "name": "coffeescript",
+      "note": "Compiler header and shipped version match, original upstream release LICENSE included. Historical source reference; marker survives in the new build, but new embedded byte/version/license closure is not complete. Current Ace 1.45.2 source files at 68d7fd1c0f5ac50cdb610bf06b86074eab3be652 have identical Git blobs to the historical evidence; current source markers independently rechecked. Full nested license closure remains open.",
+      "notices": [
+        "third_party/licenses/embedded/coffee.txt"
+      ],
+      "parent": "ace",
+      "status": "partial",
+      "version": "2.2.1"
+    },
+    {
+      "ecosystem": "npm",
+      "evidence": [
+        {
+          "git_blob": "d36f9fadd14c30bdd9530584012d36920f4ffb0f",
+          "marker": "exports.version = \"0.3.1\"",
+          "url": "https://github.com/ajaxorg/ace/blob/238b88ed1773005fd2b81eccacf6cf4ef5e7334d/lib/ace/mode/lua/luaparse.js"
+        },
+        {
+          "git_blob": "304d06237a0d4199192409ec3f7b9ace281e595e",
+          "marker": "version=\"0.3.1\"",
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-lua.js"
+        }
+      ],
+      "id": "ace-luaparse",
+      "kind": "library",
+      "license": "MIT",
+      "locations": [
+        {
+          "file": "vendor/ace/worker-lua.js",
+          "marker": "version=\"0.3.1\""
+        }
+      ],
+      "name": "luaparse",
+      "note": "Version explicit in source and shipped worker; exact release license. Historical source reference; marker survives in the new build, but new embedded byte/version/license closure is not complete.",
+      "notices": [
+        "third_party/licenses/embedded/luaparse.txt"
+      ],
+      "parent": "ace",
+      "status": "partial",
+      "version": "0.3.1"
+    },
+    {
+      "ecosystem": null,
+      "evidence": [
+        {
+          "git_blob": "b77096be3cf1289f52d1dde5c0f326fdf9b062d0",
+          "marker": "require(\"./xquery/xqlint\")",
+          "url": "https://github.com/ajaxorg/ace/blob/238b88ed1773005fd2b81eccacf6cf4ef5e7334d/lib/ace/mode/xquery_worker.js"
+        },
+        {
+          "git_blob": "14413843c3ca84366c8c25c30b4d43eee4703572",
+          "marker": "REx v5.30",
+          "url": "https://github.com/ajaxorg/ace/blob/238b88ed1773005fd2b81eccacf6cf4ef5e7334d/lib/ace/mode/xquery/xquery_lexer.js"
+        },
+        {
+          "git_blob": "f123f46fa7bbe78459e8be0861256cab076e0c43",
+          "marker": "REx v5.30",
+          "url": "https://github.com/ajaxorg/ace/blob/238b88ed1773005fd2b81eccacf6cf4ef5e7334d/lib/ace/mode/xquery/jsoniq_lexer.js"
+        },
+        {
+          "git_blob": "e2bd33d8503d86f65a568ecc3b41de7c04e1f668",
+          "marker": "\"version\": \"0.1.5\"",
+          "url": "https://github.com/wcandillon/xqlint/blob/1778846ed8e707780d791fd3ffb41feccdf9de04/package.json"
+        },
+        {
+          "git_blob": "4d2b8f6870eab5e565d059a78c3758b97124f5c2",
+          "marker": "ace/mode/xquery/xquery_lexer",
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/mode-xquery.js"
+        },
+        {
+          "git_blob": "afb8381588080c01ba4566cbaf7427075447bed8",
+          "marker": "ace/mode/xquery/jsoniq_lexer",
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/mode-jsoniq.js"
+        },
+        {
+          "git_blob": "ca18b43a42ca5ea827b3092c7b54cffba5e9c7c6",
+          "marker": "xqlint",
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-xquery.js"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/lib/ace/mode/xquery_worker.js",
+          "git_blob": "b77096be3cf1289f52d1dde5c0f326fdf9b062d0",
+          "marker": "require(\"./xquery/xqlint\")"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/lib/ace/mode/xquery/xquery_lexer.js",
+          "git_blob": "14413843c3ca84366c8c25c30b4d43eee4703572",
+          "marker": "REx v5.30"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/lib/ace/mode/xquery/jsoniq_lexer.js",
+          "git_blob": "f123f46fa7bbe78459e8be0861256cab076e0c43",
+          "marker": "REx v5.30"
+        }
+      ],
+      "id": "ace-xqlint",
+      "kind": "library",
+      "license": "Apache-2.0",
+      "locations": [
+        {
+          "file": "vendor/ace/mode-xquery.js",
+          "marker": "ace/mode/xquery/xquery_lexer"
+        },
+        {
+          "file": "vendor/ace/mode-jsoniq.js",
+          "marker": "ace/mode/xquery/jsoniq_lexer"
+        },
+        {
+          "file": "vendor/ace/worker-xquery.js",
+          "marker": "xqlint"
+        }
+      ],
+      "name": "XQLint and generated XQuery/JSONiq lexers",
+      "note": "Both generated XQueryTokenizer.js and JSONiqTokenizer.js at historical XQLint commit 1778846e (package 0.1.5) are literal full-source substrings of corresponding tagged Ace lexer modules. Apache-2.0 reference license retained; exact full worker version, generated output terms and other nested modules remain open; do not invent a version for the aggregate. Historical source reference; marker survives in the new build, but new embedded byte/version/license closure is not complete. Current Ace 1.45.2 source files at 68d7fd1c0f5ac50cdb610bf06b86074eab3be652 have identical Git blobs to the historical evidence; current source markers independently rechecked. Full nested license closure remains open.",
+      "notices": [
+        "third_party/licenses/embedded/xqlint-reference.txt"
+      ],
+      "parent": "ace",
+      "status": "partial",
+      "version": null
+    },
+    {
+      "ecosystem": null,
+      "evidence": [
+        {
+          "git_blob": "08f1380f3a9bce3135253bc69f5861dec3dcae17",
+          "marker": "If not otherwise specified",
+          "url": "https://github.com/ajaxorg/ace/blob/238b88ed1773005fd2b81eccacf6cf4ef5e7334d/tool/tmthemes/LICENSE"
+        },
+        {
+          "git_blob": "824a528ddd5edb6c3ff523ca885567cbe4dc25af",
+          "marker": "ace/theme/monokai",
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/theme-monokai.js"
+        }
+      ],
+      "id": "ace-theme-snippet-attribution",
+      "kind": "review",
+      "license": null,
+      "locations": [
+        {
+          "file": "vendor/ace/theme-monokai.js",
+          "marker": "ace/theme/monokai"
+        }
+      ],
+      "name": "Ace theme conversion and snippet attribution review",
+      "note": "Review record, not a claim all themes/snippets derive from this license. Historical tool license expressly allows per-file exceptions. Review theme/snippet upstream copyright and any extension dependencies. Historical source reference; marker survives in the new build, but new embedded byte/version/license closure is not complete.",
+      "notices": [
+        "third_party/licenses/embedded/ace-tmthemes-reference.txt"
+      ],
+      "parent": "ace",
+      "status": "partial",
+      "version": null
+    },
+    {
+      "ecosystem": "npm",
+      "evidence": [
+        {
+          "git_blob": "24a496423e2b277b5f76afaa679105c3b87a524b",
+          "marker": "Sizzle CSS Selector Engine v2.3.6",
+          "url": "https://github.com/jquery/jquery/blob/0cc1ad64ab0f482c13d6edd2a5226f309dd00006/external/sizzle/dist/sizzle.js"
+        }
+      ],
+      "id": "jquery-sizzle",
+      "kind": "library",
+      "license": "MIT",
+      "locations": [
+        {
+          "file": "jquery-3.6.0.min.js",
+          "marker": "sizzle"
+        }
+      ],
+      "name": "sizzle",
+      "note": "Selector engine in exact upstream jQuery build; full Sizzle license included.",
+      "notices": [
+        "third_party/licenses/embedded/sizzle.txt"
+      ],
+      "parent": "jquery",
+      "status": "identified",
+      "version": "2.3.6"
+    },
+    {
+      "ecosystem": "npm",
+      "evidence": [
+        {
+          "git_blob": "1beece92ae3317ce6453fb693afa7503a13285e3",
+          "marker": "no-undef",
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-javascript.js"
+        },
+        {
+          "git_blob": "d640dd3456722a4b6c56edc39beae695ea6c757f",
+          "marker": "Unresolved tag",
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-yaml.js"
+        },
+        {
+          "git_blob": "e7c858877314ea7caac5d7845c9980043a60a6b5",
+          "marker": "no-undef",
+          "url": "https://github.com/mkslanc/ace-linters/blob/e0d223c5a880cb2f258c96ccd22feaaffb29e5a5/packages/ace-legacy-linters/src/workers/javascript-worker.ts"
+        },
+        {
+          "git_blob": "76ca4bf50c9093640550f2b10229353a631f76ff",
+          "marker": "parseAllDocuments",
+          "url": "https://github.com/mkslanc/ace-linters/blob/e0d223c5a880cb2f258c96ccd22feaaffb29e5a5/packages/ace-legacy-linters/src/workers/yaml-worker.ts"
+        },
+        {
+          "git_blob": "dbe8ced0479259147b3ea8c5548da910ba953d64",
+          "marker": "\"version\": \"1.0.2\"",
+          "url": "https://github.com/mkslanc/ace-linters/blob/e0d223c5a880cb2f258c96ccd22feaaffb29e5a5/packages/ace-legacy-linters/package.json"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/Makefile.dryice.js",
+          "git_blob": "2d4596dee98c8b09333b192a8f4cd9cd09331185",
+          "marker": "/node_modules/ace-legacy-linters/build"
+        },
+        {
+          "url": "https://github.com/mkslanc/ace-linters/blob/e0d223c5a880cb2f258c96ccd22feaaffb29e5a5/packages/ace-legacy-linters/build-worker.mjs",
+          "git_blob": "f052326468c9ad723174aea0153ef8f6d9de5fd3",
+          "marker": "outDir: \"build/src-min-noconflict\""
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-css.js",
+          "git_blob": "ef3eb06052f1f2ff941aff408021280de9d6d0ed",
+          "marker": "ace/mode/css_worker"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-html.js",
+          "git_blob": "63e2c21f5fbe7987bae23da5abacb78bf9f4131b",
+          "marker": "ace/mode/html_worker"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-javascript.js",
+          "git_blob": "1beece92ae3317ce6453fb693afa7503a13285e3",
+          "marker": "ace/mode/javascript_worker"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-json.js",
+          "git_blob": "72b056dfd9ee8f48c3a4ff234a6f078c3bda132b",
+          "marker": "ace/mode/json_worker"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-lua.js",
+          "git_blob": "304d06237a0d4199192409ec3f7b9ace281e595e",
+          "marker": "ace/mode/lua_worker"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-php.js",
+          "git_blob": "4b08531534c9e27cba64adf7b1795dc6001cf5e6",
+          "marker": "ace/mode/php_worker"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-xml.js",
+          "git_blob": "2050bbf3d6128671e312c279b289e30f652d5169",
+          "marker": "ace/mode/xml_worker"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-yaml.js",
+          "git_blob": "d640dd3456722a4b6c56edc39beae695ea6c757f",
+          "marker": "ace/mode/yaml_worker"
+        }
+      ],
+      "id": "ace-legacy-linters",
+      "kind": "library",
+      "license": "MIT",
+      "locations": [
+        {
+          "file": "vendor/ace/worker-javascript.js",
+          "marker": "no-undef"
+        },
+        {
+          "file": "vendor/ace/worker-yaml.js",
+          "marker": "Unresolved tag"
+        },
+        {
+          "file": "vendor/ace/worker-css.js",
+          "marker": "ace/mode/css_worker"
+        },
+        {
+          "file": "vendor/ace/worker-html.js",
+          "marker": "ace/mode/html_worker"
+        },
+        {
+          "file": "vendor/ace/worker-javascript.js",
+          "marker": "ace/mode/javascript_worker"
+        },
+        {
+          "file": "vendor/ace/worker-json.js",
+          "marker": "ace/mode/json_worker"
+        },
+        {
+          "file": "vendor/ace/worker-lua.js",
+          "marker": "ace/mode/lua_worker"
+        },
+        {
+          "file": "vendor/ace/worker-php.js",
+          "marker": "ace/mode/php_worker"
+        },
+        {
+          "file": "vendor/ace/worker-xml.js",
+          "marker": "ace/mode/xml_worker"
+        },
+        {
+          "file": "vendor/ace/worker-yaml.js",
+          "marker": "ace/mode/yaml_worker"
+        }
+      ],
+      "name": "ace-legacy-linters",
+      "note": "Both build forms of all eight workers match official pinned npm ace-legacy-linters 1.0.2 byte-for-byte (#351 artifact 15187533994). Source MIT license LF copy is exact Git source; npm LICENSE has exactly 21 CRLF line endings and no other byte difference. Full nested dependency closure remains open.",
+      "notices": [
+        "third_party/licenses/embedded/ace-legacy-linters.txt"
+      ],
+      "parent": "ace",
+      "status": "identified",
+      "version": "1.0.2"
+    },
+    {
+      "ecosystem": null,
+      "evidence": [
+        {
+          "git_blob": "1beece92ae3317ce6453fb693afa7503a13285e3",
+          "marker": "@babel/parser",
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-javascript.js"
+        },
+        {
+          "git_blob": "e7c858877314ea7caac5d7845c9980043a60a6b5",
+          "marker": "@babel/parser",
+          "url": "https://github.com/mkslanc/ace-linters/blob/e0d223c5a880cb2f258c96ccd22feaaffb29e5a5/packages/ace-legacy-linters/src/workers/javascript-worker.ts"
+        }
+      ],
+      "id": "ace-babel-parser",
+      "kind": "library",
+      "license": null,
+      "locations": [
+        {
+          "file": "vendor/ace/worker-javascript.js",
+          "marker": "@babel/parser"
+        }
+      ],
+      "name": "@babel/parser",
+      "note": "Source import and shipped marker support partial identity; exact bundled version/license evidence pending.",
+      "notices": [],
+      "parent": "ace",
+      "status": "partial",
+      "version": null
+    },
+    {
+      "ecosystem": null,
+      "evidence": [
+        {
+          "git_blob": "d640dd3456722a4b6c56edc39beae695ea6c757f",
+          "marker": "Unresolved tag",
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-yaml.js"
+        },
+        {
+          "git_blob": "76ca4bf50c9093640550f2b10229353a631f76ff",
+          "marker": "parseAllDocuments",
+          "url": "https://github.com/mkslanc/ace-linters/blob/e0d223c5a880cb2f258c96ccd22feaaffb29e5a5/packages/ace-legacy-linters/src/workers/yaml-worker.ts"
+        },
+        {
+          "git_blob": "76ca4bf50c9093640550f2b10229353a631f76ff",
+          "marker": "from \"yaml\"",
+          "url": "https://github.com/mkslanc/ace-linters/blob/e0d223c5a880cb2f258c96ccd22feaaffb29e5a5/packages/ace-legacy-linters/src/workers/yaml-worker.ts"
+        }
+      ],
+      "id": "ace-yaml-parser",
+      "kind": "library",
+      "license": null,
+      "locations": [
+        {
+          "file": "vendor/ace/worker-yaml.js",
+          "marker": "Unresolved tag"
+        }
+      ],
+      "name": "yaml (Ace worker)",
+      "note": "Source uses yaml.parseAllDocuments; not the standalone js-yaml parser. Exact bundled version/license closure pending.",
+      "notices": [],
+      "parent": "ace",
+      "status": "partial",
+      "version": null
+    },
+    {
+      "ecosystem": null,
+      "evidence": [
+        {
+          "git_blob": "67d887d16947036adeb83b52d8255b765e0c5199",
+          "marker": "ace",
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/ace.js"
+        }
+      ],
+      "id": "ace-historical-notice-review",
+      "kind": "review",
+      "license": null,
+      "locations": [
+        {
+          "file": "vendor/ace/ace.js",
+          "marker": "ace"
+        }
+      ],
+      "name": "Historical Ace 1.9.6 notice references",
+      "note": "Conservatively retained historical notices pending new bundle attribution. These do not assert the old libraries or historical JSON license are present in the new runtime.",
+      "notices": [
+        "third_party/licenses/embedded/csslint.txt",
+        "third_party/licenses/embedded/html5-reference.txt",
+        "third_party/licenses/embedded/jshint-json.txt",
+        "third_party/licenses/embedded/jshint.txt",
+        "third_party/licenses/embedded/json-parser-attribution.txt",
+        "third_party/licenses/embedded/lodash-reference.txt",
+        "third_party/licenses/embedded/parserlib.txt",
+        "third_party/licenses/embedded/phpjs-attribution.txt",
+        "third_party/licenses/embedded/xmldom-reference.txt",
+        "third_party/licenses/embedded/yaml-lint-reference.txt"
+      ],
+      "parent": "ace",
+      "status": "partial",
+      "version": null
+    },
+    {
+      "id": "ace-xml-lodash",
+      "parent": "ace",
+      "kind": "library",
+      "name": "lodash",
+      "version": "4.17.21",
+      "ecosystem": "npm",
+      "license": "MIT",
+      "status": "identified",
+      "notices": [
+        "third_party/licenses/embedded/lodash-4.17.21.txt"
+      ],
+      "locations": [
+        {
+          "file": "vendor/ace/worker-xml.js",
+          "marker": "Bn.VERSION=\"4.17.21\""
+        },
+        {
+          "file": "vendor/ace/worker-xml.js",
+          "marker": "../../node_modules/lodash/lodash.js"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-xml.js",
+          "git_blob": "2050bbf3d6128671e312c279b289e30f652d5169",
+          "marker": "Bn.VERSION=\"4.17.21\""
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-xml.js",
+          "git_blob": "2050bbf3d6128671e312c279b289e30f652d5169",
+          "marker": "../../node_modules/lodash/lodash.js"
+        }
+      ],
+      "note": "Exact version marker and source-module path in shipped XML worker; unminified counterpart and pinned source lock agree. npm LICENSE matches immutable Git source bytes. GHSA-r5fr-rjxr-66jc and GHSA-xxjr-mmjv-4gpg in #351 candidate OSV; applicability/remediation OPEN, not accepted."
+    },
+    {
+      "id": "ace-xml-chevrotain",
+      "parent": "ace",
+      "kind": "library",
+      "name": "chevrotain",
+      "version": "7.1.1",
+      "ecosystem": "npm",
+      "license": "Apache-2.0",
+      "status": "identified",
+      "notices": [
+        "third_party/licenses/embedded/chevrotain-7.1.1.txt"
+      ],
+      "locations": [
+        {
+          "file": "vendor/ace/worker-xml.js",
+          "marker": "t.VERSION=\"7.1.1\""
+        },
+        {
+          "file": "vendor/ace/worker-xml.js",
+          "marker": "../../node_modules/chevrotain/lib/src/version.js"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-xml.js",
+          "git_blob": "2050bbf3d6128671e312c279b289e30f652d5169",
+          "marker": "t.VERSION=\"7.1.1\""
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace-builds/blob/c9ea63c0a0a436fbb477c918d6736644f77cab9f/src-min-noconflict/worker-xml.js",
+          "git_blob": "2050bbf3d6128671e312c279b289e30f652d5169",
+          "marker": "../../node_modules/chevrotain/lib/src/version.js"
+        }
+      ],
+      "note": "Exact version and module-path markers in shipped XML worker; source lock candidate agrees. npm LICENSE matches immutable release Git blob. Further nested closure remains open."
+    }
+  ],
+  "font_provenance": {
+    "file": "flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2",
+    "google_repository_candidate": {
+      "git_blob": "9fa211252080046a23b2449dbdced6abc2b0bb34",
+      "relation": "different-blob",
+      "url": "https://github.com/google/material-design-icons/blob/f880f4bd322f55d1fe64aa238e233f719339637b/iconfont/MaterialIcons-Regular.woff2"
+    },
+    "introduced": "2019-12-29",
+    "note": "Original HASS Configurator commit and prior online Google stylesheet establish repository lineage; exact original Google CDN URL/archive not recorded. Historical official Git WOFF2 differs. Font name-table version 1.017 / copyright 2018 remains verified; no byte-origin claim or font replacement.",
+    "predecessor_stylesheet": "https://fonts.googleapis.com/icon?family=Material+Icons",
+    "source": "https://github.com/undel-gh/hass-configurator/blob/6e3611006c84cf103318a9c4bb5a661e5da73411/hass_configurator/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2",
+    "source_blob": "d9c6038f7c3cb67eda285b7034b0144bf1460519",
+    "status": "partial"
+  },
+  "limitations": [
+    "Partial current inventory; missing nested identities, versions and notices are release blockers, not accepted risk.",
+    "Historical Ace 1.9.6 rows and literal source relationships: docs/history/ace-1.9.6-embedded.json and checkpoint b5924860ad8e27a2c47cecb71cac7905627a2819",
+    "Historical retained notices are references, not proof of active libraries or current license closure.",
+    "New worker imports and build markers do not establish exact dependency versions. Candidate OSV queries remain separately scoped.",
+    "Non-Ace embedded findings and font provenance remain unchanged.",
+    "Current Ace 1.45.2 XQuery and JSONiq lexer source blobs are unchanged from baseline and literal tokenizer relationships independently rechecked; not proof of full minified-worker byte equivalence or generated output license.",
+    "Eight exact replacement worker pairs identify ace-legacy-linters 1.0.2, not the complete dependency versions. XML lodash 4.17.21 and chevrotain 7.1.1 have specific shipped version/module markers and archive/Git license agreement; remaining 25 source-lock candidate queries are a separate evidence scope."
+  ],
+  "notices": {
+    "third_party/licenses/embedded/ace-legacy-linters.txt": {
+      "kind": "whole-file",
+      "sha256": "33d28673699c4240c72143daf1fb349e39d0b0cd703d21c300bc4e0cdf2a3433",
+      "source": "https://github.com/mkslanc/ace-linters/blob/e0d223c5a880cb2f258c96ccd22feaaffb29e5a5/packages/ace-legacy-linters/LICENSE",
+      "source_blob": "319b7eddf9ad9ee57746f4bb486597c87a35929c"
+    },
+    "third_party/licenses/embedded/ace-tmthemes-reference.txt": {
+      "kind": "whole-file",
+      "sha256": "18b0771fd3fede1efbc9fae82ce82076888013a1fef3ac4a4c6ea396e959c760",
+      "source": "https://github.com/ajaxorg/ace/blob/238b88ed1773005fd2b81eccacf6cf4ef5e7334d/tool/tmthemes/LICENSE",
+      "source_blob": "08f1380f3a9bce3135253bc69f5861dec3dcae17"
+    },
+    "third_party/licenses/embedded/clockpicker.txt": {
+      "kind": "whole-file",
+      "sha256": "6c3bfb01afb9198f783778ca94966a72bc32d1723e8fc4e464aa04eed50ba8cb",
+      "source": "https://github.com/weareoutman/clockpicker/blob/d1bf8afdc29976c016215a3159c5dfee254e930b/LICENSE",
+      "source_blob": "69040dfcbdfe84707250c6d0fb1587331e721469"
+    },
+    "third_party/licenses/embedded/coffee.txt": {
+      "kind": "whole-file",
+      "sha256": "9bad517ace6e36cf17d7fec7dadb4ccf24600447b19b47f439331e61c2ea736f",
+      "source": "https://github.com/jashkenas/coffeescript/blob/a73f66bc1182e30b06af279036f5d6b2236c9de5/LICENSE",
+      "source_blob": "2b8b2288fc5b759e2739d3396ee8796b1ae49f14"
+    },
+    "third_party/licenses/embedded/csslint.txt": {
+      "kind": "source-excerpt",
+      "sha256": "14fcc3eba5b2d185f2bafb6a5989d600146c92c7bb7af1d9ce0856a346f39152",
+      "source": "https://github.com/ajaxorg/ace/blob/238b88ed1773005fd2b81eccacf6cf4ef5e7334d/lib/ace/mode/css/csslint.js",
+      "source_blob": "fed22bd86237118a56113412fdab77732dca583f"
+    },
+    "third_party/licenses/embedded/hammer.txt": {
+      "kind": "whole-file",
+      "sha256": "4d93df6544df47a49b25add3aff67ff9ff47e4756d85dd0c3e1beba8520ab9f2",
+      "source": "https://github.com/hammerjs/hammer.js/blob/702e675f1bab25d5f6997989d43aaa5eae384f54/LICENSE.md",
+      "source_blob": "e067655d694c1341ea3fb268301facb61c645d88"
+    },
+    "third_party/licenses/embedded/html5-reference.txt": {
+      "kind": "whole-file",
+      "sha256": "a8c81a5ee4e687ab52b210eeefc9ccc157073ea7b02ba3cf9270c955bf920a02",
+      "source": "https://github.com/aredridel/html5/blob/8e64c248da4028452f0a69c58130cbadbc4e3fc6/COPYING",
+      "source_blob": "16e65189257877f5ab15bfb4456a95851e508b2f"
+    },
+    "third_party/licenses/embedded/jquery-easing.txt": {
+      "kind": "whole-file",
+      "sha256": "e8675bf8fd39f4b1ad13e0c267e2453e1a223c68d6e217634bc59dcb89a97412",
+      "source": "https://github.com/gdsmith/jquery.easing/blob/3d2d602f423bb211a5dcd4f17c149ebe5ecadb84/LICENSE",
+      "source_blob": "3e654e1492f3195d66d490fb12b0fefd1f0c7698"
+    },
+    "third_party/licenses/embedded/jquery-hammer.txt": {
+      "kind": "whole-file",
+      "sha256": "45041de253b840bd7dce1fd06a07b430aca47b9a3e8c7d6610afeff5ec813da5",
+      "source": "https://github.com/hammerjs/jquery.hammer.js/blob/90c2f3bb41c75692d3f15548d59a7b7c22adb8a4/LICENSE",
+      "source_blob": "c8ad350175c1eb01655b80bb2c8acabb94d35190"
+    },
+    "third_party/licenses/embedded/jshint-json.txt": {
+      "kind": "source-excerpt",
+      "sha256": "793e72d7972a6405abb6fdc0b9031a160c45af0f91eebbded3c8bbe1c3cf940f",
+      "source": "https://github.com/jshint/jshint/blob/b7dd7d8f93244abb874fdb616c7a5725209e36b0/src/jshint.js",
+      "source_blob": "66193ba25c507aadc537101852dcf1f37236545b"
+    },
+    "third_party/licenses/embedded/jshint.txt": {
+      "kind": "whole-file",
+      "sha256": "ddefbbbf8ebb8e69a66d36848cb613b91b691686fdf4b8a2aec61d496adb59ca",
+      "source": "https://github.com/jshint/jshint/blob/b7dd7d8f93244abb874fdb616c7a5725209e36b0/LICENSE",
+      "source_blob": "0e247b19fcde7369e8d249cded2f4e209fb41434"
+    },
+    "third_party/licenses/embedded/json-parser-attribution.txt": {
+      "kind": "source-excerpt",
+      "sha256": "fba0843b53ed467356fa5565acfd43ebe0d8f60c559c751a73259ac68ff74ae6",
+      "source": "https://github.com/ajaxorg/ace/blob/238b88ed1773005fd2b81eccacf6cf4ef5e7334d/lib/ace/mode/json/json_parse.js",
+      "source_blob": "051ec7fae95bb0c6537ccf0d79424f3fb11c0621"
+    },
+    "third_party/licenses/embedded/lodash-reference.txt": {
+      "kind": "whole-file",
+      "sha256": "e159c6d48c989185448658f276375bfb2300362ec6d4ae5525a2d49c4bcb947d",
+      "source": "https://github.com/lodash/lodash/blob/0843bd46ef805dd03c0c8d804630804f3ba0ca3c/LICENSE",
+      "source_blob": "c6f2f6145e79b8a773d987597574588ac891ba6f"
+    },
+    "third_party/licenses/embedded/luaparse.txt": {
+      "kind": "whole-file",
+      "sha256": "bedf97319fd3fb51c22dc5a44daf603ca4b2515ae75cae8ac677fb6bd40ec34e",
+      "source": "https://github.com/fstirlitz/luaparse/blob/fa4ba476841b9ca4891848dfe96e42336f54f932/LICENSE",
+      "source_blob": "14f9f84f4b7951b32a766d1ccf37fc3f0d14081a"
+    },
+    "third_party/licenses/embedded/parserlib.txt": {
+      "kind": "source-excerpt",
+      "sha256": "e6ea8c57d9a739643a9c7a6db81943f08d823c77716113f16c3314db1f647fe6",
+      "source": "https://github.com/ajaxorg/ace/blob/238b88ed1773005fd2b81eccacf6cf4ef5e7334d/lib/ace/mode/css/csslint.js",
+      "source_blob": "fed22bd86237118a56113412fdab77732dca583f"
+    },
+    "third_party/licenses/embedded/phpjs-attribution.txt": {
+      "kind": "source-excerpt",
+      "sha256": "7cf9b1d2cb4f4f904a647ccf1c1f24a4a65f1f68458391510cdfd024395a1c19",
+      "source": "https://github.com/ajaxorg/ace/blob/238b88ed1773005fd2b81eccacf6cf4ef5e7334d/lib/ace/mode/php/php.js",
+      "source_blob": "76ed249618ef31134c904bb1dc051a710fa92efc"
+    },
+    "third_party/licenses/embedded/pickadate.txt": {
+      "kind": "whole-file",
+      "sha256": "8e82037b93f02ede7bfebbdfbd16391764c2c5f0824e0adfc84f20696f80281d",
+      "source": "https://github.com/amsul/pickadate.js/blob/a685590fcffdb32569cb6ad159061b93d75fa399/LICENSE.md",
+      "source_blob": "392609196eac3b21cb080aa6552c6eef56486bf7"
+    },
+    "third_party/licenses/embedded/raf.txt": {
+      "kind": "whole-file",
+      "sha256": "b25f57aba6579ba5ad2b8df4f6a80530aaca3a398345c610124653ece346cd16",
+      "source": "https://github.com/ngryman/raf.js/blob/369d243b8c93c9f60e03929d34d535b337233108/LICENSE-MIT",
+      "source_blob": "a0f33ef42f7b8a6615e57b2b04c0a75329362e57"
+    },
+    "third_party/licenses/embedded/scrollspy.txt": {
+      "kind": "whole-file",
+      "sha256": "a3197470b41662630909e2da3a32ff81e50e5935b9a675cc9bc8b9c19787e4b0",
+      "source": "https://github.com/thesmart/jquery-scrollspy/blob/0ae1076076b77707ecfc783fd8e460933a461b97/LICENSE",
+      "source_blob": "aef5551c188edd90efd88f2274e1488d0b80876e"
+    },
+    "third_party/licenses/embedded/sizzle.txt": {
+      "kind": "whole-file",
+      "sha256": "a078a8f80016416042c2e5f04dbb7f499f0f6deebb086511f3a3b72633a2d761",
+      "source": "https://github.com/jquery/sizzle/blob/b87bbfab22dddfe8af5793ea2c9e155759c8d692/LICENSE.txt",
+      "source_blob": "88fcd178b2d37f872481d686d1ddcdd3b4929648"
+    },
+    "third_party/licenses/embedded/underscore.txt": {
+      "kind": "whole-file",
+      "sha256": "c45ab55d219e63e36cc9fa9aa36972230248ea9e7565ce80d1c4932d4bbba1b5",
+      "source": "https://github.com/jashkenas/underscore/blob/2a932470303157072015d5ab7f26d40b9deb4634/LICENSE",
+      "source_blob": "8c22362515630a62150db8189d1f1bb4a7c54362"
+    },
+    "third_party/licenses/embedded/velocity-shim-attribution.txt": {
+      "kind": "source-excerpt",
+      "sha256": "5574fe600ddf024f14e7cea8bfa30132ba9d695e004369836ea05f29dfe7c907",
+      "source": "https://github.com/Dogfalo/materialize/blob/9bc43a1199ad5dfb78d58ba47726ab039218a939/js/velocity.min.js",
+      "source_blob": "ea21aad889fae591acd6a8d0ef012f53ff5e0efb"
+    },
+    "third_party/licenses/embedded/velocity.txt": {
+      "kind": "whole-file",
+      "sha256": "725d6011a8aa52d87469af24ac6815f06add959ddb7dbae96bcb17c29d26a79a",
+      "source": "https://github.com/julianshapiro/velocity/blob/1ad0a8196fa973f96e347a9b7f5bdaf7498ed1a6/LICENSE.md",
+      "source_blob": "55ddc863569afc131875f462743e9f7336f038a6"
+    },
+    "third_party/licenses/embedded/waves.txt": {
+      "kind": "whole-file",
+      "sha256": "27d1feafdc04612114d41d260404d40aa56462a69269c940d35bda0f3a8c8bf3",
+      "source": "https://github.com/fians/Waves/blob/231fa264674b67c31bc7cbaea218ec4afdfe4db2/LICENSE",
+      "source_blob": "e05282848f44ff346cfd8ba6ebb7aaff0ce9dd68"
+    },
+    "third_party/licenses/embedded/xmldom-reference.txt": {
+      "kind": "whole-file",
+      "sha256": "16205905d57a91f1cf7e32298f96a511ef8da80446dacb111e1adf6654799e4c",
+      "source": "https://github.com/xmldom/xmldom/blob/f053be7ceb9b1ddcff93c4b36c92dadb4d589986/LICENSE",
+      "source_blob": "68a9b5e1bfce20948e889f58100cdd6b6651f85e"
+    },
+    "third_party/licenses/embedded/xqlint-reference.txt": {
+      "kind": "whole-file",
+      "sha256": "cb5e8e7e5f4a3988e1063c142c60dc2df75605f4c46515e776e3aca6df976e14",
+      "source": "https://github.com/wcandillon/xqlint/blob/1778846ed8e707780d791fd3ffb41feccdf9de04/LICENSE",
+      "source_blob": "e06d2081865a766a8668acc12878f98b27fc9ea0"
+    },
+    "third_party/licenses/embedded/yaml-lint-reference.txt": {
+      "kind": "whole-file",
+      "sha256": "d03753fc0657312d42bda508aacd675e7552a9668e58db025b141b0087e2edd9",
+      "source": "https://github.com/rasshofer/yaml-lint/blob/5d6c0a8a5ce540075c94e6fd09546f7415925469/LICENSE",
+      "source_blob": "ede49191426f8fc0440bcfadf9f57c16ea72a6ef"
+    },
+    "third_party/licenses/embedded/lodash-4.17.21.txt": {
+      "sha256": "f71e8ed126b46346494aad5486874cd8f0aafe95092ed67d2e3cb6110f939abc",
+      "source": "https://github.com/lodash/lodash/blob/f299b52f39486275a9e6483b60a410e06520c538/LICENSE",
+      "source_blob": "77c42f1408a38a0609cac12c887616cb21bfb736",
+      "kind": "whole-file"
+    },
+    "third_party/licenses/embedded/chevrotain-7.1.1.txt": {
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "source": "https://github.com/Chevrotain/chevrotain/blob/01753e36dc2bef849a35a825684b641e0e3508e6/LICENSE.txt",
+      "source_blob": "d645695673349e3947e8e5ae42332d0ac3164cd7",
+      "kind": "whole-file"
+    }
+  },
+  "schema": 1,
+  "source_relationships": [
+    {
+      "upstream": {
+        "url": "https://github.com/wcandillon/xqlint/blob/1778846ed8e707780d791fd3ffb41feccdf9de04/lib/lexers/XQueryTokenizer.js",
+        "git_blob": "9ebe64fcd788ffa1af3f82f1cc36596d5968b350",
+        "marker": "REx v5.30"
+      },
+      "container": {
+        "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/lib/ace/mode/xquery/xquery_lexer.js",
+        "git_blob": "14413843c3ca84366c8c25c30b4d43eee4703572",
+        "marker": "XQueryTokenizer"
+      },
+      "relation": "literal-full-source-substring"
+    },
+    {
+      "upstream": {
+        "url": "https://github.com/wcandillon/xqlint/blob/1778846ed8e707780d791fd3ffb41feccdf9de04/lib/lexers/JSONiqTokenizer.js",
+        "git_blob": "8fcd737b2ec86ccaccdecb4ba2306d18d3027016",
+        "marker": "REx v5.30"
+      },
+      "container": {
+        "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/lib/ace/mode/xquery/jsoniq_lexer.js",
+        "git_blob": "f123f46fa7bbe78459e8be0861256cab076e0c43",
+        "marker": "JSONiqTokenizer"
+      },
+      "relation": "literal-full-source-substring"
+    }
+  ],
+  "worker_review": {
+    "vendor/ace/worker-base.js": {
+      "note": "Ace 1.45.2 exact build verified; full current worker dependencies, versions and notices not cleared.",
+      "status": "open-review"
+    },
+    "vendor/ace/worker-coffee.js": {
+      "status": "component-mapping",
+      "note": "Current source and shipped markers rechecked; partial mapping only, no complete nested/license clearance."
+    },
+    "vendor/ace/worker-css.js": {
+      "status": "component-mapping",
+      "note": "Exact published ace-legacy-linters 1.0.2 minified/unminified worker equality; individual dependencies and licenses remain partially attributed."
+    },
+    "vendor/ace/worker-html.js": {
+      "status": "component-mapping",
+      "note": "Exact published ace-legacy-linters 1.0.2 minified/unminified worker equality; individual dependencies and licenses remain partially attributed."
+    },
+    "vendor/ace/worker-javascript.js": {
+      "status": "component-mapping",
+      "note": "Exact published ace-legacy-linters 1.0.2 minified/unminified worker equality; individual dependencies and licenses remain partially attributed."
+    },
+    "vendor/ace/worker-json.js": {
+      "status": "component-mapping",
+      "note": "Exact published ace-legacy-linters 1.0.2 minified/unminified worker equality; individual dependencies and licenses remain partially attributed."
+    },
+    "vendor/ace/worker-lua.js": {
+      "status": "component-mapping",
+      "note": "Exact published ace-legacy-linters 1.0.2 minified/unminified worker equality; individual dependencies and licenses remain partially attributed."
+    },
+    "vendor/ace/worker-php.js": {
+      "status": "component-mapping",
+      "note": "Exact published ace-legacy-linters 1.0.2 minified/unminified worker equality; individual dependencies and licenses remain partially attributed."
+    },
+    "vendor/ace/worker-xml.js": {
+      "status": "component-mapping",
+      "note": "Exact published ace-legacy-linters 1.0.2 minified/unminified worker equality; individual dependencies and licenses remain partially attributed."
+    },
+    "vendor/ace/worker-xquery.js": {
+      "status": "component-mapping",
+      "note": "Current source and shipped markers rechecked; partial mapping only, no complete nested/license clearance."
+    },
+    "vendor/ace/worker-yaml.js": {
+      "status": "component-mapping",
+      "note": "Exact published ace-legacy-linters 1.0.2 minified/unminified worker equality; individual dependencies and licenses remain partially attributed."
+    }
+  }
+}

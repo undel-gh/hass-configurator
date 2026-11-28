@@ -26,7 +26,15 @@ REQUIRED_FIRST_PARTY = (
 
 def verify_checkout():
     manifest = json.loads((PACKAGE / "vendor" / "manifest.json").read_text("utf8"))
-    if manifest["schema"] != 1 or len(manifest["resources"]) < 460:
+    try:
+        from .ace_worker_profile import read_profile, validate_manifest, verify_vendor_tree, LOCK
+    except ImportError:
+        from ace_worker_profile import read_profile, validate_manifest, verify_vendor_tree, LOCK
+    selected_ace = validate_manifest(read_profile(), json.loads(LOCK.read_text("utf-8")), manifest)
+    verify_vendor_tree(PACKAGE, manifest["resources"])
+    # The curated Ace subset is validated against the immutable upstream lock.
+    # Keep the independent count guard for the 20 non-Ace vendor resources.
+    if manifest["schema"] != 1 or len(manifest["resources"]) != len(selected_ace) + 20:
         raise ValueError("Incomplete offline vendor manifest")
     for name, sha in manifest["resources"].items():
         item = PACKAGE / name

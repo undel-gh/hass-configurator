@@ -1,0 +1,2 @@
+# Preserve exact archive notice bytes, including upstream CRLF.
+hass_configurator/third_party/licenses/embedded/npm-*.txt -text

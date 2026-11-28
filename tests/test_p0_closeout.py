@@ -17,7 +17,7 @@ from scripts.audit_runtime_assets import extract
 
 ROOT = Path(__file__).resolve().parents[1]
 INVENTORY = ROOT / "docs" / "runtime-dependencies.json"
-ACE_LOCK = ROOT / "docs" / "ace-builds-1.9.6-lock.json"
+ACE_LOCK = ROOT / "docs" / "ace-builds-1.45.2-lock.json"
 VENDOR_LOCK = ROOT / "hass_configurator" / "vendor" / "manifest.json"
 
 
@@ -62,10 +62,10 @@ class P0CloseoutTests(unittest.TestCase):
         lock = json.loads(ACE_LOCK.read_text("utf8"))
         vendor = json.loads(VENDOR_LOCK.read_text("utf8"))
         self.assertEqual(lock["name"], "ace-builds")
-        self.assertEqual(lock["version"], "1.9.6")
+        self.assertEqual(lock["version"], "1.45.2")
         self.assertEqual(lock["family"], "src-min-noconflict")
-        self.assertEqual(lock["family_files"], 440)
-        self.assertEqual(len(lock["files_sha256"]), 440)
+        self.assertEqual(lock["family_files"], 495)
+        self.assertEqual(len(lock["files_sha256"]), 495)
         self.assertEqual(vendor["provenance"]["ace"]["npm_integrity"],
                          lock["npm_integrity"])
         self.assertEqual(vendor["provenance"]["ace"]["sha256"], lock["sha256"])
@@ -84,13 +84,8 @@ class P0CloseoutTests(unittest.TestCase):
         ):
             for name in names:
                 self.assertIn("%s-%s.js" % (kind, name), lock["files_sha256"])
-        for name in lock["worker_files"]:
-            with self.subTest(worker=name):
-                self.assertIn(name, lock["files_sha256"])
-                self.assertEqual(
-                    vendor["resources"]["vendor/ace/" + name],
-                    lock["files_sha256"][name],
-                )
+        from scripts.ace_worker_profile import read_profile, validate_manifest
+        validate_manifest(read_profile(), lock, vendor)
 
     def test_all_legacy_api_paths_remain_behind_exact_p0_router(self):
         router = Router(Assets())

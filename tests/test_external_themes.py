@@ -1,0 +1,171 @@
+"""External theme evidence must not hide changes or imply license clearance."""
+import plistlib
+import unittest
+from scripts.audit_external_themes import compare_plist, verify_blob, reference, verify_historical_import, textmate_license_relation, verify_expected_comparison, input_rights_indicators, converter_input_status, historic_header, split_css_source, krtheme_input_relation, later_wrapper_declaration, verify_theme_history_coverage, verify_theme_dispositions
+from scripts.audit_supply_chain import git_blob_sha1
+
+
+class ExternalThemeTests(unittest.TestCase):
+    def test_xml_format_only(self):
+        value = {"name": "example", "settings": [{"settings": {"foreground": "#123456"}}]}
+        xml = plistlib.dumps(value)
+        binary = plistlib.dumps(value, fmt=plistlib.FMT_BINARY)
+        result = compare_plist(xml, binary)
+        self.assertFalse(result["raw_equal"])
+        self.assertTrue(result["parsed_equal"])
+        self.assertTrue(result["settings_equal"])
+
+    def test_metadata_and_settings_changes_distinguished(self):
+        a = {"name": "A", "settings": [{"scope": "x"}, {"scope": "y"}]}
+        b = {"name": "B", "settings": a["settings"]}
+        result = compare_plist(plistlib.dumps(a), plistlib.dumps(b))
+        self.assertEqual(result["differing_top_level_keys"], ["name"])
+        self.assertTrue(result["settings_equal"])
+        b["settings"] = list(reversed(a["settings"]))
+        self.assertFalse(compare_plist(plistlib.dumps(a), plistlib.dumps(b))["settings_equal"])
+
+    def test_type_and_color_changes(self):
+        for a, b in ((True, 1), ("#123456", "#123457")):
+            x = plistlib.dumps({"settings": [a]})
+            y = plistlib.dumps({"settings": [b]})
+            self.assertFalse(compare_plist(x, y)["settings_equal"])
+
+    def test_blob_drift_rejected_including_license(self):
+        raw = b"original license\n"
+        pin = git_blob_sha1(raw)
+        self.assertEqual(verify_blob(raw, pin)["git_blob"], pin)
+        with self.assertRaisesRegex(ValueError, "blob mismatch"):
+            reference("owner/repo", "a" * 40, "LICENSE", pin, lambda _: raw + b" ")
+        with self.assertRaisesRegex(ValueError, "blob mismatch"):
+            verify_blob(b"changed theme", pin)
+
+    def test_invalid_shape(self):
+        with self.assertRaises(ValueError):
+            compare_plist(plistlib.dumps({"name": "missing"}), plistlib.dumps({"settings": []}))
+
+    def test_historical_import_requires_exact_bytes(self):
+        a = {"settings": [{"scope": "x"}]}
+        raw = plistlib.dumps(a)
+        self.assertTrue(verify_historical_import(raw, raw)["raw_equal"])
+        with self.assertRaisesRegex(ValueError, "import bytes differ"):
+            verify_historical_import(raw, plistlib.dumps(a, fmt=plistlib.FMT_BINARY))
+
+    def test_textmate_license_scope_only(self):
+        readme = b"Intro\n\n# License\n\nfiles in this repository fall under these terms.\nException applies."
+        local = b"files in this directory fall under these terms.\n\nException applies."
+        self.assertEqual(textmate_license_relation(readme, local),
+                         "scope-wording-and-whitespace-only")
+        for changed in (local.replace(b"Exception applies.", b""), local.replace(b"directory", b"project")):
+            with self.assertRaisesRegex(ValueError, "terms differ"):
+                textmate_license_relation(readme, changed)
+        with self.assertRaisesRegex(ValueError, "unique TextMate license"):
+            textmate_license_relation(b"Missing", local)
+
+    def test_external_port_expected_byte_relation(self):
+        raw = plistlib.dumps({"settings": [{"scope": "x"}]})
+        changed = plistlib.dumps({"settings": [{"scope": "y"}]})
+        self.assertTrue(verify_expected_comparison(raw, raw, True)["raw_equal"])
+        self.assertFalse(verify_expected_comparison(raw, changed, False)["raw_equal"])
+        with self.assertRaisesRegex(ValueError, "Unexpected external port byte relation"):
+            verify_expected_comparison(raw, changed, True)
+        with self.assertRaisesRegex(ValueError, "Unexpected external port byte relation"):
+            verify_expected_comparison(raw, raw, False)
+
+    def test_grouped_input_indicators_do_not_clear_license(self):
+        raw = plistlib.dumps({"author": "Example", "comment": "All rights reserved",
+                              "settings": []})
+        result = input_rights_indicators(raw, "Example.tmTheme",
+                                         ["Example-license.txt", "other-license.txt"])
+        self.assertEqual(result["metadata"]["author"], "Example")
+        self.assertEqual(result["companion_candidates"], ["Example-license.txt"])
+        self.assertTrue(result["rights_marker_hits"])
+        self.assertEqual(result["license_status"], "review-open")
+        empty = input_rights_indicators(plistlib.dumps({"settings": []}), "A.tmTheme", [])
+        self.assertEqual(empty["rights_marker_hits"], [])
+        self.assertEqual(empty["license_status"], "review-open")
+
+    def test_grouped_converter_mapping_is_not_assumed(self):
+        converter = 'var themes = {\n    "a": "A",\n    //"b": "B"\n};'
+        self.assertEqual(converter_input_status(converter, "a", "A.tmTheme"), "active")
+        self.assertEqual(converter_input_status(converter, "b", "B.tmTheme"), "commented")
+        self.assertEqual(converter_input_status(converter, "c", "C.tmTheme"), "unmapped")
+        with self.assertRaisesRegex(ValueError, "Unexpected converter mapping"):
+            converter_input_status(converter, "a", "Wrong.tmTheme")
+
+    def test_historic_header_scope_and_boundary(self):
+        header = (b"/* ***** BEGIN LICENSE BLOCK *****\n * Version: MPL 1.1/GPL 2.0/LGPL 2.1\n"
+                  b" * ***** END LICENSE BLOCK ***** */\n\n")
+        body = b'define(function() {});\n'
+        self.assertEqual(historic_header(header + body, b"Version: MPL"), (header, body))
+        for raw in (body, header + b"other()", header + header + body):
+            with self.assertRaises(ValueError):
+                historic_header(raw, b"Version: MPL")
+        with self.assertRaises(ValueError):
+            historic_header(header + body, b"BSD")
+
+    def test_historic_css_transfer_is_physical_source_text(self):
+        raw = b'exports.cssText = "\\\n.a {\\\n  color: red;\\\n}";'
+        self.assertEqual(split_css_source(raw), b"\n.a {\n  color: red;\n}")
+        for bad in (raw + raw, b'exports.cssText = "a\\nb";',
+                    b'exports.cssText = "a"; extra";'):
+            with self.assertRaises(ValueError):
+                split_css_source(bad)
+
+    def test_historical_css_literal_ignores_later_statement_terminators(self):
+        raw = b'exports.cssText = "\\\n.a {}";\nvar name = "other";\n'
+        self.assertEqual(split_css_source(raw), b"\n.a {}")
+
+    def test_krtheme_relation_rejects_unrelated_edits(self):
+        original = plistlib.dumps({"settings": [{"settings": {
+            "background": "#000000", "invisibles": "#E97A5459", "foreground": "#FCFFE0"}}]})
+        imported = original.replace(b"#000000", b"#0B0A09").replace(b"#E97A5459", b"#FFB16F52")
+        self.assertEqual(krtheme_input_relation(original, imported)["exact_except"],
+                         ["background", "invisibles"])
+        with self.assertRaisesRegex(ValueError, "Unexpected krTheme input relation"):
+            krtheme_input_relation(original, imported.replace(b"#FCFFE0", b"#FFFFFF"))
+
+    def test_later_wrapper_declaration_does_not_infer_bsd_from_label(self):
+        mit = (b"Distributed under the BSD license:\n"
+               b"Copyright 2011 Irakli Gozalishvili.\nPermission is hereby granted")
+        bsd = (b"Distributed under the BSD license:\nCopyright (c) 2010, Ajax.org B.V.\n"
+               b"Redistribution and use in source and binary forms\nNeither the name of Ajax.org")
+        self.assertEqual(later_wrapper_declaration(mit), "mit-labelled-bsd")
+        self.assertEqual(later_wrapper_declaration(bsd), "ajax-bsd")
+        self.assertEqual(later_wrapper_declaration(b"exports.isDark = true;"), "root-only")
+        with self.assertRaisesRegex(ValueError, "Unclassified"):
+            later_wrapper_declaration(b"Distributed under the BSD license:")
+
+    def test_theme_history_coverage_rejects_missing_and_duplicate_rows(self):
+        early = [{"theme": "kr_theme"}, {"theme": "a"}]
+        additional = [{"theme": "b"}]
+        later = [{"theme": "c"}]
+        self.assertEqual(verify_theme_history_coverage({"a", "b", "c"}, early, additional, later)["retained_count"], 3)
+        for retained, extra in (({"a", "b"}, later), ({"a", "b", "c"}, later + later)):
+            with self.assertRaises(ValueError):
+                verify_theme_history_coverage(retained, early, additional, extra)
+
+    def test_disposition_matrix_rejects_notice_and_clearance_drift(self):
+        history = {"historical_ace_theme_licenses": {"themes": [{"theme": "kr_theme"}]},
+                   "additional_bsd_theme_wrappers": [],
+                   "post_bsd_themes": {"themes": [{"theme": "a", "wrapper_declaration": "root-only"}]},
+                   "theme_history_coverage": {"retained": ["a"]}}
+        inventory = {"components": [{"id": "external-a", "kind": "library",
+                                      "locations": [{"file": "vendor/ace/theme-a.js"}]}]}
+        def row(theme, decl, excluded, components):
+            return {"theme": theme, "historical_declaration": decl,
+                    "distribution": "excluded" if excluded else "retained",
+                    "disposition": "excluded-reassessment-open" if excluded else "retained-review-open",
+                    "additional_components": components, "review_priority": "standard",
+                    "remaining_review": "verify rights"}
+        matrix = {"schema": 1, "review_status": "independent-review-pending",
+                  "ace_source_commit": "68d7fd1c0f5ac50cdb610bf06b86074eab3be652",
+                  "rows": [row("kr_theme", "ajax-bsd", True, []),
+                           row("a", "root-only", False, ["external-a"])]}
+        self.assertEqual(verify_theme_dispositions(matrix, inventory, history), matrix)
+        matrix["rows"][1]["additional_components"] = []
+        with self.assertRaisesRegex(ValueError, "notice mapping"):
+            verify_theme_dispositions(matrix, inventory, history)
+        matrix["rows"][1]["additional_components"] = ["external-a"]
+        matrix["rows"][1]["disposition"] = "cleared"
+        with self.assertRaisesRegex(ValueError, "Unexpected theme disposition"):
+            verify_theme_dispositions(matrix, inventory, history)

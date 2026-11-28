@@ -1,0 +1,835 @@
+# Ace 1.45.2 worker attribution — #33 / #9
+
+Status: **partial, evidence collection; no release clearance**.
+
+## Historical runtime gate
+
+Exact HEAD 66ac33422ac5083ac7da4bd7f2090fa4400128a7:
+baseline #349 / 45977275984 4/4 success (158 Python, 27 Chromium + one
+expected skip, wheel/sdist/Docker 6 each); rehearsal #6 / 45977275853
+11/11. Actual three archives 15187442808 / 15187752539 / 15187088520
+downloaded and inspected, ZIP CRC and GitHub SHA-256 match. Source BOM
+30 components, 57 upstream files, 27 notices, zero current literal source
+relationships; 554 resources verified in each installed distribution.
+Exact standalone js-yaml archive/member relation; Docker lock matched,
+429 Debian binary packages, equal image IDs. Main OSV 220 queries/77 matches,
+zero for ace-builds 1.45.2 and js-yaml 4.3.2; incomplete nested identity coverage.
+No external attempts. Rehearsal #6 is additional evidence, not real Supervisor.
+
+## New upstream architecture evidence
+
+Ace source 68d7fd1c0f5ac50cdb610bf06b86074eab3be652
+[Makefile.dryice.js](https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/Makefile.dryice.js)
+(blob 2d4596dee98c8b09333b192a8f4cd9cd09331185) copies
+ace-legacy-linters/build over all four generated families. Its package.json
+specifies ^1.0.2, not an exact installed version.
+
+The candidate linter build script at source e0d223c5a880cb2f258c96ccd22feaaffb29e5a5
+([build-worker.mjs](https://github.com/mkslanc/ace-linters/blob/e0d223c5a880cb2f258c96ccd22feaaffb29e5a5/packages/ace-legacy-linters/build-worker.mjs),
+blob f052326468c9ad723174aea0153ef8f6d9de5fd3) defines eight replacement
+workers and uses esbuild and Terser. The upstream monorepo package-lock.json
+Git blob 17e9297cb3a744c12b1bd2a6c55a7b3138b39918 is a *source-lock candidate*,
+not a proof of the published build dependency closure.
+
+| Worker | Source-level candidate attribution |
+| --- | --- |
+| JavaScript | @babel/parser, eslint-scope, globals; source imports and unminified path comments |
+| YAML | yaml, workspace-local node_modules/yaml (2.8.3 in pinned source lock, not root 2.7.1) |
+| CSS | vscode-css-languageservice and transitive source paths |
+| JSON | vscode-json-languageservice, JSON diagnostics wrapper |
+| HTML | htmlhint |
+| PHP | php-parser |
+| Lua | luaparse (0.3.1 version marker already present) |
+| XML | @xml-tools parser/ast/constraints/validation, namespace validator |
+| Coffee | Native Ace worker; CoffeeScript 2.2.1 marker; exact nested closure open |
+| XQuery | Native Ace worker; XQLint/tokenizer lineage needs current source checks |
+| Base | Native worker bootstrap; nested review open |
+
+## Evidence method and boundaries
+
+The build-time attribution command compares both minified and unminified
+worker members of the registry-integrity-verified ace-legacy-linters 1.0.2
+archive with the independently pinned Ace archive and actual runtime workers.
+Only equal pairs qualify as exact linter build matches. Source path comments
+then select the deepest node_modules package and exact workspace lock path;
+missing lock entries remain unresolved. It collects root license/NOTICE
+reference files from candidate npm archives with registry SRI, and source-lock
+SRI where present, and performs separate candidate OSV queries. It never
+executes npm code or writes to runtime. Archive/license evidence failures and
+missing notices remain visible. Candidate reports are not the shipped SBOM.
+
+No automatic promotion of exact nested versions from source lock. Next:
+review the actual attribution artifact, pin the linter archive and matched
+worker hashes, reconcile active records and notices; use reproducible build
+or stronger byte evidence where needed for exact dependency versions. Retain
+native, theme/snippet and residual risk gates. #33/#9 remain open.
+
+## Native worker re-check and first attribution finding
+
+Both XQuery and JSONiq tokenizer literal-full-source relationships were
+rechecked directly against current Ace source 68d7fd1c0f5ac50cdb610bf06b86074eab3be652. Both container Git
+blobs are identical to the historical 1.9.6 source evidence. CoffeeScript
+2.2.1 source blob is also unchanged and contains the compiler version header;
+current minified worker marker already verified. These current source pins
+are added to embedded.json, with partial component-mapping disposition.
+The native base worker remains open.
+
+First attribution run #350 / 45978322070 on 5895a9fa stopped at a real
+ace-legacy-linters npm LICENSE vs pinned source/shipped notice mismatch.
+Do not declare the linter notice accepted. The correction preserves actual
+archive notice bytes (base64), Git blob, SHA-256 and source/shipped equality
+flags in the report, still fails the attribution gate on mismatch, and
+retains evidence for worker comparisons and candidate notices/OSV first.
+No npm archive notice substituted into the runtime without review.
+
+## Actual archive correlation and notice disposition
+
+#351 source artifact [15187533994](https://github.com/undel-gh/hass-configurator/actions/runs/45978519039/artifacts/15187533994), exact HEAD 5c25067e2e1311fc70714e0e928ca527fe4b03db: downloaded and inspected, CRC and SHA-256
+4bbf25465cf6fee3b2bb5c3cb364f35afffd18dfe12a560784938c270b3ad389 match.
+Round 9 reviewer 2 reported HTTP 404 for the historical browser artifact link (P4-5, pre-existing; actual reference is here, not ACE_SNIPPET_RESEARCH.md). Rechecked 2026-11-28 through authenticated GitHub Actions API: artifact 15187533994 is listed under [run 45978519039](https://github.com/undel-gh/hass-configurator/actions/runs/45978519039), expired=false; downloaded actual ZIP again, CRC clean for all seven members and same published SHA-256. Retain original ID and digest; unauthenticated access may be unavailable and future retention expiry is possible. The reviewer's 404 is not evidence of archive deletion or failed historical verification.
+All eight minified **and** unminified worker pairs match the official
+ace-legacy-linters 1.0.2 npm archive byte-for-byte. Archive SHA-256
+3b816b72064cbe56412885b2a22703ac2dbdc13784ece24bed46b5ee9c0a435f.
+License archive SHA-256 3432ec591bb26b6461a86be1198f2c9538107cb8cf0c41107be53df0b9e56903,
+Git blob c5b1603adc228961316de4dfd99a4d033c4a0bca; 21 CRLF, zero bare LF,
+zero stray CR. Exact CRLF-to-LF conversion reproduces existing Git source
+blob 319b7eddf9ad9ee57746f4bb486597c87a35929c and shipped LF SHA-256
+33d28673699c4240c72143daf1fb349e39d0b0cd703d21c300bc4e0cdf2a3433.
+This specific pinned relation is now checked; arbitrary normalization is
+not allowed. No license content changed. Source inventory identifies the
+linter package, not all dependencies.
+
+25 unique source-lock candidate package/version pairs, all paths resolved;
+23 packages with root notices, two without (@vscode/l10n 0.0.18 and
+esrecurse 4.3.0; investigate source/embedded notices). 25 root notice files
+collected. Source-lock candidates, **not verified installed versions**:
+
+| Worker | Candidate versions from the exact path in published unminified build and pinned source lock |
+|---|---|
+| All 8 replacement workers | ace-code 1.43.6 |
+| JavaScript | @babel/parser 7.29.2; eslint-scope 9.1.2; esrecurse 4.3.0; estraverse 5.3.0 (two distinct lock paths); globals 14.0.0 |
+| YAML | yaml 2.8.3 (workspace-local) |
+| CSS | vscode-css-languageservice 6.3.10; @vscode/l10n 0.0.18; vscode-languageserver-textdocument 1.0.12; vscode-languageserver-types 3.17.5 |
+| JSON | vscode-json-languageservice 5.7.2; jsonc-parser 3.3.1; vscode-uri 3.1.0; same three shared @vscode/l10n/languageserver packages |
+| HTML | htmlhint 1.9.2 |
+| PHP | php-parser 3.4.0 |
+| Lua | luaparse 0.3.1 (existing shipped version marker) |
+| XML | @xml-tools/ast 5.0.5; common 0.1.6; constraints 1.1.1; parser 1.0.11; validation 1.0.16; chevrotain 7.1.1; lodash 4.17.21; regexp-to-ast 0.5.0 |
+
+Candidate OSV 26 pairs including linter package, one matched pair:
+lodash 4.17.21 (GHSA-r5fr-rjxr-66jc, GHSA-xxjr-mmjv-4gpg). Author then
+verified specific version and module-path markers in actual minified XML
+worker for lodash 4.17.21 and chevrotain 7.1.1, and exact npm LICENSE blob
+identity against each immutable Git release. Both added as identified
+active SBOM entries with exact notices. Lodash advisories must now be
+tracked in the main scan and risk register; no automatic acceptance or
+claim of exploitability. Other source-lock version candidates remain
+separate pending stronger evidence. All 8 worker package mappings and
+native coffee/XQuery mappings partial for nested closure; base open.
+
+## Curated runtime and retained notice recovery — 2026-11-27
+
+The preceding full-family sections describe historical evidence, not the
+current shipped inventory. #37 removed XML/PHP/Lua/Coffee/XQuery workers.
+Reviewed correction HEAD f72a78108a1c84f791efb0abe00876332eb91d0b: baseline #356 and
+rehearsal #13 success, all three artifacts inspected by author and reviewer 2.
+Five retained linter pairs, 15 source-lock candidates plus linter (16 OSV
+candidate queries / zero matches), native base open. Former Lodash XML
+findings are remediated by physical removal within the reviewed runtime
+scope, not a VEX/risk waiver; see P1_SUPPLY_CHAIN.md.
+
+The two candidate npm archives without root notice files were investigated:
+
+| Candidate | Source provenance | Notice evidence | Identity disposition |
+| --- | --- | --- | --- |
+| esrecurse 4.3.0 | annotated tag v4.3.0 -> 8ceb63797813d9ac69572a671b95cf58ffdf35b6; package.json blob dec5b1bc1fd3ac43e74d7a575cc6bb98b453b2e3 | Full original BSD-2-Clause source header in esrecurse.js blob 15d57dfd0218f66036a7cb5c5fe8e18c26d82267; exact excerpt shipped | identified 4.3.0: minified worker contains name, description and version in package metadata; unminified module exports version from that metadata |
+| @vscode/l10n 0.0.18 | tag l10n/v0.0.18 -> fc7e3d79ddb91a2cc24a9730aad912026a43dbf2; l10n/package.json blob 8ebb31b8d8635de35f382744b898c9579ee20a95 | Exact root MIT LICENSE blob 9e841e7a26e4eb057b24511e7b92d42b257a80e5, shipped as source-reference notice | partial: distinctive error literal and source paths establish CSS/JSON presence, exact version not proven |
+
+Both source notices are checked by existing embedded-upstream verification
+against immutable Git blobs and by local SHA-256. This does not claim either
+npm archive contains a root license file; that observation remains valid.
+esrecurse has archive SHA-256 3ecf9370d7296b47b570c88a11f70b35bb965af8d536536b259eb55f9b793b61;
+@vscode/l10n archive SHA-256 f1c2dc897488595f6bb42121869f525c6c6a5f7c8dca550754199c3251ed7c5c
+from verified #356 source evidence. Next correlate archive source members
+against published unminified worker sections; no invented exact l10n version.
+Remaining 13 candidate archive notices have been collected but their
+shipped mappings and exact version attribution remain open. Base worker,
+themes/snippets, XQuery lexer generator terms and Materialize findings
+remain separate. New inventory CI and independent review required.
+
+## Retained candidate mapping and archive notice pins
+
+Exact #357 / #14 at 9b64354a: all jobs success; author inspected actual
+source 15198574231, installed 15198804542 and rehearsal 15198309106 ZIPs,
+CRC and published SHA-256 match. 172 Python; rehearsal 20/20; wheel/sdist
+15 each, Docker 10; 30 source BOM entries, 31 verified notices, 72 Git
+sources. 553 installed resources per artifact, 5 first-party checks; image
+A/B equal sha256:5442b08d45bbbee9b1f4ca5e40364cbc59d82b9e1cf178d318195151c20f4db0.
+Main OSV 220 queries / 77 matched, esrecurse 4.3.0 zero advisories. No
+additional independent review of 9b64354a claimed.
+
+All 15 candidates now have active component mappings, using published
+unminified node_modules paths and corroborating minified literals. The
+remaining 13 retain exact original candidate npm notice files (15 total)
+from the #357 artifact. Archive SHA-256, SRI and exact member SHA-256 are
+pinned in embedded.json. Existing build-time evidence verifies fresh
+archives and exact member bytes including CRLF, duplicate/symlink rejection
+and package metadata. Only esrecurse has exact version evidence; the
+other 14 records remain partial without npm PURL or version-bound main
+OSV query. Candidate notice license expressions are evidence, not final
+runtime license clearance. Original archive root notices for estraverse
+lack its source copyright header; we also retain the complete original
+source header from pinned v5.3.0. LLVM libc++ upper_bound/lower_bound MIT
+reference remains an additional lineage/notice review. JSON service's
+full archive notice preserves glob-to-regexp BSD-2-Clause terms; two
+Microsoft third-party notice files retained verbatim, not evidence of a
+specific LGPL dependency. More exact identity evidence and all remaining
+native/theme/snippet/lexer terms are required. No runtime code changed.
+
+## Selective rebuild research
+
+A separate read-only CI workflow reconstructs only the five retained linter
+workers in a disposable pinned upstream checkout. It materializes exact
+candidate npm archives at source-lock paths, plus explicit esbuild/Terser
+tool closure and YAML alias; no npm install or lifecycle scripts. Tool
+archives missing source-lock integrity are recorded as registry-integrity
+observations, not historical toolchain pins. The reviewed upstream builder
+is instrumented only to select retained nonconflict targets and collect
+esbuild metafiles. Both output forms are compared byte-for-byte with the
+pinned official linter package; actual contributing archive inputs and
+additional bootstrap/CSS generator input hashes are recorded. No generated
+JS is promoted. Failure/mismatch retains a report and blocks the research
+claim, not a reason to invent versions or alter shipped bytes.
+
+## Research #1 result and version attribution
+
+Exact source HEAD 74fdc6e8046f81000642d2e59536021359b2e8c7, research run
+46008174383, actual artifact 15202630304 (ZIP SHA-256
+37fbc3d25be8328a8193af57d8242df512d7c358c42739734c33baca13aca71b, CRC clean).
+31 package paths materialized without npm install or scripts; 16 retained
+candidate paths (15 package/version pairs; two estraverse paths), 15 build
+or alias paths. All five retained minified workers match exact shipped bytes.
+All contributing dependency inputs are verified archive members; none
+unverified. All 16 candidate paths contribute bytes. Build-only path-browserify,
+source-map and @jridgewell/resolve-uri lacked upstream SRI; their observed
+registry archives now have explicit SHA-256/SRI pins from this artifact.
+None contributed runtime code. Node v22.23.5, esbuild 0.27.2, Terser 5.31.6.
+
+The strict first research run failed because every published unminified form
+was 216 bytes longer, first difference at offset 16. Author fetched all five
+immutable Ace-builds Git files, checked raw SHA-256 against official linter
+archive hashes, counted exactly 216 CRLF and no stray CR, and verified that
+CRLF->LF conversion reproduces each actual rebuilt SHA-256. All five raw
+minified comparisons remain exact. The new gate pins both hashes for every
+unminified file, exact CRLF count and equality after that single specified
+conversion; no generalized normalization. Raw equality remains false in the
+report; relation is explicit. Recheck all contributing original lock paths.
+All 15 exact versions now mapped to active npm PURL/OSV scope based on
+reconstructed runtime, not on source-lock candidate assumptions. Historical
+candidate-only sections above remain chronology. Independent re-review,
+new exact-HEAD CI and source-level license review remain open.
+
+## Exact version review checkpoint and non-linter attribution
+
+At b22c9f0, baseline #360 / 46008745027 (4/4), rehearsal #17 / 46008744839
+(20/20) and research #2 / 46008744855 succeeded. Actual source 15201929622,
+installed 15202334975, rehearsal 15203605070 and rebuild 15202079765 ZIPs
+inspected, CRC and published SHA-256 match. 41 BOM entries, 47 notices, 76
+Git source files; 569 installed resources each; 10 image layers/498 JS/0
+hits, final browser 10/10; equal A/B sha256:f2eb717d4eba94e27f2c0987875daf0fb6dc4252eefa2db982cdd8eb69d26708.
+Main OSV 234 queries / 77 matched (2026-11-27T13:41:18Z), all 15 retained
+linter dependency queries have zero advisories. No new independent review.
+
+Native base: published unminified worker starts with exact bootstrap from
+Ace source commit 68d7fd1c. It has nine named Ace modules (oop, apply_delta,
+event_emitter, range, anchor, document, deep_copy, lang, mirror). The first
+eight are src/ modules transformed by the upstream TypeScript 5.9.2
+Makefile.dryice.js; mirror is in lib/ace/worker. Native base is 1.45.2, not
+ace-code 1.43.6 from replacement workers. Full source/build comparison
+pending. No additional npm identity asserted for native Ace's own code.
+
+Estraverse: the original 5.3.0 source attributes upperBound to libc++ and
+MIT. llvm-mirror/libcxx release_32 commit 1b3775e3 contains a matching
+algorithm pattern and historical dual MIT/UIUC license. Distribute original
+LICENSE.TXT and CREDITS.TXT; select MIT for the adapted fragment and retain
+BSD-2-Clause source and archive notices. Exact revision not established.
+
+XQuery/JSONiq: XQLint source commit 1778846e (Apache-2.0) supplies both
+lexer grammar and tokenizer files; exact original REx 5.30 headers from
+2014 preserved. REx author's 2026 source is Apache-2.0, but historical
+output grant not established by that statement. Both lexers also contain a
+Browserify-style loader and other XQLint modules. Keep finding OPEN until
+historic output/grammar/loader terms confirmed or scoped removal agreed.
+Do not claim current REx tool package version, complete XQLint npm package,
+or automatic retrospective clearance. No runtime code removed or modified.
+
+Themes and snippets: current TextMate reference license explicitly permits
+per-file exceptions; current converter has limited mapping, generic snippet
+converter does not establish origin. Dracula MIT header identified in exact
+minified CSS payload, separate original source excerpt shipped. Detailed
+all-file comparison and source notice scan pending.
+
+A separate research job now verifies the exact source checkout and Git blobs,
+pinned published archive and shipped minified bytes for the native base,
+all theme resources and all snippet resources. It compares the native
+bootstrap raw prefix, exact nine-module top-level closure and canonical
+AST printer output after upstream TypeScript transpilation; does not
+claim a raw minified native rebuild. For themes and snippets, parse
+static exported data from source/unminified/minified (no eval), distinguish
+empty generated stubs, record exact source and runtime hashes and scan
+source files/individual TextMate metadata for attribution indicators.
+All partial/mismatch results are retained as evidence, not cleared by a
+successful native comparison. Historical origin/terms remain per-file work.
+
+XQuery/JSONiq further source checks: common lexer.js blob a6b3cddc is a
+literal full-source substring in both current source containers. Language
+wrappers xquery_lexer.js (95ceb595) and jsoniq_lexer.js (461cebd4) match
+after exactly two require( -> _dereq_( renames, no other changes. The
+browser-pack prelude at historical tag 3.1.0 commit 9d4039e5, blob
+3cbac8e6, matches both container prefixes after removing comment-only and
+blank lines and changing return newRequire; to return newRequire(entry[0]);.
+Identical prelude blobs in 3.1.1/3.2.0/4.0.0; no exact package version.
+Full original MIT notice added; verification now explicitly checks these
+two bounded transformations and reports them separately from literal source
+relations. REx output/grammar licensing remains OPEN.
+
+Research #3 failed because one historic TextMate plist is malformed XML
+(ExpatError). Preserve error in per-file report rather than stop scanning
+or infer no notice; raw source hashes and textual evidence still checked.
+No native/theme result claimed from the failed job.
+
+## Research #4: native source mapping and first theme/snippet pass
+
+At 2ecdaf8f, research #4 (46014275424) succeeded in both jobs. Actual
+native artifact 15205796171 SHA-256
+246efcaf74d4e23444a739982acf96c48ce1b198c2f8ea946ed4307cfc063ad1;
+rebuild artifact 15205041609 SHA-256
+25e1879338575ef65b4736ae89c2fe1f6ff08e9e5e025be702014cdedd55cb8e.
+CRC and published hashes verified. Native bootstrap exact, nine expected
+modules and nine canonical source/TypeScript relations equal. Parent Ace
+BSD-3-Clause notice; no additional runtime npm component. Raw native
+minified rebuild and independent review not claimed. TS archive now pinned.
+
+First pass: 48 themes (47 static payload equal; TextMate wrapper needs
+core ace.js CSS), 202 snippets (50 static payload equal, two legacy
+lib/ace/snippets sources and 150 loader-only candidates unresolved by the
+first comparator). Follow-up checks use exact loader template, both source
+locations and core CSS, and record converter input provenance per theme.
+Brilliance Black and Brilliance Dull historical plist files are malformed;
+neither is a current converter mapping. Preserve parse errors; no blanket
+license inference. Per-file origin/terms remain open even for equal data.
+
+
+## R5.1 historical lexer attribution and upstream clarification (2026-11-27)
+
+Independent reviews supplied for c62292449d35f8a9b6167c959b0df302bb2840f0
+report 177 Python tests / 939 subtests, 20/20 browser regression and 7/7 CI
+jobs successful. Reviewer 1 independently reproduced five retained workers,
+nine native modules, 48/48 theme static payloads and 52 nonempty snippet
+payloads plus 150 exact empty stubs. Scoped approval only; actual CI artifact
+contents not inspected in this round. No release or merge signoff.
+
+Historical XQLint source evidence (retrieved via immutable Git references):
+
+- XQuery introduction 840c3f05963eb07390112e582c1a2e5affbbb432,
+  lib/XQueryTokenizer.ebnf, blob 2dbde102f96306b9c23bddf0271946fad2a91f76:
+  https://github.com/wcandillon/xqlint/blob/840c3f05963eb07390112e582c1a2e5affbbb432/lib/XQueryTokenizer.ebnf
+- JSONiq introduction 23cca84bb0c18a99362e3890f92b0e3ee3740de3,
+  lib/JSONiqTokenizer.ebnf, blob b03294875246a4b5d7ff1e84af5c9b984b69085a:
+  https://github.com/wcandillon/xqlint/blob/23cca84bb0c18a99362e3890f92b0e3ee3740de3/lib/JSONiqTokenizer.ebnf
+- Original generation scripts generate_xquery_lexer.xq and
+  generate_jsoniq_lexer.xq at those respective commits, blobs
+  eb714917cf9175c8188570e5ebdd926e24ae947b and
+  b69d9312b30aec340c6434ed8a13cef9cd13be6f, POST input to REx with
+  -ll 2 -backtrack -tree -javascript -a xqlint.
+
+Both original EBNF headers identify Ajax.org B.V., 2010, BSD three-clause.
+Ad hoc programmatic comparison: remove leading comment decoration, extract
+from Copyright (c) through before END LICENSE BLOCK, collapse whitespace
+and trim; compare with similarly whitespace-normalized shipped
+hass_configurator/vendor/licenses/ace.txt (blob
+4760be2a6220cf545129b233e20574f2a7bb630e). Both exact normalized text
+comparisons returned true. This is not raw-byte equality, an automated CI
+gate, or proof of complete grammar ancestry. Known historical BSD notice
+text is already shipped; no duplicate notice added.
+
+The maintainer opened https://github.com/GuntherRademacher/rex-parser-generator/issues/80
+on 2026-11-27 to request explicit historical output redistribution terms.
+No comments at author-side check. The REx author's XQLint contribution
+6645a0c348512990536b011b1497e2f67e6d1f6d in 2022 corroborates familiarity,
+not a license grant. Historical web service terms not recovered.
+REx output rights and remaining grammar ancestry remain OPEN / HOLD.
+No change to component license expression or runtime scope in this research
+checkpoint.
+
+## R5.2 preliminary theme upstream references
+
+The reviewed static-payload matches establish shipped Ace content identity,
+not original license clearance. The following original-project reference
+files were fetched from immutable commits; these are candidate attribution
+references, not verified historical input equivalence or new shipped notices.
+
+| Family | Reference (commit / file) | Git blob | Observed terms |
+| --- | --- | --- | --- |
+| Tomorrow | [ccf6666d / LICENSE.md](https://github.com/chriskempson/tomorrow-theme/blob/ccf6666d888198d341b26b3a99d0bc96500ad503/LICENSE.md) | 0e689d0a004eb37155ef430fe615a6e27209d30f | MIT, Chris Kempson 2011 |
+| Solarized | [62f656a0 / LICENSE](https://github.com/altercation/solarized/blob/62f656a02f93c5190a8753159e34b385588d5ff3/LICENSE) | ee08d7e44f15108ef5359550399dad55955b56ca | MIT, Ethan Schoonover 2011 |
+| Gruvbox port | [75407cc8 / LICENSE](https://github.com/Briles/gruvbox/blob/75407cc80c51814d61beb1df07e380d6f58ad767/LICENSE) | 1d533cf6dcb3dd57aba8c955001f89d4ed03db81 | MIT, Brian Reilly 2016 |
+| Nord | [1cef7160 / license](https://github.com/nordtheme/nord/blob/1cef71605416a222e57225b544540ce0fcec18d4/license) | 996f8fb61226844c6bbd2167a8b1a118be10609f | MIT, Sven Greb 2016-present |
+| One Dark | [9c96f445 / LICENSE.md](https://github.com/atom/one-dark-syntax/blob/9c96f4454362267ac45322063e193ccf9d2debb1/LICENSE.md) | 4e47b02a28a95c1d3001e4b747ce0638f11475e1 | MIT, GitHub Inc. 2016 |
+
+At Ace source 68d7fd1c0f5ac50cdb610bf06b86074eab3be652,
+tool/tmthemes/Tomorrow.tmTheme (8c98c22657b272436fd55d6ce4ab3b99a1382877)
+references Chris Kempson's website; gruvboxDarkHard.tmTheme
+(64c80d32a27dad6d38edc1b74005f805c802b979) explicitly names Brian Reilly
+and Pavel Pertsev. Solarized-dark.tmTheme
+(4efdabdbd5ca5e588d0357c2b3d8aa7b255f7813) has no observed individual
+license marker. The current morhetz/gruvbox tree at
+ef8864bb42bf244f0295d1c5a403b27e3d139695 has no root LICENSE; the header
+of colors/gruvbox.vim (66246fba24fd49eeb50dd833094d272f0bbab640)
+identifies morhetz but has no explicit license grant. Do not infer an
+original license from the port's MIT terms. Further history, exact input
+relationships, per-file exceptions and original notices required. No
+new SBOM/PURL or license clearance asserted.
+
+## R5.2 external reference comparison gate
+
+Extend the native research job with seven pinned Tomorrow/Solarized TextMate comparisons and five pinned historical Tomorrow Ace ports. Verify each original Git blob and two original license blobs before comparison; record SHA-256. Compare complete parsed plist dictionaries and ordered settings, retaining differences (including metadata). Compare literal CSS strings via TypeScript AST, never execute external JS. Differences are reported, not treated as proof of lineage or clearance. Pin mismatch fails research. No runtime/notice/SBOM change. Gruvbox historical references, Nord/One Dark lineage and all license dispositions remain open. REx issue #80 still has no comments at check. New CI and artifacts pending.
+
+## R5.2 historical contributions and recovered theme notices
+
+Ace PR #432 (Chris Kempson) merged five Tomorrow inputs; all five match current Git blobs. Signed CLA promised, actual agreement not inspected. Solarized import 69778adb (David Alan Hjelle) explicitly credits Ethan Schoonover; both input blobs unchanged. PR #917 merge 16b2f1c9 replaced both historical tri-license wrapper headers with BSD-3-Clause; root LICENSE blob matches shipped Ace. Ace PR #3673 explicitly imports Briles/gruvbox; both Hard input blobs unchanged. Three original MIT whole-file notices now tracked by embedded.json, with immutable historical/current source pins and runtime locations. Partial records, no PURLs or exact external releases. Ordinary Gruvbox initial 8a5fa7fb reverted by 88520c29 for missing CLA; reintroduced via PR #3269 / d9199ac2, with Irakli Gozalishvili 2011 MIT-like header labelled BSD. Original Pavel Pertsev license, CSS reuse and wrapper lineage remain OPEN. REx #80 still awaiting clarification. No runtime changes or release approval. New CI pending.
+
+## R5.2b Gozalishvili wrapper recovery
+
+At Ace commit d9199ac2, all 36 historical theme JS files were inspected for copyright markers: 33 Ajax.org headers, three Gozalishvili headers (Ambiance, Chaos, Gruvbox). The latter share MIT permission terms labelled BSD; Gruvbox differs by one whitespace-only line. Its complete header is retained verbatim as a source excerpt. Three exact AMD-to-CommonJS relations and the 2017 Gruvbox CSS plus active-indent-guide relation are now pinned and fail closed. This is wrapper attribution, not a license claim for color schemes. Original Gruvbox rights and the 2016 CLA/reintroduction question remain open. Baseline 8f46250 workflows succeeded after rerunning Chromium infrastructure failure. No runtime changes; new CI pending.
+
+## R5.2b original Gruvbox MIT/X11 declaration (supersedes earlier uncertainty)
+
+User identified morhetz/gruvbox commit 317ca28a8e4306cdfcd43d45a41355a2a0aa25d8 (Vanilla colorscheme, 2012-12-02, author morhetz). It adds colors/gruvbox.vim and a README License section explicitly linking MIT/X11. README blob fc5bd3a2cffb45a7365064abe47ea7c9de663b87, Vim blob 70a8a50b8f0b5a15d8afaef54761b0b6aca77669. Descendant ef8864bb42bf244f0295d1c5a403b27e3d139695 (GitHub compare 193 ahead / 0 behind) still declares MIT/X11: README 008de69c071f2b783b8822739e0d6258dbde18c4, Vim 66246fba24fd49eeb50dd833094d272f0bbab640. Absence of root LICENSE is not absence of a license declaration. Both snapshots pinned; not a claim about every intervening revision or exact original revision used in Ace. Preserve exact 2012 README license excerpt and unmodified SPDX standard MIT template at cc4fe1ac462bd3ad3c81a07234baf7d9541ee871, text/MIT.txt blob d817195dad53ec992418c28ffca5fbd1cd86502a, explicitly a reference with placeholders, not original copyright text. Add original scheme attribution (Pavel Pertsev / morhetz) for all three retained variants, separate from Brian Reilly Hard port and Gozalishvili wrapper. Partial status, no version or PURL. Remaining exact port lineage, 2016 CLA revert, independence of 2017 contribution and other original-source notices OPEN. Baseline ea257b1 three workflows success; artifacts not independently reviewed in this step. New CI pending. No runtime changes or release approval.
+
+## R5.2b CLA discussion and R5.2c Nord / One Dark
+
+Original Gruvbox PR #2916 merged 2016-02-27; maintainer nightwing requested CLA on 2016-05-24 (https://github.com/ajaxorg/ace/pull/2916#issuecomment-221365903), confirmed revert due to missing CLA on 2016-06-03 (https://github.com/ajaxorg/ace/pull/2916#issuecomment-223543383; PR #2985 Fix license issues). Issue #3268 2017-04-12 and PR #3269 merged 2017-04-18 establish reintroduction by another contributor. No later signature evidenced. Missing CLA alone does not establish absence of copyright license. Remaining question is reuse of independently protected 2016 contribution in current 2017-derived CSS, not original morhetz MIT/X11 declaration. No closure or risk acceptance.
+
+Nord Dark: Ace PR #4203 merged 2020-03-08 (9115b68e); author now shown as ghost, original Nord site explicitly referenced. PR includes explicit permission to use/modify/copy/redistribute contribution under terms of choice. One Dark: PR #4415 by nkean merged 2021-03-02 (3359dfc1); explicitly references atom/one-dark-syntax and same permission statement. Historic CSS/wrappers and current source pinned; both historical wrappers contain Ajax.org BSD-3-Clause. One Dark historical CSS is current literal payload prefix with active-indent-guide addition; Nord also changes stray closing-brace comma. Original MIT whole-file notices now preserved from nordtheme/nord and atom/one-dark-syntax pins. Exact external version and any intermediate port lineage remain open. No package versions or PURLs. Baseline 128c234 three workflows SUCCESS; artifact contents not reviewed in this step. New CI pending. No runtime changes or public release approval.
+ 
+## R5.2d historical TextMate input evidence
+
+Original textmate/themes.tmbundle README.mdown at 9af146748ca3f0d3935985b6c731ccc7781831d9 (2011-11-12), blob 32d8f85a4c5f41b1fd636664c7a4ca776f511b9f, unchanged at e6e918506291b2dec178ad1b7e6f04653d25818c, contains the permission and individual-file exceptions corresponding to Ace tool/tmthemes/LICENSE added 2010-11-05 in cba64d86 (blob 08f1380f3a9bce3135253bc69f5861dec3dcae17). Scope wording repository vs directory and whitespace only; original README postdates Ace import, not proof of 2010 individual grants. Existing shipped Ace license reference retained, original README pinned in review record. Do not label this text MIT/BSD without evidence.
+
+Four exact initial imports: Cobalt TextMate 0635502e -> Ace cba64d86 (3c685f253c723122c55800f7ce7ee7374963c428), Dawn TextMate 2746dd84 -> Ace 242cfb76 (12cff9b6e2e9d6e1255678e7af2a685116c5ac32), both unchanged current inputs. Pastels on Dark TextMate c2fcd871 -> Ace cba64d86 (e3928606e60f437527a03eb5f96fda92cde95bf4), later 9ef05262 changes palette/settings to 47b836318087d53ac60db65b83c29ca07afa327f. Twilight TextMate c2fcd871 -> Ace 242cfb76 (a83f7ecbbe46792e321a1c823fb56d159bade152), later f5a5e705 adds function-name rule, current a5984e82e22654f4df93363c23f882645e6df3b4. Author metadata c2fcd871 explicitly based on best guesses from SVN log; corroborating original contributions: Jacob Rus Cobalt 1460c67a (2006), David Powers Dawn 2051f9e0 (2006), Mats Persson Pastels 2d56b38f (2005), Michael Sheets Twilight 0abc270a (2005). Cobalt identifies Slate by Wilson Miner as basis; rights/lineage OPEN.
+
+Kuroir (Stanley Rost, ab6aa3be, 36acd588d1f636c411071c0d48fefc8c6d1f14d4), Xcode default (comment Carmine Paolino, ecfdc5fb, c7b5072cd31169ec9582bab8de3e007adfaede01), krTheme (comment Kenneth Reitz, cba64d86, 65c5c9b6aac1d42dc65c1ee537093404fe207b64): current inputs match historical Ace additions; external origins/individual terms not established. No companion -license file observed in current Ace directory; historical and external per-file exceptions remain to be reviewed.
+
+Research gate now verifies pinned source identities, exact initial import byte equality, compares full parsed current inputs without discarding ordered settings, and checks the bounded license scope wording change. No runtime changes, new shipped notices or SBOM components. Baseline 41ae327 three workflows SUCCESS; artifacts not reviewed in this step. New CI pending. REx #80 no response at check. No release approval.
+
+## R5.2d external port references and krTheme rights question
+
+Baseline 3eacaf0 research run 46034299132 SUCCESS; native artifact 15215607982 downloaded, SHA-256 2b4ffeaf372aeae9878a57a5190ea799d54350315a3c868fc6837b38593a7f57 matches GitHub digest, ZIP CRC OK, source_checkout exact. historical_textmate confirms four byte-exact initial imports and three unchanged Ace inputs; Cobalt 44/44 settings, Dawn 32/32, Pastels 58/60, Twilight 42/43, Kuroir 71/71, Xcode 21/21, krTheme 44/44. License relation scope-wording-and-whitespace-only. Other artifacts not reviewed in this step; migration run 46034296715 SUCCESS, baseline Offline foundation 46034295983 still in progress at check.
+
+Xcode: author Carmine Paolino published crmne/xcode-default.tmtheme; 2010-07-30 initial f6ccc816, 2010-08-17 88df84daf46d6d5e57742f5c9e82ac0a408cbd67 adds tag/attribute colors. Xcode default.tmTheme exact Ace input blob c7b5072cd31169ec9582bab8de3e007adfaede01. README.markdown blob 1d7b8dc487917a7715187b12d414cc0587f80301 describes default Xcode basis/installation, no express license; author publication also evidenced by https://stackoverflow.com/questions/2155545/xcodes-theme-for-textmate/3370932. No original Apple or author grant inferred from publication.
+
+Kuroir: MarioRicalde/TextMate-Kuroir-Theme at 085bd4d4e1a9a691a47b6e1b477e6b7c0aa348b0 has exact input blob 36acd588d1f636c411071c0d48fefc8c6d1f14d4; README.markdown 605b342597b1cdeca94363625333570b2f1ac0c7. History includes Mario Ricalde initial 9898a1f3 (2010), Kevin Yank beedeed4 (2012); file credits Stanley Rost and repository description identifies a prior theme without its name. No explicit license found in pinned tree/README. Exact external file identity, not entire author lineage or grant.
+
+krTheme: kennethreitz-archive/krTheme.tmTheme at ec21b6d65a3d38d699b47b76026b2746f38d1681, author input 6b4da423a8e7a9f005ed0cd20436a74bd2d1def4 differs from Ace 65c5c9b6aac1d42dc65c1ee537093404fe207b64. Original Readme.md b9618416c8e135efd9e84520495b551415eb1bd4 states Copyright 2010 Kenneth Reitz. All Rights Reserved. No separate permission established. Second author repository kennethreitz-archive/textmate-krtheme at fb3931c134c2be9eae9680387bfa094a3f476be5 has same differing input, README.rst 1256a465a7878e2c93d62f367c0e54510ce354f9, no explicit grant. Exact Ace blob also in filmgirl/TextMate-Themes at 87743ad74d04cd59099bfda39a0552e673edbc54, README.md 822ed07e40de94be2fd73725942a57f89d85d598 calls itself collected themes, not original license grant. Copyright statement is not proof of a restrictive license for every historical variant; possible separate grant remains unverified. Review per-file exception rather than assume umbrella TextMate license covers krTheme. No automatic exclusion or risk acceptance.
+
+Slate: Wilson Miner's author announcement found in TextMate mailing-list archive (https://lists.macromates.com/hyperkitty/list/textmate%40lists.macromates.com/latest?count=100&page=87, subject tmTheme: Slate); sharing announcement is not explicit redistribution/modification license. Original attachment and terms not verified.
+
+Research now pins and compares four external theme/README pairs, records exact/different results and distinct source/rights statuses. No new shipped license, component, or runtime changes. REx #80 still no response at check. New CI pending; full release HOLD.
+
+## R5.2b follow-up: independent Gruvbox adaptation evidence
+
+Compared historical CSS blobs e8d72de790a67822c0d423085bcd22caccc4ee88
+(2016, Hecatoncheir) and 48a4161e6866f562d091fccf506d83f4559c447f
+(2017, Jaime Alvarez). A simple selector/declaration comparison
+(expand comma-separated selectors, trim/collapse whitespace, lower-case
+declaration text, sort declarations) yields 38 versus 23 unique selectors:
+21 old-only, 6 new-only, 17 shared. Of the shared selectors, only two
+have equal normalized declaration sets: active line and active gutter
+background #3c3836, present in the original 2012 Gruvbox MIT/X11 palette.
+Fifteen shared selectors have different declarations. This is supporting
+evidence for separate adaptations of the same original and Ace API,
+not proof of independent creation, a general CSS parser, or CLA closure.
+Keep all three Gruvbox themes; do not treat the 2016 missing CLA as a
+finding against every later variant. Record the remaining question
+about protected 2016 contribution reuse without inferring infringement.
+
+## R5.2d krTheme disposition (target source)
+
+Maintainer approved physical exclusion from the #37 curated distribution.
+Historical copyright evidence and research inputs remain pinned; do not
+infer a license grant from this disposition. Remove theme-kr_theme.js
+(SHA-256 f19940a65591c8da719215e6d3d206430892b74d295dc9abed7eda87cff07451)
+and its live review location, retain the upstream lock, and migrate saved
+theme choices to a retained theme before loading options. Kuroir, Xcode,
+Cobalt/Slate and other unresolved themes are not excluded by this change.
+Exact-HEAD package/image/CI verification and independent review pending.
+
+## Gruvbox upstream deletion and re-addition (review disposition proposed)
+
+GitHub commit 88520c2912ead6b8f5eaa88e6c267d97bab909a8 explicitly
+reverts 8a5fa7fb due to missing CLA, removing all 122 CSS and nine JS
+lines. Deleted blob identities e8d72de790a67822c0d423085bcd22caccc4ee88
+and 2925afc86711ff0715fa1424c99da24c50775a0d. Non-truncated recursive
+Git trees at that revert and at f6cb3b97f052df3948562de72a25bf93c3bb1439
+(parent immediately before the 2017 contribution) contain no Gruvbox
+paths. Commit d9199ac2d8efb42f2781126ee125cff5f00ceef9 adds 95 CSS and
+33 JS lines as two new files (blobs 48a4161e6866f562d091fccf506d83f4559c447f
+and 67d90430a208226366874409852af3b748f502d3). There are shared lines,
+principally conventional Ace selectors and font-style; do not interpret
+the revert diff as proof of zero shared lines in today's implementation.
+Together with the earlier bounded CSS comparison and current 2017
+lineage, evidence supports separate adaptations. Proposed disposition
+for independent review: historical contribution removed upstream; no
+evidence of material reuse identified in the retained implementation by
+the scoped comparison. No claim of a signed CLA, independent creation
+proof, original-port version closure or blanket licensing clearance.
+Do not treat missing 2016 CLA alone as an independent release blocker
+once independently reviewed. No issue closure or risk acceptance.
+
+## krTheme removal verification and consistency corrections
+
+3798f61 research run 46036889563 and rehearsal 46036889587 SUCCESS.
+Downloaded exact-HEAD native artifact 15219165168 and rehearsal artifact
+15218515477; published SHA-256 digests and ZIP CRC verified. Native report
+source_checkout exact, 47 retained theme payloads, 52 nonempty snippets,
+150 exact generated empty stubs; excluded_themes lists theme-kr_theme.js,
+no krTheme asset row. Rehearsal verified-input exact HEAD, 489 curated Ace
+files, 509 vendor resources, five excluded workers and one excluded theme.
+Offline foundation 46036889562 FAILED: static inventory retained krTheme,
+fixture expected 510 rather than 509 resources, and supply-chain inventory
+pinned old manifest hash. Immutable Docker base job passed; installed
+wheel/sdist and image-layer acceptance not complete. Correct these three
+drifts without weakening gates, add fixture absence regression. New
+manifest SHA-256 a024c5d46349eb005f34e6368029d6c5ef9afd27d31a48861d55fd5de630df2f. Fresh exact-HEAD CI and artifacts pending.
+
+## R5.2e grouped TextMate input review
+
+Baseline 031b94ca4cc63e637e88b85545f094b42a380caf: Offline foundation
+46037811065, rehearsal 46037811071 and research 46037811061 all SUCCESS.
+Downloaded and inspected exact-HEAD source artifact 15219800924 (SHA-256
+44c836f883f71589b53233021c19a2665a2ab68fb2a1a9d043088b3853218d01),
+installed/E2E artifact 15219416589 (3d126adfddae5875edaf2b8f84f21e61f6e9f378ec711479dfeff84be47a36b8),
+and native artifact 15218476318 (8d7b79c5cf8237952bb8e70b1b8165c3c7eb0af8b3a7acdc8330c73e0c2dfeed).
+ZIP CRC and published digests match. Source marker report exact checkout:
+489 retained files, 505 runtime/source files, 489 upstream counterparts.
+Installed wheel, sdist and Docker reports each verify 583 application
+resources, 5 first-party resources and exact curated vendor closure.
+Docker image scan 10 layers, 497 JS members, no excluded filename or
+identical digest hits. Native report 47 theme static payloads, 52 nonempty
+snippets, 150 generated empty stubs. This supports krTheme removal in
+the tested distribution, not an independent Docker rebuild or real HAOS
+acceptance. Remaining two research/rehearsal artifacts not reviewed here.
+
+Group scope: nine remaining mapped converter inputs (Clouds, Clouds
+Midnight, idleFingers, Merbivore, Merbivore Soft, monoindustrial, Monokai,
+Katzenmilch, Vibrant Ink), plus iPlastic and Mac Classic historic inputs.
+Full upstream trees and path histories establish immutable snapshots.
+Six current inputs match the selected historic Ace blob: Clouds pair,
+monoindustrial, Katzenmilch, iPlastic, Mac Classic (renamed to Textmate
+(Mac Classic) in the current tree). Five differ: idleFingers, Merbivore
+pair, Monokai, Vibrant Ink. Snapshot is not necessarily first import.
+All eleven are now pinned in grouped_textmate; the research gate
+compares complete plists and records historical/current metadata and
+rights marker candidates, current companion filenames, converter status
+and external lineage gaps. Historical companion inventory is explicitly
+not collected by this function. No blanket clearance from absent markers.
+
+iPlastic and Mac Classic also match exact TextMate input blobs at
+c2fcd871773e33529fecd77fd484f8aa9b66fe8b, respectively
+7253df6a7516986b50acb280acb6d8d2959d8b7b and
+4b789dfea34e1328a9b4a6fa4c7172aeb023310f. Author metadata (Jeroen van
+der Ham and Chris Thomas) corroborated by their direct TextMate commits
+5967f6e29c1b3620c07986559dd5c3f3ea495fc8 (2005-09-13, iPlastic)
+and 970a59af99c3315aae9559c4990e0b5009d5ce4a (2005-07-25, Mac Classic).
+iPlastic absent from current converter mapping; textmate mapping commented,
+with current CSS in ace.js. Historical file match is not a generated CSS
+lineage proof. Other nine inputs have no exact external source established
+by this group investigation; follow up individually. Current metadata
+lacks author fields for these nine; Katzenmilch has a comment, not a grant.
+Prior evidence for Cobalt/Dawn/Pastels/Twilight, external ports, MIT theme
+families and krTheme remains intact. No new notices or license assignments,
+no runtime changes, no issue closures. New CI pending.
+
+## R5.2e research correction and verified group output
+
+At 1c0e5a4, research 46038798881 failed with a Python SyntaxError:
+the JS replacement-string interpolation of a regex ending in dollar
+and single quote inserted the suffix of the old research function
+inside the expression. Fix 414ce2ac77a991af9a4ee507a57f5682ece14ecb
+restores the expression and includes grouped_textmate in the actual
+research return. Research 46039207297 SUCCESS on exact fix HEAD.
+Native artifact 15218568053 downloaded and inspected: SHA-256
+e90b5563356427a942d6334cc3d368bda1f1d8b0f8f1c4e77838901003ed86db,
+published digest matches, ZIP CRC OK, source_checkout exact.
+47 theme static payloads, 52 nonempty snippets and 150 generated empty
+stubs. Group rows 11/11: Clouds 29/29, Clouds Midnight 30/30,
+idleFingers 31/32, Merbivore 23/24, Merbivore Soft 23/26,
+monoindustrial 34/34, Monokai 22/29, Katzenmilch 27/27,
+Vibrant Ink 37/38, iPlastic 23/23, Mac Classic 35/35.
+All eleven current and historical marker lists empty; no matching
+current companion-license filename. No inference of permission.
+iPlastic unmapped, Mac Classic commented, other nine active.
+Other workflows/artifacts for this fix HEAD not yet accepted.
+
+## R5.2f core theme provenance leads (review open)
+
+Monokai: Wimer Hazenberg's official history
+https://monokai.pro/history confirms original 2006 TextMate theme,
+publication via the TextMate wiki, later unofficial adaptations, and
+separate Monokai Pro product from 2017. No express historic redistribution
+grant found in that history. Modern Pro license is not evidence of
+historic 2006 terms. Archive URL for original blog was inaccessible
+during this review. A third-party mirror
+https://gist.github.com/ntwb/7316a3b610ede7e4fd51871fb00bf3f3
+(2017, links to 2007 archived download) shows UUID
+D8D5E82E-3D5B-46B5-B38E-8C841C21347D, same as both pinned Ace
+inputs, and matching background #272822, caret #F8F8F0, foreground
+#F8F8F2, selection #49483E. Mirror invisibles #3B3A32 and lineHighlight
+#3E3D32 differ from 2010 Ace values #49483E for both. Mirror is not
+author-controlled evidence; no byte equality or exact external version
+asserted. Original license remains OPEN; MIT of a third-party port
+is not the original grant. Monokai is a runtime dark-mode/fallback
+dependency; no removal without explicit design decision.
+
+Chrome: initial Ace contribution by Bernie Telles at
+a32ade33006608b9b2ba68439d2910fcf3d2477b (2011-11-16),
+lib/ace/theme/chrome.js blob 546766f1338da39abc932532ca4be7861758aa82,
+historical MPL/GPL/LGPL header. After upstream BSD header migration,
+f1e5e6fbffbd4f2ad3dba696ae665c21fa7df24c (2012-09-11,
+Garen Torikian, Add new GitHub/Chrome builds from tmtheme) adds
+tool/tmthemes/Chrome.tmTheme blob 8f14e4fa36a49e2ba7467b8e2efafafeaf7c0362,
+credits Austin Cummings, and generated Chrome CSS references UUID
+4FCFA210-B247-11D9-9D00-000D93347A42. Same input blob in current
+tool/tmthemes/Chrome DevTools.tmTheme. Current converter mapping commented.
+Do not attribute entire implementation solely to initial Ace contributor
+or assume Chrome/Chromium licensing applies to Cummings' theme.
+External author source, terms and later CSS lineage OPEN.
+
+TextMate: early Ace theme file renamed from _textmate.js to textmate.js
+in 2c0368ff6c914734fb27d9b7fce603bd059a10fc (2010-11-09),
+blob 80599f10298812552f57f338d5a4737d896f1702, alongside monokai.js
+blob e7122013450c9279e68d7a961797cd1cd38eca88. Mac Classic input exact
+TextMate historical blob 4b789dfea34e1328a9b4a6fa4c7172aeb023310f as
+previously established; Ace changes include 25c15cf57a89fd6570679c4fb950ba5e67c4a102
+(2011-08-02, use same active line as in TextMate). Current textmate
+CSS and module are mapped to shipped static payload by native research.
+Exact conversion lineage from historic plist to runtime CSS not established.
+
+At 2012-09-12 Ace ecfdc5fbc4691b7d3933416b65da340768111f04,
+all three theme JS wrappers carry the Ajax.org B.V. 2010 BSD-3-Clause
+notice already covered by shipped Ace license. CSS compared to
+current 1.45.2 literal payload: Chrome 3222 vs 3051 characters,
+Monokai 2611 vs 2560, TextMate 3095 vs 2917; all differ in raw,
+trimmed and prefix comparisons. No exact historic-to-current CSS
+transformation asserted. Twelve historical/current CSS/wrapper
+source references now pinned in the review record; no new notice
+or license assignment. These pins are evidence of file identity,
+not an automated CSS lineage relation. No runtime change or license
+clearance. New exact-HEAD verification pending.
+
+## R5.2g historical Ace theme implementation licensing
+
+Baseline f9acca2226629f376b2c8720b83305fe8cfbe03c all three workflows
+SUCCESS (46039596207, 46039596336, 46039596209); artifacts not reviewed.
+Maintainer identified upstream bb6854ae (2010-11-18 Joe Walker),
+adding missing license headers. Full source comparisons against parent
+b32d86fd confirm all 11 bodies unchanged; each patch adds 37 lines,
+removes none. Identical MPL 1.1/GPL 2.0/LGPL 2.1 header names Ajax.org
+Services B.V. and contributor Fabian Jakobs. Nine contain inline CSS;
+Eclipse and TextMate still load separate CSS in this snapshot. Original
+Clouds Midnight path is clouds_mignight.js, not a typo in evidence.
+
+At 0e6bf2bd immediately before 8a3e7b0f (2012-05-11), all eleven
+have inline CSS and the historical tri-license header. Extracted
+physical string source (remove assignment and literal delimiters,
+replace backslash-LF with LF, no other escape transformations)
+matches full new CSS file bytes for 11/11 themes. This is not decoded
+JS runtime string equality. BSD headers added at 8b971619 (2012-09-06)
+and merged at 16b2f1c9 (PR #917). All eleven wrapper paths in merge
+tree have expected BSD blobs; root LICENSE blob
+4760be2a6220cf545129b233e20574f2a7bb630e is the current pinned Ace
+license. Split wrappers have same blobs at pre-BSD parent c0b23a78;
+CSS had further edits between May and September, not claimed unchanged
+through all history. New research gate pins six snapshots per theme
+and root LICENSE, checks header-only bodies, early inline scope,
+exact CSS source-text transfer, wrapper reference and BSD wrapper
+body equality, and root license identity. Added positive/negative
+unit tests; new CI pending, no local test claim.
+
+Disposition reassessment: Monokai remains retained/review-open; do not
+treat absence of separate original palette permission as proof of a
+license violation or proof a separate grant is needed. krTheme remains
+physically excluded under approved #37 policy, with reassessment-open.
+Historical Ace license declarations strengthen the evidence for its
+implementation, but do not by themselves establish permission over
+Kenneth Reitz's original material. Explicit original copyright evidence
+remains in the record; no permission inferred, no restoration authorized.
+Compare the actual original input and its derivatives, identify whether
+material requiring separate permission is present, and seek independent
+review before changing disposition. No new shipped notices, SBOM
+components or runtime changes; original input lineage remains open.
+
+## R5.2h additional historical wrapper declarations and krTheme reassessment
+
+85cad1f research run 46044521005 failed: split_css_source counted quote
+semicolon tokens in the whole suffix rather than the actual CSS literal.
+Five-worker research and migration succeeded; Offline foundation still
+running at initial check. Correct literal recognition to the bounded
+observed continuation grammar and add a regression test with later JS
+statements. No relaxation of source equality or blob checks.
+
+Non-truncated tree of 16b2f1c9 (2012 BSD merge) has 26 theme JS files.
+In addition to prior eleven, inspected all 15 other wrappers: Chrome,
+Crimson Editor, Dreamweaver, GitHub, Merbivore pair, Pastels on Dark,
+Solarized pair, Tomorrow five, Vibrant Ink. All explicitly carry
+Ajax.org B.V. BSD-3-Clause header and reference separate CSS. New
+research pins these 15. This is wrapper-level evidence, not a finding
+that CSS and external rights are cleared; no new notice assigned.
+Remaining later themes are outside this batch.
+
+krTheme: author archive ec21b6d65a3d38d699b47b76026b2746f38d1681
+blob 6b4da423a8e7a9f005ed0cd20436a74bd2d1def4 and Ace 2010
+cba64d86 input blob 65c5c9b6aac1d42dc65c1ee537093404fe207b64 both
+12317 characters, 552 split lines. EXACT after replacing only
+background #000000 with #0B0A09 and invisibles #E97A5459 with #FFB16F52.
+Same creator comment, UUID 87F051F7-B6FB-408C-96F9-467B66C14E9F,
+all 43 scope entries. 47 of 49 distinct six/eight-digit hex colors shared.
+15 of the author input hex colors also occur in current Ace CSS
+source blob 3f7d001d2ab54d56e56f9f69835964b931bde849.
+This establishes near-identical input content, not direction of copying,
+copyrightability of individual colors, or proof of independent creation.
+Historical Ace implementation license remains meaningful, but no
+original separate grant established. Keep excluded-reassessment-open;
+recommend retaining physical exclusion unless new rights evidence
+or independent assessment justifies restoration. No runtime change.
+
+## REx #80 historical generated-output permission — author response
+
+On 2026-11-27, verified public response by GuntherRademacher on
+https://github.com/GuntherRademacher/rex-parser-generator/issues/80#issuecomment-7224280132
+(comment ID 7224280132, author account ID 24464731).
+Asked whether REx v5.30 users could redistribute generated JavaScript
+parsers/tokenizers including modified and minified versions: yes.
+Asked whether REx-generated parts of the two specific files may be
+redistributed under Apache-2.0 or another permissive license: yes.
+Asked whether additional copyright, attribution or redistribution
+requirements apply: no. This resolves the historical generator-output
+permission question for the stated scope; independent review pending.
+It is a public issue response, not a Git blob, so record the stable
+comment URL here and in inventory prose, not as a fabricated immutable
+file pin. Preserve existing generator notices. Grammar origin and
+permissions remain separate; no blanket XQLint clearance or full
+component identity claim. No runtime or SBOM status change.
+
+## R5.2i later theme historical declarations
+
+4383b39 all three workflows SUCCESS (46045105501, 46045105319,
+46045105317). Downloaded native artifact 15222415336; SHA-256
+573164ee48bb3b6daafd63b9ca69a17e3f908de6c0af61f086e341717f9ece58
+matches published digest, CRC OK, exact source_checkout. Historical
+11/11 header-only, source transfer and BSD wrapper body checks true,
+nine inline in 2010; 15 additional BSD wrappers; krTheme exact except
+background and invisibles, 44/44 settings, still excluded.
+Other artifacts not reviewed in this iteration.
+
+Remaining 22 theme names compared to 2012 merge tree. Pins are earliest
+located under current name, not necessarily first creation: iPlastic is
+rename of Sublime (fb5f272f, 2015), Gruvbox uses re-addition 2017,
+Gruvbox Hard uses 2018 contribution later merged in 2022. All 22
+historical wrappers and separate CSS files inspected and pinned.
+
+* Ajax.org BSD declaration (15): Cloud9 Day/Night/Night Low Color,
+  Dracula, GOB, Gruvbox Hard dark/light, iPlastic, Katzenmilch, Kuroir,
+  Nord Dark, One Dark, SQL Server, Terminal, Xcode.
+* MIT permission text with BSD label (3): Ambiance, Chaos, Gruvbox.
+  Existing Gozalishvili wrapper notice remains applicable to prior
+  bounded evidence, no new license label from the BSD heading.
+* No individual declaration in wrapper (4): Cloud Editor light/dark,
+  GitHub Dark, GitHub Light Default. Root LICENSE at all three
+  relevant commits is the current pinned BSD blob
+  4760be2a6220cf545129b233e20574f2a7bb630e.
+  PR #4715 Cloud9 brought from c9 branch, explicit contributor grant;
+  PR #5154 GitHub Dark explicit contributor grant; PR #5404 CloudEditor
+  describes new accessible modern theme, no explicit grant in body;
+  PR #5597 GitHub Light Default explicit grant for contribution and
+  identifies official GitHub VS Code port. Contributor grant is not
+  a grant for unrelated third-party code.
+
+CSS marker scan: Dracula original 2017 CSS has Zeno Rocha MIT notice,
+already retained separately. Other 21 historical CSS sources have no
+matches to scoped rights marker scan; this does not prove absence of
+additional rights. Xcode and Kuroir generated comments preserve source
+UUID; Katzenmilch generated comment UUID empty. Historical separate
+CSS is not automatically covered by wrapper header.
+PR #5597 (https://github.com/ajaxorg/ace/pull/5597) explicitly names
+official VS Code port. Primer repository historical pre-port snapshot
+38b50d41bdc6b190b7351e220956af043221d763 LICENSE blob
+fcc8ec1341626589ac053947aea5279928966bc3 contains MIT Copyright (c)
+2020 Primer. Pin as reference, not exact version of the port.
+Follow up recover actual port lineage and ship applicable Primer MIT
+notice before acceptance. Do not apply this to legacy GitHub or GitHub
+Dark by name. No new shipped notice in this commit.
+
+New post_bsd_themes report compares pinned declarations, separate CSS
+markers and three root licenses, and verifies historical-name coverage
+against retained distribution. 25 retained earlier + 22 later = 47;
+krTheme separately historical/excluded. Historical snapshot coverage
+does not establish current CSS lineage or license clearance. Unit tests
+for declaration and coverage errors. No runtime or vendor changes.
+Exact new HEAD CI and independent review pending.
+
+## R5.2j consolidated theme dispositions and Primer notice
+
+R5.2i HEAD e125d1ef9002ca0c1cd390eb70cc447079c66452 all workflows
+SUCCESS (46046445455, 46046445408, 46046445524).
+Native artifact 15223170929 inspected, SHA-256
+ad80139a1fc37ec33679f3b9712187bf479ce459347ffe94ad196da4a8989221
+matches published digest, CRC OK, source_checkout exact. 47 retained
+plus krTheme; 22 later declarations: 15 Ajax BSD, 3 MIT-labelled-BSD,
+4 root-only. CSS rights markers only Dracula in that group. Other
+artifacts not reviewed in this iteration.
+
+PR #5597 names official GitHub VS Code port. Pinned Primer package.json
+at 38b50d41 verifies publisher GitHub, extension github-vscode-theme,
+reference version 6.3.4 and label GitHub Light Default; not an asserted
+port version. 15/18 distinct six-digit colors in initial Ace CSS match
+classic palette (#fff expanded); other values #e8e8e8, #eeeeee, #1a85ff.
+Introductory and current CSS identical blob a4457141. This is bounded
+corroboration, not exact variant or version identification. Retain
+whole-file MIT notice e2c871bb6effe9f6ec8d94d6596db33c4bfe4dd94969a6a9a2fb0473ebe6442e.
+Partial component ace-theme-github-light-default, null version/ecosystem,
+no inferred applicability to other GitHub themes or new runtime dependency.
+
+Maintainer's Sphinx reference: kennethreitz/kr-sphinx-themes at
+010ddb33d2aaca5d3ba7e18c372bcb8850d6b07b, LICENSE
+81f4d30592d3b4270b2f52a135769c1b3df2c36b, README
+e8179f9690f0d3b8b9f5873cd4939614e8aa8027.
+Armin Ronacher added BSD-style Flask Design License with kind request
+at b8e0f4f1bfc7c89fffb5440fcdf60edaa033c836 (2010-06-19).
+Reitz added his modification copyright at
+b8fae3ce841b666c47cfa5008580f3f9d24219d6 (2010-09-15).
+Scope is Sphinx Flask derivative; do not equate extra request with
+exact SPDX BSD-3-Clause text. Current tree no .tmTheme; FlaskyStyle
+explicitly Tango-derived Pygments source blob
+33f47449c11d241e36c83d7f95d819bbe56e2c8f. No separate TextMate grant
+established. Pinned as research evidence, not shipped notice.
+krTheme stays excluded-reassessment-open.
+
+Proposed dispositions in docs/ace-theme-dispositions.json and readable
+docs/ACE_THEME_DISPOSITIONS.md: 47 retained-review-open, 1 excluded.
+Retained historical declarations 40 Ajax BSD, 3 MIT-labelled-BSD, 4 root-only.
+16 retained themes have additional attribution library records.
+Other rows use Ace and applicable scoped reference notices; no
+blanket clearance. Elevated priority is proposed review order, not risk
+rating. Native research checks coverage, declarations, distribution
+and exact additional component mappings. Runtime/vendor unchanged.
+New CI and installation evidence pending, no independent clearance.
+
+## R5.4a — XQLint grammar and mode ancestry
+
+See [ACE_XQLINT_GRAMMAR_RESEARCH.md](ACE_XQLINT_GRAMMAR_RESEARCH.md).
+Two exact grammar body relations and JSONiq string delta pinned. New
+review-only eXide lineage record identifies shared historic editing methods
+in retained XQuery/JSONiq modes; original permission remains a release gate
+despite later Ace headers and Candillon CLA receipt. No runtime change.

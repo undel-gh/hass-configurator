@@ -1,0 +1,195 @@
+{
+  "schema": 1,
+  "status": "excluded-reassessment-open",
+  "baseline_commit": "99e2a767a933e6c92e7dd619127bb75a7eb03866",
+  "reason": "Maintainer approved snippet-only physical exclusion; evidence is historical, not distributed inventory.",
+  "components": [
+    {
+      "id": "ace-lsl-snippet-source-review",
+      "name": "LSL historical Builders Brewery snippet source review",
+      "parent": "ace",
+      "kind": "review",
+      "status": "partial",
+      "version": null,
+      "ecosystem": null,
+      "license": null,
+      "locations": [
+        {
+          "file": "vendor/ace/snippets/lsl.js",
+          "marker": "ace/snippets/lsl"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/36198a50f4bdef76c5044ba83df09d3298e90b6a/lib/ace/snippets/lsl.snippets",
+          "git_blob": "bc0d2eb9d0286050bbb56efa09cc02aaec500dba",
+          "marker": "snippet CAMERA_ACTIVE"
+        },
+        {
+          "url": "https://github.com/dazzle-lsl/linden-scripting-language/blob/d777b7ad20cfa223a368d8bdf379edfc58130f4f/ace/lib/ace/snippets/lsl.snippets",
+          "git_blob": "bc0d2eb9d0286050bbb56efa09cc02aaec500dba",
+          "marker": "snippet CAMERA_ACTIVE"
+        },
+        {
+          "url": "https://github.com/dazzle-lsl/linden-scripting-language/blob/54ef136c1eb3cb2703fb0b6b6e610918e03c217d/ace/lib/ace/snippets/lsl.snippets",
+          "git_blob": "352d26e7b4ed7389ddefb8365b4e2d985e63d037",
+          "marker": "snippet CAMERA_ACTIVE"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/fb0384329602f0ea99aa1fd983f094f7b0c31797/lib/ace/snippets/lsl.snippets",
+          "git_blob": "352d26e7b4ed7389ddefb8365b4e2d985e63d037",
+          "marker": "snippet CAMERA_ACTIVE"
+        },
+        {
+          "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/snippets/lsl.snippets.js",
+          "git_blob": "7e33bdc2855b5f7e3ff0cb5d4f5f546dc809ccf5",
+          "marker": "module.exports"
+        },
+        {
+          "url": "https://github.com/dazzle-lsl/linden-scripting-language/blob/54ef136c1eb3cb2703fb0b6b6e610918e03c217d/README.md",
+          "git_blob": "276b2a807b8991a1a0be3bb2b6e818e6012350c8",
+          "marker": "snippet files"
+        },
+        {
+          "url": "https://github.com/dazzle-lsl/linden-scripting-language/blob/54ef136c1eb3cb2703fb0b6b6e610918e03c217d/ace/README.md",
+          "git_blob": "978ba7615b0608435bdd30845597aa4aaf72cb43",
+          "marker": "Ace Editor"
+        },
+        {
+          "url": "https://github.com/dazzle-lsl/linden-scripting-language/blob/54ef136c1eb3cb2703fb0b6b6e610918e03c217d/sublimetext/LSL/other/kwdb/LICENSE.md",
+          "git_blob": "8cb9f32f550b7ca8ecf725066c437ee4b356bc18",
+          "marker": "GNU GENERAL PUBLIC LICENSE"
+        },
+        {
+          "url": "https://github.com/dazzle-lsl/linden-scripting-language/blob/54ef136c1eb3cb2703fb0b6b6e610918e03c217d/sublimetext/LSL/other/lindenlab-viewer/LICENSE.md",
+          "git_blob": "723f008e956b5c9b045d7139c444ecc222b7ef07",
+          "marker": "GNU LESSER GENERAL PUBLIC LICENSE"
+        }
+      ],
+      "notices": [],
+      "note": "Historical Builders Brewery repository preserved in dazzle-lsl fork: initial 2015 snapshot exactly matches 2014 Ace raw and 2015-09-18 21:42:30 UTC source exactly matches Ace 21:49:57 UTC endpoint; both histories have same contributor. Full raw equality and current static template relation checked by gate. No root or Ace-directory license found at that external snapshot; nested KWDB GPL-3.0 and viewer LGPL-2.1 texts are separate scope references, not proof of generated payload derivation or a license assignment. Original upstream direction for earliest import, API data source and rights remain open; no new library identity, notice or clearance."
+    }
+  ],
+  "former_snipmate_location": {
+    "file": "vendor/ace/snippets/edifact.js",
+    "marker": "ace/snippets/edifact"
+  },
+  "former_snipmate_evidence": [
+    {
+      "git_blob": "624b87ad3d9e135050ba3415237fff3e38241bbc",
+      "marker": "snippet",
+      "url": "https://github.com/ajaxorg/ace/blob/f884c8fd6394d60311782c50e6d233dbc6da4ecc/lib/ace/snippets/edifact.snippets"
+    }
+  ],
+  "source_relationships": [
+    {
+      "upstream": {
+        "git_blob": "854f14ac22f148309d4f9ec450fda38244ede6ec",
+        "marker": "snippet",
+        "url": "https://github.com/ajaxorg/ace/blob/d16daddc5ea91e578fafde6c9c17b41cdb036579/lib/ace/snippets/java.snippets"
+      },
+      "container": {
+        "git_blob": "624b87ad3d9e135050ba3415237fff3e38241bbc",
+        "marker": "snippet",
+        "url": "https://github.com/ajaxorg/ace/blob/f884c8fd6394d60311782c50e6d233dbc6da4ecc/lib/ace/snippets/edifact.snippets"
+      },
+      "relation": "ace-edifact-java-two-triggers"
+    },
+    {
+      "upstream": {
+        "git_blob": "624b87ad3d9e135050ba3415237fff3e38241bbc",
+        "marker": "snippet",
+        "url": "https://github.com/ajaxorg/ace/blob/f884c8fd6394d60311782c50e6d233dbc6da4ecc/lib/ace/snippets/edifact.snippets"
+      },
+      "container": {
+        "git_blob": "afe85e064b4594d344b7b101d82cefc42460565f",
+        "marker": "module.exports",
+        "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/snippets/edifact.snippets.js"
+      },
+      "relation": "ace-snippet-template-literal"
+    },
+    {
+      "relation": "ace-lsl-identical-raw",
+      "upstream": {
+        "url": "https://github.com/ajaxorg/ace/blob/36198a50f4bdef76c5044ba83df09d3298e90b6a/lib/ace/snippets/lsl.snippets",
+        "git_blob": "bc0d2eb9d0286050bbb56efa09cc02aaec500dba",
+        "marker": "snippet CAMERA_ACTIVE"
+      },
+      "container": {
+        "url": "https://github.com/dazzle-lsl/linden-scripting-language/blob/d777b7ad20cfa223a368d8bdf379edfc58130f4f/ace/lib/ace/snippets/lsl.snippets",
+        "git_blob": "bc0d2eb9d0286050bbb56efa09cc02aaec500dba",
+        "marker": "snippet CAMERA_ACTIVE"
+      }
+    },
+    {
+      "relation": "ace-lsl-identical-raw",
+      "upstream": {
+        "url": "https://github.com/dazzle-lsl/linden-scripting-language/blob/54ef136c1eb3cb2703fb0b6b6e610918e03c217d/ace/lib/ace/snippets/lsl.snippets",
+        "git_blob": "352d26e7b4ed7389ddefb8365b4e2d985e63d037",
+        "marker": "snippet CAMERA_ACTIVE"
+      },
+      "container": {
+        "url": "https://github.com/ajaxorg/ace/blob/fb0384329602f0ea99aa1fd983f094f7b0c31797/lib/ace/snippets/lsl.snippets",
+        "git_blob": "352d26e7b4ed7389ddefb8365b4e2d985e63d037",
+        "marker": "snippet CAMERA_ACTIVE"
+      }
+    },
+    {
+      "relation": "ace-snippet-template-literal",
+      "upstream": {
+        "url": "https://github.com/ajaxorg/ace/blob/fb0384329602f0ea99aa1fd983f094f7b0c31797/lib/ace/snippets/lsl.snippets",
+        "git_blob": "352d26e7b4ed7389ddefb8365b4e2d985e63d037",
+        "marker": "snippet CAMERA_ACTIVE"
+      },
+      "container": {
+        "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/snippets/lsl.snippets.js",
+        "git_blob": "7e33bdc2855b5f7e3ff0cb5d4f5f546dc809ccf5",
+        "marker": "module.exports"
+      }
+    },
+    {
+      "upstream": {
+        "url": "https://github.com/ajaxorg/ace/blob/4f9cd17910cfe36dc504b456ea5ef62c15189f2d/lib/ace/snippets/java.snippets",
+        "git_blob": "854f14ac22f148309d4f9ec450fda38244ede6ec",
+        "marker": "## Basic Java packages and import"
+      },
+      "container": {
+        "url": "https://github.com/ajaxorg/ace/blob/1693305c8974a5dd4f350bb0b9d48b134fca113c/lib/ace/snippets/wollok.snippets",
+        "git_blob": "f98f8587908fefe10bc9dc3a9fa02443a60bb1aa",
+        "marker": "## Basic Java packages and import"
+      },
+      "relation": "ace-wollok-java-retained-blocks"
+    },
+    {
+      "upstream": {
+        "url": "https://github.com/ajaxorg/ace/blob/1693305c8974a5dd4f350bb0b9d48b134fca113c/lib/ace/snippets/wollok.snippets",
+        "git_blob": "f98f8587908fefe10bc9dc3a9fa02443a60bb1aa",
+        "marker": "## Basic Java packages and import"
+      },
+      "container": {
+        "url": "https://github.com/ajaxorg/ace/blob/68d7fd1c0f5ac50cdb610bf06b86074eab3be652/src/snippets/wollok.snippets.js",
+        "git_blob": "04d3c58efa7c958cb98aa84e76bcbdcc0bb6dd8b",
+        "marker": "module.exports"
+      },
+      "relation": "ace-snippet-template-literal"
+    }
+  ],
+  "additional_exclusion_baseline_commit": "e7c6da7ea2f6d743a61b18bb413e9d1dfbc0c825",
+  "former_wollok_snipmate_location": {
+    "file": "vendor/ace/snippets/wollok.js",
+    "marker": "ace/snippets/wollok"
+  },
+  "former_wollok_snipmate_evidence": [
+    {
+      "url": "https://github.com/ajaxorg/ace/blob/4f9cd17910cfe36dc504b456ea5ef62c15189f2d/lib/ace/snippets/java.snippets",
+      "git_blob": "854f14ac22f148309d4f9ec450fda38244ede6ec",
+      "marker": "## Basic Java packages and import"
+    },
+    {
+      "url": "https://github.com/ajaxorg/ace/blob/1693305c8974a5dd4f350bb0b9d48b134fca113c/lib/ace/snippets/wollok.snippets",
+      "git_blob": "f98f8587908fefe10bc9dc3a9fa02443a60bb1aa",
+      "marker": "## Basic Java packages and import"
+    }
+  ],
+  "former_wollok_snipmate_note": "Sixteen unique ordered literal spans (510 bytes) of historical Java/SnipMate material mapped to Wollok; raw and endpoint pins and bounded relations retained. No whole-payload or adaptation rights assertion."
+}

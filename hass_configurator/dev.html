@@ -1563,7 +1563,6 @@
                           <option value="ace/theme/cobalt">Cobalt</option>
                           <option value="ace/theme/gruvbox">Gruvbox</option>
                           <option value="ace/theme/idle_fingers">idle Fingers</option>
-                          <option value="ace/theme/kr_theme">krTheme</option>
                           <option value="ace/theme/merbivore">Merbivore</option>
                           <option value="ace/theme/merbivore_soft">Merbivore Soft</option>
                           <option value="ace/theme/mono_industrial">Mono Industrial</option>
@@ -1587,7 +1586,8 @@
               </p>
               <p class="col s12">
                   <input type="checkbox" class="blue_check" data-hc-click="hc-71" id="useWorker" />
-                  <Label for="useWorker">Use Worker</label>
+                  <Label for="useWorker">Use Worker (supported languages)</label>
+                  <span id="worker-mode-status" role="status"></span>
               </p>
               <p class="col s12">
                   <input type="checkbox" class="blue_check" data-hc-click="hc-72" id="vScrollBarAlwaysVisible" />
@@ -2985,7 +2985,13 @@ jQuery.ajaxPrefilter(function(options, ignored, xhr) {
     });
 
     if (localStorage.hasOwnProperty("pochass")) {
-        editor.setOptions(JSON.parse(localStorage.pochass));
+        var restoredAceOptions = JSON.parse(localStorage.pochass);
+        // Never transiently enable a saved worker before default-off applies.
+        restoredAceOptions.useWorker = false;
+        if (Object.prototype.hasOwnProperty.call(restoredAceOptions, 'theme')) {
+            restoredAceOptions.theme = window.hcAceResolveTheme(restoredAceOptions.theme);
+        }
+        editor.setOptions(restoredAceOptions);
         editor.setOptions({
             enableBasicAutocompletion: true,
             enableSnippets: true,
@@ -3053,6 +3059,16 @@ jQuery.ajaxPrefilter(function(options, ignored, xhr) {
     }
 
     apply_settings();
+
+    function update_worker_status() {
+        var session = editor.getSession();
+        var supported = window.hcAceSupportsWorker(session.getMode().$id);
+        var status = document.getElementById("worker-mode-status");
+        status.textContent = !supported ? "No background diagnostics for this mode" :
+            session.getUseWorker() ? "Background diagnostics requested" : "Background diagnostics off";
+    }
+    editor.getSession().on("changeMode", update_worker_status);
+    update_worker_status();
 
 
     /* ============================================================

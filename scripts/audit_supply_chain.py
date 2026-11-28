@@ -5,13 +5,15 @@ import base64
 import datetime
 import hashlib
 import importlib.metadata as metadata
+import io
 import json
 from pathlib import Path, PurePosixPath
 import re
 import subprocess
 import sys
 import tarfile
-from urllib.parse import quote
+from urllib.parse import quote, unquote
+import xml.etree.ElementTree as ET
 from urllib.request import Request, urlopen
 
 try:
@@ -52,14 +54,170 @@ def verify_file(root, name, expected):
         raise ValueError("Inventory SHA256 mismatch: " + name)
 
 
+# Special filenames are permitted only for the two pinned source collections.
+TEXTMATE_COLLECTIONS = {
+    "io": ("textmate/io.tmbundle", "e8f7b3773544cfc14a7ede7344ed94683f7ed602", ".plist", 10,
+           "500eb8b25ca88e35a0dc4ce97011c577a72ed057"),
+    "vala": ("technosophos/Vala-TMBundle", "2fd9373f90bf74eef0b15f43c7240c28d55bebaa", ".tmSnippet", 31,
+             "b1230e6871d9f08406d16dd862f371c36bbabc6f"),
+}
+TEXTMATE_ACE_REV = "68d7fd1c0f5ac50cdb610bf06b86074eab3be652"
+
+# Vala historical source pins, scoped to the exact paths needed for attribution.
+VALA_REDCAR = "https://github.com/danlucraft/redcar-bundles/blob/"
+VALA_BUTCHER = "https://github.com/technosophos/Vala-TMBundle/blob/"
+VALA_REDCAR_REV = "21ff196d839c2793c83db9df08160ab1852e07fc"
+VALA_SANITIZED_REV = "594eb0c20836d563ea4d31fac06b5218c8e83d08"
+VALA_IMPORT_REV = "6ea1cc187c3e1be58ac05624b735b81c0e2dd6f2"
+VALA_ADDED_REV = "cfca3a64285c76857147947139fd31cc2691d68a"
+VALA_FIXED_REV = "af55cfc7c0b034c9e032d6a14720deee9fa70cfe"
+VALA_RENAMED_REV = "0f40b5d0da80444124ee9ac039c3b1163647f84c"
+VALA_LICENSE_BLOB = "4446030e4815a6abda7152a72dabc028ff7e042f"
+VALA_LICENSE_PATH = "third_party/licenses/embedded/redcar-vala-bundle-license.txt"
+VALA_ORIGINAL = {
+    "Console.WriteLine (writeline).plist": "d7828633f15704389c7027eff003dc88e37072de",
+    "case.plist": "818d8e9586479c0e981866c547e07664dc5261d3",
+    "class.plist": "0e1e95593a44be52975074a6acb388b779ed3916",
+    "do while.plist": "9dd440145033f6fc0a5ac2a62a4f33ddbfe4547a",
+    "else if (elseif).plist": "a637fbb794e3ae72b872bb2297ac748c3d1291e3",
+    "else.plist": "0fb763415925f90fcd870c8947ea094dc5d2eb14",
+    "for.plist": "e26a938aff3e8f48e486fd9a54b8ae86a95d6c18",
+    "foreach.plist": "5d0254b6fc3773ebf0427ec0008d44e45ea1fc42",
+    "if.plist": "fb5a269903b238fc14ddeca5807b1b658a9a328d",
+    "namespace (ns).plist": "2682216c02b2a77f892f7d0d74cca2a7f903b075",
+    "property (prop).plist": "572447dc0595f4b3c0c97e63e0405c96110711e6",
+    "read-only property (roprop).plist": "333d5fb20dee592811fd246098fd326e9a6d3a68",
+    "switch.plist": "b44baff8fc7fcec7537521b6ed03a4ee86a12846",
+    "while.plist": "eb784d1a64de35902ae8466baafe17acc7d88128",
+}
+VALA_SANITIZED = {
+    "Console_WriteLine___writeline__.plist": "d7828633f15704389c7027eff003dc88e37072de",
+    "case.plist": "818d8e9586479c0e981866c547e07664dc5261d3",
+    "class.plist": "0e1e95593a44be52975074a6acb388b779ed3916",
+    "do_while.plist": "9dd440145033f6fc0a5ac2a62a4f33ddbfe4547a",
+    "else.plist": "0fb763415925f90fcd870c8947ea094dc5d2eb14",
+    "else_if___elseif__.plist": "a637fbb794e3ae72b872bb2297ac748c3d1291e3",
+    "for.plist": "e26a938aff3e8f48e486fd9a54b8ae86a95d6c18",
+    "foreach.plist": "5d0254b6fc3773ebf0427ec0008d44e45ea1fc42",
+    "if.plist": "fb5a269903b238fc14ddeca5807b1b658a9a328d",
+    "namespace___ns__.plist": "2682216c02b2a77f892f7d0d74cca2a7f903b075",
+    "property___prop__.plist": "572447dc0595f4b3c0c97e63e0405c96110711e6",
+    "read__only_property___roprop__.plist": "333d5fb20dee592811fd246098fd326e9a6d3a68",
+    "switch.plist": "b44baff8fc7fcec7537521b6ed03a4ee86a12846",
+    "while.plist": "eb784d1a64de35902ae8466baafe17acc7d88128",
+}
+VALA_DELTA = {
+    "Comment (multiline).tmSnippet": "1f58883393206674f86d8eced7e1225876b46398",
+    "DBus annotation.tmSnippet": "e8f6e1c54bd760612a9c8fba4bad1d2bdced3f29",
+    "DocBlock.tmSnippet": "d00916a9d4fa1d7f44b947318f146655e9c24fef",
+    "Gee_ArrayList.tmSnippet": "d67415cbdc1c243d235601356145ce52e5dcf326",
+    "Gee_HashMap.tmSnippet": "e96031b7ab04d5afefd0b1467b7894cfcbf38cd7",
+    "Gee_HashSet.tmSnippet": "6b3b6806665841cd03255ddfd17a4fc9a7acfc37",
+    "Main function.tmSnippet": "bd86c7e4ca31823ce41e6fa46945911d0d2d51ca",
+    "String template (@).tmSnippet": "6e488970ee80ecdf6829d50cfc032dc063433e00",
+    "Verbatim string (\"\"\").tmSnippet": "c3afa7bfd0d7dc71abd5341cd5e620c8104e7a75",
+    "class.plist": "bafc69bdcab709bffebcb9d93f9687133363e92f",
+    "closure.tmSnippet": "e63ee79c17f2c963f3cd5791e1515b1302649ef0",
+    "delegate.tmSnippet": "7e79b111ca44585948fc1eb5be7ba9af4cb7cf23",
+    "enum.tmSnippet": "5b1f36bc90d9f31c5e427222db2749b1601897d5",
+    "error domain.tmSnippet": "730dd21376c574b72a93d0e14e2257152675c66d",
+    "interface.tmSnippet": "e7cf218c5415533d0153640e9e3841a06600770f",
+    "printf.tmSnippet": "6d5f571eec42288a6a7e572e718e498f37c5bb36",
+    "struct.tmSnippet": "3ed0b3ffff5fc71895f07c023b321e8946aeb225",
+    "try:catch.tmSnippet": "610ede504a37d18f9f9f9a9f3ac5f9524002db72",
+}
+
+
+def vala_historical_pins():
+    """Reconstruct the historical snippet sets and bind them to exact raw paths."""
+    added = {**VALA_ORIGINAL, **VALA_DELTA}
+    fixed = {**added, "printf.tmSnippet": "274ee7a3a2347aa18142590228615a595c5af679"}
+    renamed = {name.removesuffix(".plist") + ".tmSnippet" if name.endswith(".plist") else name: blob
+               for name, blob in fixed.items()}
+    stages = (
+        (VALA_REDCAR + VALA_REDCAR_REV + "/Bundles/Vala.tmbundle/Snippets/", VALA_ORIGINAL),
+        (VALA_REDCAR + VALA_SANITIZED_REV + "/Bundles/Vala.tmbundle/Snippets/", VALA_SANITIZED),
+        (VALA_BUTCHER + VALA_IMPORT_REV + "/Snippets/", VALA_ORIGINAL),
+        (VALA_BUTCHER + VALA_ADDED_REV + "/Snippets/", VALA_DELTA),
+        (VALA_BUTCHER + VALA_FIXED_REV + "/Snippets/", {"printf.tmSnippet": fixed["printf.tmSnippet"]}),
+        (VALA_BUTCHER + VALA_RENAMED_REV + "/Snippets/", renamed),
+    )
+    pins = {prefix + quote(name, safe="/"): (blob, "<key>content</key>")
+            for prefix, files in stages for name, blob in files.items()}
+    for revision in (VALA_REDCAR_REV, VALA_SANITIZED_REV):
+        pins[VALA_REDCAR + revision + "/LICENSE"] = (
+            VALA_LICENSE_BLOB, "Permission to copy, use, modify, sell and distribute")
+    return pins
+
+
+def vala_tree_identity(files):
+    """Git tree object hash for the observed flat regular-file snippet trees."""
+    data = b"".join(b"100644 " + name.encode("utf-8") + b"\0" + bytes.fromhex(blob)
+                    for name, blob in sorted(files.items()))
+    return hashlib.sha1(b"tree " + str(len(data)).encode("ascii") + b"\0" + data).hexdigest()
+
+
+def validate_vala_history(embedded):
+    record = next(c for c in embedded["components"] if c["id"] == "ace-textmate-vala-snippets")
+    expected = vala_historical_pins()
+    historical = [p for p in record["evidence"] if p["url"] in expected]
+    observed = {p["url"]: (p["git_blob"], p["marker"]) for p in historical}
+    added = {**VALA_ORIGINAL, **VALA_DELTA}
+    fixed = {**added, "printf.tmSnippet": "274ee7a3a2347aa18142590228615a595c5af679"}
+    renamed = {name.removesuffix(".plist") + ".tmSnippet" if name.endswith(".plist") else name: blob
+               for name, blob in fixed.items()}
+    final_prefix = "https://github.com/technosophos/Vala-TMBundle/blob/2fd9373f90bf74eef0b15f43c7240c28d55bebaa/Snippets/"
+    final = {unquote(p["url"][len(final_prefix):]): p["git_blob"]
+             for p in record["evidence"] if p["url"].startswith(final_prefix)}
+    if (len(historical) != len(expected) or observed != expected
+            or len(VALA_ORIGINAL) != 14 or len(VALA_DELTA) != 18
+            or set(VALA_ORIGINAL) & set(VALA_DELTA) != {"class.plist"}
+            or set(VALA_SANITIZED.values()) != set(VALA_ORIGINAL.values())
+            or len(VALA_SANITIZED) != 14 or len(added) != 31 or renamed != final
+            or vala_tree_identity(VALA_ORIGINAL) != "b204825ca15eb75dade9a06d805f0643c03d309b"
+            or vala_tree_identity(VALA_SANITIZED) != "027dc8ce2321dd7f78bbe431968f29cacccfdf25"
+            or vala_tree_identity(added) != "67aba7ae0bcbbcdffaaf3b8e9bf1e5dbe1c403cd"
+            or vala_tree_identity(fixed) != "4d4f64ac0d43f93472416d79d20ba1177489df00"
+            or vala_tree_identity(renamed) != "2506df0b1ff0b4b3d360c1c74d829d0457e44d31"
+            or record["license"] != "LicenseRef-TextMate-Bundle AND MIT"
+            or set(record["notices"]) != {VALA_LICENSE_PATH, "third_party/licenses/embedded/vala-tmbundle-mit.txt"}
+            or embedded["notices"].get(VALA_LICENSE_PATH) != {
+                "kind": "whole-file", "sha256": "0b4781488f944d7a2479ab992f730dbae7857c43aa56682a0fcff681054ee10d",
+                "source": VALA_REDCAR + VALA_REDCAR_REV + "/LICENSE", "source_blob": VALA_LICENSE_BLOB}):
+        raise ValueError("Incomplete Vala historical provenance")
+    return {"historical_pins": len(expected), "inherited": 14, "additions": 17,
+            "changed": ["class.plist", "printf.tmSnippet"], "final": 31}
+
+
+# Exactly two official reference template paths; no general encoded-path exception.
+SQLSERVER_REFERENCE_REV = "80d5bf59f8df98a4b1bc910a9424c77647896f00"
+SQLSERVER_REFERENCE_PATHS = {
+    "samples/features/ssms-templates/Sql/Stored Procedure/Create Stored Procedure (New Menu).sql",
+    "samples/features/ssms-templates/Sql/Function/Create Scalar Function (New Menu).sql",
+}
+
+
 def immutable_raw_url(url):
     """Only exact public GitHub commit/blob evidence, never mutable tags."""
     match = re.fullmatch(
         r"https://github\.com/([A-Za-z0-9_.-]+)/([A-Za-z0-9_.-]+)/blob/"
-        r"([0-9a-f]{40})/([A-Za-z0-9_.\-/]+)", url)
+        r"([0-9a-f]{40})/([A-Za-z0-9_.%/\-]+)", url)
     if not match:
         raise ValueError("Non-immutable embedded evidence URL: " + url)
     owner, repo, commit, filename = match.groups()
+    if "%" in filename:
+        # No encoded separators, dot aliases, double encoding, query or
+        # control characters. The exception is confined to one filename.
+        decoded = unquote(filename, encoding="ascii", errors="strict")
+        allowed = any(f"{owner}/{repo}" == project and commit == revision
+                      and decoded.endswith(extension)
+                      for project, revision, extension, _, _ in TEXTMATE_COLLECTIONS.values())
+        textmate = allowed and re.fullmatch(r'Snippets/[A-Za-z0-9_. ()"@:\-]+', decoded)
+        ssms = (owner == "microsoft" and repo == "sql-server-samples"
+                and commit == SQLSERVER_REFERENCE_REV and decoded in SQLSERVER_REFERENCE_PATHS)
+        if (not (textmate or ssms or url in vala_historical_pins())
+                or quote(decoded, safe="/") != filename):
+            raise ValueError("Unsafe encoded embedded evidence URL: " + url)
     path = PurePosixPath(filename)
     if (owner in {".", ".."} or repo in {".", ".."} or path.is_absolute()
             or ".." in path.parts or path.as_posix() != filename):
@@ -76,6 +234,381 @@ def check_git_pin(url, blob):
 def git_blob_sha1(raw):
     # Git object identity, NOT a SHA-1 digest of bare bytes.
     return hashlib.sha1(b"blob " + str(len(raw)).encode("ascii") + b"\0" + raw).hexdigest()
+
+
+def check_npm_notice_pin(info):
+    """Strict immutable npm tarball/member identity for reference notices."""
+    name, version = info["name"], info["version"]
+    member = info["member"]
+    if (not re.fullmatch(r"(?:@[a-z0-9_.-]+/)?[a-z0-9_.-]+", name)
+            or any(part in {".", ".."} for part in name.split("/"))
+            or not re.fullmatch(r"[0-9][a-zA-Z0-9.+-]*", version)
+            or not re.fullmatch(r"package/[A-Za-z0-9_.-]+", member)
+            or member.split("/")[-1] in {".", ".."}):
+        raise ValueError("Invalid npm notice identity")
+    expected = ("https://registry.npmjs.org/" + name + "/-/" +
+                name.split("/")[-1] + "-" + version + ".tgz")
+    if (info["tarball"] != expected
+            or not re.fullmatch(r"[0-9a-f]{64}", info["archive_sha256"])
+            or not re.fullmatch(r"sha512-[A-Za-z0-9+/]{86}==", info["npm_integrity"])
+            or not re.fullmatch(r"[0-9a-f]{64}", info["sha256"])):
+        raise ValueError("Invalid npm notice archive pin")
+
+
+def verify_npm_notice(info, raw, local):
+    """No extraction or execution; exact member bytes, not a version proof."""
+    check_npm_notice_pin(info)
+    actual_sri = "sha512-" + base64.b64encode(hashlib.sha512(raw).digest()).decode("ascii")
+    if len(raw) > 32 * 1024 * 1024 or sha(raw) != info["archive_sha256"] or actual_sri != info["npm_integrity"]:
+        raise ValueError("Embedded npm archive mismatch: " + info["name"])
+    with tarfile.open(fileobj=io.BytesIO(raw), mode="r:gz") as archive:
+        def member(name, limit):
+            matches = [item for item in archive.getmembers() if item.name == name]
+            if len(matches) != 1 or not matches[0].isfile() or matches[0].size > limit:
+                raise ValueError("Invalid or duplicate npm notice member: " + name)
+            return archive.extractfile(matches[0]).read()
+        package = json.loads(member("package/package.json", 512 * 1024))
+        if (package.get("name"), package.get("version")) != (info["name"], info["version"]):
+            raise ValueError("Embedded npm notice package identity mismatch")
+        upstream = member(info["member"], 512 * 1024)
+    if sha(upstream) != info["sha256"] or upstream != local:
+        raise ValueError("Embedded npm notice bytes mismatch: " + info["member"])
+    return {"name": info["name"], "version": info["version"], "tarball": info["tarball"],
+            "archive_sha256": info["archive_sha256"], "member": info["member"],
+            "member_sha256": sha(upstream), "relation": "exact-archive-reference-member"}
+
+
+SOURCE_RELATIONS = {"literal-full-source-substring", "xqlint-two-require-renames",
+                    "xqlint-ebnf-body-exact", "xqlint-jsoniq-string-delta",
+                    "browser-pack-standalone-prelude", "ace-theme-wrapper-amd-to-commonjs",
+                    "ace-gruvbox-css-indent-guide", "ace-snippet-template-literal",
+                    "ace-edifact-java-two-triggers", "ace-liquid-html-prefix",
+                    "ace-wollok-java-retained-blocks", "ace-lsl-identical-raw",
+                    "ace-sqlserver-ms-procedure-shared", "ace-sqlserver-ms-function-shared"}
+
+
+SQLSERVER_SHARED_BLOCKS = {
+    "ace-sqlserver-ms-procedure-shared": (
+        (b"-- =============================================\n-- Author:\t\t<Author,,Name>\n-- Create date: <Create Date,,>\n-- Description:\t<Description,,>\n-- =============================================\nCREATE PROCEDURE <Procedure_Name, sysname, ProcedureName> \n",
+         b"\t-- =============================================\n\t-- Author:\t\t${1:Author}\n\t-- Create date: ${2:Date}\n\t-- Description:\t${3:Description}\n\t-- =============================================\n\tCREATE PROCEDURE ${4:Procedure_Name}\n"),
+        (b"\t-- Add the parameters for the stored procedure here\n",
+         b"\t\t${5:/*Add the parameters for the stored procedure here*/}\n"),
+        (b"AS\nBEGIN\n\t-- SET NOCOUNT ON added to prevent extra result sets from\n\t-- interfering with SELECT statements.\n\tSET NOCOUNT ON;\n",
+         b"\tAS\n\tBEGIN\n\t\t-- SET NOCOUNT ON added to prevent extra result sets from interfering with SELECT statements.\n\t\tSET NOCOUNT ON;\n"),
+        (b"END\nGO\n",
+         b"\tEND\n\tGO\n"),
+    ),
+    "ace-sqlserver-ms-function-shared": (
+        (b"-- =============================================\n-- Author:\t\t<Author,,Name>\n-- Create date: <Create Date, ,>\n-- Description:\t<Description, ,>\n-- =============================================\nCREATE FUNCTION <Scalar_Function_Name, sysname, FunctionName> \n",
+         b"\t-- =============================================\n\t-- Author:\t\t${1:Author}\n\t-- Create date: ${2:Date}\n\t-- Description:\t${3:Description}\n\t-- =============================================\n\tCREATE FUNCTION ${4:Scalar_Function_Name}\n"),
+        (b"\t-- Add the parameters for the function here\n",
+         b"\t\t-- Add the parameters for the function here\n"),
+        (b"RETURNS <Function_Data_Type, ,int>\nAS\nBEGIN\n",
+         b"\tRETURNS ${5:Function_Data_Type}\n\tAS\n\tBEGIN\n"),
+        (b"\tDECLARE <@ResultVar, sysname, @Result> <Function_Data_Type, ,int>\n",
+         b"\t\tDECLARE @Result ${5:Function_Data_Type}\n"),
+        (b"\t-- Add the T-SQL statements to compute the return value here\n",
+         b"\t\t${6:/*Add the T-SQL statements to compute the return value here*/}\n"),
+        (b"END\nGO\n",
+         b"\tEND\n\tGO"),
+    ),
+}
+
+
+def sqlserver_shared_blocks(upstream, container, relation):
+    # Deliberately partial: compare only fixed, distinctive spans in the
+    # designated trigger, not the other ten snippets or arbitrary SQL.
+    proc = relation == "ace-sqlserver-ms-procedure-shared"
+    trigger = b"\nsnippet createproc\n" if proc else b"\nsnippet createfn\n"
+    if container.count(trigger) != 1:
+        return False
+    section = container.split(trigger, 1)[1]
+    if proc:
+        boundary = b"# Create Scalar Function\nsnippet createfn\n"
+        if section.count(boundary) != 1:
+            return False
+        section = section.split(boundary, 1)[0]
+    if b"\nsnippet " in section:
+        return False
+    blocks = SQLSERVER_SHARED_BLOCKS[relation]
+    for raw, side in ((upstream, 0), (section, 1)):
+        end = 0
+        for pair in blocks:
+            block = pair[side]
+            start = raw.find(block, end)
+            if start < 0 or raw.count(block) != 1:
+                return False
+            end = start + len(block)
+    return section.endswith(blocks[-1][1])
+
+
+def embedded_source_relation(upstream, container, relation):
+    """Apply only named, bounded source transformations to immutable blobs."""
+    if not upstream or relation not in SOURCE_RELATIONS:
+        raise ValueError("Invalid embedded source relation")
+    if relation == "xqlint-ebnf-body-exact":
+        # Ignore only the observed historical BSD/AMD wrapper, not grammar bytes.
+        old_start = b"<?xqlint\n/* ***** BEGIN LICENSE BLOCK *****\n"
+        old_end = b"\n<?ENCORE?>\n\n<?xqlint\n});\n?>\n"
+        new_end = b"\n<?ENCORE?>\n\n<?xqlint\n?>\n"
+        boundary = b"\n?>\n"
+        if not (upstream.startswith(old_start) and upstream.endswith(old_end)
+                and container.endswith(new_end)):
+            return False
+        header_end = b" * ***** END LICENSE BLOCK ***** */\n\ndefine(function(require, exports, module){\n"
+        if upstream.count(header_end) != 1:
+            return False
+        old_inner = upstream.split(header_end, 1)[1][:-len(old_end)]
+        new_prefix = b"<?xqlint\n"
+        if not container.startswith(new_prefix):
+            return False
+        new_inner = container[len(new_prefix):-len(new_end)]
+        for name in (b"XQueryTokenizer", b"JSONiqTokenizer"):
+            signature = (b"var " + name + b" = exports." + name + b" = function "
+                         + name + b"(string, parsingEventHandler)\n{\n"
+                         + b"  init(string, parsingEventHandler);" + boundary)
+            if old_inner.startswith(signature) and new_inner.startswith(signature):
+                return len(old_inner) > len(signature) and old_inner == new_inner
+        return False
+    if relation == "xqlint-jsoniq-string-delta":
+        old_rule = b"         ::= PredefinedEntityRef | CharRef | EscapeQuot | QuotChar | '\"' | EOF"
+        new_rule = b"         ::= JSONPredefinedCharRef | JSONCharRef | JSONChar | '\"' | EOF"
+        anchor = b"<?TOKENS?>\n\n"
+        insertion = b"JSONChar ::= [^\"\\]\n\nJSONCharRef\n         ::= '\\' 'u' [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F]\n         \nJSONPredefinedCharRef\n         ::= '\\' ( '\\' | '/' | '\"' | \"'\" | 'b' | 'f' | 'n' | 'r' | 't' )\n         \n"
+        if upstream.count(old_rule) != 1 or upstream.count(anchor) != 1:
+            return False
+        return container == upstream.replace(old_rule, new_rule, 1).replace(
+            anchor, anchor + insertion, 1)
+    if relation in SQLSERVER_SHARED_BLOCKS:
+        return sqlserver_shared_blocks(upstream, container, relation)
+    if relation == "ace-lsl-identical-raw":
+        return upstream == container and b"snippet CAMERA_ACTIVE\n" in upstream
+    if relation == "ace-wollok-java-retained-blocks":
+        # Partial shared-material relation only. Whole input bytes are separately
+        # pinned by the network gate and the endpoint-to-current relation.
+        # Each distinctive fragment must occur once, in the observed order.
+        blocks = (
+            b"##\n## Basic Java packages and import\nsnippet im\n\timport\n",
+            b"snippet cl\n\tclass ${1:`Filename(\"\", \"untitled\")`} ${2}\n",
+            b"##\n## Comments\nsnippet /*\n\t/*\n\t * ${1}\n\t */\n",
+            b"##\n## Control Statements\n",
+            b"snippet el\n\telse\n",
+            b"snippet if\n\tif (${1}) ${2}\n",
+            b"##\n## Create a Method\nsnippet m\n",
+            b"snippet as\n",
+            b"snippet ca\n",
+            b"snippet thr\n\tthrow\n",
+            b"snippet try\n\ttry {\n\t\t${3}\n",
+            b"##\n## Javadocs\nsnippet /**\n\t/**\n\t * ${1}\n\t */\n",
+            b"##\n## Print Methods\nsnippet print\n",
+            b"##\n## Setter and Getter Methods\nsnippet set\n",
+            b"snippet get\n",
+            b"##\n## Terminate Methods or Loops\nsnippet re\n\treturn",
+        )
+        for raw in (upstream, container):
+            end = 0
+            for block in blocks:
+                start = raw.find(block, end)
+                if start < 0 or raw.count(block) != 1:
+                    return False
+                end = start + len(block)
+        # The source ends this trigger with LF; Wollok truncates after return.
+        return (blocks[-1] + b"\n" in upstream
+                and container.endswith(blocks[-1]))
+    if relation == "ace-edifact-java-two-triggers":
+        # Exactly the two observed access-modifier trigger replacements.
+        old = b"snippet po\n\tprotected\nsnippet pu\n\tpublic\n"
+        new = b"snippet u\n\tUN\nsnippet un\n\tUNB\n"
+        if not upstream.startswith(b"## Access Modifiers\n" + old) or upstream.count(old) != 1:
+            return False
+        return container == upstream.replace(old, new, 1)
+    if relation == "ace-liquid-html-prefix":
+        # Exact observed Liquid additions; no arbitrary prefix or trimming.
+        prefix = b"\n# liquid specific snippets\nsnippet ife\n\t{% if ${1:condition} %}\n\n\t{% else %}\n\n\t{% endif %}\nsnippet if\n\t{% if ${1:condition} %}\n\t\t\n\t{% endif %}\nsnippet for\n\t{% for in ${1:iterator} %}\n\n\t{% endfor %}\nsnippet capture\n\t{% capture ${1} %}\n\n\t{% endcapture %}\nsnippet comment\n\t{% comment %}\n\t  ${1:comment}\n\t{% endcomment %}\n\n# Include html.snippets\n"
+        if not upstream.startswith(b"# Some useful Unicode entities\n"):
+            return False
+        return container == prefix + upstream
+    if relation == "ace-snippet-template-literal":
+        # Exact static payload only: never execute JS or normalize whitespace.
+        try:
+            text = container.decode("utf-8")
+        except UnicodeDecodeError:
+            return False
+        if "\r" in text:
+            return False
+        match = re.fullmatch(
+            r"[ \t\n]*module\.exports[ \t]*=[ \t]*\x60((?:\\[\s\S]|[^\x60\\])*)\x60;[ \t\n]*",
+            text,
+        )
+        if not match:
+            return False
+        body = match.group(1)
+        decoded = []
+        pos = 0
+        escapes = {"\\": "\\", chr(96): chr(96), "$": "$",
+                   "n": "\n", "r": "\r", "t": "\t"}
+        while pos < len(body):
+            char = body[pos]
+            pos += 1
+            if char == "$" and body[pos:pos + 1] == "{":
+                return False  # unescaped JS interpolation
+            if char == "\\":
+                if pos == len(body):
+                    return False
+                char = body[pos]
+                pos += 1
+                if char == "x":
+                    digits = body[pos:pos + 2]
+                    if not re.fullmatch(r"[0-9a-fA-F]{2}", digits):
+                        return False
+                    char = chr(int(digits, 16))
+                    pos += 2
+                elif char in escapes:
+                    char = escapes[char]
+                else:
+                    return False
+            decoded.append(char)
+        return "".join(decoded).encode("utf-8") == upstream
+    if relation == "ace-theme-wrapper-amd-to-commonjs":
+        # Only the three observed wrappers, exact syntax and bounded edits.
+        header, sep, body = upstream.partition(b"***** END LICENSE BLOCK ***** */")
+        if (not sep or not header.startswith(b"/* ***** BEGIN LICENSE BLOCK *****")
+                or b"Copyright 2011 Irakli Gozalishvili." not in header):
+            return False
+        for name in (b"ambiance", b"chaos", b"gruvbox"):
+            old = (b'define(function(require, exports, module) {\n\n'
+                   b'exports.isDark = true;\nexports.cssClass = "ace-' + name + b'";\n'
+                   b'exports.cssText = require("../requirejs/text!./' + name + b'.css");\n\n'
+                   b'var dom = require("../lib/dom");\n'
+                   b'dom.importCssString(exports.cssText, exports.cssClass);\n\n});')
+            if body not in (b"\n\n" + old, b"\n\n" + old + b"\n"):
+                continue
+            expected = old[len(b"define(function(require, exports, module) {\n\n"):-len(b"\n});")]
+            expected = expected.replace(b"../requirejs/text!./" + name + b".css", b"./" + name + b"-css")
+            expected = expected.replace(b"exports.cssClass);", b"exports.cssClass, false);")
+            return container == expected
+        return False
+    if relation == "ace-gruvbox-css-indent-guide":
+        # Preserve the entire 2017 CSS, with exactly one added known rule.
+        suffix = "\n\n.ace-gruvbox .ace_indent-guide-active {\n  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAEklEQVQIW2PQ1dX9zzBz5sz/ABCcBFFentLlAAAAAElFTkSuQmCC) right repeat-y;\n}\n`;\n"
+        return container == b"module.exports = `" + upstream.removesuffix(b"\n") + suffix.encode("ascii")
+    if relation == "xqlint-two-require-renames":
+        # Browserify derequire changed exactly the two import calls.
+        if upstream.count(b"require(") != 2:
+            raise ValueError("Unexpected XQLint require count")
+        upstream = upstream.replace(b"require(", b"_dereq_(")
+    elif relation == "browser-pack-standalone-prelude":
+        # Historical prelude is identical apart from comment-only/empty
+        # lines and the single standalone entry-export return expression.
+        if upstream.count(b"return newRequire;") != 1:
+            raise ValueError("Unexpected browser-pack return count")
+        upstream = b"\n".join(line for line in upstream.split(b"\n")
+                               if line.strip() and not line.lstrip().startswith(b"//"))
+        upstream = upstream.replace(b"return newRequire;", b"return newRequire(entry[0]);")
+        return container.startswith(b"define(function(require, exports, module) {\nmodule.exports = " +
+                                    upstream + b"\n(")
+    return upstream in container
+
+
+
+def textmate_collection_records(embedded):
+    """Validate fixed collection identities, exact counts and unique pins offline."""
+    for language, (project, revision, extension, count, module_blob) in TEXTMATE_COLLECTIONS.items():
+        cid = "ace-textmate-" + language + "-snippets"
+        records = [c for c in embedded["components"] if c["id"] == cid]
+        if len(records) != 1:
+            raise ValueError("Missing TextMate collection: " + cid)
+        record = records[0]
+        prefix = f"https://github.com/{project}/blob/{revision}/Snippets/"
+        module_url = f"https://github.com/ajaxorg/ace/blob/{TEXTMATE_ACE_REV}/src/snippets/{language}.js"
+        sources = [p for p in record["evidence"] if p["url"].startswith(prefix)]
+        modules = [p for p in record["evidence"] if p["url"] == module_url]
+        if (len(sources) != count or len({p["url"] for p in sources}) != count
+                or len({p["git_blob"] for p in sources}) != count
+                or any(not re.fullmatch(r"[^/]+", p["url"][len(prefix):])
+                       or not p["url"].endswith(extension)
+                       or p["marker"] != "<key>content</key>" for p in sources)
+                or len(modules) != 1 or modules[0]["git_blob"] != module_blob
+                or modules[0]["marker"] != "exports.snippets ="
+                or record["locations"] != [{"file": f"vendor/ace/snippets/{language}.js",
+                                             "marker": f"ace/snippets/{language}"}]
+                or record["parent"] != "ace" or record["kind"] != "library"
+                or record["status"] != "partial" or record["version"] is not None
+                or record["ecosystem"] is not None):
+            raise ValueError("Incomplete TextMate collection pins: " + cid)
+        yield language, sources, modules[0]
+
+
+def textmate_plist_entry(raw):
+    """Parse only observed XML string dictionaries; never resolve DTDs."""
+    text = raw.decode("utf-8")
+    if "\r" in text:
+        # XML 1.0 normally converts literal CR to LF. The historical Io
+        # converter preserved one literal CR as the Return key equivalent.
+        # Reproduce only this immutable source, never normalize other fields.
+        observed = "<key>keyEquivalent</key>\n\t<string>\r</string>"
+        if (git_blob_sha1(raw) != "97bfd34c245f79c304f9e3f6c2810477b1037958"
+                or text.count("\r") != 1 or text.count(observed) != 1):
+            raise ValueError("Unexpected literal CR in TextMate plist")
+        text = text.replace(observed, observed.replace("\r", "&#13;"))
+    text = re.sub(r'^\s*<\?xml version="1\.0" encoding="UTF-8"\?>\s*', "", text, count=1)
+    text = re.sub(
+        r'^<!DOCTYPE plist PUBLIC "-//Apple(?: Computer)?//DTD PLIST 1\.0//EN" '
+        r'"http://www\.apple\.com/DTDs/PropertyList-1\.0\.dtd">\s*',
+        "", text, count=1)
+    if "<!" in text or "<?" in text:
+        raise ValueError("Unsupported TextMate XML declaration")
+    root = ET.fromstring(text)
+    if (root.tag != "plist" or root.attrib != {"version": "1.0"} or len(root) != 1
+            or (root.text or "").strip() or (root.tail or "").strip()):
+        raise ValueError("Invalid TextMate plist wrapper")
+    dictionary = root[0]
+    if (dictionary.tag != "dict" or dictionary.attrib or (dictionary.text or "").strip()
+            or (dictionary.tail or "").strip() or len(dictionary) % 2):
+        raise ValueError("Invalid TextMate plist dictionary")
+    result = {}
+    for key, value in zip(dictionary[::2], dictionary[1::2]):
+        if (key.tag != "key" or value.tag != "string" or key.attrib or value.attrib
+                or len(key) or len(value) or (key.tail or "").strip()
+                or (value.tail or "").strip() or not key.text or key.text in result):
+            raise ValueError("Invalid or duplicate TextMate plist field")
+        result[key.text] = value.text or ""
+    if ("uuid" not in result or not re.fullmatch(r"[0-9A-Fa-f-]{36}", result.pop("uuid"))
+            or not {"name", "content", "scope"} <= result.keys()
+            or not result.keys() <= {"name", "content", "scope", "tabTrigger", "keyEquivalent"}
+            or not result["name"] or not result["scope"]):
+        raise ValueError("Unsupported TextMate plist fields")
+    result["scope"] = result["scope"].replace("source.", "")
+    return result
+
+
+def textmate_snippet_collection(sources, container, language):
+    """Exact one-to-one dictionary closure; no JS execution or fuzzy matching."""
+    if language not in TEXTMATE_COLLECTIONS:
+        return False
+    try:
+        count = TEXTMATE_COLLECTIONS[language][3]
+        prefix = '"use strict";\n\nexports.snippets = '
+        suffix = '\nexports.scope = "' + ("io" if language == "io" else "") + '";\n'
+        text = container.decode("utf-8")
+        if not text.startswith(prefix) or not text.endswith(";" + suffix):
+            return False
+        def unique_fields(pairs):
+            result = dict(pairs)
+            if len(result) != len(pairs):
+                raise ValueError("Duplicate Ace snippet field")
+            return result
+        entries = json.loads(text[len(prefix):-len(";" + suffix)], object_pairs_hook=unique_fields)
+        if (not isinstance(entries, list) or len(entries) != count or len(sources) != count
+                or any(not isinstance(row, dict) or not isinstance(row.get("name"), str)
+                       or not all(isinstance(v, str) for v in row.values()) for row in entries)):
+            return False
+        original = [textmate_plist_entry(raw) for raw in sources]
+        left = {row["name"]: row for row in original}
+        right = {row["name"]: row for row in entries}
+        return len(left) == len(right) == count and left == right
+    except (ValueError, UnicodeError, ET.ParseError):
+        return False
 
 
 def validate_embedded(root, inv, vendor, embedded, notice_paths):
@@ -129,17 +662,23 @@ def validate_embedded(root, inv, vendor, embedded, notice_paths):
     for name, info in embedded["notices"].items():
         if not name.startswith("third_party/licenses/embedded/"):
             raise ValueError("Invalid embedded notice path: " + name)
-        check_git_pin(info["source"], info["source_blob"])
-        if info["kind"] not in {"whole-file", "source-excerpt"}:
+        if info["kind"] == "npm-archive-member":
+            check_npm_notice_pin(info)
+        elif info["kind"] in {"whole-file", "source-excerpt"}:
+            check_git_pin(info["source"], info["source_blob"])
+        else:
             raise ValueError("Invalid embedded notice source kind: " + name)
     for relationship in embedded["source_relationships"]:
-        if relationship["relation"] != "literal-full-source-substring":
+        if relationship["relation"] not in SOURCE_RELATIONS:
             raise ValueError("Unknown embedded source relationship")
         for role in ("upstream", "container"):
             record = relationship[role]
             check_git_pin(record["url"], record["git_blob"])
             if not record["marker"]:
                 raise ValueError("Missing source relationship marker")
+    # Validate collection cardinality and endpoints even without network access.
+    list(textmate_collection_records(embedded))
+    validate_vala_history(embedded)
     font = embedded["font_provenance"]
     check_git_pin(font["source"], font["source_blob"])
     if (font["file"] not in inv["legacy_assets"] or font["status"] != "partial"
@@ -157,8 +696,9 @@ def embedded_upstream_evidence(inv, fetch=None):
     if fetch is None:
         def fetch(url):
             with urlopen(url, timeout=25) as response:
-                raw = response.read(8 * 1024 * 1024 + 1)
-            if len(raw) > 8 * 1024 * 1024:
+                limit = (32 if url.startswith("https://registry.npmjs.org/") else 8) * 1024 * 1024
+                raw = response.read(limit + 1)
+            if len(raw) > limit:
                 raise ValueError("Embedded evidence exceeds size limit")
             return raw
     cache = {}
@@ -176,9 +716,18 @@ def embedded_upstream_evidence(inv, fetch=None):
             raw = verified(evidence["url"], evidence["git_blob"])
             if evidence["marker"].encode("utf-8") not in raw:
                 raise ValueError("Embedded upstream source marker missing: " + item["id"])
+    npm_cache = {}
+    npm_notices = []
     for path, notice in embedded["notices"].items():
-        raw = verified(notice["source"], notice["source_blob"])
         local = read_file(PACKAGE, path)
+        if notice["kind"] == "npm-archive-member":
+            check_npm_notice_pin(notice)
+            url = notice["tarball"]
+            if url not in npm_cache:
+                npm_cache[url] = fetch(url)
+            npm_notices.append({"path": path, **verify_npm_notice(notice, npm_cache[url], local)})
+            continue
+        raw = verified(notice["source"], notice["source_blob"])
         if ((notice["kind"] == "whole-file" and local != raw)
                 or (notice["kind"] == "source-excerpt" and local not in raw)):
             raise ValueError("Embedded upstream license text mismatch: " + path)
@@ -186,10 +735,19 @@ def embedded_upstream_evidence(inv, fetch=None):
         left, right = (relationship[key] for key in ("upstream", "container"))
         upstream = verified(left["url"], left["git_blob"])
         container = verified(right["url"], right["git_blob"])
-        if (not upstream or upstream not in container
+        if (not embedded_source_relation(upstream, container, relationship["relation"])
                 or left["marker"].encode("utf-8") not in upstream
                 or right["marker"].encode("utf-8") not in container):
             raise ValueError("Embedded source relationship mismatch: " + left["url"])
+    collection_results = []
+    for language, sources, module in textmate_collection_records(embedded):
+        inputs = [verified(p["url"], p["git_blob"]) for p in sources]
+        container = verified(module["url"], module["git_blob"])
+        if not textmate_snippet_collection(inputs, container, language):
+            raise ValueError("TextMate snippet collection mismatch: " + language)
+        collection_results.append({"language": language, "count": len(inputs),
+                                   "container": module["url"], "relation": "exact-plist-array-dictionaries"})
+    vala_history = validate_vala_history(embedded)
     font = embedded["font_provenance"]
     original = verified(font["source"], font["source_blob"])
     candidate = font["google_repository_candidate"]
@@ -200,8 +758,17 @@ def embedded_upstream_evidence(inv, fetch=None):
                               "sha256": sha(raw)}
                              for url, raw in sorted(cache.items())],
             "component_records": len(embedded["components"]),
+            "textmate_snippet_collections_verified": collection_results,
+            "vala_historical_provenance_verified": vala_history,
             "notices_verified": len(embedded["notices"]),
-            "literal_source_relationships_verified": len(embedded["source_relationships"]),
+            "npm_archive_notices": npm_notices,
+            "literal_source_relationships_verified": sum(row["relation"] == "literal-full-source-substring"
+                for row in embedded["source_relationships"]),
+            "transformed_source_relationships_verified": [
+                {"relation": row["relation"], "upstream": row["upstream"]["url"],
+                 "container": row["container"]["url"]}
+                for row in embedded["source_relationships"]
+                if row["relation"] != "literal-full-source-substring"],
             "font_lineage": "repository-byte-match; original CDN archive unresolved",
             "limitations": embedded["limitations"]}
 
@@ -215,7 +782,13 @@ def source_inventory(root=PACKAGE):
     vendor = load(root / MANIFEST)
     if vendor["schema"] != 1:
         raise ValueError("Unknown vendor manifest schema")
+    try:
+        from .ace_worker_profile import read_profile, validate_manifest, verify_vendor_tree, LOCK
+    except ImportError:
+        from ace_worker_profile import read_profile, validate_manifest, verify_vendor_tree, LOCK
+    validate_manifest(read_profile(root / "ace-bootstrap.js"), load(LOCK), vendor)
     resources = vendor["resources"]
+    verify_vendor_tree(root, resources)
     legacy = inv["legacy_assets"]
     embedded = json.loads(read_file(root, EMBEDDED))
     if set(inv["license_notices"]) & set(embedded["notices"]):
@@ -262,6 +835,21 @@ def source_inventory(root=PACKAGE):
     used_notices.update(validate_embedded(root, inv, vendor, embedded, notice_paths))
     if used_notices != notice_paths:
         raise ValueError("Incomplete third-party ownership/notice coverage")
+    # Version-bound review matrix is a build-time source gate, not runtime policy.
+    try:
+        from .audit_ace_snippet_dispositions import (
+            load_matrix, verify_snippet_dispositions, render_document, DOCUMENT_PATH,
+            verify_stub_parent_notice)
+    except ImportError:
+        from audit_ace_snippet_dispositions import (
+            load_matrix, verify_snippet_dispositions, render_document, DOCUMENT_PATH,
+            verify_stub_parent_notice)
+    matrix = load_matrix(ROOT)
+    verify_snippet_dispositions(matrix, load(LOCK), vendor, embedded)
+    verify_stub_parent_notice(matrix, inv, load(LOCK),
+                              read_file(root, matrix["shared_stub_loader"]["notice"]))
+    if (ROOT / DOCUMENT_PATH).read_text("utf-8") != render_document(matrix):
+        raise ValueError("Snippet disposition Markdown drift")
     inv["embedded"] = embedded
     inv["license_notices"] = notices
     # Router's explicit first-party boundary must remain synchronized.
@@ -468,6 +1056,13 @@ def installed_evidence(label, locked=False, os_packages=False):
     paths |= {MANIFEST, NOTICE, EMBEDDED, "third_party/NOTICE.md"}
     for name in sorted(paths):
         verify_file(installed, name, sha(read_file(PACKAGE, name)))
+    try:
+        from .ace_worker_profile import verify_vendor_tree
+    except ImportError:
+        from ace_worker_profile import verify_vendor_tree
+    verify_vendor_tree(installed, vendor["resources"])
+    for name in inv["first_party_assets"] + ["dev.html"]:
+        verify_file(installed, name, sha(read_file(PACKAGE, name)))
     distributions = []
     seen = {}
     for d in sorted(metadata.distributions(), key=lambda d: normalize(d.metadata["Name"])):
@@ -499,6 +1094,8 @@ def installed_evidence(label, locked=False, os_packages=False):
         raise ValueError("Installed versions differ from reviewed lock")
     result = {"label": label, "python": sys.version.split()[0],
               "application_resources_verified": len(paths),
+              "curated_vendor_closure_verified": True,
+              "first_party_resources_verified": len(inv["first_party_assets"]) + 1,
               "distributions": distributions,
               "lock_matches": all(seen[name] == value[0] for name, value in pins.items())}
     if os_packages:
