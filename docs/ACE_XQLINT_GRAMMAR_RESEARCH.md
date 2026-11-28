@@ -115,3 +115,59 @@ Read [eXide initial import 66a5071d](https://github.com/eXist-db/eXide/commit/66
 | retained rebuild | 15241888213 | a5991fc2f55b9e68af2f55f51d70f5c0387c357a50f04f92502a783b2d741d46 |
 
 Actual JSON content: 55 SBOM components, 47 embedded records, 69 notices, 439 source records, 4 literal + 46 transformed relations; 473 curated Ace, 493 overlay + two js-yaml checks; 202 disposition rows, 186 retained (36 nonempty/150 stubs), 16 excluded. All wheel/sdist/Docker reports show 574 application resources and 5 first-party resources, curated vendor closure true; Docker lock_matches true (wheel/sdist lock_matches false, not a Docker lock failure). Image A/B `sha256:1df7b4f2b4a3fbd2bf19a3bac3067c159c52bfcca4414b204391cb844bca0e59`, 10 layers/481 JS/no prohibited hits, runtime attempts empty. Decoded embedded Playwright report.json: installed 14/14 and rehearsal 24/24, zero unexpected/flaky/skipped each. All five minified workers equal, all five unminified exact pinned CRLF relation, 16 contributing paths, zero missing/unexpected/unmapped/unverified inputs. OSV 234 queries/77 with advisories; rehearsal two queries/zero advisories. Actual report inspection, not independently rebuilding locally, real Supervisor acceptance or independent review. New HEAD verification remains separate.
+
+## R5.4c external grammar provenance research (2026-11-28)
+
+### Earlier Candillon parser and possible external sources
+
+[Ace 2a183e9, 2012-05-25](https://github.com/ajaxorg/ace/commit/2a183e9f9d5bddfb19a6d32a265d6eaf2ccd01b5) explicitly names wcandillon/xquery.js as parser-generation project. Its [README at 7d40dcb](https://github.com/wcandillon/xquery.js/blob/7d40dcb56ce0ac4bb726e14de773ef6a3324a1ee/README.md) (blob `be3045a1448521302eeaf0e9caaf16645972cf3c`) describes ANTLR. [XQueryParser.g](https://github.com/wcandillon/xquery.js/blob/7d40dcb56ce0ac4bb726e14de773ef6a3324a1ee/xquery/XQueryParser.g) (blob `054e56b0359b5ec4010b2104544a7bcb98553925`) has Ajax.org/Candillon MPL 1.1/GPL 2.0/LGPL 2.1 header and JSONiq extensions. [63018c2](https://github.com/wcandillon/xquery.js/commit/63018c22c91d7da9599d666c056bd374e9c6cb6b) references the XQuery 3.0 spec. This establishes predecessor work, not exact ANTLR-to-EBNF derivation or clearance. First XQLint EBNF parser remains 900d74d9, 2012-11-17.
+
+[REx sample grammar README at 52f3bcc3](https://github.com/GuntherRademacher/rex-parser-generator/blob/52f3bcc355cbfab7692733d79c38c16441fc4eec/docs/sample-grammars/README.md) (blob `0370f8df000b9f9364143f615c03ba1361460010`) explicitly identifies W3C sources and RR extraction. XQuery-30 cites the 2014 Recommendation, Update-10 the 2011 Recommendation, Update-30 the 2017 Note. Modern root Apache-2.0 LICENSE blob `261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64` is not evidence of the historical grammar license. The post-2012 examples cannot be direct 2012 inputs. Historical REx-specific syntax and substantial overlap are leads, not proof of direct copying or direction of derivation. REx author permission in [issue #80](https://github.com/GuntherRademacher/rex-parser-generator/issues/80#issuecomment-7224280132) covers generated portions, not independently owned grammar input material.
+
+### W3C conditions and uncertainty
+
+[2011-12-13 XQuery 3.0 WD](https://www.w3.org/TR/2011/WD-xquery-30-20111213/) predates XQLint and includes the grammar. Its document notice refers to W3C document-use rules. [2002 Document License](https://www.w3.org/Consortium/Legal/2002/copyright-documents-20021231) and [2002 Software License](https://www.w3.org/Consortium/Legal/2002/copyright-software-20021231) are distinct: the former restricts modifications absent permission; the latter permits modification and redistribution of covered software with notice/conditions. Separate W3C machine-readable grammar resources are a possible source-specific path; inspected a 2013 JJTree resource, not an exact EBNF ancestor. XML download did not succeed. No historical input identity or applicable grant for a copied/adapted W3C grammar has been established. Do not assign W3C Software or Document License to the entire retained mode on similarity alone.
+
+### JSONiq scope distinction
+
+[JSONiq specification 0.4.42, September 2012](https://www.jsoniq.org/docs/JSONiqExtensionToXQuery/pdf/Language_Specification-0.4.42-JSONiq-en-US.pdf), chapter 12 Grammar Summary, predates XQLint. The [2013-12-16 initial JSONiq repository chapter](https://github.com/28msec/JSONiq/blob/11c9a66bd3ebe196c6af52b7252ae03c25c6dfd3/JSONiqExtensionToXQuery/en-US/Chapter-Grammar.xml) is a pinned later witness to the grammar, not the historical source file. [Historical site](https://github.com/28msec/JSONiq/blob/11c9a66bd3ebe196c6af52b7252ae03c25c6dfd3/web/index.html) blob `279aa226ad60e9408149b533e0aec3687d81cf82` declares [CC BY-SA 3.0 Unported](https://creativecommons.org/licenses/by-sa/3.0/legalcode). That license matters if protected material is adapted; language syntax/functionality alone does not establish such a relationship. No blanket CC BY-SA assignment to a tokenizer or mode.
+
+All 16 chapter production names occur in early XQLint parser; nine normalized RHS match (ObjectConstructor, PairConstructor, ArrayConstructor, JSONAppendExpr, JSONTest, StructuredItemTest, JSONItemTest, JSONObjectTest, JSONArrayTest). Seven differ (PrimaryExpr, ExprSingle, JSONDeleteExpr, JSONInsertExpr, JSONRenameExpr, JSONReplaceExpr, ItemType). None of these 16 names occur in retained July 2014 JSONiq tokenizer grammar. The 2014 lexical delta (JSONChar, JSONCharRef, JSONPredefinedCharRef, QuotString) is separate and not directly sourced by this chapter comparison. Absence of shared names is not proof of absence of protected expression. No new active attribution or change in disposition.
+
+### Reproducible bounded comparisons
+
+`scripts/research_xqlint_grammar.mjs` pins ten Git blobs and records occurrence counts; requires explicit `--fetch` or `--input-dir DIR` (each file named by its pin ID, original bytes), `--pins` prints the manifest. Node 18+; no dependencies. Verifies Git blob SHA-1 and expected results before printing research JSON. Heuristic extracts line-start productions, splits at directive/conflict lines, drops block comments, trims/collapses whitespace including within literals; it is not grammar-aware. Counts source occurrences with any matching target, not a one-to-one match. Duplicates retained. JSONiq chapter uses indented rule extraction. No semantic equality, full provenance, copyright determination or release clearance. Comparisons executed against all ten pinned GitHub connector sources and expected results confirmed; standalone CLI network execution and production CI of new HEAD remain unverified. No vendor payloads added and no runtime or automated production-gate changes.
+
+| Source (occurrences) | REx XQuery-30 | REx Update-10 | REx Update-30 | XML | JSON | RFC7159 |
+|---|---:|---:|---:|---:|---:|---:|
+| 2012 parser (335) | 228/185 | 180/124 | 238/195 | 9/2 | 0/0 | 1/1 |
+| 2014 XQuery tokenizer (67) | 46/20 | 41/18 | 46/20 | 10/2 | 0/0 | 1/1 |
+| 2014 JSONiq tokenizer (70) | 46/19 | 41/17 | 46/19 | 10/2 | 0/0 | 1/1 |
+
+Pairs = same name / same name and normalized RHS. Full immutable input list:
+- [parser](https://github.com/wcandillon/xqlint/blob/900d74d9fda1c2758af045ae6e970af969a43ae4/lib/XQueryParser.ebnf): `d189eeeb83972c985d18c64791a5fbec520fce95`, 335 occurrences
+- [xquery](https://github.com/wcandillon/xqlint/blob/1778846ed8e707780d791fd3ffb41feccdf9de04/lib/lexers/XQueryTokenizer.ebnf): `d6514598ccf8d385e6baf70319745410630a5c79`, 67 occurrences
+- [jsoniq](https://github.com/wcandillon/xqlint/blob/1778846ed8e707780d791fd3ffb41feccdf9de04/lib/lexers/JSONiqTokenizer.ebnf): `eff1da00eda14040b50cb2891ea2bcd0f9ba4385`, 70 occurrences
+- [xq30](https://github.com/GuntherRademacher/rex-parser-generator/blob/52f3bcc355cbfab7692733d79c38c16441fc4eec/docs/sample-grammars/XQuery-30.ebnf): `d150e236b136798fba374695f0fb324c12f4a4e5`, 233 occurrences
+- [update10](https://github.com/GuntherRademacher/rex-parser-generator/blob/52f3bcc355cbfab7692733d79c38c16441fc4eec/docs/sample-grammars/XQuery-Update-10.ebnf): `4e6db8e125c35d8d1cad6b9146e8e12adc6bba82`, 184 occurrences
+- [update30](https://github.com/GuntherRademacher/rex-parser-generator/blob/52f3bcc355cbfab7692733d79c38c16441fc4eec/docs/sample-grammars/XQuery-Update-30.ebnf): `a2dd561aecca1ac205bfaaf44ab6edd79f48e7a9`, 246 occurrences
+- [xml](https://github.com/GuntherRademacher/rex-parser-generator/blob/52f3bcc355cbfab7692733d79c38c16441fc4eec/docs/sample-grammars/XML.ebnf): `93f6c8e2424af3a792b13a32e3675663f4499fcb`, 65 occurrences
+- [json](https://github.com/GuntherRademacher/rex-parser-generator/blob/52f3bcc355cbfab7692733d79c38c16441fc4eec/docs/sample-grammars/JSON.ebnf): `232b33ed32a7dfe4884874abcfd83d665f4bfadd`, 16 occurrences
+- [rfc7159](https://github.com/GuntherRademacher/rex-parser-generator/blob/52f3bcc355cbfab7692733d79c38c16441fc4eec/docs/sample-grammars/RFC-7159.ebnf): `c3f1b9490aa37732fd154389c174875a6630429d`, 33 occurrences
+- [jsoniq-spec](https://github.com/28msec/JSONiq/blob/11c9a66bd3ebe196c6af52b7252ae03c25c6dfd3/JSONiqExtensionToXQuery/en-US/Chapter-Grammar.xml): `a322910117bac5dd6ed4d9a6a9a6214438ea8be1`, 16 occurrences
+
+Disposition: retain both modes review-open. Historical exact REx/W3C/JSONiq input identities, applicable grants, and eXide residual rights remain unresolved. No contact, exclusion, notice/SBOM/disposition change or merge. Round 9 may review bounded evidence, not certify clearance.
+
+### R5.4b exact-HEAD CI/artifact verification
+
+`4bed4da5713190cb19d3591be96dbb26e87d421b`: [offline 46093378122](https://github.com/undel-gh/hass-configurator/actions/runs/46093378122) 4/4, [research 46093378079](https://github.com/undel-gh/hass-configurator/actions/runs/46093378079) 2/2, [rehearsal 46093378132](https://github.com/undel-gh/hass-configurator/actions/runs/46093378132) 1/1 SUCCESS. Downloaded all five ZIPs; CRC and SHA-256 verified against published digests.
+
+| Artifact | ID | SHA-256 |
+|---|---:|---|
+| source | 15242530276 | c3ee6f45bf03e1bd3a8676387eb5c6da635c1740cee0f259172da5bf777f714e |
+| installed/E2E | 15242188911 | d5c094ee4a6bf3349582328e5f9352e5ba858f2eb0b98b22bbe6194160c21cb7 |
+| rehearsal | 15242183748 | 1b581bd31880b947e795ea11c001c7a87b6373d77b3db10b3ba6e34b49ec49cb |
+| native | 15242495286 | 045759f46684481bd9aab472708be4868461e098d0b8a990039c4b68644a4749 |
+| retained rebuild | 15241543737 | 31216c46a6d791dd24462af6a40241d0c71a3a63b06fbc7b29305f7a21e2f49d |
+
+Actual JSON: 55 SBOM components, 47 embedded records, 69 notices, 439 source records, 4 literal + 46 transformed relations; 473 curated Ace, 493 overlay + two js-yaml checks; 202 disposition rows, 186 retained, 16 excluded. Wheel/sdist/Docker each 574 application resources, five first-party, curated closure true; Docker lock_matches true (wheel/sdist false). 10 layers/481 JS/no prohibited hits; runtime attempts empty. Retained rebuild exact-runtime-rebuild-match, five workers/16 contributing paths; OSV 234/77 with advisories, rehearsal 2/0. Report inspection is not local rebuild, real HAOS acceptance, independent review or new HEAD verification.
