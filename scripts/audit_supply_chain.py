@@ -279,6 +279,7 @@ def verify_npm_notice(info, raw, local):
 
 
 SOURCE_RELATIONS = {"literal-full-source-substring", "xqlint-two-require-renames",
+                    "xqlint-ebnf-body-exact", "xqlint-jsoniq-string-delta",
                     "browser-pack-standalone-prelude", "ace-theme-wrapper-amd-to-commonjs",
                     "ace-gruvbox-css-indent-guide", "ace-snippet-template-literal",
                     "ace-edifact-java-two-triggers", "ace-liquid-html-prefix",
@@ -345,6 +346,39 @@ def embedded_source_relation(upstream, container, relation):
     """Apply only named, bounded source transformations to immutable blobs."""
     if not upstream or relation not in SOURCE_RELATIONS:
         raise ValueError("Invalid embedded source relation")
+    if relation == "xqlint-ebnf-body-exact":
+        # Ignore only the observed historical BSD/AMD wrapper, not grammar bytes.
+        old_start = b"<?xqlint\n/* ***** BEGIN LICENSE BLOCK *****\n"
+        old_end = b"\n<?ENCORE?>\n\n<?xqlint\n});\n?>\n"
+        new_end = b"\n<?ENCORE?>\n\n<?xqlint\n?>\n"
+        boundary = b"\n?>\n"
+        if not (upstream.startswith(old_start) and upstream.endswith(old_end)
+                and container.endswith(new_end)):
+            return False
+        header_end = b" * ***** END LICENSE BLOCK ***** */\n\ndefine(function(require, exports, module){\n"
+        if upstream.count(header_end) != 1:
+            return False
+        old_inner = upstream.split(header_end, 1)[1][:-len(old_end)]
+        new_prefix = b"<?xqlint\n"
+        if not container.startswith(new_prefix):
+            return False
+        new_inner = container[len(new_prefix):-len(new_end)]
+        for name in (b"XQueryTokenizer", b"JSONiqTokenizer"):
+            signature = (b"var " + name + b" = exports." + name + b" = function "
+                         + name + b"(string, parsingEventHandler)\n{\n"
+                         + b"  init(string, parsingEventHandler);" + boundary)
+            if old_inner.startswith(signature) and new_inner.startswith(signature):
+                return len(old_inner) > len(signature) and old_inner == new_inner
+        return False
+    if relation == "xqlint-jsoniq-string-delta":
+        old_rule = b"         ::= PredefinedEntityRef | CharRef | EscapeQuot | QuotChar | '\"' | EOF"
+        new_rule = b"         ::= JSONPredefinedCharRef | JSONCharRef | JSONChar | '\"' | EOF"
+        anchor = b"<?TOKENS?>\n\n"
+        insertion = b"JSONChar ::= [^\"\\]\n\nJSONCharRef\n         ::= '\\' 'u' [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F]\n         \nJSONPredefinedCharRef\n         ::= '\\' ( '\\' | '/' | '\"' | \"'\" | 'b' | 'f' | 'n' | 'r' | 't' )\n         \n"
+        if upstream.count(old_rule) != 1 or upstream.count(anchor) != 1:
+            return False
+        return container == upstream.replace(old_rule, new_rule, 1).replace(
+            anchor, anchor + insertion, 1)
     if relation in SQLSERVER_SHARED_BLOCKS:
         return sqlserver_shared_blocks(upstream, container, relation)
     if relation == "ace-lsl-identical-raw":

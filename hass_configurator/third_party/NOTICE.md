@@ -193,3 +193,11 @@ ABC, EDIFACT, Gobstones and LSL snippet collections are excluded from the
 curated distribution. EDIFACT removal is product-only; its historical MIT/BSD
 evidence and LSL review evidence remain in docs/history/ace-snippet-exclusions.json.
 All four language modes remain; this decision does not clear mode licensing.
+
+R5.4a: 2013 BSD XQLint grammar bodies mapped to 2014 Apache-era inputs;
+JSONiq string-rule delta pinned. Existing notices retained. Earlier grammar
+ancestry and separate eXide-origin editing methods (historical GPL-3.0-or-later
+header; later Ace header changes) in retained XQuery/JSONiq modes remain
+review-open. PR #645 CLA receipt is not proof of the original rightsholder's
+grant. No blanket license classification or risk acceptance asserted.
+See docs/ACE_XQLINT_GRAMMAR_RESEARCH.md.

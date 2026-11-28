@@ -878,6 +878,36 @@ class SupplyChainTests(unittest.TestCase):
             with self.subTest(edit=edit.__name__):
                 self.mutate_embedded(edit, "Incomplete Vala historical provenance")
 
+    def test_xqlint_grammar_body_exact(self):
+        relation = "xqlint-ebnf-body-exact"
+        signature = (b"var XQueryTokenizer = exports.XQueryTokenizer = function "
+                     b"XQueryTokenizer(string, parsingEventHandler)\n{\n"
+                     b"  init(string, parsingEventHandler);\n?>\n")
+        body = signature + b"\nRule ::= 'a'\n"
+        old = (b"<?xqlint\n/* ***** BEGIN LICENSE BLOCK *****\n"
+               b" * Copyright (c) 2010, Ajax.org B.V.\n"
+               b" * ***** END LICENSE BLOCK ***** */\n\n"
+               b"define(function(require, exports, module){\n"
+               + body + b"\n<?ENCORE?>\n\n<?xqlint\n});\n?>\n")
+        new = b"<?xqlint\n" + body + b"\n<?ENCORE?>\n\n<?xqlint\n?>\n"
+        self.assertTrue(embedded_source_relation(old, new, relation))
+        self.assertFalse(embedded_source_relation(old, new.replace(b"'a'", b"'b'"), relation))
+        self.assertFalse(embedded_source_relation(old, new.replace(b"Rule ::=", b"Rule  ::="), relation))
+        self.assertFalse(embedded_source_relation(old, new + b"\n", relation))
+
+    def test_xqlint_jsoniq_string_delta(self):
+        relation = "xqlint-jsoniq-string-delta"
+        old_rule = b"         ::= PredefinedEntityRef | CharRef | EscapeQuot | QuotChar | '\"' | EOF"
+        new_rule = b"         ::= JSONPredefinedCharRef | JSONCharRef | JSONChar | '\"' | EOF"
+        anchor = b"<?TOKENS?>\n\n"
+        insertion = b"JSONChar ::= [^\"\\]\n\nJSONCharRef\n         ::= '\\' 'u' [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F]\n         \nJSONPredefinedCharRef\n         ::= '\\' ( '\\' | '/' | '\"' | \"'\" | 'b' | 'f' | 'n' | 'r' | 't' )\n         \n"
+        old = b"QuotString\n" + old_rule + b"\n" + anchor + b"ModuleDecl\n"
+        new = b"QuotString\n" + new_rule + b"\n" + anchor + insertion + b"ModuleDecl\n"
+        self.assertTrue(embedded_source_relation(old, new, relation))
+        self.assertFalse(embedded_source_relation(old, new + b"\n", relation))
+        self.assertFalse(embedded_source_relation(old + anchor, new + anchor, relation))
+        self.assertFalse(embedded_source_relation(old, new.replace(b"JSONCharRef", b"Other", 1), relation))
+
 
 if __name__ == "__main__":
     unittest.main()

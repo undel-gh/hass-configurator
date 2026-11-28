@@ -824,3 +824,11 @@ blanket clearance. Elevated priority is proposed review order, not risk
 rating. Native research checks coverage, declarations, distribution
 and exact additional component mappings. Runtime/vendor unchanged.
 New CI and installation evidence pending, no independent clearance.
+
+## R5.4a — XQLint grammar and mode ancestry
+
+See [ACE_XQLINT_GRAMMAR_RESEARCH.md](ACE_XQLINT_GRAMMAR_RESEARCH.md).
+Two exact grammar body relations and JSONiq string delta pinned. New
+review-only eXide lineage record identifies shared historic editing methods
+in retained XQuery/JSONiq modes; original permission remains a release gate
+despite later Ace headers and Candillon CLA receipt. No runtime change.
